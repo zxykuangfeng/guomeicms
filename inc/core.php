@@ -67,9 +67,24 @@ function __construct(){
 	$_config = $this->CACHE->read('', 'core', '');
 	$_config = is_array($_config)?$_config:array();
 	
-	$this->CONFIG = array_merge($_config, $this->CONFIG);
-	unset($_config);
+	// $this->CONFIG = array_merge($_config, $this->CONFIG);
+	// unset($_config);
 	
+	       $this->CONFIG = array_merge($_config, $this->CONFIG);
+        unset($_config);
+
+        if(empty($this->CONFIG['mysql_connect_types']) || !is_array($this->CONFIG['mysql_connect_types'])){
+                $this->CONFIG['mysql_connect_types'] = array();
+        }
+        $default_connect_types = array(
+                'mysql' => 'P8_mysql',
+                'mysqli' => 'P8_mysqli',
+                'dm' => 'P8_dm',
+                'pgsql' => 'P8_pgsql'
+        );
+        $this->CONFIG['mysql_connect_types'] = array_merge($default_connect_types, $this->CONFIG['mysql_connect_types']);
+
+
 	$this->TABLE_ = empty($this->CONFIG['core_table_prefix']) ? $this->CONFIG['table_prefix'] : $this->CONFIG['core_table_prefix'];
 	$this->attachment_table = $this->TABLE_ .'attachment';
 	$this->member_table = $this->TABLE_ .'member';
@@ -464,6 +479,9 @@ function _set_config(
 **/
 function DB_connect($type = 'master'){
 	$mysql_connect_type = isset($this->CONFIG['mysql_connect_type'])?$this->CONFIG['mysql_connect_type']: 'mysql';
+
+	// var_dump($mysql_connect_type);
+	// die;
 	$mysql_connect_charset = isset($this->CONFIG['mysql_charset'])?$this->CONFIG['mysql_charset']: 'utf8';
 	$mysql_connect_port = isset($this->CONFIG['mysql_connect_port'])?$this->CONFIG['mysql_connect_port']: 3306;
 	require_once PHP168_PATH .'inc/'. $mysql_connect_type .'.class.php';
