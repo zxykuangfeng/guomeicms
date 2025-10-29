@@ -1,0 +1,148 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$item_title - {$P8LANG['comment']}</title>
+<link href="{$SKIN}../core/header/common.css" rel="stylesheet" type="text/css" />
+<link href="{$SKIN}comment.css" rel="stylesheet" type="text/css" />
+<link href="{$RESOURCE}/images/dialog.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/$MODULE/$MODULE.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript" src="{$RESOURCE}/js/login_box.js?rid=<!--{php echo P8_TIME;}-->"></script>
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<div class="comment_whole">
+	<div class="comment_view">
+		<div class="comment_view_title">订购产品</div>
+		<div class="comment_view_main">
+			<div class="comment_view_nav">
+				<a href="{$core.controller}">首页</a>&gt;
+			</div>
+			<a name="top"></a>
+			<div class="comment_view_box" id="comment_box">
+				<div id="login_com_box">
+					<form method="post" id="form" action="{$core.U_controller}/core/member-login" >
+						<span> 网站通行证：</span>
+						<input type="text" name="username" id="username_box" class="username" value="请输入账号" onfocus="if(this.value=='请输入账号'){this.value='';}" onblur="if(this.value==''){this.value='请输入账号';}"/>
+						 <span>密码：</span><input type="password" name="password" id="password_box" autocomplete="new-password" class="password"/>						
+						 <input type="button" value="{$P8LANG['login']}" tabindex="3" class="submit" onclick="validpwd();" id="loginbtn"/>
+						 <input type="hidden" name="forward" id="forward_c" value="$this_url-id-{$id}" /> <span> <a href="{$core.controller}/core/member-register">注册</a> | <a href="{$core.controller}/core/member-getpassword">忘记密码</a> </span>					
+					</form>
+				</div>
+				<div id="logined_box">
+					网站通行证：<a href="{$core.url}/u.php"><font color="#FF7F04">{$USERNAME}</font></a>
+				</div>
+				<div class="form_div">
+					<div class="comment_avatar"></div>
+					<div class="comment_full">
+						<form action="$this_router-comment" method="post" id="commenter" target="submit_comment">
+							<div style="height:28px;line-height:24px;">
+								{if !empty($this_module->CONFIG['order']['field_1_enabled']) && isset($this_module->CONFIG['order']['field_1'])}{$this_module->CONFIG['order']['field_1']}：<input type="text" name="field_1" style="border:1px solid #e5e5e5;height:24px;" value="{$USERNAME}" size="12" /> {/if}
+								{if !empty($this_module->CONFIG['order']['field_2_enabled']) && isset($this_module->CONFIG['order']['field_2'])}{$this_module->CONFIG['order']['field_2']}：<input type="text" name="field_2" style="border:1px solid #e5e5e5;height:24px;" value="" size="12" /> {/if} 
+								{if !empty($this_module->CONFIG['order']['field_3_enabled']) && isset($this_module->CONFIG['order']['field_3'])}{$this_module->CONFIG['order']['field_3']}：<input type="text" name="field_3" style="border:1px solid #e5e5e5;height:24px;" value="" size="12" /> {/if}
+								{if !empty($this_module->CONFIG['order']['field_4_enabled']) && isset($this_module->CONFIG['order']['field_4'])}{$this_module->CONFIG['order']['field_4']}：<input type="text" name="field_4" style="border:1px solid #e5e5e5;height:24px;" value="" size="12" /> {/if}
+								{if !empty($this_module->CONFIG['order']['field_5_enabled']) && isset($this_module->CONFIG['order']['field_5'])}{$this_module->CONFIG['order']['field_5']}：<input type="text" name="field_5" style="border:1px solid #e5e5e5;height:24px;" value="" size="12" /> {/if}
+								{if !empty($this_module->CONFIG['order']['field_6_enabled']) && isset($this_module->CONFIG['order']['field_6'])}{$this_module->CONFIG['order']['field_6']}：<input type="text" name="field_6" style="border:1px solid #e5e5e5;height:24px;" value="" size="12" /> {/if}
+								{if !empty($this_module->CONFIG['order']['field_7_enabled']) && isset($this_module->CONFIG['order']['field_7'])}{$this_module->CONFIG['order']['field_7']}：<input type="text" name="field_7" style="border:1px solid #e5e5e5;height:24px;" value="" size="12" /> {/if}
+							</div>
+							<textarea name="content" id="comment_content" class="comment_body" class="comment_body" cols="70" rows="5">文明上网，登录订购</textarea><br />
+							<p><input type="button" id="comment_submit" class="commentBtn2" name="bbt" onclick="post_comment()"  value="我要订购"/> </p>
+							<input type="hidden" name="action" value="add" />
+							<input type="hidden" name="iid" value="$data[id]" />
+						</form>
+					</div>
+				</div>				
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+var allow_comment = false;
+
+function comment_check(form){
+	
+	var flag = true,
+		msg = '';
+	
+	if(!allow_comment){
+		alert(P8LANG[SYSTEM].comment.not_allow);
+		flag = false;
+	}
+	
+	if($.trim(form.find('textarea').val()).length < 5){
+		alert(P8LANG[SYSTEM].comment.write_something);
+		flag = false;
+	}
+	
+	return flag;
+}
+
+var reply_id;
+
+$(function(){
+	if(get_cookie('UID')){
+		$('#comment_login').html(get_username());
+	}else{
+		$('#comment_login form').show().append(
+			$('<input type="hidden" name="forward" value="'+ window.location +'" />')
+		);
+	}
+});
+
+var limitTime;
+function post_comment(){
+	var content=$('#comment_content').val();
+	if(content.length<5 || content==''){alert('字数太少或为空'); return false; }
+	$('#commenter').submit();
+	$("input[name^='field_']").val('');	
+	$('#comment_content').val('');
+	limitTime=5;
+	limitComment();
+	
+}
+
+function limitComment(){
+	limitTime=limitTime-1;
+	if(limitTime>0){
+		$('#comment_content').val('还剩'+limitTime+'秒,你才可以再订购');
+		$('#comment_content').attr('disabled','disabled');
+		$('#comment_submit').attr('disabled','disabled');
+		setTimeout("limitComment()",1000);
+	}else if(limitTime==0){
+		$('#comment_content').val('文明上网，登录订购');
+		$('#comment_content').removeAttr('disabled');
+		$('#comment_submit').removeAttr('disabled');
+	}
+}
+function reply_comment(id){
+	reply_id = id;
+	reply_dialog.show();
+	$('#comment_'+ id).addClass('pre_reply');
+	$('#reply_id').val(id);
+}
+
+var UID = get_cookie('UID');
+$(document).ready(function(){
+	if(UID === undefined){
+		$('#login_com_box').show();$('#logined_box').hide();
+	}else{
+		$('#logined_box').show();$('#login_com_box').hide();
+	}  
+});
+
+</script>
+<iframe name="submit_comment" style="display:none;"></iframe>
+</body>
+</html>
+<!--{/php168}-->

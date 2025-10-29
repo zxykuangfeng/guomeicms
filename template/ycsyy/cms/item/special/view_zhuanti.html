@@ -1,0 +1,159 @@
+<!--{php168}-->
+<!--{template $this_system seo}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$core.CONFIG['page_charset']}" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=2.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<title>$TITLE</title>
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/sites/common/css/global.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$SKIN}zhuanti/zhuanti.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/special/label_special.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/slick.css">
+<link href="{$RESOURCE}/skin/label/swiper-3.3.1.min.css" type="text/css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+    <script src="{$RESOURCE}/html5shiv.min.js"></script>
+    <script src="{$RESOURCE}/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/guowei.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/breakpoints.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap-hover-dropdown.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/wow.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/slick.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.SuperSlide.2.1.1.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.iosslider.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.easing-1.3.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] !== undefined ? (\$_GET['verified'] == 1 ? 1 : 0) : 1;
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+</head>
+<body>
+<div class="header">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="navbar-header clearfix">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<div class="logo pull-left">
+						$label[list_zhuanti_logo]
+					</div>
+				</div>
+			</div>
+			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="topmember text-right hidden-xs" id="header_t"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="banner">$label[list_zhuanti_banner]</div>
+<div class="navbar-collapse navbar-collapse-toolbar collapse navbar-main" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">	
+	<div class="container">
+		$label[list_zhuanti_nav]
+	</div>
+</div>
+<div class="mainfull">
+	<div class="container">
+		<div class="breadnav clearfix">
+			<div class="position fl">
+				<a href="{$core.controller}">首页</a>/<!--{foreach $parent_cats $v}--><a href="$v[url]">$v[name]</a>/<!--{/foreach}--><a href="$CAT[url]">$CAT[name]</a>/列表
+			</div>
+		</div>
+		<div class="maincon clearfix">
+			<div class="contentitem ">
+				<div class="article">
+					<div class="actitle">$data[title]</div>
+					<div class="acinfo2 clearfix">
+						<div class="acnav fl">
+							<ul class="clearfix">
+								<li class="li1">来源：$data[source_name]</li>
+								<li class="li2"><!--{php echo date("Y-m-d",$data['timestamp']);}--></li>
+								<li class="li3">作者：$data[author]</li>
+								<li class="li4">浏览($data[views])</li>
+								<li class="li5"><a href="javascript:;" onclick="alert('请使用键盘Ctrl+D组合键进行收藏');">收藏</a></li>
+								<li class="li6"><span id="operation" style="display: none; cursor: pointer;color:#087cf3">{$P8LANG['operation']}>></span></li>
+							</ul>
+						</div>
+						<div class="acnav fr">
+							<ul class="clearfix">
+								<li class="li7"><a href="javascript:;" onclick="javascript:preview(1)">打印文章</a></li>							
+							</ul>
+						</div>
+					</div>	
+					<!--startprint1-->
+					<!--打印内容开始-->
+					<div class="content" id="content">
+						$data[content]
+					</div>
+					<div class="clear"></div>
+					<!--打印内容结束-->
+					<!--endprint1-->
+				</div>			
+			</div>
+		</div>
+	</div>
+</div>
+<div class="copyright">
+	<div class="container">
+		$label[list_zhuanti_copyright]
+	</div>
+</div>
+<script language="javascript">
+	function preview(oper)
+		{
+		if (oper < 10){
+			bdhtml=window.document.body.innerHTML;
+			sprnstr="<!--startprint"+oper+"-->";
+			eprnstr="<!--endprint"+oper+"-->";
+			prnhtml=bdhtml.substring(bdhtml.indexOf(sprnstr)+18);
+			prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));
+			window.document.body.innerHTML=prnhtml;
+			window.print();
+			window.document.body.innerHTML=bdhtml;
+		} else {
+			window.print();
+		}
+	}
+</script>
+<script type="text/javascript" src="{$STATIC_URL}/search/count.php?id=$data[id]"></script>
+<script type="text/javascript">
+var USERNAME = get_username();
+$(document).ready(function(){
+	//**show_edit**//					   
+	init_labelshows('header_t');
+})
+</script>
+</body>
+</html>
+<!--{/php168}-->

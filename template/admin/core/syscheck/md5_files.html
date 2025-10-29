@@ -1,0 +1,112 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $core menu_safe admin}-->
+<div class="mainbox mainborder">
+		<div class="section">
+ 
+            <table class="columntable formtable hover_table">
+
+				<tr class="title fix_head">
+					<td colspan="10" class="title">{$P8LANG['md5_scan']}</td>
+				</tr>
+				
+				<tr>
+					<td colspan="10">
+						
+						<input type="button" class="submit_btn" value="{$P8LANG['new_scan_point']}" 
+                        onclick="scanfile()" />
+					</td>
+				</tr>
+			</table>
+</div></div>
+
+<!--{if empty($diff)}-->
+<form action="$this_url" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table class="columntable formtable hover_table">
+				
+				
+				<tr class="title fix_head">
+                	<td class="title" width="10%"></td>
+                	<td class="title" width="30%">{$P8LANG['tittle']}</td>
+					<td class="title" width="30%">{$P8LANG['scan_time']}</td>
+					<td class="title" width="30%">{$P8LANG['operation']}</td>
+
+				</tr>
+				<!--{foreach $list $item}-->
+				<tr>
+					<td><input type="checkbox" name="ids[]" value="{$item['path']}"></td>
+					<td>{$item['tittle']}</td>
+					<td>{$item['add_time']}</td>
+					<td><button onclick="delfile('{$item['path']}');return false">{$P8LANG['delete']}</button></td>
+				</tr>
+				<!--{/foreach}-->				
+				<tr>
+					<td colspan="10">
+						
+						<input type="submit" class="submit_btn" value="{$P8LANG['show_scan_point']}"/>
+					</td>
+				</tr>
+			</table> 
+		</div>
+	</div>
+	<input type="hidden" name="diff" value="1" />
+</form>
+<!--{else}-->
+<div class="mainbox mainborder">
+		<div class="section">
+			<table class="columntable formtable hover_table">
+				
+            <tr class="title fix_head">
+				<td class="title" width="33%">{$P8LANG['file']}</td>
+				<td class="title" width="33%">{$P8LANG['operation']}</td>
+				<td class="title" width="33%">{$P8LANG['modify_time']}</td>
+			</tr>
+			<!--{foreach $diff $file $v}-->
+			<tr>
+				<td><!--{php echo str_replace(PHP168_PATH, '', $file);}--></td>
+				<td>
+					<!--{if $v['status'] == 'mod'}-->
+					{$P8LANG['status_mod']}
+					<!--{elseif $v['status'] == 'new'}-->
+					<font color="red">{$P8LANG['status_new']}</font>
+					<!--{elseif $v['status'] == 'del'}-->
+					<font color="red">{$P8LANG['status_del']}</font>
+					<!--{/if}-->
+				</td>
+				<td>
+					<!--{php echo date('Y-m-d H:i:s', $v['time']);}-->
+				</td>
+			</tr>
+			<!--{/foreach}-->
+            <tr>
+					<td colspan="10">
+						<button onclick="location.href='{$core.admin_controller}/core-md5_files'">返回</button>
+					</td>
+				</tr>
+        </table>
+        
+    </div>    
+</div>
+<!--{/if}-->
+<script type="text/javascript">
+function scanfile(){
+    var tittle = prompt("请输入扫描目的","");
+
+    if(tittle){
+        
+        ajaxing({text:"{$P8LANG['scaning']}"});
+        $.post('{$this_url}',{tittle:tittle},function(){ajaxing({action: 'hide'});p8_window.alert('扫描完成');location.reload();});
+    
+    }else{
+        p8_window.alert('{$P8LANG['fail']}');
+    }
+}
+
+function delfile(id){
+    $.post('{$this_url}',{ids:id,del:1},function(){ajaxing({action: 'hide'});p8_window.alert('操作成功');location.reload();});
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

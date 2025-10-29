@@ -1,0 +1,22 @@
+<?php
+return array (
+  '说明.txt' => '15b254c5a6491cf7c07112ed6a30e9e6',
+  'main.php' => '5d2e0d5548f6070bd3f765a657898c47',
+  'index.php' => 'b5e48b3b8664d2281d1fc440a95dd5dd',
+  'index.html' => '7215ee9c7d9dc229d2921a40e899ec5f',
+  'admin/addon.php' => '0d9a726fb5f0724db63ddc08feee6c4a',
+  'admin/update_addon.php' => '8f1dd2d9912ddfa904a871f2d0e73f2c',
+  'admin/delete.php' => '56d4266b7ab164bca2911216a2682b40',
+  'admin/index.html' => '7215ee9c7d9dc229d2921a40e899ec5f',
+  'admin/update.php' => '69b9ad873e20b3eb15518ab00f1666d1',
+  'admin/delete_addon.php' => 'f74cd24edd96ba27667d73e3084e6189',
+  'admin/add.php' => '1e38b2fd99641dd94380c6d6f65ada2a',
+  'member/delete_addon.php' => '3bbc5308cf03a323a4fa3d6fec4a47d9',
+  'member/update.php' => 'f78f7ebf5c1655bd5437e20887d5123e',
+  'member/update_addon.php' => 'a1a35cca670c24650c74f016982f927b',
+  'member/delete.php' => 'd48d411045fc9531a3a8b3867a0a1249',
+  'member/index.html' => '7215ee9c7d9dc229d2921a40e899ec5f',
+  'member/add.php' => 'fe37d8eb3761a26628e1978bd40fb47e',
+  'list.php' => 'f9685c8d2dcd7cca43d3e97a554be769',
+  'view.php' => '50cf173fc89cff41e4783508b06d3623',
+);

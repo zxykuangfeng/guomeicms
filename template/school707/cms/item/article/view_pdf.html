@@ -1,0 +1,103 @@
+<!--{php168}-->
+<!--{template $core header school707}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<script src="https://cdn.bootcss.com/html2canvas/0.5.0-beta4/html2canvas.js"></script>
+<div class="container">
+	<div class="maincon">
+		<div class="row">
+			<div class="position2">
+				<a href="{$core.controller}">首页</a>
+				<!--{foreach $parent_cats $v}-->
+				&gt; <a href="$v[url]">$v[name]</a>
+				<!--{/foreach}-->
+				&gt; <a href="$CAT[url]">$CAT[name]</a> 
+			</div>
+		</div>
+		<div class="row">
+			<div class="contentbox fl right-aside" style="padding:40px;">
+				<div class="layout_txtcontent_title">
+					$data[title]
+				</div>
+				<div class="sub_title">$data[sub_title]</div>
+				<div class="layout_txtcontent_info">
+					日期：{date('Y-m-d', $data['timestamp'])}&nbsp;来源：{$data['source']}&nbsp;发布人：{$data['username']}&nbsp;作者：{$data['author']}&nbsp;编辑：{$data['editer']}&nbsp;审核人：{$data['verifier']} 浏览量：<span class="item_views">$data[views]</span>
+					<a href="javascript:void(0)" onclick="collect('{$id}')">收藏本文</a> <a href="javascript:void(0)" onclick="javascript:window.print()">打印本文</a> <span id="operation" style="display: none; cursor: pointer;color:#0040ff;margin-left:15px;">{$P8LANG['operation']}>></span>
+				</div>
+				<div class="layout_txtcontent_content">
+					$data[content]
+					<!--{if $data['attachment_pdf']}-->
+					<br><iframe width="100%" height="600" src="{$STATIC_URL}/api/pdf.php?file={$data[attachment_pdf]}" style="border:1px solid #DDDDDD"></iframe>
+					<!--{/if}-->
+				</div>
+				<!--{if $_GET['verified'] && $data['checkfile'] }--><img src="{$data[checkfile][url]}" width="600" /><!--{/if}-->
+				<div class="layout_txtcontent_list">
+					$pages
+				</div>
+				
+				<div class="son_title tr">
+					<span>核发：{$data['verifier']} </span><span>点击数：$data[views]</span>
+					<span>【<a href="javascript:" onClick="jscript:window.external.AddFavorite(document.location.href,document.title);">收藏本页</a>】</span>
+				</div>
+				<div class="change" id="editor">
+					<ul>
+						<li><font style="color:red">上一篇：</font><!--{if !empty($prev_item['subject'])}--><a href="$prev_item[url]" title="$prev_item[title]">$prev_item[subject]</a><!--{else}-->没有了<!--{/if}--></li>
+						<li><font style="color:red">下一篇：</font><!--{if !empty($next_item['subject'])}--><a href="$next_item[url]" title="$next_item[title]">$next_item[subject]</a><!--{else}-->没有了<!--{/if}--></li>
+					</ul>
+				</div>				
+				<div class="closepage">
+					<span><a href="{if $this_system->domain}{$this_system.domain}{else}{str_replace('index.php/cms','',$this_system->controller)}{/if}">返回首页</a></span>
+					<span><a href="javascript:self.close()" >关闭页面</a></span>
+					<span><a href="javascript:;" onClick="print_download_pdf()">下载PDF</a></span>
+				</div>
+			</div>			
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+  function print_download_pdf() {
+    var target = $(".right-aside")[0];
+	$(".right-aside").css({'background':'#ffffff'});
+    html2canvas(target, {
+      onrendered:function(canvas) {
+        var contentWidth = canvas.width;
+        var contentHeight = canvas.height;
+		console.log(contentWidth,contentHeight);
+        //一页pdf显示html页面生成的canvas高度;
+        var pageHeight = contentWidth / 592.28 * 841.89;
+        //未生成pdf的html页面高度
+        var leftHeight = contentHeight;
+        //页面偏移
+        var position = 0;
+        //a4纸的尺寸[595.28,841.89]，html页面生成的canvas在pdf中图片的宽高
+		console.log(pageHeight,leftHeight);
+        var imgWidth = 595.28;
+        var imgHeight = 592.28/contentWidth * contentHeight;
+		var pageData = canvas.toDataURL('image/jpeg', 1.0);
+
+        var pdf = new jsPDF('', 'pt', 'a4');
+
+        //有两个高度需要区分，一个是html页面的实际高度，和生成pdf的页面高度(841.89)
+        //当内容未超过pdf一页显示的范围，无需分页
+		console.log(leftHeight,pageHeight);
+		
+        if (leftHeight < pageHeight) {
+          pdf.addImage(pageData, 'JPEG', 0, 0, imgWidth, imgHeight );
+        } else {
+          while(leftHeight > 0) {
+			console.log(position,imgWidth,imgHeight);
+            pdf.addImage(pageData, 'JPEG', 0, position, imgWidth, imgHeight)
+            leftHeight -= pageHeight;
+            position -= 841.89;
+            //避免添加空白页
+            if(leftHeight > 0) {
+              pdf.addPage();
+            }
+          }
+        }
+        pdf.save("content.pdf");
+      }
+    })
+  }
+</script>
+<!--{template $core footer school707}-->
+<!--{/php168}-->

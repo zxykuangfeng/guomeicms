@@ -1,0 +1,93 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable" width="100%">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$this_system.admin_controller}-index_menu"><i class="fa fa-cog"></i>所有快捷导航</a></li>	
+						<li><a href="{$this_system.admin_controller}/farm-menu_custom"><i class="fa fa-cog"></i>本站快捷发布栏目管理 </a></li>
+						<li><a href="{$this_system.admin_controller}/farm-menu_nav"><i class="fa fa-cog"></i>本站专属导航管理 </a></li>
+						<li><a href="{$this_system.admin_controller}-menu_user"><i class="fa fa-cog"></i>本账号专属菜单管理</a></li>
+						<li><a href="{$this_system.admin_controller}-index_mconfig"><i class="fa fa-cog"></i>站群公共导航管理</a></li>
+						<li><a href="{$this_system.admin_controller}/farm-menu_list"><i class="fa fa-cog"></i>网站前台导航管理</a></li>
+						<li class="course"><a href="{$RESOURCE}/attachment/jiaocheng/daohang2.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 导航操作教程 >></a></li>	
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<div class="sites-menu-box">
+			<div class="sites-menu-head clearfix">
+				<h3 class="pull-left"><a href="{$this_system.admin_controller}/farm-menu_custom" target="_blank">本站快捷栏目发布导航</a></h3>
+				<div class="add pull-right"><a href="{$this_system.admin_controller}/farm-menu_custom" target="_blank">添加导航>></a></div>
+			</div>
+			<div class="sites-menu-main">
+				<ul class="sites-menu-list">
+					<!--{foreach $custom_menu $v}-->
+					<!--{php if(!$v['display'])continue;}-->
+					<li><a href="$v[url]" target="$v[target]"><i class="icon icon-arrow"></i>$v[name]</a></li>
+					<!--{/foreach}-->
+				</ul>
+			</div>
+		</div>
+		<!--本站专属个性化导航-->
+		<!--{foreach $menu_nav $k $v}-->		
+		<!--{php if(!$v['display'])continue;}-->
+		<div class="sites-menu-box">
+			<div class="sites-menu-head clearfix">
+				<h3 class="pull-left"><a href="$v[url]" target="$v[target]">$v[name]</a></h3>
+				<div class="add pull-right"><a href="{$this_system.admin_controller}/farm-menu_custom" target="_blank">添加导航>></a></div>
+			</div>
+			<div class="sites-menu-main">
+				<ul class="sites-menu-list">
+					<!--{foreach $v['menus'] $k2 $v2}-->
+					<li><a href="$v2[url]" target="$v2[target]"><i class="icon icon-arrow"></i>$v2[name]</a></li>
+					<!--{/foreach}-->
+				</ul>
+			</div>
+		</div>
+		<!--{/foreach}-->
+		<!--用户专属个性化导航-->
+		<div class="sites-menu-box">
+			<div class="sites-menu-head clearfix">
+				<h3 class="pull-left"><a href="{$this_system.admin_controller}-menu_user" target="_blank">我的专属个性化菜单</a></h3>
+				<div class="add pull-right"><a href="{$this_system.admin_controller}-menu_user" target="_blank">添加导航>></a></div>
+			</div>
+			<div class="sites-menu-main">
+				<ul class="sites-menu-list">
+					<!--{foreach $menu_user $v}-->
+					<!--{php if(!$v['display'])continue;}-->
+					<li><a href="$v[url]" target="$v[target]"><i class="icon icon-arrow"></i>$v[name]</a></li>
+					<!--{/foreach}-->
+				</ul>
+			</div>
+		</div>
+		<!--站群通用导航-->
+		<!--{foreach $menus $k $v}-->		
+		<!--{php if(!$v['display'])continue;}-->
+		<div class="sites-menu-box">
+			<div class="sites-menu-head clearfix">
+				<h3 class="pull-left"><a href="$v[url]" target="$v[target]">$v[name]</a></h3>
+				<div class="add pull-right"><a href="{$this_system.admin_controller}-index_mconfig" target="_blank">添加导航>></a></div>
+			</div>
+			<div class="sites-menu-main">
+				<ul class="sites-menu-list">
+					<!--{foreach $v['menus'] $k2 $v2}-->
+					<li><a href="$v2[url]" target="$v2[target]"><i class="icon icon-arrow"></i>$v2[name]</a></li>
+					<!--{/foreach}-->
+				</ul>
+			</div>
+		</div>
+		<!--{/foreach}-->
+	</div>
+</div>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

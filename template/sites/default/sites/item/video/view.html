@@ -1,0 +1,189 @@
+<!--{php168}-->
+<!--{template $this_system seo}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$TITLE</title>
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<meta http-equiv="X-UA-Compatible" content="IE=10" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}core/header/common.css" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}core/header/head_foot.css" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}item/{$MODEL}/style.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/iva.css">
+<!--{if !empty($LINKRSS)}-->
+<link rel="alternate" type="application/rss+xml" title="$LINKRSS[title]" href="$LINKRSS[url]" />
+<!--{/if}-->
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$this_router}-check_verify_action?cid=$cid"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/$MODULE/item.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+<!--{template_init_js}-->
+<!--{template $this_module item_js}-->
+</script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] === undefined ? 1 : (\$_GET['verified'] == 0 ? 0 : 1);
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+<script type="text/javascript" src="{$SKIN}js/media.js"></script>
+</head>
+<body>
+
+<!--{template $this_system top_header}-->
+
+<div class="gov_frame">
+	<div class="list_nave ">
+		<a href="{$this_system.domain}">首页</a>&nbsp;&gt;&nbsp;
+		<!--{foreach $parent_cats $v}-->
+		<a href="$v[url]">$v[name]</a>&nbsp;&gt;&nbsp;
+		<!--{/foreach}-->
+		<a href="$CAT[url]">$CAT[name]</a>
+	</div>
+</div>
+<!--content-->
+<div id="vd_wrap" class="mtop">
+	<div class="video_wrap vd_990">
+		<div class="left_box">			<div class="screen">
+				<!--{if $pay_check}-->
+				<script type="text/javascript" src="{$RESOURCE}/js/media.js"></script>
+				<!--{if !empty($data['video_url'])}-->
+				<!--{php 
+					$video_title = is_array($data['video_url']) ? $data['video_url'][0]['title'] : $data['title'];
+					$video_url = is_array($data['video_url']) ? $data['video_url'][0]['url'] : $data['video_url'];
+					$video_thumb = is_array($data['video_url']) ? $data['video_url'][0]['thumb'] : $data['frame'];
+					$video_note = is_array($data['video_url']) ? $data['video_url'][0]['note'] : '';
+				}-->
+				
+				<div id="video_url">
+				<script type="text/javascript">
+				showMedia({
+					url: '$video_url',
+					width: 750,
+					height: 480,
+					image: '$video_thumb'.replace(/\.thumb\.jpg/, ''),
+					flashvars: {
+						winType: 'interior',
+						showAd: 0,
+						show_pre: 0,
+						show_next: 0,
+						isAutoPlay: 'true'
+					}
+				});
+				</script>
+				</div>
+				<div class="video_title" id="video_title">{$video_title} {$video_note}</div>
+				<!--{/if}-->
+				<!--{else}-->
+				<!--{php include template($this_module, 'pay');}-->
+				<!--{/if}-->
+			</div>
+			<div class="vd_title">
+				$data[title]
+				<span id="operation" style="display: none;float:right;color:#ff0000; cursor: pointer;">{$P8LANG['operation']}</span>
+			</div>
+			<div class="vd_summary">
+				<div class="nomal">
+				<div id="p8_content_show">$data[content]</div>
+				</div>
+			</div>
+			<div class="vd_date_time">
+				<!--{if !empty($data['source'])}-->
+				来源:<a href="$data[source_url]" target="_blank">$data[source_name]</a>
+				<!--{/if}-->
+				添加时间:{date('Y-m-d H:i:s', $data['timestamp'])}			</div>
+		</div>
+		<div class="right_box vd_border">
+			<div class="rtop-adb ">
+				$label[vd_ad_1]
+			</div>
+			<div class="vd_list">
+				<!--{foreach $listdb $val}-->
+				<div class="vd_slist">
+					<a class="frame" href="$val[url]"><img src="{if !empty($val['frame'])}$val[frame]{else}{$RESOURCE}/images/nopic.jpg{/if}"  onerror="this.src='{$RESOURCE}/images/nopic.jpg'" /></a>
+					<p class="sl_title" style="clear:right" > <a class="frame" href="$val[url]">$val[title]</a></p>
+					<p class="sl_time">
+						{date('Y-m-d H:i:s', $val['timestamp'])}
+					</p>
+				</div>
+				<!--{/foreach}-->
+			</div>
+		</div>
+		<div class="right_box  vd_border" style="margin-top:10px;clear:right;">			
+				<div class="rtop-adc">
+					本周最受欢迎视频
+				</div>
+				<div class="vd_list" style="border-top:none">
+					$label[本周最受欢迎视频]{'i.cid' => $CATEGORY, 'model' => $MODEL}
+				</div>			
+		</div>
+		<script language="javascript">
+		$(document).ready(function(){
+			$('.vd_slist').hover(
+				function(){ $(this).addClass('vd_slist2') },
+				function(){ $(this).removeClass('vd_slist2') }
+			);
+		});
+	</script>
+		<div class="clear">
+		</div>
+	</div>
+</div>
+<div>
+<!--footer-->
+<div style="width:990px;margin:10px auto 0;border-top: 4px solid #3A6BAD;text-align:center;padding:15px">
+	<ul>
+		<li>{$SITE['config']['copyright']}</li>
+		<li>Copyright@{$this_system->get_site_domain()} all rights reserved <a href="http://www.miibeian.gov.cn" target="_blank">{$core.CONFIG['copyright_domain']}</a></li>
+		
+		<!--{if !empty($SITE['config']['statistics'])}-->
+		<li>{$SITE['config']['statistics']}</li>
+		<!--{/if}-->
+	</ul>
+	<!--{php $allow_main}--><div id="footer_login" style="text-align:center;"><script type="text/javascript" src="{$core.RESOURCE}/u.php/member-sites"></script></div><!--{/if}-->
+</div>
+<script type="text/javascript" src="$this_router-count?id=$data[id]"></script>
+<script type="text/javascript" src="{$RESOURCE}/ueditor/ueditor.parse.min.js"></script>
+<script type="text/javascript">uParse('#p8_content_show', {rootPath: '<!--{php echo P8_ROOT;}-->ueditor/'});</script>
+<script type="text/javascript">
+	function select_video(url,thumb,divid){
+		showMedia({
+			url: url,
+			width: 750,
+			height: 480,
+			image: thumb.replace(/\.thumb\.jpg/, ''),
+			flashvars: {
+				winType: 'interior',
+				showAd: 0,
+				show_pre: 0,
+				show_next: 0,
+				isAutoPlay: 'true'
+			}
+		},divid);
+	}
+	$('.vd_player_list li:first a').addClass('on');
+	$(".vd_player_list li").each(function (index) {
+			$(this).click(function(){
+				$('.vd_player_list li a').removeClass();
+				$(this).children("a").addClass("on");
+			});	
+		});
+</script>
+</body>
+</html>
+<!--{/php168}-->

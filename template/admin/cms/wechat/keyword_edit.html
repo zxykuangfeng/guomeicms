@@ -1,0 +1,116 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<form name="form1" method="post" action="$this_url?action=edit">
+<div class="mainbox mainborder">
+	<div class="section">
+	<table class="formtable columntable">
+		<tr>
+			<td colspan="2" class="title">关键词</td>
+		</tr>
+		<tr> 
+		  <td class="tdL">关键词</td>
+		  <td class="tdR"><input type="text" name="keyword" class="txt" value="{$keywordRow['keyword']}"></td>
+		</tr>
+		  <tr>
+			<td class="tdL">回复类型</td>
+			<td class="tdR">
+				<select name="type" id="type" class="txt" onchange="showoutlink(this);">
+					<option value="image"{if $keywordRow['type'] == 'image'} selected="selected"{/if}>图片</option>
+					<option value="voice"{if $keywordRow['type'] == 'voice'} selected="selected"{/if}>语音</option>
+					<option value="video"{if $keywordRow['type'] == 'video'} selected="selected"{/if}>视频</option>
+					<option value="music"{if $keywordRow['type'] == 'music'} selected="selected"{/if}>音乐</option>
+					<option value="news"{if $keywordRow['type'] == 'news'} selected="selected"{/if}>图文</option>
+					<option value="text"{if $keywordRow['type'] == 'text'} selected="selected"{/if}>文本</option>					
+				</select>
+			</td>
+		  </tr>
+		  <tr>
+			<td class="tdL">匹配模式</td>
+		   <td class="tdR">
+			<input type="radio" name="pattern" value="2"{if $keywordRow['pattern'] == '2'} checked{/if} />完全相同
+			<input type="radio" name="pattern" value="1"{if $keywordRow['pattern'] == '1'} checked{/if} />模糊匹配
+			</td>
+		  </tr>
+		  <tr class="text">
+			<td class="tdL">内容类型</td>
+			<td class="tdR">
+				<input type="radio" name="reply_type" value="2"{if $keywordRow['reply_type'] == '2'} checked{/if} />固定内容
+				<input type="radio" name="reply_type" value="1"{if $keywordRow['reply_type'] == '1'} checked{/if} />动态获取       
+			<br/>内容类型如果选择“动态获取”，则回复内容填写url地址，程序会将openid作为参数传递给该网址，该网址获取到openid后进行处理，输出需返回给用户的内容（直接echo输出字符串即可）。</td>
+		  </tr>		  
+		  <tr class="text">
+			<td class="tdL">回复内容</td>
+			<td class="tdR"><textarea name="content" id="content" cols="50" rows="10">{$keywordRow['content']}</textarea>
+			</td>			
+		  </tr>
+	  
+      <tr id="media">
+        <td class="tdL">素材id</td>
+        <td class="tdR">
+		<input name="media_id" id="media_id" class="txt" size="60" value="{$keywordRow['content']}">
+		<br/>请上传永久素材，并将获得的素材id填写在这里，<span class="point"><a href="javascript:;" onclick="upload_file();">去上传</a></span>
+        </td>
+      </tr>
+	  
+	  <fieldset id="news">
+		  <tr class="news">
+			<td class="tdL">标题</td>
+			<td class="tdR"><input name="title" id="title" class="txt" size="60" value="{$keywordRow['title']}">
+			</td>			
+		  </tr>
+		  <tr class="news">
+			<td class="tdL">描述</td>
+			<td class="tdR"><input name="description" id="description" size="60" class="txt" value="{$keywordRow['description']}">
+			</td>			
+		  </tr>
+		  <tr class="news">
+			<td class="tdL">图片链接</td>
+			<td class="tdR"><input name="picurl" id="picurl" class="txt" size="60" value="{$keywordRow['picurl']}">
+			<br/>支持JPG、PNG格式，较好的效果为360*200
+			</td>
+		  </tr>
+		  <tr class="news">
+			<td class="tdL">跳转链接</td>
+			<td class="tdR"><input name="url" id="url" class="txt" size="60" value="{$keywordRow['url']}">
+			<br/>点击图文消息跳转链接
+			</td>			
+		  </tr>
+	   </fieldset>
+      <tr>
+       		<td colspan="2" class="tdR" align="center">
+				<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+			</td>
+      </tr>
+    </table>
+	</div>
+</div>
+</form>
+<script type="text/javascript">
+function showoutlink(obj,t){
+	f = $(obj).val();
+	f = t ? t : f;
+	if(f=='text'){
+		$('.text').show();
+		$('#media').hide();
+		$('.news').hide();
+	}else if(f=='news'){
+		$('.text').hide();
+		$('#media').hide();
+		$('.news').show();
+	}else{
+		$('.text').hide();
+		$('#media').show();
+		$('.news').hide();
+	}
+}
+function upload_file(){
+	var type = $('#type').val();
+	window.open("{$this_router}-addmaterial?type="+type);
+}
+$(function() {
+	showoutlink('{$keywordRow['type']}','{$keywordRow['type']}');
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

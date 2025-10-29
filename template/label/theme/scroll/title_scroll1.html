@@ -1,0 +1,68 @@
+<!--{php168}-->
+<style type="text/css">
+.title-responsive .slider-item{padding:0 10px;}
+.title-responsive .slider-item .item{display:block;max-width:100%;height:100%;padding:20px 20px;background: #fff;}
+.title-responsive .slider-item .item .date{width:71px;height:85px;float:left;text-align:center;}
+.title-responsive .slider-item .item .d{font-size:48px;color:#a40000;display:block;}
+.title-responsive .slider-item .item .y{font-size:14px;color:#a40000;display:block;}
+.title-responsive .slider-item .item .text{margin-left:91px;}
+.title-responsive .slider-item .item h3{font-size:18px;color:#343434;margin-top:10px;margin-bottom:30px;max-height:66px;line-height:33px;overflow:hidden;}
+.title-responsive .slider-item .item p{color:#787878;line-height:30px;height:90px;}
+.title-responsive .slider-item .item:hover{color:#dd5511 !important;}
+.title-responsive .slick-arrow{width:33px;height:54px;background-color:#606263;background-repeat:no-repeat;background-position: center;position: absolute;top:25px;z-index:100;cursor: pointer;font-size:0;border:0;outline: none;top:67px;}
+.title-responsive .slick-prev {background-image: url({$RESOURCE}/skin/label/theme/prev.png);left:-54px;}
+.title-responsive .slick-next {background-image: url({$RESOURCE}/skin/label/theme/next.png);right:-54px;}
+</style>
+<div class="sliderbox-responsive">
+	<div class="slider title-responsive">
+		<!--{foreach $list $value}-->
+			<div class="slider-item">
+				<a class="item" href="$value[url]" target="_blank" title="$value[full_title]">
+					<div class="date">
+						<span class="d"><!--{php echo date('d', $value['timestamp']);}--></span>
+						<span class="y"><!--{php echo date('Y/m', $value['timestamp']);}--></span>
+					</div>
+					<div class="text">
+						<h3>$value[title]</h3>
+						<p>$value[summary]</p>
+					</div>
+				</a>
+			</div>
+		<!--{/foreach}-->
+	</div>
+</div>
+<script type="text/javascript">
+$(".title-responsive").slick({
+	dots: false,
+	infinite: true,
+	speed: 300,
+	slidesToShow: 3,
+	slidesToScroll: 1,
+	responsive: [
+		{
+			breakpoint: 1024,
+			settings: {
+			slidesToShow: 3,
+			slidesToScroll: 1,
+			infinite: true,
+			dots: true
+		  }
+		},
+		{
+			breakpoint: 600,
+			settings: {
+			slidesToShow: 2,
+			slidesToScroll: 1
+		  }
+		},
+		{
+			breakpoint: 480,
+			settings: {
+			slidesToShow: 1,
+			slidesToScroll: 1
+		 }
+	   }
+	]
+});
+</script>
+<!--{/php168}-->

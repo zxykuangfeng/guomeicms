@@ -1,0 +1,293 @@
+<!--{php168}-->
+<!--{template $this_module header}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/images/dialog.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<script type="text/javascript">
+var attachment_hash = '$attachment_hash';
+$(function(){
+	
+	$('#form').validate({
+		rules: {
+			title: {
+				required: true,
+				maxlength: 80
+			},
+			
+			username: {
+				required: true,
+				maxlength: 10
+			},
+			
+			id_num: {
+				required: true
+			},
+			phone: {
+				required: true,
+				maxlength: 15,
+				valid_phone:true
+			},
+			department: {
+				required: true
+			},
+			content: {
+				required: true
+			},
+			type: {
+				required: true
+			},
+			source: {
+				required: true
+			},
+			captcha: {
+				required: true,
+				remote: {
+					url: '$this_url',
+					cache: false,
+					type: 'post',
+					data: {checkcaptcha: '1'},
+					beforeSend: function(){
+						ajaxing({});
+					},
+					complete: function(){
+						ajaxing({action: 'hide'});
+					}
+				}
+			}
+		},
+		
+		messages: {
+			title: {
+				required: '{$P8LANG['required']}',
+				maxlength: '{$P8LANG['title_oversize']}'
+			},
+			username: {
+				required: '{$P8LANG['required']}',
+				maxlength: '{$P8LANG['username_oversize']}'
+			},
+			
+			id_num: {
+				required: '{$P8LANG['required']}'
+			},
+			phone: {
+				required: '{$P8LANG['required']}',
+				maxlength:'{$P8LANG['too_long']}',
+				valid_phone:'{$P8LANG['format_error']}'
+			},
+			department: {
+				required: '{$P8LANG['required']}'
+			},
+			content: {
+				required: '{$P8LANG['required']}'
+			},
+			type: {
+				required: '{$P8LANG['required']}'
+			},
+			source: {
+				required: '{$P8LANG['required']}'
+			},
+			captcha: {
+				required: '{$P8LANG['required']}',
+				remote: '{$P8LANG['captcha_incorrect']}'
+			}
+		},
+		
+		errorPlacement: function(error, element) {
+			if(element.parent().prop('tagName').toLowerCase() == 'td')
+				error.appendTo(element.parent());
+			else
+				error.appendTo(element.parent().prev());
+		},
+		
+		submitHandler: function(form){
+			form_submit = true;
+			
+			form.submit();
+		},
+		
+		onkeyup: false
+	});
+});
+$.validator.addMethod('valid_phone', function(value, element){
+	return value.length > 3 && /^[0-9_-]+$/.test(value);
+});
+</script>
+<script type="text/javascript">
+	var uploader = new P8_Upload({
+		element: {
+			src: $('#attachment'),
+			attribute: 'value'
+		},
+		callback: function(json){
+			$('input[name="attachment_name"]').val(json.attachments[0].name);
+			$('input[name="attachment"]').val(json.attachments[0].file);
+		}
+	});
+
+</script>
+<div class="nav"> 您的位置：<a href="{$this_system.domain}">首页</a>&nbsp;&gt;&nbsp;<a href="#">{$P8LANG['letter']}</a> </div>
+<div style="width:245px;" class="contain_left">	
+	<div class="border1">		
+		<div class="head6">
+			<span class="title7"><a>快捷导航</a></span>
+		</div>
+		<div class="main1">$label[hdjl-email_menu]</div>
+	</div>
+	<div class="border1 mtop6">
+		<div class="head6">
+			<span class="title7">信件统计</span> 
+		</div>
+		<div class="main1  bg_grey">
+										<table width="100%" class="lettertb" cellspacing="0" cellpadding="0">
+				<tr><td align="center"><b>信件类型</b></td><td align="center"><b>回复总数</b></td></tr>
+				<!--{foreach $cates['type'] $key $row}-->
+				<tr><td align="center">{$row['name']}</td><td align="center"><span style="color:#4d3739"><!--{if !empty($tatistics[$row['id']]['total'])}-->{$tatistics[$row['id']]['solve']}/{$tatistics[$row['id']]['total']}<!--{else}-->0/0<!--{/if}--></span></td></tr>
+				<!--{/foreach}-->
+				</table>
+		</div>
+	</div>
+		<div class="mtop">$label[hdjl-letter_ads1]</div>
+		<div class="mtop">$label[hdjl-letter_ads2]</div>
+</div>
+<div style="width:705px;" class="contain_right">
+     <div class="show_box_govs email4">
+      <div class="form_title" style="margin-top:0px"><span class="f_l">信件列表| <a href="{$this_system.domain}/letter-post" target="_blank">写信>></a></span><span class="more1" id="editcontent"></span></div>
+      <div class="form_content">
+        <div><span style="font-family: Arial, Verdana, sans-serif; font-size: 12px; line-height: normal; color: rgb(178, 34, 34);"><strong>写信注意事项：</strong></span>
+
+<p style="color: rgb(34, 34, 34); font-family: Arial, Verdana, sans-serif; font-size: 12px; line-height: normal;">1.投诉人真实姓名、电子邮件、电话（一定要有区号，最好留手机号码）。以方便我们及时与您联系。<br />
+2.投诉信息中，可填写详细的被投诉对象名称、联系方式，方便我们快速受理跟进。<br />
+3.在具体内容中，应写明投诉事件发生发经过，包括时间、地点和当事人（包括被投诉方）；说明明你的投诉要求。<br />
+4.不允许发表任何非法的、骚扰性的、中伤他人的、伤害性的、庸俗的，淫秽等信息资料。</p>
+        </div>
+        <form id="form" action="" method="post">
+          <table width="100%" cellspacing="0" cellpadding="0" border="none" style="border:#f0f0f0 1px solid">
+            <tr class="tt">
+              <td colspan="4"><span style="color:#ff0000;"><b>写信人信息</b>(注意标有<span class="start">*</span>的必须填写； 个人敏感信息只有管理员和您本人有权限查看到)</span></td>
+
+            </tr>
+            <tr>
+              <td class="grey" width="85">姓名:</td>
+              <td class="white" width="250"><input type="text" name="username" id="username" value="{if !empty($data['username'])}{$data['username']}{/if}" />
+                <span class="start">*</span><span style="color:#808069"> 仅自己可见</span></td>
+              <td class="grey" width="103">性别:</td>
+              <td class="white"><select name="gender" id="gender">
+				  <option value="">请选择</option>
+                  <option value="1" {if !empty($data['gender']) && $data['gender']==1}selected{/if}>男</option>
+                  <option value="2" {if !empty($data['gender']) && $data['gender']==2}selected{/if}>女</option>
+                </select></td>
+            </tr>
+            <tr>
+              <td class="grey">年龄:</td>
+              <td class="white"><input type="text" name="age" id="age"  value="{if !empty($data['age'])}{$data['age']}{/if}"/></td>
+              <td class="grey">身份:</td>
+              <td class="white"><input type="text" name="profession" id="profession"  value="{if !empty($data['profession'])}{$data['profession']}{/if}"/></td>
+            </tr>
+            <tr>
+              <td class="grey">证件类型:</td>
+              <td class="white"><select name="id_type" id="id_type">
+					<option value="">请选择</option>
+                 <!--{foreach $id_type $key $row}-->
+                  <option value="{$key}" {if !empty($data['id_type']) && $data['id_type']==$key}selected{/if}>{$row}</option>
+               <!--{/foreach}-->   
+                </select><span style="color:#808069"> 仅自己和管理员可查看</span></td>
+              <td class="grey">证件号码:</td>
+              <td class="white"><input type="text" name="id_num" id="id_num"  value="{if !empty($data['id_num'])}{$data['id_num']}{/if}"/>
+                <span class="start">*</span></td>
+            </tr>
+            <tr>
+              <td class="grey">联系电话:</td>
+              <td class="white"><input type="text" name="phone" id="phone"  value="{if !empty($data['phone'])}{$data['phone']}{/if}"/>
+                <span class="start">*</span> <span style="color:#808069">接收短信</span></td>
+              <td class="grey">电子邮件:</td>
+              <td  class="white"><input type="text" name="email" id="email" value="{if !empty($data['email'])}{$data['email']}{/if}" />
+                <span style="color:#808069">接收回复</span></td>
+            </tr>
+            <tr>
+              <td class="grey">联系地址:</td>
+              <td  class="white" colspan="3"><input type="text" name="address" id="address"  value="{if !empty($data['address'])}{$data['address']}{/if}" style="width:520px" />
+                <span class="start">*</span></td>
+            </tr>
+            <tr class="tt">
+              <td colspan="4"><b>信访事项信息</b>(注意标有<span class="start">*</span>的必须填写)</td>
+            </tr>
+			<!--{if !empty($letterconfig['receive']) && !empty($letterconfig['redepartment'])}-->
+			<input type="hidden" name="department" id="department" value="{$letterconfig['redepartment']}"/>
+			<!--{else}-->
+            <tr>
+              <td class="grey">选择部门:</td>
+              <td  class="white" colspan="3">
+              <select name="department" id="department">
+				<option value="">请选择</option>
+              <!--{foreach $departments $key $row}-->
+                  <option value="{$row['id']}" {if !empty($data['department']) && $data['department']==$row['id']}selected{/if}>{$row['name']}</option>
+               <!--{/foreach}-->   
+                </select> <span class="start">*</span> <span style="color:#808069">若不知部门，可选“公共信箱”</span></td>
+            </tr>
+			<!--{/if}-->
+			<tr>
+              <td class="grey">问题类别:</td>
+              <td  class="white" colspan="3"><select name="type" id="type">
+				<option value="">----请选择类别----</option>
+                 <!--{foreach $types $key $row}-->
+                  <option value="{$row['id']}" {if !empty($data['type']) && $data['type']==$row['id']}selected{/if}>{$row['name']}</option>
+               <!--{/foreach}--> 
+                </select>
+                <span class="start">*</span></td>
+            </tr>
+            <tr>
+              <td class="grey">主题:</td>
+              <td  class="white" colspan="3"><input type="text" name="title" id="title" value="{if !empty($data['title'])}{$data['title']}{/if}" style="width:520px"/>
+                <span class="start">*</span></td>
+            </tr>
+            <tr>
+              <td class="grey">内容:</td>
+              <td  class="white" colspan="3"><textarea name="content" id="content" cols="45" rows="5">{if !empty($data['content'])}{$data['content']}{/if}</textarea>
+                <span class="start">*</span></td>
+            </tr>
+            <tr>
+              <td class="grey">附件:</td>
+              <td  class="white" colspan="3"><p> 标题：
+                  <input type="text" class="txt" name="attachment_name" id="attachment_name"  value="{if !empty($data['attachment_name'])}{$data['attachment_name']}{/if}"/>
+                  <br/>
+                  地址：
+                  <input type="text" class="txt" name="attachment" id="attachment"  value="{if !empty($data['attachment'])}{$data['attachment']}{/if}" size="50" />
+                  <input type="button" onclick="uploader.choseup();" value="上传" />
+                </p></td>
+            </tr>
+            <tr>
+              <td class="grey">是否公开:</td>
+              <td  class="white" colspan="3"><input type="radio" name="visual"  value="1"  {if !empty($data['visual'])}checked{/if}/>
+                公开
+                <input type="radio" name="visual"  value="0" {if empty($data['visual'])}checked{/if} />
+                不公开
+				<span style="color:#808069">（此内容是否愿意公开显示出来）</span>
+                </td>
+            </tr>
+            <tr>
+              <td class="grey">验证码:</td>
+              <td  class="white" colspan="3"><input name="captcha" type="text" id="captcha" class="input" />
+                <span id="captcham"></span>
+                <script type="text/javascript">
+		captcha($('#captcham'), $('#captcha'));
+		
+		</script><span style="color:#808069">（点击验证码图片可刷新或更换）</span>
+		
+		</td>
+            </tr>
+            <tr>
+              <td  class="last" colspan="4"><input type="submit" name="submitbutton" value="提交" />
+                <input type="reset" name="reset" value="重置" />
+                <input type="hidden" name="id" value="{if !empty($id)}{$id}{/if}" />
+                <input type="hidden" name="attachment_hash" value="{$attachment_hash}" />
+               </td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
+  </div>
+<div class="clear"> </div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

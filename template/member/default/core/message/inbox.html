@@ -1,0 +1,253 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<div class="panelbody">
+	<div class="content msg_list">
+		<form action="$this_router-down" method="post" id="message_down">
+			<div class="msg_main">
+			 
+				<div class="msg_head">
+					<a href="$this_url?type=new"{if $type == 'new'} class="over"{/if}>未读信息</a> |
+					<a href="$this_url?type=in" {if $type == 'all'} class="in"{/if}>常规信息</a> |
+					<a href="$this_url?type=all" {if $type == 'all'} class="over"{/if}>全部信息</a> |
+					<a href="$this_url?type=private"{if $type == 'private'} class="over"{/if}>个人信息</a> |
+					<a href="$this_url?type=important"{if $type == 'important'} class="over"{/if}>重要信息</a> |
+					<a href="$this_url?type=public"{if $type == 'public'} class="over"{/if}>系统信息</a> |
+				</div>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table click_changeable">
+					<tr class="title">
+						<td width="3%"><input type="checkbox" onclick="check_all(this, 'id[]');"/></td>
+						<td width="3%">ID</td>
+						<td width="34%">标题</td>
+						<td width="15%">发送者</td>
+						<td width="15%">状态</td>
+						<td width="15%">时间</td>
+						<td width="15%">操作</td>
+					</tr>
+					<tbody id="show_list">
+					<!--{foreach $list $k $value}-->
+					<tr>
+						<td><input type="checkbox" name="id[]" id="checkbox_$value[id]" value="$value[id]"></td>
+						<td>$value[id]</td>
+						<td>
+							<a class="action" data-param="$value[id]" href="$this_router-read?id=$value[id]&holder=$holder">
+							{if $value['new']}
+							<b>$value[title]</b>
+							{else}
+							$value[title]
+							{/if}
+							</a>
+						</td>
+						<td><!--{if $value['username'] == ''}-->{$P8LANG['system_message']}<!--{else}-->$value[username]<!--{/if}--></td>
+						<td><!--{if $value['new']}-->未读<!--{else}-->已读<!--{/if}--></td>
+						<td>{date('Y-m-d H:i:s', $value['timestamp'])}</td>
+						<td>
+							<a href="$this_router-send?id=$value[id]">回复</a>
+							<a href="$this_router-send?type=in&id=$value[id]">转发</a>
+							<a href="###" id="message_$value[id]" onclick="delete_message([this.id])">删除</a>
+						</td>
+					</tr>
+					<!--{/foreach}-->
+					</tbody>
+				</table>
+				
+				<input type="hidden" name="ids" id="message_ids"/>
+				<input type="hidden" name="type" value="in"/>
+				<div class="msg_btn">
+					<a href="javascript:void(0)" onclick="check_all(true, 'id[]')">全选</a> /
+					<a href="javascript:void(0)" onclick="check_all(false, 'id[]')">全不选</a>
+					<input style="margin-left:10px;" type="button" value="标记信息" onclick="mark_message(checked_values('id[]'),'important');"/>
+					<input style="margin-left:10px;" type="button" value="取消标记" onclick="mark_message(checked_values('id[]'),'in');"/>
+					<input style="margin-left:10px;" type="button" value="清空当前类别所有短消息" onclick="delete_all_message();"/>
+					<input style="margin-left:10px;" type="button" value="下载选中" onclick="download();"/>
+					<input style="margin-left:10px;" type="button" value="删除选中" onclick="delete_message(checked_values('id[]'));"/>
+				</div>
+				<div class="pages center">$pages</div>
+			</div>
+		</form> 
+	</div>
+</div>
+<div class="offside-file-detail right-panel clearfix">
+	<div class="offside-content msg_list">
+		<div class="offside-head">
+			<div class="offside-title">我的短信息</div>
+			<div class="offside-close"><i class="iconfont icon-close"></i></div>
+		</div>
+		<div class="offside-mian msg_main">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table offside-table">
+				<tbody>
+					<tr class="">
+						<td width="20%"><b>发件人</b></td>
+						<td><span id="con_senduser" style="color:#1F8919;font-weight:bold"></span></td>
+					</tr>
+					<tr class="">
+						<td width="20%"><b>标题</b></td>
+						<td><span id="con_title" style="color:#1F8919;font-weight:bold"></span></td>
+					</tr>
+					<tr class="">
+						<td width="20%"><b>发送时间</b></td>
+						<td><span id="con_time"></span></td>
+					</tr>
+					<tr class="">
+						<td width="20%"><b>内容</b></td>
+						<td><p id="con_content" style="font-size:16px;font-family:黑体,Verdana, Geneva, sans-serif;padding-top: 10px;min-height:60px;line-height:24px;"></p></td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="offside-btn text-center">
+				<a class="link_btn btn1" href="$this_router-send?id=$data[id]"><i class="icon icon-ico46"></i>回复</a> 
+				<a class="link_btn btn2"  href="$this_router-send?type=$type&id=$data[id]"><i class="icon icon-ico47"></i>转发</a>
+				<a  class="link_btn btn3" href="###" id="message_$data[id]" onclick="delete_message([this.id])"><i class="icon icon-ico48"></i>删除</a>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function() {
+    // 点击.action类元素时，给.offside-file-detail添加show类
+    $('.action').on('click', function(e) {
+		e.preventDefault(); // 阻止链接默认行为
+        $('.offside-file-detail').addClass('show');		
+		$.ajax({
+			url: '{$this_router}-read',
+			type: 'GET',
+			cache :false,
+			data: 'id='+this.dataset.param+'&type=in'+this.intype,
+			dataType: 'json',
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success:function(json){
+				$('#con_title').html(json.title);
+				$('#con_senduser').html(json.username);
+				$('#con_time').html(date('Y年m月d日 h:i:s',json.timestamp));
+				$('#con_content').html(json.content);
+				ajaxing({action: 'hide'});
+			},
+			error: function(jqXHR, textStatus, errorThrown) {
+				ajaxing({action: 'hide'});
+				// 请求失败时的处理
+				console.error('AJAX error:', textStatus, errorThrown);
+				p8_window.alert('An error occurred:'+textStatus+' - '+errorThrown);
+			}
+		});
+    });
+	$(document).mouseup(function(e) {
+		var offside = $(".offside-file-detail");
+		if (!offside.is(e.target) && offside.has(e.target).length === 0) {
+			offside.removeClass("show");
+		}
+	});
+    // 确保.offside-close点击事件处理器不会冒泡并触发上面的逻辑
+    $('.offside-close').on('click', function(e) {
+        e.stopPropagation(); // 阻止事件冒泡
+        // 移除.show类
+        $('.offside-file-detail').removeClass('show');
+    });
+});
+function mark_message(array,mark){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!id.length){
+		p8_window.alert('{$P8LANG[message_select_required]}');
+		return;
+	}
+	p8_window.confirm('{$P8LANG['message_confirm_to_mark']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-mark',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({type: mark, id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					p8_window.alert(json.length+'条信息标记成功！');
+					for(var i in json){
+						$('#message_'+ json[i]).parent().parent().remove();
+					}
+				}
+			});
+		}
+	});
+}
+function delete_all_message(){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({types: '{$type}',type:'in', deleteall:1}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});					
+					$('#show_list').hide();
+				}
+			});
+		}
+	});
+}
+function delete_message(array){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length){
+		p8_window.alert('{$P8LANG[message_select_required]}');
+		return;
+	}
+	//if(confirm('{$P8LANG['confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({type: 'in', id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#message_'+ json[i]).parent().parent().remove();
+					}
+				}
+			});
+		}
+	});
+}
+
+function download(){
+	var inputs=$("input[name='id[]']:checked");
+	var ids=new Array();
+	for(var i=0;i<inputs.length;i++){
+		ids[i]=$(inputs[i]).attr("value");
+	}
+	if(ids.length>0){
+		$("#message_ids").attr("value",ids);
+		$("#message_down").submit();
+	}
+}
+
+function deleteAll(){
+	var inputs=$("input[name='checkbox']:checked");
+	var ids = checked_values('id[]');
+	delete_message(ids);
+}
+</script>
+
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

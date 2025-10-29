@@ -1,0 +1,156 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$TITLE</title>
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}zhuanti/style_zhuanti.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+
+</head>
+<body>
+<div class="header_zt">
+<div class="top">
+$label[zt_toplink]<br><div id="header_t"></div></div>
+</div>
+<div class="wrap">
+<div class="nav">$label[zt_mainNav]</div>
+</div>
+<script type="text/javascript">
+var USERNAME = get_username();
+$(document).ready(function(){
+	//**show_edit**//					   
+	init_labelshows('header_t');
+	
+})
+</script>
+<!--content-->
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] === undefined ? 1 : (\$_GET['verified'] == 0 ? 0 : 1);
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+<div class="wrap">
+<div class="hei18"></div>
+<div style="width:978px; margin-left:7px;">
+<table width="987" cellspacing="0" cellpadding="0" border="0" align="center">
+  <tbody><tr>
+    <td width="737" valign="top">
+    <table width="737" cellspacing="0" cellpadding="0" border="0">
+      <tbody><tr>
+        <td height="29">
+        <table width="735" cellspacing="0" cellpadding="0" border="0" class="nei_news">
+  <tbody><tr>
+    <td width="172" height="27" align="center" class="wit"><a>$CAT[name]</a></td>
+    <td align="right" class="font12"><a href="index.php">返回首页 &gt;</a>      $CAT[name]      &nbsp;&nbsp;</td>
+ </tr>
+</tbody></table>
+
+        </td>
+      </tr>
+      <tr>
+        <td>
+       <div class="hei18"></div>
+       <div class="hei11"></div>
+       <div style="width:695px; margin:0 auto;">
+       <table width="695" height="84" cellspacing="0" cellpadding="0" border="0" align="center" class="nei_txt">
+        
+  <tbody><tr>
+    <td align="center"><a style="font-size:20px;"><strong>$data[title]</strong></a></td>
+  </tr>
+  <tr>
+    <td align="center" style="font-size:12px; color:#999999;">【作者：<a href="$data[source_url]" target="_blank">$data[source_name]</a> | 发布日期：{date('Y-m-d H:i:s', $data['timestamp'])} | 编辑者：$data[username] | 阅读次数：$data[views]】<span id="operation" style="display: none; cursor: pointer;color:red;font-size:12px">[{$P8LANG['operation']}]</span></td>
+  </tr>
+</tbody></table>
+ <div class="hei18"></div>
+       <div class="hei11"></div>
+<table width="695" cellspacing="0" cellpadding="0" border="0" align="center" class="indet">
+  <tbody><tr>
+    <td class="con_a">
+<div id="p8_content_show">$data[content]</div>
+			<div class="layout_txtcontent_list">
+				$pages
+			</div>
+</td>
+  </tr>
+</tbody></table>
+</div>
+        </td>
+      </tr>
+    </tbody></table></td>
+    <td width="13"></td>
+   <td width="237" valign="top">
+    <table width="237" cellspacing="0" cellpadding="0" border="0" align="center" class="pic3">
+  <tbody><tr>
+    <td height="32" class="padd"><table width="140" cellspacing="0" cellpadding="0" border="0">
+      <tbody><tr>
+        <td height="32" align="center" class="wit">$label[zt_gzjg_tt]</td>
+      </tr>
+    </tbody></table></td>
+  </tr>
+   <tr>
+    <td valign="top" height="537" style="font-size:14px" class="txt">
+$label[zt_gzjg_con]
+	
+	</td>
+  </tr>
+</tbody></table>
+<table width="237" cellspacing="0" cellpadding="0" border="0" align="center">
+      <tbody><tr>
+        <td height="8"></td>
+      </tr>
+</tbody></table>
+      <table width="237" cellspacing="0" cellpadding="0" border="0" align="center" class="pic2">
+        <tbody><tr>
+          <td height="29"><table width="100%" height="27" cellspacing="0" cellpadding="0" border="0" class="pic4">
+              <tbody><tr>
+                <td width="91" align="center" style="color:#FFFFFF; font-weight:bold" class="red">友情链接</td>
+                <td width="138"></td>
+              </tr>
+          </tbody></table></td>
+        </tr>
+        <tr>
+          <td height="35" align="center">
+$label[zt_frdlink01]</td>
+        </tr>
+        <tr>
+          <td height="35" align="center">
+$label[zt_frdlink02]</td>
+        </tr>
+</tbody></table>
+
+    </td></tr></tbody></table>
+</div>
+</div>
+<!--footer-->
+<script type="text/javascript" src="$this_router-count?id=$data[id]"></script>
+<script type="text/javascript" src="{$RESOURCE}/ueditor/ueditor.parse.min.js"></script>
+<script type="text/javascript">uParse('#p8_content_show', {rootPath: '<!--{php echo P8_ROOT;}-->ueditor/'});</script>
+<div class="wrap">
+<div class="hei18"></div>
+<div style="font-size:14px" class="foot"><br>
+$label[zt_footer-txt]
+</div>
+</div>
+</body></html><!--{/php168}-->

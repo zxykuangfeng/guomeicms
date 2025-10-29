@@ -1,0 +1,256 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+
+<form id="searchForm" action="$this_url" method="GET">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/core/label-add?system={if isset($system)}$system{/if}&module={if isset($module)}$module{/if}&site={if isset($site)}$site{/if}&env={if isset($env)}$env{/if}" target="_blank"><i class="icon icon-ico44"></i>添加标签</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/core/label-list?{if isset($_GET['holder'])}$_GET[holder]{/if}"><i class="icon icon-ico33"></i>所有标签列表 </a></li>
+						<li class="course pull-right">
+							<ul class="operation-nav">
+								<li>
+									<a style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 标签教程>></a>
+									<ul class="dropdown-menu">
+										<li class="btn-color1"><a href="{$RESOURCE}/attachment/jiaocheng/piliangdaochubiaoqian.pdf" target="_blank" ><i class="icon icon-ico55"></i>批量导出标签</a></li>
+										<li class="btn-color2"><a href="{$RESOURCE}/attachment/jiaocheng/piliangdaorubiaoqian.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>批量导入标签</a></li>
+										<li class="btn-color3"><a href="{$RESOURCE}/attachment/jiaocheng/danggebiaoqian.pdf" target="_blank" ><i class="icon icon-ico55"></i>单个标签管理</a></li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	
+		<table class="columntable formtable hover_table">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['label_scope']}</td>
+			</tr>
+			
+			<tr>
+				<td class="headerbtn_list" style="border-bottom:0;">
+				<ul>
+					<li><a href="$this_router-list?all=$all"><i class="fa fa-cogs"></i>{$P8LANG['all']}</a></li>
+					<li><a href="$this_router-list?system=core&all=$all"><i class="fa fa-cogs"></i>{if 'core' == $system}<b>{$P8LANG['core']}</b>{else}{$P8LANG['core']}{/if}</a></li>
+					<!--{foreach $systems $k $v}-->	
+						<!--{if $v['enabled']}-->
+						<li><a href="$this_router-list?system=$k&all=$all"><i class="fa fa-cogs"></i>{if $k == $system}<b>{$v['alias']}</b>{else}{$v['alias']}{/if}</a></li>
+						<!--{/if}-->
+					<!--{/foreach}-->
+				</ul>
+			</td>
+			</tr>
+			
+			<tr>
+				<td class="headerbtn_list" style="border-bottom:0;">
+					<ul>
+					<!--{foreach $modules $k $v}-->
+						<!--{if file_exists(PHP168_PATH . ($system == 'core' ? '' : $system) .'/modules/'. $k .'/admin/label.php')}-->
+						<li><a href="$this_router-list?system=$system&module=$k"><i class="fa fa-cog"></i>{if $k == $module}<b>{$v['alias']}</b>{else}{$v['alias']}{/if}</a></li>
+						<!--{/if}-->
+					<!--{/foreach}-->
+					</ul>
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="headerbtn_list">
+					<!--{if $sitesd}-->
+					站点别名
+					<select name="site">
+						<option value="" {if empty($site)}selected{/if}>不限</option>					
+						<!--{foreach $all_sites $sites}-->
+						<option value="{$sites['alias']}" {if !empty($site) && $sites['alias']==$site}selected{/if}>{$sites['sitename']}</option>
+						<!--{/foreach}-->
+					</select>
+					<!--{/if}-->
+					{$P8LANG['label_postfix']}<input type="text" name="postfix" class="txt" value="$postfix" size="10" />
+					{$P8LANG['label_name']}<input type="text" class="txt" name="word" value="$keyword" size="20" /> 
+					{$P8LANG['label_ttl']}<input type="text" class="txt" name="ttl[]" value="$ttl[0]" size="3" /> - <input type="text" class="txt" name="ttl[]" value="$ttl[1]" size="3" />
+					上次缓存时间：<input type="text" class="txt" name="last_update[]" value="$last_update[0]" size="10" onclick="rcalendar(this)" autocomplete="off" /> - <input type="text" class="txt" name="last_update[]" value="$last_update[1]" size="10" onclick="rcalendar(this)" autocomplete="off" />					
+					最后修改时间：<input type="text" class="txt" name="update_time[]" value="$update_time[0]" size="10" onclick="rcalendar(this)" autocomplete="off" /> - <input type="text" class="txt" name="update_time[]" value="$update_time[1]" size="10" onclick="rcalendar(this)" autocomplete="off" />
+					ID<input type="text" class="txt" name="id" value="$id" size="5" /> 
+					<input type="submit" name="search" class="submit_btn" value="{$P8LANG['label_search']}" />
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<input type="hidden" name="system" value="$system" />
+<input type="hidden" name="module" value="$module" />
+</form>
+
+
+<form action="$this_url" method="POST" id="form">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr><td>
+			<table class="columntable formtable hover_table click_changeable">
+			<tr class="title">
+				<td width="3%" align="center" class="title"><input type="checkbox" onclick="check_all(this, 'id[]'); init_tr($('#form'));" /></td>
+				<td width="6%" align="center" class="title">ID</td>
+				<td width="*" align="center" class="title">{$P8LANG['label_name']}</td>
+				<td width="6%" align="center" class="title">{$P8LANG['label_scope']}</td>
+				<td width="7%" align="center" class="title">{$P8LANG['label_postfix']}</td>
+				<!--{if $sitesd}--> 
+				<td width="8%" align="center" class="title">站点</td>
+				<!--{/if}-->
+				<td width="10%" align="center" class="title">{$P8LANG['label_last_update']}</td>
+				<td width="10%" align="center" class="title">{$P8LANG['last_update_time']}</td>
+				<td width="7%" align="center" class="title">{$P8LANG['last_setter']}</td>
+				<td width="6%" align="center" class="title">{$P8LANG['label_cache']}</td>
+				<td width="12%" align="center" class="title">{$P8LANG['operation']}</td>
+			</tr>
+			
+			<!--{foreach $list $value}-->
+			<tr id="label_$value[id]">
+				<td align="center"><input type="checkbox" name="id[]" value="$value[id]" /></td>
+				<td align="center">{$value['id']}</td>
+				<td id="name_$value[id]">
+					<a href="###" invoke="{$value['invoke']}" onclick="prompt('', $(this).attr('invoke'));" title="{$P8LANG['label_type'][$value['type']]}"><img src="{$_SKIN}/$MODULE/$value[type].gif" />{if $value['variable']}<font color="blue">{$value['name']}</font>{else}{$value['name']}{/if}</a>
+				</td>
+				<td align="center">{$value['system']}/{$value['module']}</td>
+				<td align="center">{$value['postfix']}</td>
+				<!--{if $sitesd}-->
+				<td align="center"><a href="###" onclick="_search_site('{$value['site']}')">{$value['site']}</a></td>
+				<!--{/if}-->
+				<td align="center">{if $value['last_update']}{date('Y-m-d H:i', $value['last_update'])}{/if}</td>
+				<td align="center">{if $value['update_time']}{date('Y-m-d H:i', $value['update_time'])}{/if}</td>
+				<td align="center">{$value['last_setter']}</td>
+				<td align="center">{$value['ttl']}</td>
+				<td align="center">
+					<a href="$this_router-copy?id={$value['id']}" target="_blank">{$P8LANG['copy']}</a> / 
+					<a href="$this_router-update?id={$value['id']}&fromurl=admin" target="_blank">{$P8LANG['edit']}</a>
+					<!--{if $value['module']=='' && $value['postfix']==''}--> / <a href="###" onclick="showJs('{$value['id']}','{$value['system']}','{$value['name']}','{$value['site']}')">JS调用</a><!--{/if}-->
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			
+			</table>
+			</td></tr>
+			
+			
+			<tr>
+				<td colspan="10">
+					<table width="100%" class="columntable formtable">
+					<tr>
+						<td align="center" id="pages" class="pages">$pages</td>
+					</tr>
+				</table>
+					<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">						
+						<tr>
+							<td>
+								<input type="button" value="导入" onclick="import_dialog.show();" class="edit_btn" />
+								<input type="button" value="导出" onclick="_export()" class="edit_btn" />
+								<input type="button" value="导出所有" onclick="_exportall()" class="edit_btn" />
+								<input type="button" value="删除" onclick="delete_label()" class="edit_btn" />
+							<td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<input type="hidden" name="act" value="" />
+</form>
+
+<script type="text/javascript">
+function _search_site(site){
+	$('#searchForm input[name=site]').val(site);
+	$('#searchForm').submit();
+}
+function delete_label(){
+	var id = checked_values('id[]', $('#form'));
+	
+	if(!id.length) return;
+	
+	//if(!confirm('{$P8LANG['confirm_to_delete']}')) return;
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				dataType: 'json',
+				cache: false,
+				data: ajax_parameters({id: id}),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#label_'+ json[i]).remove();
+					}
+				}
+			});
+			return false;
+		}else{
+			return;
+		}
+	});	
+}
+
+function _export(){
+	var id = checked_values('id[]', $('#form'));
+	
+	if(!id.length) return;
+	ajaxing({text:'处理中...'});
+	$('#form input[name=act]').val('export');
+	$('#form').submit();
+}
+function _exportall(){
+
+	$('#searchForm').append('<input type="hidden" name="exportall" value="1" />');
+	$('#searchForm').submit();
+}
+
+var import_dialog = new P8_Dialog({
+	title_text: '导入',
+	width: 400,
+	height: 320,
+	button: true,
+	ok: function(){
+		$.trim(this.content.find('textarea').appendTo($('#form')).val());
+		ajaxing({text:'处理中...'});
+		$('#form input[name=act]').val('import');
+		$('#form').submit();
+	}
+});
+
+var evaluate_dialog = new P8_Dialog({ 
+	title_text: '标签数据javascript调用', 
+	width: 480, 
+	height: 186, 
+	button:false
+});
+function showJs(id,sys,name,site){
+	var shtml='<textarea rows="3" id="show_'+id+'" cols="70">\<script type="text/javascript" src="{$main_url}/api/lbjs.php?&n='+name+(sys != 'core'?'&sys='+sys:'')+(site?'&site='+site:'')+'"\>\</script\></textarea>';
+	shtml +='<br/><input style="float:right;margin-top:3px;margin-right:5px;" type="button" onClick="copyUrl2(\''+id+'\')" value="点击复制代码" /><br/><span style="color:red">注意：js调用的标签，【模块】选项必须为无,【标签后缀】选项必须为空，否则调用不到数据！</span>';
+	evaluate_dialog.show();        
+	evaluate_dialog.content.html(shtml);
+}
+import_dialog.content.append($('<textarea name="data" style="width: 380px; height: 220px;"></textarea>'));
+
+function copyUrl2(id){
+	var Url2=$("#show_"+id);
+	Url2.select();
+	document.execCommand("Copy");
+	p8_window.alert("复制成功，可贴粘！");
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

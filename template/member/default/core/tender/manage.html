@@ -1,0 +1,505 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $core intranet_header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<div class="forms-container">
+	<div class="forms-left">
+		<div class="forms-left-box">
+			<div class="forms-left-logo"><img src="{$MEMBERSKIN}/intranet/logo2.png" alt=""></div>
+			<div class="user-menu">
+				<ul class="menu-1st" id="groups">
+					<li>
+						<a href="{$core->U_controller}"><span class="gwicon gwicon-home"></span>主页</a>
+					</li>					
+					<li class="">
+						<a title="myforms" href="{$this_router}-post"><span class="gwicon gwicon-notice"></span>发布招投标</a>
+					</li>					
+					<li class="">
+						<a title="myforms" href="{$this_router}-myforms"><span class="gwicon gwicon-notice"></span>我发布的招投标</a>
+					</li>
+					<li class="">
+						<a title="myforms" href="{$this_router}-manage?mid=1"><span class="gwicon gwicon-notice"></span>我管理的投标</a>
+					</li>
+					<!--{if $manage}-->
+					<li class="manage">
+						<a title="myforms" href="{$this_router}-myforms"><span class="gwicon gwicon-manage"></span>发布文章</a>
+					</li>
+					<li title="manage">
+						<a title="manage" href="{$this_router}-manage"><span class="gwicon gwicon-manage"></span>我发布的文章</a>
+					</li>
+					<li title="manage">
+						<a title="manage" href="{$this_router}-manage"><span class="gwicon gwicon-manage"></span>我管理的文章</a>
+					</li>
+					<!--{/if}-->					
+					<li class="">
+						<a href="{$core->U_controller}?main_page=/member-profile#editpw"><span class="gwicon gwicon-pwd"></span>修改密码</a>
+					</li>
+					<li class="">
+						<a href="{$core->U_controller}?main_page=/message-inbox"><span class="gwicon gwicon-xiaoxi"></span>系统消息</a>
+					</li>
+				</ul>
+			</div>
+			<div class="brand">
+				<h1>十年知名品牌</h1>
+				<ul class="version">
+					<li>今天日期：<!--{php echo date('Y-m-d', $timestamp);}--></li>
+					<li>开发商：<a href="http://www.php168.net/" target="_blank">广州国微软件 >></a></li>
+					<li>电话：400-601-5217</li>
+				</ul>
+			</div>
+		</div>
+		<script>
+			$(".user-menu .menu-1st > li > a").on('click',function(){
+				var this_li = $(this).parent();
+				var this_menu2nd = $(this).next();
+				var this_menu2ndStat = this_menu2nd.css('display');
+				if(this_menu2ndStat === 'none'){
+					this_menu2nd.slideDown(200);
+					this_li.addClass('on');
+				}else{
+					this_menu2nd.slideUp(200);
+					this_li.removeClass('on');
+				}
+				//收起其他所有二级
+				this_li.siblings('li').removeClass('on').find('.menu-2nd').slideUp(200);
+			})
+			//判断若有子栏目，其父级栏目a标签禁止跳转
+			$(".user-menu .menu-2nd").each(function(){
+				if($(this).children('li').length != 0){
+					$(this).prev('a').attr('href','javascript:;');
+				}
+			})
+		</script>
+		
+	</div>
+	<div class="forms-right">
+		<div class="main-title"><span>{if $model_alias}[{$model_alias}]{else}我管理的招投标{/if}</span></div>
+		<div class="search-myforms search-manage">
+			<form name="request" id="request" class="search-form" action="$this_url" method="get">				
+				<!--{if $mid != '199'}-->
+				<div class="form-item4">
+					<label class="form-label">招投标:</label>
+					<div class="input-block">
+						<select name="mid"onchange="this.form.submit();" class="select">
+							<option value="">所有</option>
+							<!--{foreach $models $k $v}-->
+							<!--{if $v['enabled']}-->
+							<option value="$v[id]" {if isset($mid) && $mid==$v['id']}selected="selected"{/if}>$v[alias]</option>
+							<!--{/if}-->
+							<!--{/foreach}-->
+						</select>
+					</div>
+				</div>
+				<!--{/if}-->
+				<div class="form-item4">
+					<label class="form-label">提交时间:</label>
+					<div class="input-block">
+						<input type="text" name="mindate" size="10" onclick="rcalendar(this);" value="{if !empty($mindate)}$mindate{/if}" class="input2"/>
+						-
+						<input type="text" name="maxdate" size="10" onclick="rcalendar(this);"  value="{if !empty($maxdate)}$maxdate{/if}" class="input2"/>
+					</div>
+				</div>				
+				<div class="form-item4">
+					<label class="form-label">用户名:</label>
+					<div class="input-block">
+						<input type="text" name="username" size="8" value="{if !empty($username)}$username{/if}" class="input"/> 
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">真实姓名:</label>
+					<div class="input-block">
+						<input type="text" name="name" size="8" value="{if !empty($name)}$name{/if}" class="input"/> 
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">审核:</label>
+					<div class="input-block">
+						<select name="verified" class="select" id="verified">
+							<option value="">所有</option>
+							<option value="1" {if $verified == 1}selected{/if}>{$P8LANG['verified']}</option>
+							<option value="2" {if $verified == 2}selected{/if}>{$P8LANG['verified_passed']}</option>
+							<option value="3" {if $verified == 3}selected{/if}>{$P8LANG['unverified_need']}</option>
+							<option value="-99" {if $verified == -99}selected{/if}>{$P8LANG['rejected']}</option>
+							<option value="88" {if $verified == 88}selected{/if}>{$P8LANG['recycle']}</option>
+							<option value="0" {if $verified == 0}selected{/if}>{$P8LANG['all_unverified']}</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">前台显示:</label>
+					<div class="input-block">
+						<select name="display" class="select">
+							<option value="">所有</option>
+							<option value="2" {if $display == 2}selected{/if}>是</option>
+							<option value="1" {if $display == 1}selected{/if}>否</option>
+						</select>
+					</div>
+				</div>
+				<!--{if $mid}-->				
+				<!--{foreach $this_model['filterable_fields'] $field $field_data}-->
+				<!--{php $field_data['editable'] = 1;}-->				
+				<div class="form-item4">
+					<label class="form-label">{$field_data['alias']}:</label>
+					<div class="input-block">
+						<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+					</div>
+				</div>
+				<!--{/foreach}-->
+				<!--{/if}-->
+				<div class="clear"></div>
+				<div class="form-item4" style="text-align:center;margin:0 auto;padding:0;width:100%;">
+					<div class="input-block">
+						<input type="submit" class="btn" onclick="request.action='$this_url';request.method='get'" value="查询" />
+						<input type="reset" name="" class="btn btn-reset" value="重置">						
+						<input type="hidden" name="ids" value="" />
+					</div>
+				</div>
+			</form>
+		</div>
+		<div id="show_myforms" style="">
+			<div class="forms-content">
+				<ul class="forms-header">
+                    <li data-verifyfor="1" {if $verified=='1'}class="active"{/if}>{$P8LANG['verified']}</li>
+                    <li data-verifyfor="2" {if $verified=='2'}class="active"{/if}>{$P8LANG['verified_passed']}</li>
+					<li data-verifyfor="3" {if $verified=='3'}class="active"{/if}>{$P8LANG['unverified_need']}</li>
+					<li data-verifyfor="-99" {if $verified=='-99'}class="active"{/if}>{$P8LANG['rejected']}</li>
+					<li data-verifyfor="88" {if $verified=='88'}class="active"{/if}>{$P8LANG['recycle']}</li>
+					<li data-verifyfor="0" {if $verified=='0'}class="active"{/if}>{$P8LANG['all_unverified']}</li>					
+                </ul>
+				<form name="form" id="form" action="$this_url" method="post">
+					<table width='99%' cellspacing='1' cellpadding='3' class="show_table" style="text-align:center">
+						<tr class="tablehead">
+							<td width="8%">ID</td>
+							<td width="20%" align="center"><a href="$this_url">招投标名称</a></td>
+							<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+							<td width="">$field_data[alias]</td>
+							<!--{/foreach}-->
+							<td width="5%">提交者</td>
+							<td width="5%">真实姓名</td>
+							<td width="8%">填写时间</td>
+							<td width="5%">状态</td>
+							<td width="5%">审核流程</td>
+							<td width="5%">前台显示</td>
+							<td width="*">操作</td>
+						</tr>
+						<!--{foreach $list $key $value}-->
+						<tr id="item_$value[id]">
+							<td>
+								<input type="checkbox" name="id[]" value="$value[id]" />
+								$value[id]</td>
+							<td align="center"><a href="$this_url?mid=$value[mid]"><strong>$value[title]</strong></a></td>
+							<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+							<td>
+								<!--{if !empty($value[$field]) && ($field_data['widget']=='radio' || $field_data['widget']=='select')}-->					
+									<!--{php echo is_array($field_data['data'][$value[$field]]) ? $field_data['data'][$value[$field]][0] : $field_data['data'][$value[$field]];}-->
+								<!--{elseif !empty($value[$field]) && ($field_data['widget']=='checkbox' || $field_data['widget']=='multi_select')}-->
+									<!--{foreach $value[$field] $v}-->
+										{$field_data['data'][$v]}, 
+									<!--{/foreach}-->
+								<!--{elseif isset($value[$field]) && $field_data['widget']=='linkage'}-->
+										<!--{php  $field_value= array_pop($value[$field]);}-->
+											{$field_value}	
+								<!--{elseif !empty($value[$field]['url']) && $field_data['widget']=='uploader'}-->						
+									<a href="{$value[$field]['url']}" target="_blank">下载</a>
+								<!--{elseif !empty($value[$field]['url']) && $field_data['widget']=='image_uploader'}-->						
+									<a href="{$value[$field]['url']}" target="_blank">{$value[$field]['thumb']}</a>
+								<!--{elseif $field_data['widget']=='uploader_basic'}-->							
+									{if is_array($value[$field])}{$value[$field][0]}{else}{$value[$field]}{/if} <a href="{if is_array($value[$field])}{$value[$field][0]}{else}{$value[$field]}{/if}" target="_blank">下载</a>
+								<!--{else}-->	
+									{$value[$field]}
+								<!--{/if}-->
+								<!--{if !empty($field_data['units'])}-->
+									$field_data[units]
+								<!--{/if}-->
+							</td>
+							<!--{/foreach}-->
+							<td>$value[username]</td>
+							<td>$value[uname]</td>
+							<td>{date('Y-m-d',$value['timestamp'])}</td>
+							<td id="status_$value[id]">
+								<!--{if $value['status']==0}-->
+								<strong>
+								<!--{/if}-->
+								{$status[$value['status']]}
+								<!--{if $value['status']==0}-->
+								</strong>
+								<!--{/if}-->
+							</td>
+							<td>
+								<a href="javascript:void(0)" onclick="verify_item(['$value[id]'],{$value['verified']})">
+								<span style="font-weight:700;color:#008000;">						
+								{$P8LANG['forms_verify'][$value['verified']]}
+								</span>
+								</a>							
+							</td>
+							<td align="center" id="verified_$value[id]"><!--{if $value['display']==0}-->是<!--{else}--><strong>否</strong><!--{/if}--></td>			
+							<td class="operation">
+							<!--{if $allow_verify || $allow_verify_first}-->
+							<a href="javascript:void(0)" onclick="verify_item(['$value[id]'],{$value['verified']})">审核</a> / 
+							<!--{/if}-->
+							<a href="javascript:void(0)" onclick="setstatus($value[id],$value[mid])">处理</a> / 
+							<a href="$value[url]" target="_blank">查看</a> / 
+							<!--{if $mid != '199' && $guestbook}-->
+							<a href="$this_router-get_items?iid={$value[id]}">查看留言</a> / 
+							<!--{/if}-->							
+							<a href="{$this_module.controller}-update?id=$value[id]&mid=$value[mid]" target="_blank">修改</a> / 
+							<a href="javascript:void(0)" onclick="verifyitem($value[id],$value[display]);return false" id="verify_$value[id]">切换显示</a> / 
+							<a href="javascript:void(0)" onclick="deleteitem($value[id],$value[mid]);return false">删除</a>
+							</td>
+						</tr>
+						<!--{/foreach}-->
+					</table>
+					<table width='99%' cellspacing='1' cellpadding='3' class="formtable columntable hover_table mtop" style="text-align:center">
+						<!--{if !empty($this_module->MODEL)}-->
+						<tr>
+							<td align="left" style="border:0;">								
+									<a href="javascript:void(0)" onclick="check_all(true,'id[]',$('#form'))">全选</a>/<a href="javascript:void(0)" onclick="check_all(false,'id[]',$('#form'));">反选</a>
+									<!--{if $allow_verify || $allow_verify_first}-->
+									<input type="button" class="submit_btn" value="审核" onclick="verify_item(checked_values('id[]', $('#form')),1)" />
+									<!--{/if}-->
+									<input type="button" class="submit_btn" value="处理" onclick="setstatus()" />
+									<input type="button" class="submit_btn" value="显示" onclick="verifyitem('id[]',1)"/>
+									<input type="button" class="submit_btn" value="不显示" onclick="verifyitem('id[]',0)"/>
+									<input type="button" class="submit_btn" value="导出" onclick="download()" />
+									<input type="button" class="submit_btn" value="删除" onclick="deleteitem()" />								
+							</td>
+						</tr>
+						<!--{/if}-->
+						<tr>
+							<td align="center" style="border:0;padding:20px;">
+								<span class="pages-forms">$pages</span>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var verify_item_value = 1;
+var verify_item_id = [];
+var STATUS = $status_json;
+var MID = $mid;
+var dialog = new P8_Dialog({
+	title_text:'处理招投标',
+	width: 400,
+	height: 200,
+	button: true,
+	ok:function(){
+		var status = this.content.find('input[name=status]:checked').val();
+		var reply = this.content.find('textarea').val();
+		var id = this.content.find('input[name=id]').val();
+		if(status==undefined){
+			p8_window.alert("{$P8LANG['forms_confirm_no_manage']}");
+			return;
+		}
+		$.ajax({
+			url: '$this_url',
+			type: 'POST',
+			dataType: 'json',
+			data: $('#form').serialize()+'&action=set_status&oid='+id+'&status='+status+'&reply='+reply,
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				var oSTATUS = STATUS[MID];
+				for(var i in json){
+					$('#status_'+json[i].id).html(oSTATUS[json[i].status]);
+				}
+			}
+		});
+	}
+});
+var verify_html = '';
+
+<!--{foreach $verify_acl $status $v}-->
+	<!--{php if(!$allow_verify && $status ==1) continue;}-->
+	verify_html += '<span><input type="radio" id="verify$status" name="value" value="$status"/><label for="verify$status">$v</label> </span>';
+<!--{/foreach}-->
+verify_html += '<fieldset><legend style="font-size:14px;border:0;margin-bottom:5px;">{$P8LANG['forms_verify']['reason']}</legend><textarea rows="5" cols="60"></textarea></fieldset>';
+
+var verify_first_html = '';
+<!--{foreach $verify_acl $status $v}-->
+<!--{if $status != 1}-->
+	verify_first_html += '<span><input type="radio" id="verify$status" name="value" value="$status" /><label for="verify$status">$v</label> </span>';
+<!--{/if}-->	
+<!--{/foreach}-->
+verify_first_html += '<fieldset><legend style="font-size:14px;border:0;margin-bottom:5px;">{$P8LANG['forms_verify']['reason']}</legend><textarea rows="5" cols="60"></textarea></fieldset>';
+
+function verify_item(array, value){
+	verify_item_id = [];	
+	var audit_verify_html = '';
+	var theight=250
+	$.each(array, function(k, v){
+		verify_item_id.push(v.replace(/[^0-9]/g, ''));
+	});		
+	if(!verify_item_id.length) return false;	
+	verify_item_value = value;
+	$.ajax({url:'/api/verify_log.php?m=forms&id='+verify_item_id+'&token={$core.CONFIG['p8_api_token']}',dataType:'json',type:'get',success:function(dat){ audit_verify_html =dat.htmlstr;theight+=dat.line*35; },async:false })
+	
+var verify_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['forms_verify']['']}',
+	width: 500,
+	height: theight,
+	button: true,
+	ok: function(){
+		var value = this.content.find('input[name=value]:checked').val();
+		var reason = this.content.find('textarea').val();
+		var url = '$this_router-verify';
+		<!--{if $verify_first_only}-->
+		url = '$this_router-verify_first';
+		<!--{/if}-->
+		$.ajax({
+			url: url,			
+			type: 'POST',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({mid:{$mid},id: verify_item_id, value: value, push_back_reason: reason}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				if(json.length){
+					for(var i in json){
+						$('#item_'+ json[i]).remove();
+					}			
+					p8_window.alert(lang_array(P8LANG.core.forms.you_verified, [json.length]));
+				}else{
+					p8_window.alert('{$P8LANG['fail']}');
+				}
+			}
+		});
+	},
+	show: function(){
+		<!--{if $verify_first_only}-->
+		this.content.html(verify_first_html);
+		<!--{else}-->
+		this.content.html(audit_verify_html+verify_html);
+		<!--{/if}-->
+		this.content.find('#verify'+verify_item_value).prop('checked', true);
+		this.content.find('input[type=radio]').click(function(){
+			this.value == '-99' && this.checked ? $(this).parent().parent().find('div').show() : $(this).parent().parent().find('div').hide();
+		});
+	}
+});
+	verify_dialog.show();
+}
+function setstatus(id,mid){
+	if(id==undefined){
+		if(check_ids())
+		show_dialog();
+	}else{
+		MID = mid;
+		$.ajax({
+			url: '{$this_url}',
+			type: 'POST',
+			dataType: 'json',
+			data: 'action=check_status&id='+id,
+			success:function(json){
+				show_dialog(json)
+			}   
+		});
+	}
+}
+function show_dialog(json){
+	var innerhtml = '<p>处理方式：';
+	var oSTATUS = STATUS;
+	for(var i in oSTATUS){
+		innerhtml +=' <input type="radio" name="status" value="'+i+'" '+(json ==undefined ? '' : (json.status==i? 'checked':''))+'>'+oSTATUS[i];
+	}
+	innerhtml +='</p>处理意见：<textarea style="width:380px;height:90px"> '+(json ==undefined ? '' : json.reply)+'</textarea>';
+	innerhtml +='<input type="hidden" name="id" value="'+(json ==undefined ? '' : json.id)+'"/>';
+	dialog.content.html(innerhtml);			
+	dialog.show();
+}
+function deleteitem(id,mid){
+	if(id==undefined){	
+		if(!check_ids())return;
+	}
+	//if(!confirm('确定要删除？'))return;
+	p8_window.confirm('确定要删除？', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: $('#form').serialize()+'&action=delete&oid='+id+"&mid="+(mid==undefined? MID : mid),
+				beforeSend: function(){
+					//ajaxing({});
+				},
+				success: function(json){
+					//ajaxing({action: 'hide'});
+					for(var i in json){
+						$('#item_'+json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});	
+}
+function verifyitem(id,ov){
+	if(id==undefined){	
+		if(!check_ids())return;		
+	}	
+	$.ajax({
+			url: '$this_url',
+			type: 'POST',
+			dataType: 'json',
+			data: $('#form').serialize()+'&action=display&oid='+id+"&model={$this_model['name']}"+'&ov='+ov,
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				for(var i in json){
+					$('#verified_'+json[i].id).html(''+(ov? '是':'<strong>否</strong>')+'');
+				}
+			}
+		});
+	
+}
+function check_ids(){
+	var ids=[];
+	$.each(checked_values('id[]'), function(k, v){
+	ids.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(ids.length<1)return false;
+	return true;
+	
+}
+function download(){
+	var obj=checked_values('id[]');
+	var ids = [];
+	$.each(obj, function(k, v){
+		ids.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(ids.length<1){
+		//if(!confirm('你没选中任何个人，是否操作全部'))return;
+		p8_window.confirm('你没选中任何个人，是否操作全部？', function (r) {
+			if(r){
+				$('#request').attr('action',"{$this_router}-download");
+				$('#request').attr('method',"post");
+				//$('#request').find('input[name=ids]').attr('value',ids);
+				$('#request').submit();
+			}else{
+				return;
+			}
+		});
+	}
+}
+$(document).ready(function(){
+    $('#show_myforms > div > ul').find('li').on('click',function(){
+        $('#verified').val($(this).data('verifyfor'))
+        $('#request').submit();
+    })   
+})
+</script>
+<div class="clear">
+</div>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

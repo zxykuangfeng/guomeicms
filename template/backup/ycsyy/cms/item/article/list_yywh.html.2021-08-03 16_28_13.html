@@ -1,0 +1,56 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_gg]
+		</div>
+	</div>
+</div>
+<div class="maincon clearfix">
+	<div class="container">
+		<div class="column-location mb20 clearfix">
+			您现在的位置： <a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			>> <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			>> <a href="$CAT[url]">$CAT[name]</a>
+		</div>
+		<div class="column-title mb20 clearfix">
+			$CAT[name]
+		</div>
+		<div class="row">
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<div class="img-box mb20">$label[list_yywh_pic1]</div>
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<div class="img-box mb20">$label[list_yywh_pic2]</div>
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<div class="img-box mb20">$label[list_yywh_pic3]</div>
+			</div>
+		</div>
+		<div class="part-list2 pt20">
+			<div class="list-title mb10 clearfix">
+				<div class="title pull-left">$label[list_yywh_box1_tt1]</div> 
+				<span class="more pull-right"> 
+					$label[list_yywh_box1_more1]
+				</span>
+			</div>
+			<div class="row row30">
+				<div class="col-md-6 col-sm-6 col-xs-12 col-pd-30">
+					<div class="img-box mb20">$label[list_yywh_con1]</div>
+				</div>
+				<div class="col-md-6 col-sm-6 col-xs-12 col-pd-30">
+					<div class="list-content mb20">$label[list_yywh_con2]</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+
+

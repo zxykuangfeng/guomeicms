@@ -1,0 +1,70 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<body>
+<style>
+#flying_{$data['id']} #timebox{border-radius:20px;width: 120px;height:70px;overflow: hidden;text-align: center;position: absolute;bottom:80px;left: calc(50% - 60px);font-size:50px;font-weight: bold;color: #d6201d;}
+#flying_{$data['id']} a{width:100%;height:100%;display:block;}
+</style>
+<div id="flying_{$data['id']}" style="width:{$data['width']}px;height:{$data['height']}px;position: absolute;overflow:hidden;z-index:9999;background: url({$data['data']['media']});background-repeat: no-repeat;background-size: 100%;">
+<a href="$url" target="_blank"><div id="timebox"></div></a>
+<span style="top:2px;right:2px;cursor:pointer;position: absolute;width: 18px; height: 18px; background: url($RESOURCE/images/close.gif) no-repeat 0 -18px;" onclick="$('#flying_{$data['id']}').hide();"></span>
+</div>
+<script type="text/javascript">
+(function(){
+	var height_{$data['id']} = $(window).height(); 
+	var width_{$data['id']} = $(window).width();
+	var randheight = Math.random() < 0.5 ? -30*Math.ceil(Math.random()*10) : 30*Math.ceil(Math.random()*10);
+	var Hoffset_{$data['id']} = $('#flying_{$data['id']}').height(); 
+	var Woffset_{$data['id']} = $('#flying_{$data['id']}').width(); 
+	var xPos_{$data['id']} = (width_{$data['id']}-Woffset_{$data['id']})/2 + randheight; 
+	var yPos_{$data['id']} = (height_{$data['id']}-Hoffset_{$data['id']})/2 - randheight; 
+	var step_{$data['id']} = 1; 
+	var delay_{$data['id']} = Math.ceil(25+Math.random()*10*(Math.random() < 0.5?-1:1));
+	var yon_{$data['id']} = 0;
+	var xon_{$data['id']} = 0;
+	var pause_{$data['id']} = true; 
+	var interval_{$data['id']}; 
+	var interval_{$data['id']} = setInterval(changePos_{$data['id']}, delay_{$data['id']});
+	$('#flying_{$data['id']}').hover(function(){ clearInterval(interval_{$data['id']}); },function(){ interval_{$data['id']} = setInterval(changePos_{$data['id']}, delay_{$data['id']});});
+	function changePos_{$data['id']}() {
+		$('#flying_{$data['id']}').css({left:xPos_{$data['id']}+$(window).scrollLeft(),top:yPos_{$data['id']}+$(window).scrollTop()});																																																								
+		if (yon_{$data['id']}) {yPos_{$data['id']} = yPos_{$data['id']} + step_{$data['id']}; } 
+		else {yPos_{$data['id']} = yPos_{$data['id']} - step_{$data['id']}; } 
+		if (yPos_{$data['id']} < 0) { yon_{$data['id']} = 1;yPos_{$data['id']} = 0; } 
+		if (yPos_{$data['id']} >= (height_{$data['id']} - Hoffset_{$data['id']})) { yon_{$data['id']} = 0;yPos_{$data['id']} = (height_{$data['id']} - Hoffset_{$data['id']});}																																																																	
+		if (xon_{$data['id']}) {xPos_{$data['id']} = xPos_{$data['id']} + step_{$data['id']}; } 
+		else {xPos_{$data['id']} = xPos_{$data['id']} - step_{$data['id']}; } 
+		if (xPos_{$data['id']} < 0) { xon_{$data['id']} = 1;xPos_{$data['id']} = 0; } 
+		if (xPos_{$data['id']} >= (width_{$data['id']} - Woffset_{$data['id']}-20)) { xon_{$data['id']} = 0;xPos_{$data['id']} = (width_{$data['id']} - Woffset_{$data['id']}-20); }
+	}
+	// 目标倒计时时间（示例为2022年1月1日 00:00:00）
+	var targetDate = new Date('<!--{if $data['expire']}-->{date('Y-m-d H:i', $data['expire'])}<!--{/if}-->');
+	// 更新倒计时显示
+	function updateCountdown() {
+	  var currentDate = new Date();
+	  var remainingTime = targetDate - currentDate;
+
+	  // 计算剩余的天、小时、分钟和秒
+	  var days = Math.floor(remainingTime / (1000 * 60 * 60 * 24));
+	  var hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+	  var minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+	  var seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+
+	  // 更新倒计时显示
+	  document.getElementById('timebox').innerHTML = days;
+
+	  // 检查是否已经到达目标时间
+	  if (remainingTime <= 0) {
+		clearInterval(countdownInterval);
+		document.getElementById('flying_{$data['id']}').hide();
+		// 执行其他操作
+	  }
+	}
+	// 每秒更新一次倒计时显示
+	var countdownInterval = setInterval(updateCountdown, 1000);
+})()
+</script>
+</body>
+</html>
+<!--{/php168}-->

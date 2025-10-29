@@ -1,0 +1,105 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<form id="theform" action="" method="post">
+			<table class="columntable formtable hover_table click_changeable" width="100%" style="text-align:center" >
+				<tr bgcolor="#eeeeee" class="title">
+					<td width="9%"><input type="checkbox" onclick="check_all(this, 'id[]')"/>编号</td>
+					<td width="30%">标题</td>
+					<td width="12%">发布时间</td>
+					<td width="12%">结束时间</td>
+					<td width="10%">填写数量</td>
+					<td width="8%">状态</td>
+					<td width="30%">操作</td>
+				</tr>
+				<!--{foreach $list $k $v}-->
+				<tr>
+					<td><input type="checkbox" name="id[]" value="{$v['id']}"/> $v[id]</td>
+					<td align="left"><a href="{$this_module.controller}-post-id-$v[id]" target="_blank">$v[title]</a></td>
+					<td>
+						<!--{php echo date("Y-m-d H:i:s",$v['timestamp']);}-->
+					</td>
+					<td>
+						<!--{php echo date("Y-m-d H:i:s",$v['endtime']);}-->
+					</td>
+					<td><a href="{$this_router}-list?iid={$v['id']}" >$v[post]</a></td>
+					<td><!--{if $v['status']}-->启用<!--{else}-->关闭<!--{/if}--></td>
+					<td>
+						<a href="{$this_router}-update?id={$v['id']}" >编辑</a> | 
+						<a href="{$this_router}-titles?iid={$v['id']}" >问题</a> | 
+						<a href="{$this_module.controller}-post-id-$v[id]" target="_blank">填写</a> | 
+						<a href="{$this_router}-list?iid={$v['id']}">问卷回复</a> | 
+						<a href="{$this_module.controller}-view-id-$v[id]" target="_blank">结果</a> | 
+						<a href="javascript:void(0)" onclick="download_item($v[id],$v[times],1)">导出EXCEL</a> | 
+						<a href="$this_router-delete_item?id=$v[id]" onclick="javascript:return confirm('确定了')">删除</a>
+					</td>
+				</tr>
+				<!--{/foreach}-->
+				<tr>
+					<td colspan="7" class="pages">{$pages}</td>
+				</tr>
+				<tr>
+					<td colspan="7" align="left"><input type="button" value="更新统计" class="submit_btn" onclick="survery()"/></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<form action="$this_router-download" id="download" method="post">
+<input type="hidden" name="iid" id="download_iid" value="" />
+</form>
+<script type="text/javascript">
+function survery(){
+	if(!$('input:checked[name="id[]"]').length){
+		p8_window.alert('先勾选要统计的项目');return;	
+	}
+	ajaxing({text:"{$P8LANG['running']}"});
+	$.ajax({
+		   url : '{$this_url}',
+		   data: $('#theform').serialize(),
+		   type:'post',
+		   dataType: 'json',
+		   success:function(result){
+			   if(!result.error){
+					location.reload();
+			   }else{
+					p8_window.alert(result.error);				   
+			   }
+		   }
+		   })
+}
+function download_item(iid,times,page){
+	$('#download_iid').val(iid);
+	if (typeof page === 'undefined') {  
+		page = 1;  
+	}
+	if(page <= times){
+		ajaxing({text:'进度:'+page+'/'+times});
+		$('#download_page').val(page);
+		$('#download').submit();
+		if(page < times){
+			setTimeout(function() {
+				p8_window.confirm('{$P8LANG['confirm_to_continue']}', function (r) {
+					if(r){
+						download_item(iid,times,page + 1); 
+					}else{
+						ajaxing({action: 'hide'});
+						p8_window.alert('{$P8LANG[done]}');
+						return;
+					}
+				})
+			},2000);
+		}else{
+			ajaxing({action: 'hide'});
+			p8_window.alert('{$P8LANG[done]}');
+		}
+	}else{
+		ajaxing({action: 'hide'});
+		p8_window.alert('{$P8LANG[done]}');
+	}	
+}
+
+</script>
+<!--{/php168}-->

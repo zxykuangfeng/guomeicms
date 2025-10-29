@@ -1,0 +1,421 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<div class="mainfluid">
+	<div class="mtab">
+		<div id="tab_1" class="tab_box">
+			<div class="head">
+				<span>基本资料</span> <span>联系方式</span> <span id="editpw">修改密码</span><span>解绑微信</span> <!--{if $config['question_enabled']}--><span id="editpw">找回密码设置</span><!--{/if}-->
+				<div class="course"><a href="{$RESOURCE}/attachment/jiaocheng/mimaxiugai.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 密码修改教程>></a></div>
+			</div>
+			<div class="main profile" style="margin-top:20px">
+				<div class="content base_config">
+					<form action="$this_url" method="post">
+						<table width="100%" border="0" cellspacing="1" cellpadding="8" class="pretable">
+							<tr>
+								<td>头像:</td>
+								<td>
+									<img src="$data[icon]" id="icon_img" width="90" height="90" onerror="this.src='{$MEMBERSKIN}/nomenpic.gif'"/>
+									<!--{if $icon_allow}-->
+									<br />
+									<input type="text" name="icon" id="icon" value="{$data['icon']}" size="35" onchange="$('#icon_img').attr('src', this.value)" />&nbsp;<input type="button" value="上传" onclick="icon_uploader.choseup()"  /><a href="###" onclick="icon_uploader.image_cut()">[$P8LANG[image_cut]]</a><br />
+									注：允许上传格式为.jpg .gif，图片大小不可超过500k
+									<input type="hidden" name="attachment_hash" value="<!--{php echo $attachment_hash = unique_id(16);}-->" />
+									<script type="text/javascript">
+									var attachment_hash = '$attachment_hash';
+									var icon_uploader;
+									
+									$(function(){
+										
+										icon_uploader = new P8_Upload({
+											element: {
+												src: $('#icon'),
+												attribute: 'value'
+											},
+											param: {
+												return_thumb: true
+											},
+											callback: function(json){
+												$('#icon_img').attr('src', json.attachments[0].file);
+											}
+										});
+									});
+									</script>
+									<!--{/if}-->
+								</td>
+							</tr>
+							
+							<tr>
+								<td width="12%" class="tbl">用户名:</td>
+								<td width="88%">{$data['username']}</td>
+							</tr>
+							<tr>
+								<td>电子邮箱:</td>
+								<td><input type="text" name="email" id="email" value="{$data['email']}" /></td>
+							</tr>
+							<tr>
+								<td>真实姓名:</td>
+								<td><input type="text" name="name" id="name" value="{$data['name']}" /></td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['role_gname']}:</td>
+								<td class="tdR">
+									<select name="dept" id="dept">
+										<option value="">请选择部门</option>
+										<!--{foreach $dept $ditem}-->
+										<option value="{$ditem[code]}" {if $data['dept']==$ditem['code']}selected{/if}>{$ditem[name]}</option>
+										<!--{/foreach}-->
+									</select>																	
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['role_gname2']}</td>
+								<td class="tdR">
+									<span id="dept2_path"></span>
+									<input type="hidden" name="#field_dept2_posted" />
+									<input type="hidden" id="fields_dept2" name="dept2" value="{if isset($data[dept2])}$data[dept2]{/if}" />
+									<input type="button" value="{$P8LANG['select_dept']}" id="dept2_button" />
+
+									<script type="text/javascript">
+									$(function(){
+										var dialog = new P8_Dialog({
+											title_text: '{$P8LANG['select_dept']}',
+											width: 700,
+											height: 300,
+											button: true,
+											show: function(){
+												selector.init();
+											},
+											ok: function(){
+												var v = selector.get_value();
+												
+												$('#fields_dept2').val(v);
+												
+												path(v);
+											}
+										});
+										
+										var selector;
+										include_once('{$RESOURCE}/js/recursive_dept.js', function(){
+											selector = new Recursive_Selector({
+												dialog: dialog,
+												sub_property: 'depts',
+												input: $('input[name="#field_dept2_posted"]'),
+												value: $('#fields_dept2').val(),
+												url: P8CONFIG.url +'/api/dept.php',
+												item_callback: function(dept, item){
+													
+													if(dept.depts){
+														item.addClass('sub_category');
+													}
+												},
+												init_callback: function(){
+													var id = this.get_value();
+													
+													path(id);
+												}
+											});
+											
+											if($('#fields_dept2').val()){
+												selector.init();
+											}
+										});
+										
+										function path(id){
+											if(id == 0){
+												$('#dept2_path').html('');
+												selector = new Recursive_Selector({
+													dialog: dialog,
+													sub_property: 'depts',
+													input: $('input[name="#field_dept2_posted"]'),
+													value: 0,
+													url: P8CONFIG.url +'/api/dept.php',
+													item_callback: function(dept, item){
+														
+														if(dept.depts){
+															item.addClass('sub_category');
+														}
+													},
+													init_callback: function(){}
+												});
+												return;
+											}										
+											var tmp = selector.get_by_id(id);
+											var html = '';										
+											while(true){
+												html = tmp.name +' &gt; '+ html;
+												if(tmp.parent == 0) break;
+												
+												tmp = selector.get_by_id(tmp.parent);
+											}
+											
+											$('#dept2_path').html(html);
+										}
+										
+										$('#dept2_button').click(function(){
+											dialog.show();
+										});									
+									});
+									</script>									
+									<span class="point">不选则不进入统计 </span>
+								</td>
+							</tr>
+							<!--{if !empty($data['number'])}-->
+							<tr>
+								<td>编号:</td>
+								<td><input type="text" name="name" id="name" value="{$data['number']}" readonly="readonly" /></td>
+							</tr>
+							<!--{/if}-->
+							<tr>
+								<td>性别:</td>
+								<td>
+								<input type="radio" name="gender" id="gender" value="0" {$data[0]} />保密
+								<input type="radio" name="gender" id="gender" value="1" {$data[1]} />男 
+								<input type="radio" name="gender" id="gender" value="2" {$data[2]} />女
+								</td>
+							</tr>
+							<tr>
+								<td>生日:</td>
+								<td>
+									<select id="birthday_year" name="birthday_year">
+									<option value="" > </option>
+									<!--{php $datenow=getdate();}-->
+									<!--{php for($y=$datenow['year'];$y>=$datenow['year']-100;$y--){}-->
+										<option value="$y" {$by[$y]}>$y</option>
+										<!--{php }}-->
+									</select>年
+									<select id="birthday_month" name="birthday_month">
+									<option value="" > </option>
+									<!--{php for($m=12;$m>=1;$m--){$m=str_pad($m,2,0,STR_PAD_LEFT);}-->
+										<option value="$m" {$bm[$m]}>$m</option>
+										<!--{php }}-->
+									</select>月
+									<select id="birthday_day" name="birthday_day">
+									<option value="" > </option>
+									<!--{php for($d=31;$d>=1;$d--){$d=str_pad($d,2,0,STR_PAD_LEFT);}-->
+										<option value="$d" {$ba[$d]}>$d</option>
+										<!--{php }}-->
+									</select>日
+								</td>
+							</tr>
+							<tr>
+								<td>地址:</td>
+								<td><input type="text" name="address" id="address" size="55" value="{$data['address']}" /></td>
+							</tr>
+							
+							<!--{foreach $this_model['fields'] $field $field_data}-->
+							<tr>
+								<td>$field_data[alias]</td>
+								<td>
+									<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+								</td>
+							</tr>
+							<!--{/foreach}-->
+							
+							<tr>
+								<td>&nbsp;</td>
+								<td>
+								<input type="submit" name="button" id="button" value="提交" class="submit_btn"/>
+								<input type="hidden" name="id" id="id" value="{$data['id']}"/>
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+				<div class="content">
+				<form action="$this_router-$ACTION" method="post">
+					<table width="100%" border="0" cellspacing="1" cellpadding="5">
+						<tr>
+							<td width="12%">电话:</td>
+							<td width="88%"><input type="text" name="phone" id="phone" value="{$data['phone']}" /></td>
+						</tr>
+						<tr>
+							<td>传真:</td>
+							<td><input type="text" name="fax" id="fax" value="{$data['fax']}" /></td>
+						</tr>
+						<tr>
+							<td>手机:</td>
+							<td><input type="text" name="cell_phone" id="cell_phone" value="{$data['cell_phone']}" /></td>
+						</tr>
+						<tr>
+							<td>QQ:</td>
+							<td><input type="text" name="qq" id="qq" value="{$data['qq']}" /></td>
+						</tr>
+						<tr>
+							<td>MSN:</td>
+							<td><input type="text" name="msn" id="msn" value="{$data['msn']}" /></td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>
+							<input type="submit" name="button2" id="button2" value="提交" class="submit_btn"/>
+							<input type="hidden" name="id" id="id" value="{$data['id']}"/>
+							</td>
+						</tr>
+					</table>
+					</form>
+				</div>
+
+				<div class="content">
+				<form action="$this_router-$ACTION" method="post"  id="form3">
+					<table width="100%" border="0" cellspacing="1" cellpadding="5">
+						<tr>
+							<td width="12%">输入旧密码：</td>
+							<td width="88%"><input type="password" name="old_password"  /></td>
+						</tr>
+						<tr>
+							<td>输入新密码：</td>
+							<td><input type="password" id="passwordinput" name="new_password" /><span class="point"> 需大写、小写、数字、特殊符号( 特殊符号只能设一个)组成，位数不少于10位</span></td>
+						</tr>
+						<tr>
+							<td>重新输入新密码：</td>
+							<td><input type="password" name="confirm_password" /></td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td>
+							<input type="submit" name="button4" id="button4" value="提交" class="submit_btn"/>
+							<input type="hidden" name="job" value="passwd" /></td>
+						</tr>
+					</table>
+					</form>
+				</div>
+				<div class="content">
+					<table width="100%" border="0" cellspacing="1" cellpadding="5">
+						<!--{if $wechatInfo}-->
+						<tr>
+							<td width="12%">已绑定微信昵称：</td>
+							<td width="88%">{$wechatInfo['nickname']}</td>
+						</tr>
+
+						<tr>
+							<td width="12%"></td>
+							<td width="88%"><button onclick="unbindwx({$wechatInfo['id']})">解绑</button>
+							<script type="text/javascript">
+								function unbindwx(id){
+									if(confirm("确定解除此绑定吗？")){
+									$.post('{$wechatconnect->controller}-bind?plugin=wechatconnect',{do:"unbind",id:id},function(ret){
+									alert("绑定解除成功！");									location.reload();									},'json')}}
+							</script>
+							</td>
+						</tr>
+						<!--{else}-->
+						<tr>
+							<td>你没有绑定微信，无须操作！</td>
+						</tr>
+						<!--{/if}-->
+					</table>
+				</div>
+				<!--{if $config['question_enabled']}-->
+				<div class="content">
+				<form action="$this_router-$ACTION" method="post"  id="form4">
+					<table width="100%" border="0" cellspacing="1" cellpadding="5">
+						<tr>
+							<td width="12%">密保问题1：</td>
+							<td width="88%">								
+								<select name="find_pwd[1][order]">
+									<option value="">请选择密保问题</option>
+									<!--{foreach $questions $order $question}-->
+									<option value="{$order}" {if $order == $find_pwd[1]['order']} selected{/if}>{$question}</option>
+									<!--{/foreach}-->
+								</select>
+								答案：<input type="text" name="find_pwd[1][ans]" size="15" value="{$find_pwd[1][ans]}"/> 正确回答2个问题即可重置密码
+							</td>
+						</tr>
+						<tr>
+							<td width="12%">密保问题2：</td>
+							<td width="88%">								
+								<select name="find_pwd[2][order]">
+									<option value="">请选择密保问题</option>
+									<!--{foreach $questions $order $question}-->
+									<option value="{$order}" {if $order == $find_pwd[2]['order']} selected{/if}>{$question}</option>
+									<!--{/foreach}-->
+								</select>
+								答案：<input type="text" name="find_pwd[2][ans]" size="15" value="{$find_pwd[2][ans]}"/> 正确回答2个问题即可重置密码
+							</td>
+						</tr>
+						<tr>
+							<td width="12%">密保问题3：</td>
+							<td width="88%">								
+								<select name="find_pwd[3][order]">
+									<option value="">请选择密保问题</option>
+									<!--{foreach $questions $order $question}-->
+									<option value="{$order}" {if $order == $find_pwd[3]['order']} selected{/if}>{$question}</option>
+									<!--{/foreach}-->
+								</select>
+								答案：<input type="text" name="find_pwd[3][ans]" size="15" value="{$find_pwd[3][ans]}"/> 正确回答2个问题即可重置密码
+							</td>
+						</tr>
+						<tr>
+							<td>&nbsp;</td>
+							<td><input type="submit" name="button" id="button" value="提交" class="submit_btn"/>
+							<input type="hidden" name="id" id="id" value="{$data['id']}"/></td>
+						</tr>
+					</table>
+					</form>
+				</div>
+				<!--{/if}-->
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript">
+$.validator.addMethod('valid_passwd', function(value, element){
+	return /^(?![^a-zA-Z]+$)(?!\D+$).{8,20}$/.test(value);
+});
+$('#form3').validate({
+	rules: {
+		
+		new_password: {
+			required: true,
+			rangelength: [10, 20],
+			valid_passwd: true
+		}
+	},
+	
+	messages: {
+		
+		new_password: {
+			required: '$P8LANG[password_required]',
+			rangelength: '$P8LANG[password_length_range]',
+			valid_passwd: '$P8LANG[password_strong]'
+		}
+	},
+	
+	onkeyup: false
+});
+$('#passwordinput').focus(function(){
+$('#form3').validate({
+	rules: {
+		
+		new_password: {
+			rangelength: [10, 20],
+			valid_passwd: true
+		}
+	},
+	
+	messages: {
+		
+		new_password: {
+			required: '$P8LANG[password_required]',
+			rangelength: '$P8LANG[password_length_range]',
+			valid_passwd: '$P8LANG[password_strong]'
+		}
+	},
+	
+	onkeyup: false
+});
+});
+</script>
+<script type="text/javascript">
+// 选项卡
+MoveTabs("tab_1");
+<!--{if $editpw}-->
+$('#editpw').click();
+<!--{/if}-->
+</script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

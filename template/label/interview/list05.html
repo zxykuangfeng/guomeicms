@@ -1,0 +1,19 @@
+<!--{php168}-->
+<!--{php $first=array_shift($list);$first_title=p8_cutstr($first['full_title'], $label['option']['top_title_length'],'');}-->
+<div class="interviewtop">
+<div class="ph">
+<a href="$first[url]" target="_blank"><img width="255" height="170" alt="$first[full_title]" onError="this.src='$RESOURCE/images/nopic.jpg'" src="{if empty($first['frame'])}{$RESOURCE}/images/nopic.jpg{else}$first[frame]{/if}"  border="0" /></a>
+</div>
+<div class="dt">
+	<span class="th">[第8期]</span><a href="$first[url]" target="_blank">名人访谈录</a>
+</div>
+</div>
+<div class="interviewbtm">
+<ul>
+<!--{foreach $list $value}-->
+<li><span class="th">[第8期]</span><a href="$value[url]" target="_blank" title="$value[full_title]">名人访谈录</a></li>
+<!--{/foreach}-->
+</ul>
+</div>
+<div class="clear"></div>
+<!--{/php168}-->

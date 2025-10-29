@@ -1,0 +1,163 @@
+<!--{php168}-->
+<!--{php $TITLE = '来信统计_湘南学院-教育阳光服务中心';}-->
+<!--{template $core header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/style.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/style_list.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/opinion/tongji.css">
+<div class="maincon">
+	<div class="mainfull">
+		<div class="coordinate">
+			<div class="position3">
+				<a href="{$core.controller}">首页</a>
+				&gt;&gt; 平台信箱
+			</div>
+		</div>
+		<div class="row">
+			<div class="add-count">
+				<div class="sjtj">
+					<h3 class="title">数据统计<span class="time">今天是：<!--{php echo date('Y-m-d');}-->  <!--{php echo $P8LANG['week_'.date('N')];}--></span></h3>
+					<div class="leftCol">					
+						<div class="con">
+							<form method="post" action="">
+								<div class="formbox">
+									<ul>
+										<li>部门单位：</li>
+										<li><select name="department"><option value="">所有</option><!--{foreach $cate['department'] $row}--><option value="{$row['id']}" {if $row['id']==$filter['department']}selected{/if}>{$row['name']}</option><!--{/foreach}--></select></li>
+										<li>统计周期：</li>
+										<li>
+											<input type="text" name="begin_time" value="{$filter['begin_time']}" maxlength="10" size="12" onclick="rcalendar(this , 'YYY-MM-DD');" /> 
+											至 <input type="text"  maxlength="10" size="12"  name="end_time" value="{$filter['end_time']}" onclick="rcalendar(this ,'YYY-MM-DD');" />										
+										</li>
+										<li><input type="submit" class="submitbtn" value="搜索" id="button" name="button"></li>
+									</ul>
+								</div>
+							</form>
+							<div class="leftTxt"> 来信总数<span> {$total[0]} </span>件&#12288;已受理<span> {$total[1]} </span>件&#12288;已办结<span> {$total[2]} </span>件 <br>
+								<!--{foreach $total[4] $row}-->{$cate['type'][$row['type']]['name']}<span> {$row['count']}</span> 件    <!--{/foreach}-->
+							</div>
+						</div>
+					</div>
+					<div class="rightCol">
+						<div class="rightTxt">
+							<div class="yesterday">
+								来信总数<span> $alldata[0] </span>件<br>
+								受理总数<span> $alldata[1] </span>件<br>
+								办结总数<span> $alldata[2] </span>件 <br>
+								待办总数<span> $alldata[3] </span>件 
+							</div>
+							<div class="today">
+								本月来信<span> $mon_total[0] </span>件<br>
+								本月受理<span> $mon_total[1]</span>件<br>
+								本月办结<span> $mon_total[2] </span>件 <br>
+								本月待办<span> $mon_total[3] </span>件 
+							</div>
+							<div class="clear"></div>
+						</div>					
+					</div>
+				</div>
+				<div class="clear"></div>
+				<div class="Hang2">
+					<div class="ctab">
+						<div class="hd">
+							<div class="title">$label[count_title]</div>
+							<ul><li><!--{php echo date("n");}-->月</li><li><!--{php echo date("Y");}-->年度</li><li>$label[count_tit3]</li></ul>
+						</div>
+						<div class="bd">
+							<div class="clist" style="display:block">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="countlist">
+          <tr>
+              <td align="center">排序</td>
+              <td align="center">部门名称</td>
+			  <td align="center">写信数量</td>
+              <td align="center">已受理数量</td>
+              <td align="center">办理完结数量</td>
+              <td align="center">待处理数量</td>
+              <td align="center">超时数量(红灯)</td>
+              <td align="center">办理率</td>
+          </tr>
+          <!--{php $i=0;}-->
+          {foreach $list_01_all['list'] $key $row}
+          <!--{php $i+=1;}-->
+          <tr>
+              <td align="center"><!--{php echo $i;}--></td>
+              <td align="center">{$row['department_name']}</td>
+              <td align="center"><!--{php echo isset($list_01_month['list'][$key]['count']) ? $list_01_month['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_02_month['list'][$key]['count']) ? $list_02_month['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_03_month['list'][$key]['count']) ? $list_03_month['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo (isset($list_01_month['list'][$key]['count']) ? $list_01_month['list'][$key]['count'] : 0)-(isset($list_02_month['list'][$key]['count'])?$list_02_month['list'][$key]['count']:0);}--></td>
+              <td align="center"><!--{php echo isset($list_05_month['list'][$key]['count']) ? $list_05_month['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_04_month['list'][$key]['count']) ? $list_04_month['list'][$key]['count'].'%' : '--';}--></td>
+          </tr>
+          {/foreach}
+      </table>
+							</div>
+							<div class="clist" style="display:none">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="countlist">
+          <tr>
+              <td align="center">排序</td>
+              <td align="center">部门名称</td>
+			  <td align="center">写信数量</td>
+              <td align="center">已受理数量</td>
+              <td align="center">办理完结数量</td>
+              <td align="center">待处理数量</td>
+              <td align="center">超时数量(红灯)</td>
+              <td align="center">办理率</td>
+          </tr>
+          <!--{php $i=0;}-->
+          {foreach $list_01_all['list'] $key $row}
+          <!--{php $i+=1;}-->
+          <tr>
+              <td align="center"><!--{php echo $i;}--></td>
+              <td align="center">{$row['department_name']}</td>
+              <td align="center"><!--{php echo isset($list_01_year['list'][$key]['count']) ? $list_01_year['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_02_year['list'][$key]['count']) ? $list_02_year['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_03_year['list'][$key]['count']) ? $list_03_year['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo (isset($list_01_year['list'][$key]['count']) ? $list_01_year['list'][$key]['count'] : 0)-(isset($list_02_year['list'][$key]['count'])?$list_02_year['list'][$key]['count']:0);}--></td>
+              <td align="center"><!--{php echo isset($list_05_year['list'][$key]['count']) ? $list_05_year['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_04_year['list'][$key]['count']) ? $list_04_year['list'][$key]['count'].'%' : '--';}--></td>
+          </tr>
+          {/foreach}
+      </table>
+							</div>
+							<div class="clist" style="display:none">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="countlist">
+          <tr>
+              <td align="center">排序</td>
+              <td align="center">部门名称</td>
+			  <td align="center">写信数量</td>
+              <td align="center">已受理数量</td>
+              <td align="center">办理完结数量</td>
+              <td align="center">待处理数量</td>
+              <td align="center">超时数量(红灯)</td>
+              <td align="center">办理率</td>
+          </tr>
+          <!--{php $i=0;}-->
+          {foreach $list_01_all['list'] $key $row}
+          <!--{php $i+=1;}-->
+          <tr>
+              <td align="center">{$i}</td>
+              <td align="center">{$row['department_name']}</td>
+              <td align="center"><!--{php echo isset($list_01_all['list'][$key]['count']) ? $list_01_all['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_02_all['list'][$key]['count']) ? $list_02_all['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_03_all['list'][$key]['count']) ? $list_03_all['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo (isset($list_01_all['list'][$key]['count']) ? $list_01_all['list'][$key]['count'] : 0)-(isset($list_02_all['list'][$key]['count'])?$list_02_all['list'][$key]['count']:0);}--></td>
+              <td align="center"><!--{php echo isset($list_05_all['list'][$key]['count']) ? $list_05_all['list'][$key]['count'] : 0;}--></td>
+              <td align="center"><!--{php echo isset($list_04_all['list'][$key]['count']) ? $list_04_all['list'][$key]['count'].'%' : '--';}--></td>
+          </tr>
+          {/foreach}
+      </table>
+							</div>
+						</div>
+					</div>	
+				</div>
+				<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery(".ctab").slide({});
+</script>
+<!--{template $core footer}-->
+<!--{/php168}-->

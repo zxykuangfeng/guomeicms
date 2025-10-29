@@ -1,0 +1,76 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<select id="collation" style="display: none;">
+<option value="">&nbsp;</option>
+<!--{foreach $collations $c $v}-->
+	<optgroup label="$c">
+	<!--{foreach $v $vv}-->
+		<option value="$vv">$vv</option>
+	<!--{/foreach}-->
+	</optgroup>
+<!--{/foreach}-->
+</select>
+
+<select id="type" style="display: none;">
+<!--{foreach $types $v}-->
+	<option value="$v">$v</option>
+<!--{/foreach}-->
+</select>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr><td>
+				<table class="columntable formtable hover_table">
+					<tr class="title fix_head">
+						<td width="10%" class="title">备份文件</td>
+						<td width="5%" class="title">备份时间</td>
+						<td width="5%" class="title">长度</td>
+						<td width="8%" class="title">操作</td>
+					</tr>
+
+					<!--{foreach $list $value}-->
+					<tr id="field_$value[Field]">
+						<td>{$value['title']}</td>
+						<td>{$value['datetime']}</td>
+						<td class="type">{$value['size']}M</td>
+						<td><button onclick="downloaddb('{$value['hash']}')">下载</button> </td>
+					</tr>
+					<!--{/foreach}-->
+				</table>
+			</td></tr>
+			
+		</table>
+	</div>
+</div>
+<form action="{$this_url}" id="dw" target="_blank" method="post" style="display:none">
+    <input name="act" value="download"/>
+    <input name="name" value=""/>
+    <input name="code" value=""/>
+</form>
+	
+<script type="text/javascript">
+function downloaddb(hash){
+    var code = prompt("请输入密码");
+	if(code){
+       $.post('{$this_url}',{code:code,name:hash,act:'checkcode'},function(ret){
+       console.log(ret)
+            if(ret.code=='0'){
+                alert(ret.msg)
+            }else{
+                $('#dw').find('input[name=name]').val(hash);
+                $('#dw').find('input[name=code]').val(code);
+                $('#dw').submit();
+            }
+       },'json')
+    }
+}
+
+function deletedb(hash){
+
+}
+
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

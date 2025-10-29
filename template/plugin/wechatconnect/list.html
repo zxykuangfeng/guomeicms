@@ -1,0 +1,77 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$this_url}?plugin=wechatconnect"><i class="fa fa-cogs"></i>插件配置</a></li>
+						<li class="active"><a href="{$this_url}?plugin=wechatconnect&job=list"><i class="fa fa-cogs"></i>账号管理</a></li>
+						
+					</ul>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" class="columntable formtable hover_table">
+				<tr>
+					<td  class="title">编号</td>
+					<td  class="title">微信ID</td>
+					<td  class="title">微信昵称</td>
+					<td  class="title">绑定账号</td>
+					<td  class="title">操作</td>
+                     
+				</tr>
+			
+				<!--{foreach $list $k $v}-->
+				<tr>
+					<td>{$v['id']}</td>
+					<td>{$v['openid']}</td>
+					<td>{$v['nickname']}</td>
+                    <td>{$v['username']}</td>
+                    <td>
+                        <!--{if $v['uid']}--><button onclick="unbind({$v['id']})">解绑账号</button><!--{/if}-->
+                        <!--{if !$v['uid']}--><button onclick="binduser({$v['id']})">绑定账号</button><!--{/if}-->
+                    </td>   
+				</tr>
+				<!--{/foreach}-->
+				<tr>
+					<td class="pages" colspan="5" align="center">{$pages}</td>
+				</tr>
+			</table>
+		</div>
+	</div>	
+<script type="text/javascript">
+
+function unbind(id){
+    if(confirm("确定解除此绑定吗？")){
+        $.post('{$this_url}?plugin=wechatconnect',{do:"unbind",id:id},function(ret){
+             alert("绑定解除成功！");
+             location.reload();
+        },'json')
+       
+    }
+}
+
+function binduser(id){
+    var username = prompt("输入要绑定的账号...", "");
+    if (username != null) {
+        $.post('{$this_url}?plugin=wechatconnect',{do:"bind",id:id,username:username},function(ret){
+            if(ret.code==0){
+             alert("绑定成功！");
+             location.reload();
+            }else
+                 alert(ret.msg);
+        },'json')
+    }
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->
+

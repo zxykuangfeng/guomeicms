@@ -1,0 +1,126 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=2.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="renderer" content="webkit">
+<title>领导信箱</title>
+<meta content="领导信箱" name="keywords">
+<meta content="领导信箱" name="description">
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/letter/style.css" />
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<div id="letter">
+  <div class="header mb20">
+    <div class="container relative clearfix">
+      <div class="row">
+        <div class="col-lg-12 col-md-12 col-sm-12">
+          <div class="letter-detail-title text-center">
+            <img src="{$RESOURCE}/skin/default/core/letter/letter-state.png"/>信件状态
+          </div>
+          <div class="hlogin">
+            <div class="topmember" id="header_t">
+        $label[letter_detail_top]
+              <!--{if $IS_ADMIN}-->
+              <span id="labelshow">[显示标签]</span>
+              <script type="text/javascript">
+                LABEL_URL = location.href;
+                if(LABEL_URL.indexOf('edit_label')==-1){
+                  var ls='?';
+                  if(LABEL_URL.indexOf('?')>-1)ls='&';
+                  LABEL_URL=LABEL_URL+ls+'edit_label=1';
+                  $('#labelshow').html('<a href='+LABEL_URL+' id="edit_label">[显示标签]</a>');
+                }else{
+                  LABEL_URL=LABEL_URL.replace('&edit_label=1','');
+                  LABEL_URL=LABEL_URL.replace('edit_label=1','');
+                  $('#labelshow').html('<a href='+LABEL_URL+' >[隐藏标签]</a>');
+                }
+              </script>
+              <!--{/if}-->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="letter-outer">
+      <div class="bar2 clearfix"><span class="tt2">信息查询结果</div>
+      <table width="100%" cellspacing="0" cellpadding="0" border="0" style="border-collapse: collapse;" class="letter-detail-table">
+        <tr>
+          <td class="tdL">编号:</td>
+          <td class="tdR">{$data['number']}</td>
+        </tr>
+        <tr>
+          <td class="tdL">提交人</td>
+          <td class="tdR">{$data['username']}</td>
+        </tr>
+        <tr>
+          <td class="tdL">当前状态:</td>
+          <td class="tdR"><strong>{$P8LANG['status_'.$data['status']]}</strong></td>
+        </tr>
+        <tr>
+          <td class="tdL">内容:</td>
+          <td class="tdR">{$data['data'][0]['content']}</td>
+        </tr>
+        <tr >
+          <td class="tdL">处理结果:</td>
+          <td class="tdR">{if !empty($data['data'][0]['reply'])}{$data['data'][0]['reply']}{/if}<br/><br/><br/></td>
+        </tr>
+        <tr>
+          <td class="tdL">处理部门:</td>
+          <td class="tdR">{if !empty($data['solve_department'])}{$cates['department'][$data['solve_department']]['name']}{/if}</td>
+        </tr>
+        <tr>
+          <td class="tdL">处理人</td>
+          <td class="tdR">{$data['solve_name']}</td>
+        </tr>
+      </table>
+      <div style="margin-top:20px"></div>
+    </div>
+    <!--{if $data['status']==3}-->
+    <div class="botline">信访人的评价:<span>
+    <!--{if $isposter && !$data['comment']}-->
+    <a href="javascript:;" onclick="dialog.show()">还没评价,点击这里进行评价</a>
+    <script type="text/javascript">
+    var dialog = new P8_Dialog({
+    	title_text: '评价',
+    	button: true,
+    	zIndex:10000,
+    	width: 400,
+    	height: 180,
+    	ok:function(){
+    		$('#common_form').submit();
+    	}
+    });
+    shtml ='<form id="common_form" action="" method="post"><input type="hidden" name="id" value="{$data[id]}" /><input type="hidden" name="snumber" value="{$data[code]}" /><div style="padding:10px">你对本次信访的评价是：<!--{foreach $comments $ck $com}-->&nbsp;<input type="radio" name="common" value="$ck"/>$com<!--{/foreach}--></div></form>';
+    dialog.content.html(shtml);
+
+    </script>
+    <!--{elseif !$data['comment']}-->
+    还没评价
+    <!--{else}-->
+    {$comments[$data['comment']]}
+    <!--{/if}-->
+    </span></div>
+    <div style="margin-top:20px"></div>
+	<!--{/if}-->
+  </div>
+</div>
+</body>
+</html>
+<!--{/php168}-->

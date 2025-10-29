@@ -1,0 +1,13 @@
+<!--{php168}-->
+<ul class="label-news63 label-news63b line-37" style="color:#454545;">
+<!--{foreach $list $value}-->
+	<li>
+		<div class="row">
+			<div class="col-md-6 col-sm-6 col-xs-12"><div class="title clam1"><span class="category"><a href="$value[category_url]" target="_blank">【$value[category_name]】</a></span><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></div></div>
+			<div class="col-md-4 col-sm-4 col-xs-4 text-center">信息发布：$value[source]</div>
+			<div class="col-md-2 col-sm-2 col-xs-4 text-center"><span class="datatime"><!--{php echo date('Y-m-d',$value['timestamp']);}--></span></div>
+		</div>
+	</li>
+<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

@@ -1,0 +1,394 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$this_system.admin_controller}-recovery"><i class="fa fa-cog"></i>系统巡检</a></li>
+						<li><a href="{$this_system.admin_controller}/category-html_manager"><i class="fa fa-cog"></i>栏目静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}/farm-list_manager"><i class="fa fa-cog"></i>菜单静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-visualization"><i class="fa fa-cog"></i>页面可视化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-publishing"><i class="fa fa-cog"></i>站点发布管理</a></li>
+						<li><a href="javascript:void(0);" onclick="cache_base_sites()"><i class="fa fa-refresh"></i>更新本站缓存 </a></li>
+						<li><a href="javascript:;" onclick="list_to_html('{$this_system->SITE}')"><i class="fa fa-refresh"></i>静态本站所有数据</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="formtable zq_list hover_table" align="center">	
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">操作流程   <div class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/zhandiankeshihua.pdf" target="_blank" style="color:#c00;font-weight:normal;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 可视化操作教程>></a></div></td>
+			</tr>
+			<tr>
+				<td class="tdL">应用场景说明</td>
+				<td class="tdR">
+					1、新建立一个网站，他首页是空的，他需要快捷调用对应的标签和内容。<br>
+					2、我们需要对首页进行可视化处理，包括横幅、内容调用、文字、图片等。<br>
+					3、我们也可以对栏目的横幅、左右的标签调用。<br>
+					4、看不到更新效果的处理方法。<br>
+
+				</td>
+			</tr>					
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">完整操作流程：</td>
+			</tr>
+			<tbody>
+			
+			<tr>
+				<td class="tdL">操作1：首页可视化</td>
+				<td class="tdR">
+					<a class="open-btn" onclick="show_edit_label()" target="_blank">域名指向等基础情况的检查准备</a> 首页可视化操作;	<a href="{$RESOURCE}/attachment/jiaocheng/shouyekeshihua.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/shouyekeshihua.mp4" class="blue" target="_blank">视频教程>>  </a>									
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">操作2：栏目和专题频道可视化</td>
+				<td class="tdR">
+					<a href="{$this_system.admin_controller}/category-list" class="open-btn" target="_blank">进入栏目可视化</a>栏目或专题频道可视化;<a href="{$RESOURCE}/attachment/jiaocheng/lanmukeshihua.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/lanmukeshihua.mp4" class="blue" target="_blank">视频教程>>  </a>						
+
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">操作3：内容页可视化</td>
+				<td class="tdR">
+					<a href="{$this_system.admin_controller}/category-list" class="open-btn" target="_blank">进入内容页可视化</a>内容页可视化；<a href="{$RESOURCE}/attachment/jiaocheng/lanmukeshihua.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/lanmukeshihua.mp4" class="blue" target="_blank">视频教程>>  </a>						
+
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作4：标签的选择技巧</td>
+				<td class="tdR">
+					<a href="{$RESOURCE}/attachment/jiaocheng/biaoqianxuanzhe.pdf" class="open-btn" target="_blank">标签选择技巧教程</a> 主要是标签的说明讲解；<a href="{$RESOURCE}/attachment/jiaocheng/biaoqianxuanzhe.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/biaoqianxuanzhe.mp4" class="blue" target="_blank">视频教程>>  </a>						
+
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作5：如何根据参考网站选择标签</td>
+				<td class="tdR">
+					<a href="{$RESOURCE}/attachment/jiaocheng/biaoqiancankao.pdf" class="open-btn" target="_blank">根据参考网站选择标签教程</a> 需要和参考网站一模一样的标签方法 ；<a href="{$RESOURCE}/attachment/jiaocheng/biaoqiancankao.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/biaoqiancankao.mp4" class="blue" target="_blank">视频教程>>  </a>						
+
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作6：子站标签如何快捷批量导出</td>
+				<td class="tdR">
+					<a href="{$core.admin_controller}/core/label-list" class="open-btn" target="_blank">子站标签批量导出</a> 子站快捷批量导出标签；<a href="{$RESOURCE}/attachment/jiaocheng/biaoqiandaochu.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/biaoqiandaochu.mp4" class="blue" target="_blank">视频教程>>  </a>						
+
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作7：子站批量导入标签</td>
+				<td class="tdR">
+					<a href="{$core.admin_controller}/core/label-list" class="open-btn" target="_blank">子站批量导入标签</a> 子站快捷批量导入标签，无需逐个手工处理；<a href="{$RESOURCE}/attachment/jiaocheng/biaoqiandaoru.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/biaoqiandaoru.mp4" class="blue" target="_blank">视频教程>>  </a>						
+
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作8：缓存和静态本站点所有内容</td>
+				<td class="tdR">
+					<a href="{$core.admin_controller}/sites-mysites_cache" class="open-btn" target="_blank">进入首页和栏目静态入口</a>  更新缓存和静态本站内容；<a href="{$RESOURCE}/attachment/jiaocheng/jingtaiquanzhan.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/jingtaiquanzhan.mp4" class="blue" target="_blank">视频教程>>  </a>						
+
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作9：看不到效果的处理方法 </td>
+				<td class="tdR">
+					<a href="{$core.admin_controller}/sites-mysites_cache" class="open-btn" target="_blank">重新看到效果的教程</a> 看不到效果时候的处理方法；<a href="{$RESOURCE}/attachment/jiaocheng/liulanqi.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/liulanqi.mp4" class="blue" target="_blank">视频教程>>  </a>						
+
+				</td>
+			</tr>
+			</tbody>
+		
+		</table>
+	</div>
+</div>
+<form action="" method="post" id="reflash" target="__reflash_statistic__">
+	<input type="hidden" name="type" value="rebuild" id="reflash_type" />
+	<input type="hidden" name="system" value="sites" />	
+	<input type="hidden" name="site" value="{$this_system->SITE}" />	
+</form>
+<iframe style="display: none;" name="__reflash_statistic__"></iframe>
+<form action="$this_router-list?site={$this_system->SITE}" method="post" id="form">
+<input type="hidden" name="action" value="" />
+</form>
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend style="font-size:14px;">列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+
+<fieldset class="field" id="shower2">
+	<legend style="font-size:14px;">内容页</legend>
+	<iframe name="shower2" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+
+<form id="list_to_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<form id="view_to_html" action="{$this_system.admin_controller}/item-view_to_html" method="post" target="shower2"></form>
+<form id="list_only_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<script type="text/javascript">
+var url = window.location.href;
+index = url.indexOf("flag");
+if(index !=-1) html_index();
+function show_edit_label(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+function site_reflash(site){
+	//更新标签缓存  更新魔板缓存   静态首页   静态最近10天的内容
+	var cache_data = ['template','label'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'更新中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			//静态首页
+			html_index();
+			//静态最近10天的内容
+			view_to_html(10);
+			html_dialog.hide();
+			p8_window.alert('操作成功');
+		}
+	});	
+}
+function cache_site(site){
+	var cache_data = ['farm','template','label','manu','model','category','menu_custom'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});
+}
+function list_to_html(site){
+	$('#list_to_html').empty();
+	$('#view_to_html').empty();	
+	var pages = 0;
+	var items = -1;
+	
+	$('#list_to_html').append($('<input type="hidden" name="pages" value="'+ pages +'" />'));
+	$('#list_to_html').submit();	
+	html_dialog.show();	
+	$('#view_to_html').append($('<input type="hidden" name="items" value="'+ items +'" />'));
+	$('#view_to_html').submit();
+	if(!site) return false;
+	$.ajax({
+			url:'{$this_system.admin_controller}-index_to_html',
+			type: 'post',
+			dataType: 'json',
+			data: ajax_parameters({site:site}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({'text':'处理中…'});
+			},
+			success: function(msg){
+				ajaxing({action: 'hide'});
+				if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态首页');
+				}else{
+					//p8_window.alert('静态成功！');
+				}
+		   }
+	});
+}
+function view_to_html(time){
+	$('#view_to_html').empty();
+	if(time){
+		var _obj = new Date(<!--{php echo P8_TIME;}-->000);
+		var _Y = _obj.getFullYear();
+		var _m = _obj.getMonth() +1;
+		var _d = _obj.getDate();
+		var _H = _obj.getHours();
+		var _j = _obj.getDay();
+		var time1 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d -30, _Y));
+		var time2 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time1 +'" />'));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time2 +'" />'));
+	}
+	$('#view_to_html').submit();
+	html_dialog.show();
+}
+function sites_html_index(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[sites_site_select]}');
+			return;
+		}
+	}
+	$("#form").attr("action", "{$this_system.admin_controller}-index_to_html");
+	$('#form').submit();
+}
+
+function html_index(thisSite){
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_system.admin_controller}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   success: function(msg){
+			   if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				}else if(msg==-2){
+					p8_window.alert('静态首页锁定中，请10秒后操作！');
+				}else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	})	
+}
+
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 400,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+function change_cache(){
+	if($('#check_all_cache').prop('checked')){
+		$('#cache_form').find('input[type=checkbox]').prop('checked','checked');
+	}else{
+		$('#cache_form').find('input[type=checkbox]').prop('checked',false);
+	}
+}
+function cache_base_sites(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({text:'操作成功！',action: 'hide'});
+				}
+			});
+		}else{
+			return false;
+		}
+	});	
+}
+
+function show_edit_label(){
+	thisSite = '{$this_system->SITE}';
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+function do_cache(cache_type){		
+	$('#cache_type').val(cache_type);
+	ajaxing({'text':'处理中…'});
+	$('#cache').submit();	
+}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var values = cs.get_value();
+		$('#option_category').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$this_system.controller}/category-json',
+	values: $('#option_category').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

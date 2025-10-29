@@ -1,0 +1,208 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<div class="list_box mtop20">
+	<div class="head">				
+		<span $class[1]><a href="$this_router-verify_first?verified=1">已终审</a></span>
+		<span $class[0]><a href="$this_router-verify_first?verified=0">待初审</a></span>		
+		<span $class[2]><a href="$this_router-verify_first?verified=2">已初审</a></span>		
+		<span $class[99]><a href="$this_router-verify_first?verified=-99">未通过</a></span>
+		<a class="sendmsg_link_bg" href="$this_router-add">发布文章</a>
+		<div class="search">
+			<form action="$this_url" method="get" id="request">
+				<input type="hidden" name="verified" value="{$verified}" />
+				<input type="hidden" name="cid" value="{$cid}" />
+				<select onchange="$('#cond').attr('name', this.value);">
+					<option value="keyword">{$P8LANG['cms_item']['search_by_keyword']}</option>
+					<option value="id"{if !empty($id)} selected{/if}>{$P8LANG['cms_item']['search_by_id']}</option>
+					<option value="username"{if !empty($username)} selected{/if}>按作者</option>
+					<option value="verifier">按审核人</option>
+				</select>
+				<input type="text" class="txt" id="cond" size="8" {if !empty($keyword)} name="word" value="$keyword"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{elseif !empty($username)}name="username" value="$username"{else} name="word"{/if} />
+				<input type="submit" value="{$P8LANG['search']}" />
+			</form>
+		</div>
+	</div>
+</div>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+	<tr class="head">
+		<td>ID</td>
+		<td>标题</td>
+		<td>栏目</td>
+		<td>发布时间</td>
+		<td>发布者</td>
+		<td>审核人</td>
+		<td>当前状态</td>
+		<td>操作</td>
+	</tr>
+	
+	<!--{foreach $list $k $v}-->
+	<tr id="v_$v[id]">
+		<td>$v[id]</td>
+		<td class="al"><a href="{$core.controller}/cms/item-view-id-$v[id].shtml{if $verified != 1}?verified=0{/if}" title="{if $v['verified']!=0 && $v['push_back_reason']}原因:{$v[push_back_reason]}{/if}" target="_blank">$v[title]</a></td>
+		<td>
+			<a href="{$this_url}?cid=$v[cid]&verified=$verified" >{$category.categories[$v['cid']]['name']}</a>
+		</td>
+		<td width="60"><!--{php echo date('m-d', $v['timestamp']);}--></td>
+		<td>$v[username]{if $v['name']}({$v[name]}){/if}</td>
+		<td>$v[verifier]</td>
+		<td>
+            <a id="verify_{$v['id']}" href="javascript:void(0)" title="{if $v['verified']!=0 && $v['push_back_reason']}原因:{$v[push_back_reason]}{else}点击审核{/if}"  onclick="verify_item({$v['id']}, {$v['verified']})">
+            <span style="font-weight:700;color:blue;">
+			<!--{if $v['verified']==0}-->未审
+			<!--{elseif $v['verified']==1}-->终审
+			<!--{elseif $v['verified']==2}-->已初审
+			<!--{elseif $v['verified']==88}-->回收站
+			<!--{elseif $v['verified']==77}-->草稿箱
+			<!--{else}-->被退稿<!--{/if}--></span>
+            </a>
+		</td>
+		<td>
+			<a href="javascript:void(0)" title="点击初审" onclick="myverify($v[id],2)">通过初审</a> /
+			<a href="{$core.controller}/cms/item-view-id-$v[id].shtml{if $verified != 1}?verified=0{/if}" target="_blank">查看</a> /
+			<!--{if $allow_verify_frame}-->
+			<a href="{$core.controller}/cms/item-view_frame-id-$v[id]{if $verified != 1}?verified=0{/if}" target="_blank">审核图</a> / 
+			<!--{/if}-->
+			<!--{if $verified<2}-->
+			<a href="$this_router-addon?model=$v[model]&iid=$v[id]&verified=$verified" target="_blank">追加</a> /
+			<!--{/if}-->
+			<a href="$this_router-update?model=$v[model]&id=$v[id]&verified=$verified" target="_blank">修改</a>
+			<a href="$this_router-delete?model=$v[model]&id=$v[id]&verified=$verified" onclick="delete_item($v[id]);return false;">删除</a>
+		</td>
+	</tr>
+	<!--{/foreach}-->
+	
+	<tr>
+		<td align="center" colspan="8" class="pages">
+			$pages
+		</td>
+	</tr>
+</table>
+<script type="text/javascript">
+	function request_item(page){
+		$.ajax({
+			url: '{$this_url}',
+			type: 'GET',
+			dataType: 'html',
+			data: '',
+			cache: false,
+			success: function(json){
+				window.open("{$this_url}?cid={$cid}&verified={$verified}&username={$username}&verifier={$verifier}&page="+page+"&word={$word}","_self");
+			}
+		});
+	}
+    function myverify(id,value){
+        p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+			if(r){	
+				var verified=$verified;
+				$.ajax({
+					type:'POST',
+					url	: '{$this_url}',
+					dataType: 'json',
+					data :ajax_parameters({id: id, value: value,verified:verified}),
+					beforeSend: function(){
+						ajaxing({});
+					},
+					success:function(json){
+						ajaxing({action: 'hide'});
+						if(json){
+							p8_window.alert('{$P8LANG['done']},ID:'+json);
+							for(var i in json){
+								$('#v_'+ json[i]).remove();
+							}
+						}
+						else{ p8_window.alert('{$P8LANG['fail']}');}
+					}
+				});
+			}
+		});
+    }
+    var verifiedd = $verified,
+        verify_item_id = [];
+
+    var verify_html = '';
+    <!--{foreach $this_module->CONFIG['verify_acl'] $status $v}-->
+    <!--{if $status != 1}-->
+    verify_html += '<span><input type="radio" id="verify$status" name="value" value="$status" /><label for="verify$status">$v[name]</label> </span>';
+    <!--{/if}-->
+    <!--{/foreach}-->
+    verify_html += '<fieldset><legend>{$P8LANG['cms_item']['verify']['reason']}</legend><textarea rows="5" cols="60"></textarea></fieldset>';
+
+    function verify_item(verify_item_id, verified){
+        if(!verify_item_id) return false;
+
+        var verify_dialog = new P8_Dialog({
+            title_text: '{$P8LANG['verify']}',
+            width: 550,
+            height: 230,
+            button: true,
+            ok: function(){
+                var value = this.content.find('input[name=value]:checked').val();
+                var reason = this.content.find('textarea').val();
+
+                $.ajax({
+                    url: '{$this_url}',
+                    type: 'POST',
+                    dataType: 'json',
+                    cache: false,
+                    data: ajax_parameters({id: verify_item_id, value: value, verified: verified, push_back_reason: reason}),
+                    beforeSend: function(){
+                        ajaxing({});
+                    },
+                    success: function(json){
+                        ajaxing({action: 'hide'});
+
+                        if(json){
+                            p8_window.alert('{$P8LANG['done']},ID:'+json);
+                            for(var i in json){
+                                $('#v_'+ json[i]).remove();
+                            }
+                        }else{
+							p8_window.alert('{$P8LANG['fail']}');
+						}
+                    }
+                });
+            },
+            show: function(){
+                this.content.html(verify_html);
+
+                this.content.find('input[type=radio][value='+verified+']').attr('checked',true);
+            }
+        });
+        verify_dialog.show();
+
+    }
+
+    function delete_item(id){
+        p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+			if(r){
+				var verified=$verified;
+				$.ajax({
+					type:'POST',
+					url	: '{$this_router}-delete',
+					dataType: 'json',
+					data :ajax_parameters({id: id,verified:verified}),
+					beforeSend: function(){
+						ajaxing({});
+					},
+					success:function(json){
+						ajaxing({action: 'hide'});
+						if(json == 'no_category_privilege'){p8_window.alert('你没进行对当前分类操作的权限');return false}
+
+						if(json){
+							p8_window.alert('{$P8LANG['done']},ID:'+json);
+							for(var i in json){
+								$('#v_'+ json[i]).remove();
+							}
+						}
+						else{ p8_window.alert('{$P8LANG['fail']}');}
+					}
+				});
+			}else{
+				return false;
+			}
+		});
+    }
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

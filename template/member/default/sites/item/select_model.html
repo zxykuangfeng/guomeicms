@@ -1,0 +1,41 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="toptitle">
+			发布信息
+		</div>
+		<div class="postfirst mtop clearfix">
+			<div class="pull-left"><span>发布流程：</span><span class="thisstep">选择模型</span>----<span class="eachstep">详细发布</span>----<span class="eachstep">发布成功</span></div>
+			<div style="float:right;background:#4CAF50;border-radius:4px;height:30px;line-height:30px;padding:0 10px;"><a href="{$this_system.siteurl}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$this_system->site['sitename']}</a></div>
+			<div class="course" style="float:right;margin:0 15px;line-height:30px;font-weight:normal;">
+				<ul class="operation-nav">
+					<li>
+						<a style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 发布教程>></a>
+						<ul class="dropdown-menu">
+							<li class="btn-color1"><a href="{$RESOURCE}/attachment/jiaocheng/zizhanfabu.pdf" target="_blank" ><i class="icon icon-ico55"></i>常用稿件教程</a></li>
+							<li class="btn-color2"><a href="{$RESOURCE}/attachment/jiaocheng/zizhandanwangye.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>单网页教程</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table" >
+			<tr class="head" style="background:#eeeeee">
+				<td>模型</td>
+				<td>发布</td>
+			</tr>
+			<!--{foreach $models $k $v}-->	
+			<tr>
+				<td><strong>{$v['alias']}</strong></td>
+				<td><a href="$this_router-add?model=$k&site={$this_system.SITE}" target="_blank" class="fabu">发布</a></td>
+			</tr>
+			<!--{/foreach}-->
+		</table>
+	</div>
+</div>
+
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

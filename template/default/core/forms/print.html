@@ -1,0 +1,294 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<title>{$TITLE}_生成/打印PDF</title>
+<link rel="Shortcut Icon" href="favicon.ico">
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap2.min.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/forms/print.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/breakpoints.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jQuery.print.min.js"></script>
+<style>
+@media print {  
+    /* 隐藏不需要打印的元素 */  
+    .no-print {  
+        display: none;  
+    }  
+  
+    /* 隐藏浏览器的默认页眉和页脚（这取决于浏览器的支持程度） */  
+    @page {  
+        margin: 0mm; /* 这将移除默认的边距，可能也移除了页眉和页脚的空间 */  
+    }
+}
+</style>
+</head>
+<body>
+<div class="forms-fluid" id="step_0">
+	<div class="container-fluid">
+		<div class="row">			
+			<div class="forms-button forms-button3 no-print print_all">
+				<button class="btn btn1" onClick="print_download_pdf(0,'{$TITLE}')"> 生成/打印全部PDF </button>
+			</div>
+			<div class="col-md-12 col-sm-12 col-xs-12 col-content">
+				<div class="forms-content">
+					<div class="apply_no">{if $data['apply_no']}编号：{$data['apply_no']}{/if}</div>
+					<h2 class="title">$this_model[alias]</h2>
+					<div class="forms-section content" style="padding:0;">
+						<!--复杂布局开始-->
+						<!--分步填写开始-->
+						<!--{php $fieldset_step = 0;}-->
+						<!--{foreach $this_model['CONFIG']['parts'] $pk $pd}-->				
+						<!--{php $fieldset_step++;}-->
+						<div id="step_{$fieldset_step}" class="p8_form_step_post">
+						<table cellspacing="0" cellpadding="0" width="100%" class="forms-tabel-list2">
+								<!--{if empty($pd['hide'])}-->
+								<tr>
+									<td class="head"><b class="part_name">{$fieldset_step}.{$pd[name]}</b> <span class="forms-button forms-button3 no-print" style="float:right;padding:0;margin:0;"><button class="btn btn1" onClick="print_download_pdf({$fieldset_step},'{$TITLE}_{$pd[name]}')"> 生成/打印本小节PDF </button></span></td>
+								</tr>
+								<!--{/if}-->
+								<tr>
+									<td>
+										<table width="100%"  cellpadding="0" cellspacing="0" class="bm_middle">
+											<tr>
+												<!--{php $tdwidth = 100/$pd['row'].'%'; for($i=1;$i<=$pd['row'];$i++){ $tdid = "$pk-$i";}-->
+												<td id="$pk-$i" width="$tdwidth" valign="top" class="bm_td">
+													<table width="100%" border="0"  cellpadding="5" cellspacing="0">
+														<!--{foreach $this_model['parts'][$tdid] $fid $field}-->
+														<!--{php
+															if(in_array($field,array('study_plan','apply_no'))) continue;
+															if(in_array($field,$unprint)) continue;
+															$field_data = $this_model['fields'][$field];
+															
+															$__name = '';
+															
+															switch($field_data['widget']){
+															
+															case 'checkbox': case 'multi_select':
+																$__name = '[]';
+															break;
+															case 'uploader': case 'image_uploader':
+																$__name = '[url]';
+															break;
+															case 'multi_uploader':
+																$__name = '[url][]';
+															break;
+															
+															}
+														}-->
+														<tr>
+															<td class="tdL">{$field_data['alias']}</td>
+															<td class="tdR">
+																<!--{php
+																switch($field_data['widget']){
+																	case 'text': case 'textarea': case 'editor': case 'editor_basic': case 'editor_basic'://字段输入方式为：输入杠、文本、编辑器
+															}-->
+																	$data[$field]
+																	<!--{php
+																	break;
+																	case 'photo_uploader':
+															}-->
+																	<img width="120" height="144" onError="this.src='{$RESOURCE}/images/nomenpic.gif'" src="{if empty($data[$field])}{$RESOURCE}/images/nomenpic.gif{else}$data[$field]{/if}" />
+																	<!--{php
+																	break;
+																	case 'checkbox': case 'multi_select':
+																	foreach($v['data'] as $value => $key){								
+															}-->
+																			<input type="checkbox" {if in_array($value, $data[$field])} checked{else} disabled="true" {/if} /> <!--{php echo is_array($key) ? $key[0] : $key;}-->
+																	<!--{php								
+																		}
+																	break;
+																	
+																	case 'select': case 'radio'://字段输入方式为：单选
+																		foreach($field_data['data'] as $value => $key){
+																			if($value == $data[$field]){
+															}-->
+																	<!--{php echo is_array($key) ? $key[0] : $key;}-->
+																	<!--{php
+																				break;
+																			}
+																		}
+																	break;
+																	
+																	case 'uploader'://字段输入方式为：上传器
+															}-->
+																	<a href="{$data[$field]['url']}" target="_blank">{$data[$field]['title']}</a>
+																	<!--{php
+																	break;
+																	case 'ueditor_basic'://字段输入方式为：上传器
+															}-->
+																	<a href="{$data[$field]}" target="_blank">{$data[$field]}</a>
+																	<!--{php
+																	break;
+																	case 'image_uploader'://字段输入方式为：图片上传器
+															}-->
+																	<span class="mbottom"> <a href="{$data[$field]['url']}" target="_blank"><img src="{$data[$field]['thumb']}" /></a> </span>
+																	<!--{php
+																	break;
+																	
+																	case 'multi_uploader'://字段输入方式为：多上传器
+																	foreach($data[$field] as $vv){
+																	if(preg_match("/[.+](jpg|jpeg|gif|png|bmp)$/i",$vv['url'])){
+																		}-->
+																	<span class="mbottom"> <a href="$vv[url]" target="_blank"><img src="$vv[thumb]" /></a> </span><br/>
+																	<!--{php
+																		}else{
+																		}-->
+																	<div class="mbottom">
+																		<a href="$vv[url]" target="_blank">{$vv['title']}</a>
+																	</div>
+																	<!--{php
+																		}
+																	}	
+																	break;
+																	case 'multi_edu'://字段输入方式为：多上传器
+																		include template($core, 'widget/multi_edu_view', 'default');
+																	break;
+																	case 'multi_family'://字段输入方式为：多上传器
+																		include template($core, 'widget/multi_family_view', 'default');
+																	break;
+																	case 'multi_employ'://字段输入方式为：多上传器
+																		include template($core, 'widget/multi_employ_view', 'default');
+																	break;
+																	case 'video_uploader'://字段输入方式为：视频上传器
+															}-->
+																	<div>
+																		<script type="text/javascript" src="{$RESOURCE}/js/media.js"></script>
+																		<!--{if !empty($data[$field])}-->
+																		<script type="text/javascript">
+																		showMedia({
+																			url: '$data[video_url]',
+																			width: 550,
+																			height: 400
+																		});
+																		</script>
+																		<!--{/if}-->
+																	</div>
+																	<!--{php
+																	break;
+																	
+																case 'city'://城市选择
+																
+																
+															}-->
+															$data[$field]
+																	
+																	<!--{php
+																break;
+																case 'link'://超链接
+															}-->
+															<a href="$data[$field]" target="{if !empty($field_data['data']['target'])}{$field_data['data']['target']}{/if}">$data[$field]</a>
+																	
+																	<!--{php
+																break;
+																case 'linkage'://多级联动
+															}-->
+																<!--{php $split='';}-->
+																<!--{foreach $data[$field] $k=>$vl}-->
+																	{$split}{$vl}
+																<!--{php $split='&nbsp;&gt;&nbsp;';}-->
+																<!--{/foreach}-->	
+																	<!--{php
+																break;
+																	default://其它输入方式
+															}-->
+																	$data[$field]
+																	<!--{php
+																}
+															}-->															
+															</td>
+														</tr>														
+														<!--{/foreach}-->
+													</table>
+												</td>
+												<!--{php }}-->
+											</tr>														
+										</table>
+									</td>
+								</tr>
+								<!-- 学习计划 -->
+								<!--{if $fieldset_step == 3}-->	
+								<tr>
+									<td class="head"><b class="part_name">学习计划</b></td>
+								</tr>
+								<tr>
+									<td>
+										<table width="100%"  cellpadding="0" cellspacing="0" class="bm_middle">
+											<td width="50%" valign="top">
+												<table width="100%" border="0"  cellpadding="5" cellspacing="0">
+													<tr>
+														<td class="tdL">Study Plan Name</td>
+														<td class="tdR study_items" id="study_name">{$study_plan[name]}</td>
+													</tr>
+													<tr>
+														<td class="tdL">Major</td>
+														<td class="tdR study_items" id="study_major">{$study_plan[major]}</td>
+													</tr>
+													<tr>
+														<td class="tdL">Duration From To</td>
+														<td class="tdR study_items" id="study_duration">{$study_plan[duration]}</td>
+													</tr>
+												</table>																
+											</td>
+											<td width="50%" valign="top">
+												<table width="100%" border="0"  cellpadding="5" cellspacing="0">
+													<tr>
+														<td class="tdL">Department</td>
+														<td class="tdR study_items" id="study_department">{$study_plan[department]}</td>
+													</tr>
+													<tr>
+														<td class="tdL">Area of Research</td>
+														<td class="tdR study_items" id="study_research">{$study_plan[research]}</td>
+													</tr>
+													<tr>
+														<td class="tdL">years</td>
+														<td class="tdR study_items" id="study_years">{$study_plan[years]}</td>
+													</tr>
+												</table>																
+											</td>														
+										</table>											
+									</td>
+								</tr>								
+								<!--{/if}-->
+								<!-- 学习计划 -->								
+							</table>													
+						</div>							
+						<!--{/foreach}-->
+						<!--分步填写结束-->
+						<!--复杂布局结束-->						
+					</div>				
+				</div>
+			</div>
+			<div class="forms-button forms-button3 no-print" style="text-align:center;padding:0;margin:20px 0;"><button class="btn btn1" onClick="print_download_pdf(0,'{$TITLE}')"> 生成全部PDF/打印全部 </button></div>			
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+function print_download_pdf(step,print_title) {
+	$("#step_"+step).print({
+        	globalStyles: true,
+        	mediaPrint: false,
+        	stylesheet: null,
+        	noPrintSelector: ".no-print",
+        	iframe: true,
+        	append: null,
+        	prepend: null,
+        	manuallyCopyFormValues: true,
+        	deferred: $.Deferred(),
+        	timeout: 750,
+        	title: print_title,
+			showHeaderFooter: false,
+        	doctype: '<!doctype html>'
+	});
+}
+</script>
+</body>
+</html>
+<!--{/php168}-->

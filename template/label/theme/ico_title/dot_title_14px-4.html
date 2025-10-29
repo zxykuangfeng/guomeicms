@@ -1,0 +1,9 @@
+<!--{php168}-->
+<ul class="themelist4" style="font-size:14px;">
+<!--{foreach $list $value}-->
+    <li class="title">
+       <a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a><span class="datatime"><!--{php echo date('Y-m-d', $value['timestamp']);}--></span>
+    </li>
+	<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

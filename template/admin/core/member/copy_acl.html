@@ -1,0 +1,78 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<form action="$this_url" method="POST" id="form">
+<div class="mainbox mainborder">
+	<div class="section">	
+		<table class="columntable formtable hover_table">			
+			<tr class="title">
+				<td width="3%" class="title">{$P8LANG['source_uid']}</td>
+				<td width="10%" class="title">{$P8LANG['target_user']}</td>
+			</tr>
+			
+			<tr>
+				<td width="50%" align="center">
+					<b>来源用户ID：$member_info[id]<br/>
+					来源用户名：$member_info[username]<br/>
+					{if $member_info['name']}来源用户中文名(名称)：$member_info[name]{/if}<br/>
+					</b></td>
+				<td  width="50%">
+					<ul id="tar_user" class="manager_ids">					
+					</ul>
+					<input type="button" value="选择用户" onclick="show_dialog('tar_user')"/>
+					
+				</td>
+			</tr>						
+		</table>
+		<table align="center" border="0" cellpadding="0" cellspacing="0" class="buttomtable">
+			<tr><td class="" >
+				<input type="hidden" name="id" value="{$member_info[id]}" />
+				<input type="submit" name="submit" value="确定" class="edit_btn" />
+				<input type="reset" name="rest" value="重置" class="edit_btn"/>
+			</td></tr>
+		</table>
+	</div>
+</div>
+</form>
+<script type="text/javascript">
+$('#form').validate({
+	rules: {
+		'tar_user[]': {
+			required: true,
+			minlength: 1
+		}
+	},
+	
+	messages: {
+		'tar_user[]': {
+			required: '&nbsp;'
+		}
+	}
+});
+function delete_manager(obj){
+$(obj).parent().remove();	
+}
+var cutten_item = null;
+function member_single_select_callback(checked, json){
+	$('#'+cutten_item).find("input[value="+json.id+"]").parent().remove();
+	if(checked)	$('#'+cutten_item).append('<li>'+json.username+'<input type="hidden" name="'+cutten_item+'[]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+}
+var dialog = new P8_Dialog({
+	title_text:'选择用户',
+	width: 700,
+	height: 500,
+	button: true
+});
+dialog.content.append($('<iframe width="100%" height="380" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+
+function show_dialog(item){
+	dialog.show();
+	cutten_item = item;
+	var ifr = dialog.content.find('iframe');
+	var check_uids = {};
+	$('#'+cutten_item).find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+	ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

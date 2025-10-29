@@ -1,0 +1,2488 @@
+<?php
+defined('PHP168_PATH') or die();
+?>
+<?php
+print <<<EOT
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>系统后台管理平台</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1" />
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" href="{$RESOURCE}/skin/admin/style.css" type="text/css">
+<link rel="stylesheet" href="{$AWESOME}/skin/default/core/awesome4.7.0/css/font-awesome.min.css" type="text/css">
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core->CONFIG['lang']}.js"></script>
+EOT;
+if($SYSTEM != 'core'){
+print <<<EOT
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core->CONFIG['lang']}.js"></script>
+EOT;
+}
+print <<<EOT
+
+
+<script type="text/javascript">
+P8CONFIG.admin_controller = '{$core->admin_controller}';
+var P8_ROOT = '$P8_ROOT';
+P8CONFIG.RESOURCE = '$RESOURCE';
+var SYSTEM = '$SYSTEM',
+MODULE = '$MODULE',
+ACTION = '$ACTION',
+LABEL_URL = '$LABEL_URL',
+STATIC_URL = '$STATIC_URL',
+\$this_router = '{$this_router}',
+\$this_url = \$this_router +'-'+ ACTION,
+SKIN = '$SKIN',
+TEMPLATE = '$TEMPLATE';
+mobile_status= '{$core->CONFIG['enable_mobile']}',
+mobile_auto_jump='{$core->CONFIG['mobile_auto_jump']}',
+mobile_url = '{$core->CONFIG['murl']}';
+if(mobile_status=='1' && SYSTEM!='sites'){
+if(browser.versions.android || browser.versions.iPhone || browser.versions.iPad){
+if(mobile_auto_jump=='1' && mobile_url!=P8CONFIG.RESOURCE){
+var this_url = location.href,_pul=P8CONFIG.RESOURCE;
+if(this_url.indexOf(mobile_url)==-1 && this_url.indexOf('s.php')==-1 && this_url.indexOf('u.php')==-1 && this_url.indexOf('admin.php')==-1 && SYSTEM!='sites'){
+if(this_url.indexOf(P8CONFIG.RESOURCE+'/html')!=-1)_pul+='/html';
+if(P8CONFIG.RESOURCE==''){
+this_url = mobile_url.indexOf('http')==-1 ? this_url.mobile_url : mobile_url;
+}else{
+this_url = this_url.replace(_pul, mobile_url);
+}
+location.href = this_url;
+}
+}
+}
+}
+EOT;
+if($SYSTEM=='sites' && defined('P8_SITES')){
+$sitestatus=$core->CONFIG['url']. '/sites/html/'.$this_system->SITE.'/sitestatus.js';
+print <<<EOT
+
+include('$sitestatus'+'?_='+Math.random())
+EOT;
+}
+print <<<EOT
+
+
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+var localtionurl,localtionurltemp;
+localtionurl = String(window.location);
+if(localtionurl.indexOf("?") != 0){
+localtionurltemp = localtionurl.split("?");
+localtionurl = localtionurltemp[0];
+}
+$('.headerbtn_list li a').each(function(){  
+if($($(this))[0].href==localtionurl){  
+$(this).parent().addClass('active');  
+}     
+}); 
+}); 
+$(function () {
+$(".dropdown").mouseover(function () {
+$(this).addClass("open");
+});
+$(".dropdown").mouseleave(function(){
+$(this).removeClass("open");
+});
+});
+</script>
+</head>
+<body><div class="mainbox mainborder">
+<div class="section">
+<table class="formtable">
+<tr>
+<td class="headerbtn_list">
+<ul>
+<li class="li2"><a href="{$core->admin_controller}/$SYSTEM/item-list" class="btn2"><i class="fa fa-list-ul"></i>{$P8LANG['cms_manage']}</a></li>
+<li class="li5"><a href="{$core->admin_controller}/$SYSTEM/category-list" class="btn5"><i class="fa fa-sitemap"></i>{$P8LANG['cms_list_manage']}</a></li>						
+<li class="li3"><a href="{$core->admin_controller}/$SYSTEM/item-comment" class="btn2"><i class="fa fa-list-ul"></i>{$P8LANG['cms_comment']}</a></li>					
+<li class="li4"><a href="{$core->admin_controller}/$SYSTEM/category-recycle_list" class="btn4"><i class="fa fa-bitbucket"></i>{$P8LANG['cms_recycle_manage']}</a></li>
+<li class="li5"><a href="{$core->admin_controller}/$SYSTEM/item-config" class="btn4"><i class="fa fa-cog"></i>{$P8LANG['cms_item_config']}</a></li>	
+<li class="li6"><a href="{$core->admin_controller}/core-navigation_menu_list" class="btn4" target="_blank"><i class="fa fa-cog"></i>菜单设置</a></li>	
+EOT;
+if($ACTION == 'list_addon'){
+print <<<EOT
+
+<li><a href="$this_router-addon?model=$MODEL&iid=$data[id]
+EOT;
+if(isset($verified)){
+print <<<EOT
+&verified=$verified
+EOT;
+}
+print <<<EOT
+"><i class="fa fa-plus-square"></i>{$P8LANG['cms_item']['addon']}</a></li>
+EOT;
+}
+print <<<EOT
+						
+</ul>
+</td>
+</tr>
+</table>
+</div>
+</div>
+EOT;
+isset($MODEL) || $MODEL = '';
+print <<<EOT
+
+
+<script type="text/javascript" src="{$RESOURCE}/js/jq_tabs.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/iColorPicker.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<link rel="stylesheet" href="{$SKIN}/{$SYSTEM}/category_selector.css" type="text/css" />
+<style type="text/css">
+body, html{overflow:inherit;}
+#iColorPicker{top:310px !important;left: auto !important;right:120px !important;}
+.member-center{position:absolute;top:10px;right:10px;}
+.member-center a{color:#3472ef !important;}
+.edui-default .edui-editor,.edui-default .edui-editor-iframeholder{width:auto !important;max-width:100% !important;}
+</style>
+<script type="text/javascript">
+var MODEL = '$MODEL';
+var form_submit = false;
+EOT;
+if(!empty($this_model['CONFIG']['content_thumb_width'])){
+print <<<EOT
+P8CONFIG.cthumb_width = {$this_model['CONFIG']['content_thumb_width']};
+EOT;
+}
+if(!empty($this_model['CONFIG']['content_thumb_height'])){
+print <<<EOT
+P8CONFIG.cthumb_height = {$this_model['CONFIG']['content_thumb_height']};
+EOT;
+}
+print <<<EOT
+
+
+window.onbeforeunload = function(){
+P8_Upload.del(form_submit);
+};
+
+$(function(){	
+$('#form').validate({
+rules: {
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+title: {
+required: true,
+maxlength: 250
+},
+
+summary: {
+maxlength: 500
+},
+EOT;
+if(!empty($this_module->CONFIG['source_required'])){
+print <<<EOT
+
+source: {
+required: true,
+},
+EOT;
+}
+if(!empty($this_module->CONFIG['author_required'])){
+print <<<EOT
+
+author: {
+required: true,
+},
+EOT;
+}
+if(!empty($this_module->CONFIG['verify_frame_editable']) && !empty($this_module->CONFIG['verify_frame_required'])){
+print <<<EOT
+
+verify_frame: {
+required: true,
+},
+EOT;
+}
+print <<<EOT
+
+cid: {
+required: true
+},
+
+html_view_url_rule: {
+required: false,
+maxlength: 80
+}
+EOT;
+}
+print <<<EOT
+
+},
+
+messages: {
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+title: {
+required: '{$P8LANG['cms_item']['title_required']}',
+maxlength: '{$P8LANG['cms_item']['title_oversize']}',
+},
+
+summary: {
+maxlength: '{$P8LANG['cms_item']['summary_oversize']}',
+},
+cid: {
+required: '{$P8LANG['cms_item']['category_required']}'
+},
+EOT;
+if(!empty($this_module->CONFIG['source_required'])){
+print <<<EOT
+
+source: {
+required: '{$P8LANG['cms_item']['field_required']}'
+},
+EOT;
+}
+if(!empty($this_module->CONFIG['author_required'])){
+print <<<EOT
+
+author: {
+required: '{$P8LANG['cms_item']['field_required']}'
+},
+EOT;
+}
+if(!empty($this_module->CONFIG['verify_frame_editable']) && !empty($this_module->CONFIG['verify_frame_required'])){
+print <<<EOT
+
+verify_frame: {
+required: '{$P8LANG['sites_item']['field_required']}'
+},
+EOT;
+}
+print <<<EOT
+
+html_view_url_rule: {
+maxlength: '{$P8LANG['cms_item']['html_view_url_rule_oversize']}'
+}
+EOT;
+}
+print <<<EOT
+
+},
+
+errorPlacement: function(error, element) {
+ajaxing({action: 'hide'});
+if(element.parent().prop('tagName').toLowerCase() == 'td')
+error.wrap('<div></div>').appendTo(element.parent().prev());
+else
+error.wrap('<div></div>').appendTo(element.parent().parent().prev());
+},
+ignore: "",
+wrapper: 'div',
+
+submitHandler: function(){
+form_submit = false;
+$.post('{$this_url}', 'ajax_check_contnet=1&'+$('#form').serialize(),function(result){
+if(result=='ajax_check_contnet_success'){
+form_submit = true;
+ajaxing({'text':'{$P8LANG[running]}'});
+$('#form').get(0).submit();
+}else{
+ajaxing({action: 'hide'});
+p8_window.alert(result);
+//var ddd = new P8_Dialog({title_text:'提示'});
+//$(ddd.content).html('<div style="text-align:center;margin-top:20px;">'+result+'</div>'); ddd.show();
+}
+});
+return false;
+},
+
+onkeyup: false
+});
+});
+</script>
+<form action="$this_url" method="post" id="form">
+<div class="mainbox mainborder">
+<div class="section">
+<div class="section-operation2 clearfix">
+<h3 class="pull-left">操作说明：<span class="operation-text">上传文章时候，如果包括图片，那么图片不能大于3M；如果包括视频，视频转码为MP4格式，大小不超过200M。</span></h3>
+<div class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/zhuzhanfabu.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 发布教程>></a></div>	
+</div>
+</div>
+</div>
+<div class="mainbox mainborder clearfix">
+<div class="mainbox-left">
+<div class="section">
+<table class="columntable formtable">
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+<tr>
+<td id="tabs" style="border-bottom:0;line-height:inherit;position:relative;">
+<ul class="boxmenu2 mtop but_border">
+<li class="bm2_over" id="tab_1"><a class="bm_l btn-color1"><i class="icon icon-ico52"></i>基本信息</a></li>
+<li class="bm2_out" id="tab_2"><a class="bm_l btn-color15"><i class="icon icon-ico53"></i>其它设置</a></li>
+</ul>
+<div class="member-center">
+<a href="javascript:void(0)" onclick="get_drafts()">调用草稿箱>></a> &nbsp;&nbsp;
+<a href="{$core->U_controller}/cms/item-add" target="_blank">会员中心发布>></a>
+</div>
+</td>
+</tr>
+EOT;
+}
+print <<<EOT
+
+<tr class="head fix-head">
+<td style="border-bottom:0;">
+<div class="title2">
+EOT;
+if($ACTION == 'add' || $ACTION == 'addon'){
+print <<<EOT
+
+{$P8LANG['cms_item']['add']} 
+EOT;
+if($ACTION == 'addon'){
+print <<<EOT
+ - <span>$data[title]</span>
+EOT;
+}
+}elseif($ACTION == 'update' || $ACTION == 'update_addon'){
+print <<<EOT
+
+{$P8LANG['cms_item']['update']} - <span>$data[title]</span>
+EOT;
+}
+print <<<EOT
+
+</div>
+</td>
+</tr>
+<tr>
+<td>
+<fieldset>
+<table class="content-table" id="tabs-1">
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+<tr>
+<td class="tdL" width="15%">{$P8LANG['cms_item']['category']} <font color="red">*</font></td>
+<td class="tdR" width="85%">
+<span id="cids"></span>
+<input type="button" value="{$P8LANG['select_category']}" onclick="dialog.show()" class="browse_btn"/>
+<input type="hidden" name="cid" value="
+EOT;
+if(isset($data['cid'])){
+print <<<EOT
+$data[cid]
+EOT;
+}
+print <<<EOT
+" />
+<input type="hidden" id="cid" />
+</td>
+</tr>
+<tr>
+<td class="tdL">{$P8LANG['title']} <font color="red">*</font></td>
+<td class="tdR">
+<input type="text" class="txt" name="title"  value="
+EOT;
+if(!empty($data['title'])){
+print <<<EOT
+{$data['title']}
+EOT;
+}
+print <<<EOT
+" size="60" />
+&nbsp;&nbsp;&nbsp;&nbsp;
+EOT;
+if($allow_create_time){
+print <<<EOT
+
+修改{$P8LANG['cms_item']['create_time']}&nbsp;&nbsp;<input type="text" name="timestamp" class="txt" value="
+EOT;
+if(isset($data['timestamp_date'])){
+print <<<EOT
+$data[timestamp_date]
+EOT;
+}
+print <<<EOT
+" autocomplete="off" onclick="rcalendar(this, 'full')" style="font-size:12px;"/>
+<input type="checkbox" name="create_time_release" id="create_time_release" onclick="check_item_post_release()" value="1"
+EOT;
+if(!empty($data['create_time_release'])){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+ /><label for="create_time_release">{$P8LANG['cms_item']['create_time_release']}</label>
+&nbsp;&nbsp;{$P8LANG['cms_item']['list_order']['']}
+&nbsp;&nbsp;<input type="text" name="list_order" class="txt"  value="
+EOT;
+if(isset($data['list_order_date'])){
+print <<<EOT
+$data[list_order_date]
+EOT;
+}
+print <<<EOT
+" autocomplete="off" onclick="rcalendar(this, 'full')" />
+<span class="help">{$P8LANG['cms_item']['list_order']['note']}</span>
+EOT;
+}
+print <<<EOT
+
+</td>
+</tr>
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['sub_title']}</td>
+<td class="tdR">
+<input type="text" class="txt" name="sub_title"  value="
+EOT;
+if(!empty($data['sub_title'])){
+print <<<EOT
+{$data['sub_title']}
+EOT;
+}
+print <<<EOT
+" size="60" />
+</td>
+</tr>
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['author']} 
+EOT;
+if(!empty($this_module->CONFIG['author_required'])){
+print <<<EOT
+<font color="red">*</font>
+EOT;
+}
+print <<<EOT
+</td>
+<td class="tdR">
+<input type="text" name="author" class="txt"  id="author" value="
+EOT;
+if(!empty($data['author'])){
+print <<<EOT
+$data[author]
+EOT;
+}
+print <<<EOT
+" size="10" />
+<input type="text" name="author_x" class="txt"  id="author_x" value="
+EOT;
+if(!empty($data['author_x'])){
+print <<<EOT
+$data[author_x]
+EOT;
+}
+print <<<EOT
+" size="10" />
+<input type="text" name="author_y" class="txt"  id="author_y" value="
+EOT;
+if(!empty($data['author_y'])){
+print <<<EOT
+$data[author_y]
+EOT;
+}
+print <<<EOT
+" size="10" />
+<input type="text" name="author_z" class="txt"  id="author_z" value="
+EOT;
+if(!empty($data['author_z'])){
+print <<<EOT
+$data[author_z]
+EOT;
+}
+print <<<EOT
+" size="10" />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>{$P8LANG['cms_item']['editer']}</span>&nbsp;&nbsp;
+<input type="text" name="editer" class="txt"  id="editer" value="
+EOT;
+if(!empty($data['editer'])){
+print <<<EOT
+$data[editer]
+EOT;
+}
+print <<<EOT
+"/>
+</td>
+</tr>
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['source']} 
+EOT;
+if(!empty($this_module->CONFIG['source_required'])){
+print <<<EOT
+<font color="red">*</font>
+EOT;
+}
+print <<<EOT
+</td>
+<td class="tdR">
+<input type="text" class="txt" name="source" id="source" value="
+EOT;
+if(!empty($data['source'])){
+print <<<EOT
+{$data['source']}
+EOT;
+}
+print <<<EOT
+" size="60" />
+<input type="button" value="{$P8LANG['cms_item']['source_hint']}" onclick="$('#source').val('xxx|http://')" />								
+<select onchange="$('#source').val(this.value);">
+<option value="">快捷选择出处</option>
+EOT;
+$__t_foreach = @$item_config['source'];
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $source_setter){
+print <<<EOT
+
+<option value="{$source_setter['name']}
+EOT;
+if($source_setter['url']){
+print <<<EOT
+|{$source_setter['url']}
+EOT;
+}
+print <<<EOT
+">{$source_setter['name']}</option>
+EOT;
+}
+}
+
+print <<<EOT
+									
+</select>
+<a href="{$core->admin_controller}/cms/item-config#source_box" target="_blank">[设置出处]</a>
+</td>
+</tr>
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['frame']}<span id="frame_error"></span></td>
+<td class="tdR">
+<input type="text" class="txt" name="frame" id="frame"  value="
+EOT;
+if(!empty($data['frame'])){
+print <<<EOT
+{$data['frame']}
+EOT;
+}
+print <<<EOT
+" size="50" />
+<input type="button" onclick="imgdialog.choseup();" value="{$P8LANG['upload']}" />
+<input type="button" id="frame_toggle" onclick="" value="" style="display: none;" />
+<input type="text" name="thumb_width" id="thumb_width" size="3" onblur="chang_w_h()" value="
+EOT;
+if(!empty($this_model['CONFIG']['frame_thumb_width'])){
+print <<<EOT
+{$this_model['CONFIG']['frame_thumb_width']}
+EOT;
+}else{
+if($thumb_width){
+print <<<EOT
+{$thumb_width}
+EOT;
+}else{
+print <<<EOT
+100
+EOT;
+}
+}
+print <<<EOT
+" /> X <input type="text" name="thumb_height" id="thumb_height" size="3" onblur="chang_w_h()" value="
+EOT;
+if(!empty($this_model['CONFIG']['frame_thumb_height'])){
+print <<<EOT
+{$this_model['CONFIG']['frame_thumb_height']}
+EOT;
+}else{
+if($thumb_height){
+print <<<EOT
+{$thumb_height}
+EOT;
+}else{
+print <<<EOT
+100
+EOT;
+}
+}
+print <<<EOT
+" />
+(可自定义尺寸再上传) <a href="{$core->admin_controller}/cms/model-update?name={$_REQUEST['model']}" target="_blank">[设置默认值]</a>
+<a href="###" onclick="imgdialog.image_cut()">[$P8LANG[image_cut]]</a> <a href="###" onclick="if($('#frame').val()) window.open($('#frame').val());">[$P8LANG[preview]]</a> 
+<input type="checkbox" name="ignore_check" id="ignore_check" value="1" /><label for="ignore_check">大小不检测</label>
+<script type="text/javascript">								
+var frame_thumb_width = "{$this_model['CONFIG']['frame_thumb_width']}";
+var frame_thumb_height = "{$this_model['CONFIG']['frame_thumb_height']}";
+var imgdialog = new P8_Upload({
+element: {
+src: $('#frame'),
+attribute: 'value'
+},
+param: {
+return_thumb: true,
+thumb_width: $("#thumb_width").val() ? parseInt($("#thumb_width").val()) : (frame_thumb_width ? parseInt(frame_thumb_width) : 0),
+thumb_height: $("#thumb_height").val() ? parseInt($("#thumb_height").val()) : (frame_thumb_height ? parseInt(frame_thumb_height) : 0)
+}
+});
+function chang_w_h(){
+imgdialog = new P8_Upload({
+element: {
+src: $('#frame'),
+attribute: 'value'
+},
+param: {
+return_thumb: true,
+thumb_width: $("#thumb_width").val() ? parseInt($("#thumb_width").val()) : (frame_thumb_width ? parseInt(frame_thumb_width) : 0),
+thumb_height: $("#thumb_height").val() ? parseInt($("#thumb_height").val()) : (frame_thumb_height ? parseInt(frame_thumb_height) : 0)
+}
+});
+}
+</script>
+</td>
+</tr>
+
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['summary']}</td>
+<td class="tdR">
+<textarea name="summary" cols="90" rows="5">
+EOT;
+if(!empty($data['summary'])){
+print <<<EOT
+{$data['summary']}
+EOT;
+}
+print <<<EOT
+</textarea>
+</td>
+</tr>
+EOT;
+}
+print <<<EOT
+
+
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['url']}</td>
+<td class="tdR">
+<input type="text" name="url" id="url" size="60"  value="
+EOT;
+if(!empty($data['url'])){
+print <<<EOT
+$data[url]
+EOT;
+}
+print <<<EOT
+" />
+<span id="url_holder"></span>
+<script type="text/javascript">
+$(function(){
+var field_url = new P8_Upload({
+element: {
+src: $("#url"),
+attribute: 'value'
+},
+callback: function(json){},
+param: {}
+});
+
+$('<input type="button" value="上传附件" />').click(function(){
+field_url.choseup();
+}).appendTo($('#url_holder'));
+});
+</script>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+EOT;
+if($allow_set_views){
+print <<<EOT
+
+<span>{$P8LANG['cms_item']['views']}</span>&nbsp;&nbsp;
+<input type="text" name="views" id="views" class="txt"  value="
+EOT;
+if(!empty($data['views'])){
+print <<<EOT
+$data[views]
+EOT;
+}
+print <<<EOT
+"/>
+EOT;
+}
+print <<<EOT
+
+</td>
+</tr>
+EOT;
+if(!empty($this_module->CONFIG['verify_frame_editable'])){
+print <<<EOT
+
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['verify_frame']}
+EOT;
+if(!empty($this_module->CONFIG['verify_frame_required'])){
+print <<<EOT
+<font color="red">*</font>
+EOT;
+}
+print <<<EOT
+</td>
+<td class="tdR">
+<input type="text" class="txt" name="verify_frame" id="verify_frame"  value="
+EOT;
+if(!empty($data['verify_frame'])){
+print <<<EOT
+{$data['verify_frame']}
+EOT;
+}
+print <<<EOT
+" size="50" />
+<input type="button" onclick="verify_frame_uploader.choseup();" value="上传审核图 " />
+<input type="button" id="verify_frame_toggle" onclick="" value="" style="display: none;" />		
+<span>（手工审核证据图）</span>										
+<script type="text/javascript">
+var verify_frame_uploader;
+$(function(){
+verify_frame_uploader = new P8_Upload({
+element: {
+src: $('#verify_frame'),
+attribute: 'value'
+},
+param: {
+return_thumb: true
+EOT;
+if(!empty($this_model['CONFIG']['frame_thumb_width']) && !empty($this_model['CONFIG']['frame_thumb_height'])){
+print <<<EOT
+,
+thumb_width: {$this_model['CONFIG']['frame_thumb_width']},
+thumb_height: {$this_model['CONFIG']['frame_thumb_height']}
+EOT;
+}
+print <<<EOT
+
+}
+});
+});
+</script>
+</td>
+</tr>
+EOT;
+}
+print <<<EOT
+
+<tr>
+<td class="tdL">{$P8LANG['craw_article']}</td>
+<td class="tdR">
+<input name="crawByUrl" type="text" class="txt" size="80" placeholder="{$P8LANG['craw_url']}" value="{$data['crawByUrl']}"/>
+&nbsp;&nbsp;<input type="button" value="{$P8LANG['craw']}" onclick="craw_by_url()" />										
+</td>
+</tr>
+EOT;
+if($allow_filter_word){
+print <<<EOT
+
+<tr>
+<td class="tdL">{$P8LANG['filter_word_enable']}</td>
+<td class="tdR">
+<input type="checkbox" name="filter_word_enable" id="filter_word_enable" value="1" 
+EOT;
+if(!$filter_word_enabled){
+print <<<EOT
+disabled="disabled"
+EOT;
+}
+print <<<EOT
+/><label for="filter_word_enable">忽略不检测 <a href="{$core->admin_controller}/core-word_filter" target="_blank">[查看设置]</a></label> 
+EOT;
+if(!$filter_word_enabled){
+print <<<EOT
+<label style="color:blue">（本账号没开启此权限）</label>
+EOT;
+}
+print <<<EOT
+
+</td>
+</tr>
+EOT;
+}
+if($allow_content_censor){
+print <<<EOT
+
+<tr>
+<td class="tdL">{$P8LANG['content_censor_enabled']}</td>
+<td class="tdR">
+<input type="checkbox" name="content_censor_enabled" id="content_censor_enabled" 
+EOT;
+if($allow_censor_default){
+print <<<EOT
+checked="true"
+EOT;
+}
+print <<<EOT
+ value="1" 
+EOT;
+if(!$content_censor_enabled){
+print <<<EOT
+disabled="disabled"
+EOT;
+}
+print <<<EOT
+/><label for="content_censor_enabled">忽略不检测 <a href="{$core->admin_controller}/core-word_censor_config" target="_blank">[查看设置]</a></label> 
+EOT;
+if(!$content_censor_enabled){
+print <<<EOT
+<label style="color:blue">（本账号没开启此权限）</label>
+EOT;
+}
+print <<<EOT
+
+</td>
+</tr>
+EOT;
+}
+if($ACTION == 'update' || $ACTION == 'update_addon' || $ACTION == 'addon'){
+print <<<EOT
+
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['addon']}</td>
+<td class="tdR pages">
+$pages
+<input type="button" value="{$P8LANG['add']}" onclick="window.location.href = '$this_router-addon?model=$MODEL&iid=$data[iid]&verified=$verified'" />
+</td>
+</tr>
+EOT;
+}
+print <<<EOT
+
+
+<!--
+<tr>
+<td class="tdL">工具箱</td>
+<td class="tdR">
+
+<input name="" type="checkbox" value="" />是否将内容中的外部图片采集回来(网速慢时，很影响速度)<br />
+<input name="" type="checkbox" value="" />是否将内容中的超链接去除
+</td>
+</tr>
+-->
+<tr>
+<td colspan="2" class="tdR" style="padding:5px 15px;text-align:right;">
+<a href="{$RESOURCE}/attachment/jiaocheng/yijianpaiban.pdf" target="_blank" style="color:#0000ff;margin-right:15px;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon">内容一键排版>></a><a href="{$RESOURCE}/attachment/jiaocheng/zhuzhanbiaoge.pdf" target="_blank" style="color:#0000ff;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 表格编辑教程>></a><a href="{$RESOURCE}/attachment/jiaocheng/zhuzhanshujuts.pdf" target="_blank" style="color:#0000ff;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 数据推送教程>></a><a href="{$RESOURCE}/attachment/jiaocheng/bianjiqi.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 编辑器教程>></a>
+</td>
+</tr>
+EOT;
+if(empty($this_model['CONFIG']['parts'])){
+print <<<EOT
+
+<!--简单布局开始-->
+
+<!--!!foreach_widgets!!-->
+EOT;
+$__t_foreach = @$this_model['fields'];
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $field => $field_data){
+if(!$field_data['editable']) continue;
+print <<<EOT
+
+<tr>
+<td class="tdL">{$field_data['alias']} 
+EOT;
+if($field_data['not_null']){
+print <<<EOT
+<font color="red">*</font>
+EOT;
+}
+print <<<EOT
+</td>
+<td class="tdR">
+EOT;
+$__name = '';
+include template($core, 'widget/'. $field_data['widget'], 'default');
+
+switch($field_data['widget']){
+
+case 'checkbox': case 'multi_select':
+$__name = '[]';
+break;
+case 'uploader':case 'image_uploader':
+$__name = '[url]';
+break;
+case 'multi_uploader':
+$__name = '[url][]';
+break;
+
+}
+if(!empty($field_data['units'])){
+print <<<EOT
+$field_data[units]
+EOT;
+}
+if(!empty($field_data['description'])){
+print <<<EOT
+ <span class="help">$field_data[description]</span>
+EOT;
+}
+print <<<EOT
+
+</td>
+</tr>
+EOT;
+if($field_data['not_null']){
+print <<<EOT
+
+<script type="text/javascript">
+$(document).ready(function(){
+$('#form *[name="field#[$field]$__name"]').rules('add', {
+required: function(){ return !$('#url').val().length && true;},
+messages: { required: '{$P8LANG['cms_item']['field_required']}'}
+});
+});
+</script>
+EOT;
+}
+}
+}
+
+print <<<EOT
+
+<!--!!foreach_widgets!!-->						
+<!--!!widgets!!-->
+EOT;
+}else{
+print <<<EOT
+
+
+<!--复杂布局开始-->
+EOT;
+$__t_foreach = @$this_model['CONFIG']['parts'];
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $pk => $pd){
+if(empty($pd['hide'])){
+print <<<EOT
+
+<tr>
+<td class="head" colspan="2"><b class="part_name">$pd[name]</b></td>
+</tr>
+EOT;
+}
+print <<<EOT
+
+<tr>
+<td colspan="2" class="parts">
+<table width="100%"  cellpadding="0" cellspacing="0">
+<tr>
+EOT;
+$tdwidth = 100/$pd['row'].'%'; for($i=1;$i<=$pd['row'];$i++){ $tdid = "$pk-$i";
+print <<<EOT
+
+<td id="$pk-$i" width="$tdwidth" valign="top" class="parts">
+<table width="100%" border="0"  cellpadding="0" cellspacing="0">
+EOT;
+$__t_foreach = @$this_model['parts'][$tdid];
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $fid => $field){
+$field_data = $this_model['fields'][$field];
+
+$__name = '';
+
+switch($field_data['widget']){
+
+case 'checkbox': case 'multi_select':
+$__name = '[]';
+break;
+case 'uploader': case 'image_uploader':
+$__name = '[url]';
+break;
+case 'multi_uploader':
+$__name = '[url][]';
+break;
+
+}
+print <<<EOT
+
+<tr>
+<td class="tdL3">{$field_data['alias']} 
+EOT;
+if($field_data['not_null']){
+print <<<EOT
+<font color="red">*</font>
+EOT;
+}
+print <<<EOT
+</td>
+<td class="tdR">
+EOT;
+include template($core, 'widget/'. $field_data['widget'], 'default');
+if(!empty($field_data['units'])){
+print <<<EOT
+$field_data[units]
+EOT;
+}
+if(!empty($field_data['description'])){
+print <<<EOT
+ <span class="help">$field_data[description]</span>
+EOT;
+}
+print <<<EOT
+
+</td>
+</tr>													
+EOT;
+if($field_data['not_null']){
+print <<<EOT
+
+<script type="text/javascript">
+$(document).ready(function(){
+$('#form *[name="field#[$field]$__name"]').rules('add', {
+required: function(){ return !$('#url').val().length && true;},
+messages: { required: '{$P8LANG['cms_item']['field_required']}'}
+});
+});
+</script>
+EOT;
+}
+}
+}
+
+print <<<EOT
+
+</table>
+</td>
+EOT;
+}
+print <<<EOT
+
+</tr>
+</table>
+</td>
+</tr>
+EOT;
+}
+}
+}
+print <<<EOT
+
+</table>
+</fieldset>
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+<fieldset style="display:none">
+<table id="tabs-2" class="formtable">	
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['addon_title']}</td>
+<td class="tdR">
+<input type="text" name="addon_title" class="txt" size="40" value="
+EOT;
+if(isset($data['addon_title'])){
+print <<<EOT
+$data[addon_title]
+EOT;
+}
+print <<<EOT
+" />
+<span class="help">只能在内容页显示</span>
+</td>
+</tr>
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['forbidden_comment']}</td>
+<td class="tdR">
+<input type="checkbox" name="forbidden_comment" value="1"
+EOT;
+if(!isset($data['allow_comment']) && empty($this_module->CONFIG['allow_comment']) || isset($data['allow_comment']) && empty($data['allow_comment'])){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+ />
+</td>
+</tr>
+EOT;
+if($allow_verify){
+print <<<EOT
+
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['verify']['']}</td>
+<td class="tdR">
+<input type="checkbox" name="verify" value="1"
+EOT;
+if($ACTION == 'add' || $data['verified'] == 1){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+ />
+</td>
+</tr>
+EOT;
+}
+print <<<EOT
+
+
+<tr>
+<td class="tdL">{$P8LANG['cms_item']['html_view_url_rule']}</td>
+<td class="tdR">
+<input type="text" name="html_view_url_rule" class="txt"  value="
+EOT;
+if(!empty($data['html_view_url_rule'])){
+print <<<EOT
+$data[html_view_url_rule]
+EOT;
+}
+print <<<EOT
+" size="80" id="html_view_url_rule" />
+<input type="button" value="{$P8LANG['default']}" onclick="$('#html_view_url_rule').val('{\$category_url}/{\$Y}-{\$m}-{\$d}/content-{\$id}#-{\$page}#.html')" />
+<span class="help">{$P8LANG['cms_item']['view_url_rule_note']}</span>
+</td>
+</tr>
+
+<tr>
+<td class="tdL">{$P8LANG['seo_keywords']}</td>
+<td class="tdR">
+<input type="text" name="seo_keywords" class="txt" value="
+EOT;
+if(!empty($data['seo_keywords'])){
+print <<<EOT
+$data[seo_keywords]
+EOT;
+}
+print <<<EOT
+" size="80" />
+</td>
+</tr>
+
+<tr>
+<td class="tdL">{$P8LANG['seo_description']}</td>
+<td class="tdR">
+<input type="text" name="seo_description" class="txt" value="
+EOT;
+if(!empty($data['seo_description'])){
+print <<<EOT
+$data[seo_description]
+EOT;
+}
+print <<<EOT
+" size="80" />
+</td>
+</tr>
+<!--
+<tr>
+<td class="tdL">独立标签后缀</td>
+<td class="tdR">
+<input type="text" name="label_postfix" value="
+EOT;
+if(!empty($data['label_postfix'])){
+print <<<EOT
+$data[label_postfix]
+EOT;
+}
+print <<<EOT
+" size="15" />
+<input type="button" value="填充后缀" onclick="$(this).prev().val('item_$data[id]');" />
+</td>
+</tr>
+-->					
+EOT;
+if($this_model['CONFIG']['allow_custom']){
+print <<<EOT
+
+<tr>
+<td class="tdL">{$P8LANG['custom_name']} <a href="{$core->admin_controller}/cms/model-update?name=$MODEL" target="_blank">[查看设置]</a></td>
+<td class="tdR">
+<table class="formtable columntable"  width="100%">
+EOT;
+$__t_foreach = @$custom;
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $custom_item){
+$custom_enable = $custom_item.'_enabled';
+if($this_model['CONFIG'][$custom_enable]){
+print <<<EOT
+
+<tr>
+<td class="tdL">
+EOT;
+if($this_model[CONFIG][$custom_item]){
+print <<<EOT
+{$this_model['CONFIG'][$custom_item]}
+EOT;
+}else{
+print <<<EOT
+{$P8LANG[$custom_item]}
+EOT;
+}
+print <<<EOT
+</td>
+<td class="tdR">
+<input type="text" name="{$custom_item}" size="60" class="txt" id="{$custom_item}" value="
+EOT;
+if(!empty($data[$custom_item])){
+print <<<EOT
+$data[$custom_item]
+EOT;
+}
+print <<<EOT
+"/>
+<span class="help">调用字段名：{$custom_item}</span>
+</td>
+</tr>
+EOT;
+}
+}
+}
+
+print <<<EOT
+
+</table>
+</td>
+</tr>
+EOT;
+}else{
+print <<<EOT
+
+<tr>
+<td class="tdL">{$P8LANG['custom_name']}</td>
+<td class="tdR"><a href="{$core->admin_controller}/cms/model-update?name=$MODEL" target="_blank">[查看设置]</a></td>
+</tr>
+EOT;
+}
+print <<<EOT
+
+</table>
+</fieldset>
+EOT;
+}
+print <<<EOT
+
+</td>
+</tr>		
+<tr>
+<td class="tdR" align="center">
+EOT;
+if($ACTION == 'add' || $data['verified'] == 77){
+print <<<EOT
+
+<input type="button" value="{$P8LANG['drafts']}" onclick="drafts_submit(1)" class="submit_btn"/>
+<input type="button" value="{$P8LANG['publish']}" onclick="drafts_submit(0)" class="submit_btn"/>
+EOT;
+}else{
+print <<<EOT
+
+<input type="button" value="{$P8LANG['submit']}" onclick="drafts_submit(0)" class="submit_btn"/>
+EOT;
+}
+print <<<EOT
+
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="mainbox-right">
+<div class="section">
+<div class="publish-main">
+<div class="publish-tabs" id="tabs2">
+<ul>
+<li><a href="#tabs-1"><span>基本设置</span></a></li>
+<li><a href="#tabs-2"><span>浏览权限</span></a></li>
+<li><a href="#tabs-3"><span>标题属性</span></a></li>
+</ul>
+<div id="tabs-1">
+<div class="publish-form">
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+
+<div class="publish-form-title mb10">
+仅限局域网：
+</div>
+<div class="publish-form-item">
+<input type="checkbox" name="config[allow_ip][enabled]" id="allow_ip_2" value="2" 
+EOT;
+if(!empty($config['allow_ip']['enabled']) && $config['allow_ip']['enabled']==2){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+ onclick="allow_ip_local(2)"/><label for="allow_ip_2" onclick="allow_ip_local(2)">限局域网访问</label>
+</div>
+
+<div class="publish-form-title mb10">
+图片本地化：
+</div>
+<div class="publish-form-item">
+<input type="checkbox" name="capture_image" value="1" id="capture_image" />
+<label for="capture_image">保存远程图片在本地</label>
+</div>
+EOT;
+if($allow_attribute){
+print <<<EOT
+
+<div class="publish-form-title mb10">
+{$P8LANG['cms_item']['attribute']['']}：
+</div>
+<div class="publish-form-item mb10">
+EOT;
+$__t_foreach = @$this_module->attributes;
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $aid => $v){
+if(($IS_FOUNDER || !empty($this_module->CONFIG['attribute_acl'][$aid][$ROLE])) && !$this_module->CONFIG['attributes_show'][$aid]){
+if($aid>=10&&$aid<=13){
+if($ACTION != 'add' && isset($data['attributes'][$aid])){
+print <<<EOT
+
+<input type="hidden" id="attribute_$aid" name="attribute[$aid]" value="$aid"/>
+EOT;
+}
+}else{
+print <<<EOT
+
+<input type="checkbox" id="attribute_$aid" name="attribute[$aid]" value="$aid" 
+EOT;
+if(isset($data['attributes'][$aid])){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+ /><span title="
+EOT;
+if(!empty($attributes[$aid])){
+print <<<EOT
+{$attributes[$aid]['last_setter']} 于 
+EOT;
+echo date('Y-m-d H:i', $attributes[$aid]['timestamp']);
+print <<<EOT
+设置
+EOT;
+}
+print <<<EOT
+"><label for="attribute_$aid">
+EOT;
+if($this_module->CONFIG['attributes'][$aid]){
+print <<<EOT
+{$this_module->CONFIG['attributes'][$aid]}
+EOT;
+}else{
+print <<<EOT
+{$P8LANG['cms_item']['attribute'][$aid]}
+EOT;
+}
+print <<<EOT
+</label></span>&nbsp;									
+EOT;
+}
+}else{
+if(isset($data['attributes'][$aid])){
+print <<<EOT
+
+<input type="hidden" id="attribute_$aid" name="attribute[$aid]" value="$aid" />
+EOT;
+}
+}
+}
+}
+
+print <<<EOT
+
+</div>
+EOT;
+}
+if($allow_level){
+print <<<EOT
+
+<div class="publish-form-title mb10">
+{$P8LANG['cms_item']['level']}：
+</div>
+<div class="publish-form-item" style="margin-bottom:30px;">
+<div class="slider-info">
+<div class="publish-form-item2 mb10">
+<label>时效：</label>
+<input type="text" class="txt-inner3" name="level_time" value="
+EOT;
+if(isset($data['level_date']) && $data['level_date']){
+print <<<EOT
+$data[level_date]
+EOT;
+}else{
+print <<<EOT
+权重有效期
+EOT;
+}
+print <<<EOT
+" onfocus="if (value =='权重有效期'){value =''}" onblur="if (value ==''){value='不选则永久有效'}" autocomplete="off" onclick="rcalendar(this, 'full')" />
+</div>
+<p>
+内容排名：
+<select id="level" onchange="set_levels(this.value)">
+<option value="">快捷设置权重值</option>
+EOT;
+$__t_foreach = @$P8LANG['cms_item']['level_rank'];
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $k=>$v){
+if($k){
+print <<<EOT
+
+<option value="{$k}" 
+EOT;
+if($data['level']==$k){
+print <<<EOT
+selected
+EOT;
+}
+print <<<EOT
+>设置为：第{$v}名</option>
+EOT;
+}else{
+print <<<EOT
+
+<option value="{$k}" 
+EOT;
+if($data['level']==$k){
+print <<<EOT
+selected
+EOT;
+}
+print <<<EOT
+>设置为：{$v}</option>
+EOT;
+}
+}
+}
+
+print <<<EOT
+
+</select>
+</p>
+</div>
+<div class="input-group clearfix" style="margin:10px 0;display:block;">								
+<div class="slider-info" style="width:50%;float:left;">
+权重值: <span class="slider-info" id="sort-min-amount">
+EOT;
+if(!empty($data['level'])){
+print <<<EOT
+$data[level]
+EOT;
+}
+print <<<EOT
+</span>（选项优先）
+<input name="level" id="sort-name" value="
+EOT;
+if(!empty($data['level'])){
+print <<<EOT
+$data[level]
+EOT;
+}
+print <<<EOT
+" type="hidden">
+</div>
+<div id="sort" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" aria-disabled="false" style="width:50%;float:left;margin-top:7px;">
+<div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-min" style="width: 
+EOT;
+echo !empty($data['level'])?$data[level]/2.55:0;
+print <<<EOT
+%;"></div>
+<a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: 
+EOT;
+echo !empty($data['level'])?$data['level']/2.55:0;
+print <<<EOT
+%;"></a>
+<div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-min" style="width: 
+EOT;
+echo !empty($data['level'])?$data['level']/2.55:0;
+print <<<EOT
+%;"></div>
+</div>
+<script type="text/javascript">										
+$(function() {
+$("#sort").slider({
+range: "min",value: 
+EOT;
+if(!empty($data['level'])){
+print <<<EOT
+$data[level]
+EOT;
+}else{
+print <<<EOT
+0
+EOT;
+}
+print <<<EOT
+,
+min: 0,
+max: 250,
+step:1,
+slide: function (event, ui) {
+$("#sort-min-amount").text("" + ui.value);
+$("#sort-name").val(ui.value);
+}
+});
+$("#sort-min-amount").text("" + $("#sort").slider("value"));										
+});										
+</script>
+<span class="tablewarnings"></span>
+</div>
+</div>
+EOT;
+}
+print <<<EOT
+
+<div class="publish-form-title">
+内容页模板（个性化需要时选择）：
+</div>
+<div class="publish-form-item">
+<input type="text" class="txt-inner" name="template" id="template" value="
+EOT;
+if(!empty($data['template'])){
+print <<<EOT
+$data[template]
+EOT;
+}
+print <<<EOT
+" size="30" />
+</div>
+<div class="publish-form-item2 mb10">
+<input type="button" value="选择内容页模板" onclick="template_dialog.show();" />
+</div>
+EOT;
+if($this_model['CONFIG']['allow_custom']){
+print <<<EOT
+
+<div class="publish-form-title mb10">
+{$P8LANG['custom_name']}：
+</div>
+<div class="publish-form-item3">
+EOT;
+$__t_foreach = @$custom;
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $custom_item){
+$custom_enable = $custom_item.'_enabled';
+if($this_model['CONFIG'][$custom_enable]){
+print <<<EOT
+
+<div class="publish-form-title">
+EOT;
+if($this_model[CONFIG][$custom_item]){
+print <<<EOT
+{$this_model['CONFIG'][$custom_item]}
+EOT;
+}else{
+print <<<EOT
+{$P8LANG[$custom_item]}
+EOT;
+}
+print <<<EOT
+</div>
+<div class="publish-form-item"><input type="text" name="{$custom_item}" size="60" class="txt-inner" id="{$custom_item}" value="
+EOT;
+if(!empty($data[$custom_item])){
+print <<<EOT
+$data[$custom_item]
+EOT;
+}
+print <<<EOT
+"/></div>
+EOT;
+}
+}
+}
+
+print <<<EOT
+
+</div>
+EOT;
+}
+}
+print <<<EOT
+
+<div class="publish-form-title">
+{$P8LANG['cms_item']['attachment_pdf']}：
+</div>
+<div class="publish-form-item">
+<input type="text" class="txt-inner" name="attachment_pdf" id="attachment_pdf"  value="
+EOT;
+if(!empty($data['attachment_pdf'])){
+print <<<EOT
+{$data['attachment_pdf']}
+EOT;
+}
+print <<<EOT
+" size="50" />
+</div>
+<div class="publish-form-item2 mb20">
+<input type="button" onclick="attachment_pdf_uploader.choseup();" value="上传PDF文件" />
+<script type="text/javascript">
+var attachment_pdf_uploader;
+$(function(){
+attachment_pdf_uploader = new P8_Upload({
+element: {
+src: $('#attachment_pdf'),
+attribute: 'value'
+},
+param: {return_thumb: false,filter: {pdf:0}}
+});
+});
+</script>
+</div>
+</div>
+</div>
+<div id="tabs-2">
+<div class="publish-form">
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+<div class="publish-form-title mb10">
+是否启用IP允许：
+</div>
+<div class="publish-form-item">
+<input type="radio" name="config[allow_ip][enabled]" value="0" id="allow_ip_0" 
+EOT;
+if(empty($config['allow_ip']['enabled'])){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+/ onclick="allow_ip_local(0)"><label for="allow_ip_0" onclick="allow_ip_local(0)">不开启</label>
+<input type="radio" name="config[allow_ip][enabled]" value="2" id="allow_ip_3" 
+EOT;
+if(!empty($config['allow_ip']['enabled']) && $config['allow_ip']['enabled']==2){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+ onclick="allow_ip_local(3)"/><label for="allow_ip_3" onclick="allow_ip_local(2)">仅限局域网访问</label>
+<input type="radio" name="config[allow_ip][enabled]" value="1" id="allow_ip_1" 
+EOT;
+if(!empty($config['allow_ip']['enabled']) && $config['allow_ip']['enabled']==1){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+/ onclick="allow_ip_local(1)"><label for="allow_ip_1" onclick="allow_ip_local(1)">开启</label>
+<p>（选开启时下面的IP设置才有效，IP检测顺序：全站IP->栏目IP）</p>
+</div>
+
+<div class="publish-form-title mb10">
+允许IP：
+</div>
+<div class="publish-form-item">
+<textarea cols="30" rows="5" name="config[allow_ip][collectip]" style="width:100%">
+
+EOT;
+if(!empty($config['allow_ip']['collectip'])){
+$__t_foreach = @$config['allow_ip']['collectip'];
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $key => $value){
+print <<<EOT
+{$value}
+
+EOT;
+}
+}
+}
+print <<<EOT
+</textarea><p>访问的客户端必须是固定IP或者在固定的IP段内<br/>
+否则很有可能导致客户端无法正常访问<br/>
+书写格式每行一个IP，示例如下：<br/>
+12.*.*.*<br/>
+12.34.56.79</p>
+</div>
+
+<div class="publish-form-title mb10">
+允许IP段：
+</div>
+<div class="publish-form-item">
+<textarea cols="40" rows="5" name="config[allow_ip][area_ip]" style="width:100%">
+
+EOT;
+if(!empty($config['allow_ip']['area_ip'])){
+$__t_foreach = @$config['allow_ip']['area_ip'];
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $key => $value){
+print <<<EOT
+$value
+
+EOT;
+}
+}
+}
+print <<<EOT
+</textarea>
+<p>
+每个段位一行，书写格式如下：<br>
+192.168.0.2-192.168.0.255<br>
+192.168.1.0-192.168.254.255<br>
+...</p>
+</div>
+<div class="publish-form-title mb10">
+允许IP段内例外IP：
+</div>
+<div class="publish-form-item">
+<textarea cols="30" rows="5" name="config[allow_ip][ruleoutip]" style="width:100%">
+
+EOT;
+if(!empty($config['allow_ip']['ruleoutip'])){
+$__t_foreach = @$config['allow_ip']['ruleoutip'];
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $key => $value){
+print <<<EOT
+{$value}
+
+EOT;
+}
+}
+}
+print <<<EOT
+</textarea>
+<p>在允许IP段内，可以限制例外的IP地址<br/>
+书写格式每行一个IP，示例如下：<br/>
+12.*.*.*<br/>
+12.34.56.79</p>
+...</p>
+</div>
+EOT;
+if($ACTION == 'update'){
+print <<<EOT
+
+<div class="publish-form-title mb10">
+{$P8LANG['cms_item']['ip']}：
+</div>
+<div class="publish-form-item">
+$data[ip]
+</div>
+<div class="publish-form-title mb10">
+{$P8LANG['cms_item']['last_update_ip']}：
+</div>
+<div class="publish-form-item">
+$data[last_update_ip]
+</div>
+EOT;
+}
+print <<<EOT
+	
+<div class="publish-form-title mb10">
+此内容{$P8LANG['cms_item']['authority_viewer']}：
+</div>
+<div class="publish-form-item">
+<ul id="authority_viewer" class="manager_ids">
+EOT;
+$__t_foreach = @$authority_viewer;
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $user){
+print <<<EOT
+
+<li>{$user['username']}<input type="hidden" name="config[authority_viewer][]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+EOT;
+}
+}
+
+print <<<EOT
+
+</ul><input type="button" value="{$P8LANG['cms_item']['authority_select']}" onclick="show_role_dialog()"/>
+<br>功能状态：
+EOT;
+if($authority_enable){
+print <<<EOT
+开启
+EOT;
+}else{
+print <<<EOT
+关闭
+EOT;
+}
+print <<<EOT
+，<a href="{$core->admin_controller}/cms/item-config#authority" target="_blank">[设置角色浏览控制]</a>
+</div>
+<div class="publish-form-title mb10">
+此内容{$P8LANG['cms_item']['authority']}：
+</div>
+<div class="publish-form-item">
+<input type="checkbox" name="authority[]" id="authority0" value="0" 
+EOT;
+if(in_array('0',$authority)){
+print <<<EOT
+checked="checked"
+EOT;
+}
+print <<<EOT
+ />
+<label for="authority0">不限</label>
+EOT;
+$__t_foreach = @$core->roles;
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $yid => $v){
+if($v['gid'] != 1){
+print <<<EOT
+
+<input type="checkbox" name="authority[]" value="{$yid}" id="authority{$yid}" 
+EOT;
+if(in_array($yid,$authority)){
+print <<<EOT
+checked="checked"
+EOT;
+}
+print <<<EOT
+ />
+<label for="authority{$yid}">{$v['name']}</label>
+EOT;
+}
+}
+}
+
+print <<<EOT
+
+<span class="help">全选和不选都表示不限制</span>
+<br>功能状态：
+EOT;
+if($authority_enable){
+print <<<EOT
+开启
+EOT;
+}else{
+print <<<EOT
+关闭
+EOT;
+}
+print <<<EOT
+，<a href="{$core->admin_controller}/cms/item-config#authority" target="_blank">[设置角色浏览控制]</a>
+</div>
+<script type="text/javascript">							
+function delete_manager(obj){
+$(obj).parent().remove();	
+}
+function member_single_select_callback(checked, json){
+$('#authority_viewer').find("input[value="+json.id+"]").parent().remove();
+if(checked)	$('#authority_viewer').append('<li>'+json.username+'<input type="hidden" name="config[authority_viewer][]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+}
+var role_dialog = new P8_Dialog({
+title_text:'选择用户',
+width: 600,
+height: 440,
+button: true
+});
+role_dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+
+function show_role_dialog(){
+role_dialog.show();
+var ifr = role_dialog.content.find('iframe');
+var check_uids = {};
+$('#authority_viewer').find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+ifr.attr('src', '{$core->U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+}
+</script>	
+EOT;
+}
+print <<<EOT
+							
+</div>
+</div>
+<div id="tabs-3">
+<div class="publish-form">
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+<div class="publish-form-title">
+标题颜色：
+</div>
+<div class="publish-form-item">
+<input type="text"  name="title_color" size="7" id="titlecolor" class="txt-inner iColorPicker" value="
+EOT;
+if(!empty($data['title_color'])){
+print <<<EOT
+$data[title_color]
+EOT;
+}
+print <<<EOT
+" onclick="iColorShow('titlecolor','titlecolor', function(v){ $('#titlecolor').val(v);})" autocomplete="off" />
+</div>
+<div class="publish-form-title mb10">
+标题加粗：
+</div>
+<div class="publish-form-item">
+<input type="checkbox" name="title_bold" id="title_bold" value="1"
+EOT;
+if(!empty($data['title_bold'])){
+print <<<EOT
+ checked
+EOT;
+}
+print <<<EOT
+ /><label for="title_bold">{$P8LANG['cms_item']['title_bold']}</label>
+</div>
+
+<div class="publish-form-title publish-form-title3">
+{$P8LANG['keyword']}：
+</div>
+<div class="publish-form-item" style="margin-bottom:10px;">
+<input name="keywords" id="keywords" type="text" class="txt-inner" value="
+EOT;
+if(!empty($data['keywords'])){
+print <<<EOT
+$data[keywords]
+EOT;
+}
+print <<<EOT
+" />
+</div>		
+<div class="publish-form-item2 mb10">
+解释说明：{$P8LANG['cms_item']['keyword_hint']}
+</div>
+EOT;
+}
+print <<<EOT
+
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<input type="hidden" name="drafts_release" value="0" />
+<input type="hidden" name="model" value="$MODEL" />
+<input type="hidden" name="verified" value="
+EOT;
+if(isset($verified)){
+print <<<EOT
+$verified
+EOT;
+}
+print <<<EOT
+" />
+<input type="hidden" name="id" value="
+EOT;
+if(!empty($data['id'])){
+print <<<EOT
+{$data['id']}
+EOT;
+}
+print <<<EOT
+" />
+<input type="hidden" name="iid" value="
+EOT;
+if(!empty($data['iid'])){
+print <<<EOT
+{$data['iid']}
+EOT;
+}
+print <<<EOT
+" />
+<input type="hidden" name="page" value="
+EOT;
+if(!empty($data['page'])){
+print <<<EOT
+{$data['page']}
+EOT;
+}
+print <<<EOT
+" />
+<input type="hidden" name="_referer" value="$HTTP_REFERER" />
+<input type="hidden" name="credit_type" value="0" />
+<input type="hidden" name="credit" value="
+EOT;
+if(!empty($data['credit'])){
+print <<<EOT
+$data[credit]
+EOT;
+}else{
+print <<<EOT
+1
+EOT;
+}
+print <<<EOT
+" />
+<input type="hidden" name="action" value="$ACTION" />
+<input type="hidden" name="attachment_hash" value="
+EOT;
+echo $attachment_hash = unique_id(16);
+print <<<EOT
+" />
+<input type="hidden" name="html" value="
+EOT;
+if($this_module->CONFIG['htmlize']){
+print <<<EOT
+1
+EOT;
+}else{
+print <<<EOT
+0
+EOT;
+}
+print <<<EOT
+" />
+EOT;
+if($ACTION == 'update'){
+print <<<EOT
+
+<input type="hidden" name="verifier" value="
+EOT;
+if(!empty($data['verifier'])){
+print <<<EOT
+{$data['verifier']}
+EOT;
+}
+print <<<EOT
+" />
+EOT;
+}
+if($ACTION == 'addon' || $ACTION == 'update_addon'){
+print <<<EOT
+
+<input type="hidden" name="url" id="url" />
+EOT;
+}
+print <<<EOT
+
+</form>
+
+<script type="text/javascript">
+$('.headerbtn_list li').removeClass();
+$(".headerbtn_list li:first-child").addClass("active");
+var attachment_hash = '$attachment_hash';
+function check_item_post_release() {
+var checkbox = $('#create_time_release');
+if (checkbox.is(':checked')) {
+$.ajax({
+url: '$this_url',
+type: 'POST',
+data: {check_item_post_release: 1,model:'$MODEL'},
+dataType: 'json',
+beforeSend: function() {
+ajaxing({'text':'检测中…'});
+},
+success: function(json) {
+ajaxing({action: 'hide'});
+if(json.status == '0') {
+p8_window.alert('此功能需要开启定时发布计划任务！<a style="color:blue;" href="{$core->admin_controller}/core/crontab-update?id='+json.id+'" target="_blank">去开启>></a>');
+checkbox.prop('checked', false);
+} else {
+checkbox.prop('checked', true);
+}
+},
+error: function(jqXHR, textStatus, errorThrown) {
+// 错误处理
+p8_window.alert('AJAX 请求失败: ' + textStatus);
+checkbox.prop('checked', false);
+}
+});
+}
+}
+function drafts_submit(drafts){
+ajaxing({'text':'{$P8LANG[running]}'});
+$('input[name="drafts_release"]').val(drafts);
+$('#form').submit();
+}
+function edit_drafts(eid,model){
+window.location.href = '{$this_router}-update?model='+model+'&id='+eid+'&verified=0';
+}
+function get_drafts(){	
+var dialog = new P8_Dialog({
+title_text:'{$P8LANG[cms_item][drafts_release]}',
+width: 700,
+height: 500,
+button: false
+});
+dialog.content.append($('<iframe width="100%" height="400" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+dialog.show();
+var ifr = dialog.content.find('iframe');
+ifr.attr('src', '{$this_router}-my_drafts');
+}
+function craw_by_url(){
+var crawByUrl = $('input[name="crawByUrl"]').val();
+if(crawByUrl){		
+var currentUrl = window.location.href;
+var connStr = currentUrl.indexOf('?') == -1 ? '?' : '&';
+var newUrl = currentUrl + connStr + 'url=' + encodeURIComponent(crawByUrl);
+ajaxing({'text':'采编中…'});
+window.location.href = newUrl;
+}
+}
+
+function allow_ip_local(status){
+var isChecked = $('#allow_ip_'+status).is(":checked");
+if(status == 0 || status == 1){
+$('#allow_ip_2').prop('checked',false);
+$('#allow_ip_3').prop('checked',false);
+}else if(status == 3){
+$('#allow_ip_2').prop('checked',true);
+}else{
+$('#allow_ip_0').prop('checked',isChecked?false:true);
+$('#allow_ip_1').prop('checked',false);
+$('#allow_ip_3').prop('checked',isChecked?true:false);
+$('#allow_ip_2').prop('checked',isChecked?true:false);
+}
+}
+EOT;
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+var my_addible_category = $my_addible_category;
+/*
+var filter = {};
+if(!count(my_addible_category) || my_addible_category[0] === undefined){
+for(var i in my_addible_category){
+
+if(CATEGORY_PATH[i].length > 1){
+for(var j in CATEGORY_PATH[i]){
+filter[CATEGORY_PATH[i][j]] = 1;
+}
+}else{
+filter[i] = 1;
+}
+}
+//p8_window.alert($.toJSON(filter));
+}*/
+
+var dialog = new P8_Dialog({
+title_text: '{$P8LANG['select_category']}',
+button: true,
+width: 890,
+height: 500,
+ok: function(){
+var id = cs.get_value();
+var selected_cat = cs.get_by_id(id);
+if(selected_cat.type == 1){
+p8_window.alert('你选了一个不可发内容的大分类，请重新选择！');
+return false;
+}
+$('#form input[name=cid]').val(id);
+category_path(id);
+},
+show: function(){
+cs.init();
+}
+});
+
+var cs = new Recursive_Selector({
+input: $('#cid'),
+dialog: dialog,
+url: '{$this_system->controller}/category-json',
+sub_property: 'categories',
+value: $('#form input[name=cid]').val(),
+filter: function(cat){
+if(!my_addible_category || (my_addible_category.length == 1 && my_addible_category[0] == 1) || my_addible_category[cat.id]){
+return true;
+}
+},
+init_callback: function(){
+category_path(this.get_value());
+},
+item_callback: function(cat, item){
+if(cat.model != '$MODEL' && $.inArray('$MODEL',cat.models) == -1)
+item.css({display:'none',opacity: '0.3', alpha: '(opacity=30)'});
+
+if(cat.type == 1)
+item.find('span').addClass('frame_category');
+
+if(cat.categories)
+item.addClass('sub_category');
+},
+change: function(select){
+var cat = cs.get_by_id(select.data('value'));		
+if(cat.model == 'page' && !cat.categories){
+ajaxing({'text':'正在转向中……'});
+window.location.href="{$this_router}-add?model="+cat.model+"&cid="+cat.id+"&type="+cat.type;
+}else{
+if(cat.model != '$MODEL' && !cat.categories){
+p8_window.alert('你选了一个非本模型的分类');
+return false;
+}
+}		
+}
+});
+
+function set_levels(level){
+$("#sort-min-amount").text(level);
+$("#sort-name").val(level);
+$("#sort").slider({
+range: "min",value: level,
+min: 0,
+max: 250,
+step:1,
+slide: function (event, ui) {
+$("#sort-name").val(level);
+}
+});
+}
+function category_path(cid){
+if(!cid){
+$('#cids').html('');
+return;
+}
+
+var tmp = cs.get_by_id(cid);
+var html = '';
+
+while(true){
+html = tmp.name +' &gt; '+ html;
+if(tmp.parent == 0) break;
+
+tmp = cs.get_by_id(tmp.parent);
+}
+
+$('#cids').html(html);
+}
+
+var template_dialog = new P8_Dialog({
+title_text: '{$P8LANG['select_template']}',
+button: true,
+width: 700,
+height: 500,
+ok: function(){
+$('#template').val(template_selector.value);
+},
+show: function(){
+template_selector.init();
+}
+});
+template_dialog.content.height(300);
+
+var template_selector = new Template_Selector({
+base_dir: '{$this_module->CONFIG['template']}/{$SYSTEM}/{$MODULE}/',
+template_dir: '{$core->CONFIG['template_dir']}',
+selected: '
+EOT;
+if(!empty($data['template'])){
+print <<<EOT
+$data[template]
+EOT;
+}
+print <<<EOT
+',
+dialog: template_dialog
+});
+function Template_Selector(options){
+
+this.dialog = options.dialog;
+
+this.base_dir = options.base_dir || '';
+this.selected = options.selected || '';
+this.template_dir = options.template_dir || 'template/';
+this.last_ul = null;
+this.last_dir = null;
+this.last_file = null;
+this.value = '';
+
+this.menu_bar = $('<div>\\
+<input type="button" value="'+ P8LANG.refresh +'" class="refresh" />\\
+</div>').appendTo(this.dialog.content);
+this.content = $('<div></div>').appendTo(this.dialog.content);
+this.previewer = $('<div style="position: absolute; z-index: 200001;"><img src="" onerror="this.src=\\'{$RESOURCE}/skin/admin/nopic.jpg\\'" /></div>').hide().appendTo(document.body);
+
+this.inited = false;
+this.init_data = [];
+
+var _this = this;
+
+$('.refresh', this.menu_bar).click(function(){
+_this.refresh();
+});
+
+this.fetch = function(select, dir){
+
+if(select === null){
+dir = '';
+}
+
+if(this.last_dir == dir) return;
+
+$(select).nextAll('ul').remove();
+
+$.ajax({
+url: P8CONFIG.U_controller +'/member-template_json?base_dir='+ encodeURIComponent(this.base_dir) +'&dir='+ encodeURIComponent(dir),
+dataType: 'json',
+cache: false,
+async: false,
+beforeSend: function(){
+ajaxing({zIndex: _this.dialog.zIndex +1});
+},
+success: function(json){
+ajaxing({action: 'hide'});
+
+var ul = $('<ul class="template_selector"></ul>');
+
+var init_length = _this.init_data.length;
+var last_dir = _this.init_data.shift();
+
+for(var i = 0; i < json.length; i++){
+var name = basename(json[i].name.replace(/\\/$/, ''));
+var li = $('<li title="'+ name +'">'+ name +'</li>');
+ul.append(li);
+
+li.data('data', json[i].name);
+li.data('type', json[i].type);
+li.addClass(json[i].type == 'dir' ? 'dir' : 'html');
+if(!_this.inited && _this.selected == json[i].name){
+li.addClass('selected');
+_this.last_file = json[i].name;
+}
+
+if(json[i].type == 'file'){
+li.mouseover(function(){
+var position = $(this).offset();
+_this.previewer.show().
+css({
+left: $(this).width() + position.left +'px',
+top: position.top +'px'
+}).
+find('img').attr('src', P8_ROOT + _this.template_dir + _this.base_dir + $(this).data('data') +'.jpg');
+}).mouseout(function(){
+_this.previewer.hide();
+});
+
+if(_this.inited && _this.selected == name){
+li.addClass('selected');
+}
+}else{
+if(!_this.inited && last_dir == name){
+li.addClass('selected');
+}
+}
+
+li.click(function(){
+var type = $(this).data('type');
+var data = $(this).data('data');
+
+if(type == 'dir'){
+_this.fetch($(this).parent(), data);
+_this.last_dir = data;
+_this.last_ul = li.parent();
+_this.last_file = null;
+}else{
+_this.value = data;
+$(this).parent().nextAll('ul').find('.selected').removeClass('selected');
+_this.last_file = data;
+}
+
+$(this).parent().find('.selected').removeClass('selected');
+$(this).addClass('selected');
+});
+
+
+}
+
+_this.last_dir = dir;
+
+_this.content.append(ul);
+
+if(init_length){
+_this.last_ul = ul;
+_this.fetch(ul, dir +'/'+ last_dir);
+}else{
+_this.inited = true;
+}
+}
+});
+};
+
+this.refresh = function(){
+if(this.last_ul === null){
+this.content.find('ul').remove();
+}
+
+var last_dir = this.last_dir;
+this.last_dir = null;
+this.fetch(this.last_ul, last_dir);
+};
+
+this.init = function(){
+
+if(this.inited) return;
+
+this.init_data = this.selected.split('/');
+this.init_data.pop();
+
+this.fetch(null, '');
+
+};
+
+}
+EOT;
+}
+print <<<EOT
+
+function spider_images(times){
+p8_window.alert('图片本地化处理中，请稍候...');
+include_once(P8CONFIG.RESOURCE +'/ueditor/ueditor.config.js', function(){		
+include_once(P8CONFIG.RESOURCE +'/ueditor/ueditor.all.js', function(){
+include_once(P8CONFIG.RESOURCE +'/ueditor/lang/zh-cn/zh-cn.js',function(){
+var p8_editor = UE.getEditor('field_content');
+p8_editor.ready(function(){
+var p8_content = p8_editor.getContent();
+if(p8_content){					
+$.ajax({
+url: '$this_router-spider_images',
+type: 'POST',
+data: { content: p8_content,times:times},
+dataType: 'html',
+beforeSend: function(){
+ajaxing({'text':'上传中…'});
+p8_window.alert('图片本地化进度：'+times+'/4，请稍候...');
+},
+success: function(response) {
+p8_editor.setContent(response);
+if(times == 3){
+ajaxing({action: 'hide'});								
+p8_window.alert('图片本地化完成！');
+}else{									
+spider_images(times+1);
+}
+}
+});
+}
+});
+});
+});
+});
+}
+$(function(){	
+EOT;
+if($ACTION == 'add'){
+print <<<EOT
+
+$('#form input[name=title]').focus();
+EOT;
+}
+if($ACTION == 'add' || $ACTION == 'update'){
+print <<<EOT
+
+show_title_nav('tabs','bm2_over','bm2_out');	
+cs.init();
+//cluster_push_cs.init();
+EOT;
+}
+print <<<EOT
+
+$("#tabs2").tabs();	
+EOT;
+if($url){
+print <<<EOT
+
+spider_images(1);
+EOT;
+}
+print <<<EOT
+
+});
+</script><div class="clear"></div>
+
+</body>
+</html>
+EOT;
+?>

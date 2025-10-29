@@ -1,0 +1,114 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $core menu_safe admin}-->
+<div class="mainbox mainborder">
+	<div class="section" id="syscheck">
+		<table class="columntable formtable hover_table click_changeable">
+			<tr class="title fix_head">
+				<td width="36%" class="title" align="center"><span style="float:left"><a href="javascript:;" onclick="window.history.back(-1);"><i class="fa fa-mail-reply" style="font-size:16px;"></i> {$P8LANG['back']}</a></span>目录/文件</td>
+				<td width="8%" class="title" align="center">类型</td>
+				<td width="12%" class="title" align="center">创建时间</td>
+				<td width="12%" class="title" align="center">修改时间</td>
+				<td width="8%" class="title" align="center">大小</td>
+				<td width="8%" class="title" align="center">所需状态</td>
+				<td width="8%" class="title" align="center">当前状态</td>
+				<td width="8%" class="title" align="center">是否满足</td>
+			</tr>
+		</table>
+		<!--{foreach $dirfile_items $key $value}-->
+		<div class="each_item" title="{if $value['type'] == 'dir'}1{else}0{/if}">
+			<span style="width:36%;">
+				&nbsp; <i class="fa {$value['extension']}" style="font-size:20px;"></i> 
+				{if $value['type'] == 'dir'}
+					<a href="javascript:;" onclick="open_dir('{$value[path]}','{$value[pathid]}','{$value[authcode_path]}',1)" style="display:inline;" title="{$P8LANG['view']}">{$value['path']} <i class="fa fa-low-vision" style="font-size:16px;float:right;"></i></a>
+				{else}
+					{$value['path']}
+				{/if}
+			</span>
+			<span style="width:8%;">{if $value['type'] == 'dir'}{$P8LANG['dirfile']['dir']}{else}{$P8LANG['dirfile']['file']}{/if}</span>
+			<span style="width:12%;">{$value['ctime']}</span>
+			<span style="width:12%;">{$value['mtime']}</span>
+			<span style="width:8%;">&nbsp;{$value['size']}</span>
+			<span style="width:8%;">{$value['need']}</span>
+			<span style="width:8%;">{$value['current']}</span>
+			<span style="width:8%;">&nbsp;<img src="{$SKIN}/{if $value['status']}check_yes{else}check_no{/if}.gif" /></span>
+		</div>
+		{if $value['type'] == 'dir'}<div id="{$value['pathid']}" title="1"></div>{/if}
+		<!--{/foreach}-->
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">				
+			<tr>
+				<td>
+					<input type="button" value="{$P8LANG['back']}" onclick="window.history.back(-1);" class="edit_btn" />
+					<input type="button" value="{$P8LANG['refresh']}" onclick="window.location.reload;" class="edit_btn" />					
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function open_dir(dir,pathids,authcode_path,level){
+	var on = $('#'+ pathids).html();	
+	//dir = dir.replace('.','');
+	if(!on && dir){
+		$('#'+ pathids).show();
+		$.ajax({
+			url: '$this_url',
+			type: 'POST',
+			dataType: 'json',
+			data: ajax_parameters({dir: authcode_path}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){				
+				ajaxing({action: 'hide'});
+				var j = 0,p = 0, k = count(json);
+				var paths = '';
+				var types = '';				
+				for(var i in json){
+					j++;
+					var c = '';
+					if(level > 0){
+						c += str_repeat('│&nbsp;&nbsp;', level - p) + str_repeat('&nbsp;&nbsp;&nbsp;', p);
+						if(j == k){
+							p++;
+							c += '└';
+						}else{
+							c += '├';
+						}
+					}
+					if(json[i].type == 'dir'){
+						paths = json[i].path;
+						paths = paths.replace(dir+'/','').replace('./','');
+						paths =  '<a href="javascript:;" onclick="open_dir(\''+json[i].path+'\',\''+json[i].pathid+'\',\''+json[i].authcode_path+'\','+(level+1)+')" style="display:inline;" title="{$P8LANG[view]}">'+paths+' <i class="fa fa-low-vision" style="font-size:16px;float:right;"></i></a>';
+						types = "{$P8LANG['dirfile']['dir']}";
+					}else{
+						paths = json[i].path;
+						paths = paths.replace(dir+'/','').replace('./','');
+						types = "{$P8LANG['dirfile']['file']}";
+					}
+					var html = '';
+					html += '<div class="each_item" title="'+(json[i].type == 'dir'?1:0)+'"><span style="width:36%;">&nbsp; '+ c +'<i class="fa '+json[i].extension+'" style="font-size:20px;"></i> '+paths+'</span>'+
+							'<span style="width:8%;">'+types+'</span>'+
+							'<span style="width:12%;">'+json[i].ctime+'</span>'+
+							'<span style="width:12%;">'+json[i].mtime+'</span>'+
+							'<span style="width:8%;">&nbsp;'+json[i].size+'</span>'+
+							'<span style="width:8%;">'+json[i].need+'</span>'+
+							'<span style="width:8%;">'+json[i].current+'</span>'+
+							'<span style="width:8%;">&nbsp;<img src="{$SKIN}/'+(json[i].status ? 'check_yes':'check_no')+'.gif" /></span>'+
+						'</div>';
+					$('#'+pathids).append($(html));					
+					if(json[i].type == 'dir'){
+						html = '<div id="'+json[i].pathid+'" title="1"></div>';
+						$('#'+pathids).append($(html));
+					}					
+				}				
+			}
+		});
+	}else{
+		$('#'+ pathids).toggle();
+	}	
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

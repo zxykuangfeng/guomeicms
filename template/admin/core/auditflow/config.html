@@ -1,0 +1,44 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<form id="form1" name="form1" method="post" action="$this_url">
+			<table class="columntable formtable hover_table padding_table">
+				<tr class="title">
+					<td colspan="2">审核流程开启配置</td>
+				</tr>
+				<tr >
+					<td class="tdL" width="15%"> 主站内容系统: </td>
+					<td class="tdR" width="85%">
+							<span style="padding: 0 10px"><input type="checkbox" name="config[audit_flow_enable]" value="1" {if $config['audit_flow_enable']==1}checked{/if}> 主站 </span>
+					</td>
+				</tr>
+				<tr >
+					<td class="tdL" width="15%">子站站群系统: </td>
+					<td class="tdR" width="85%">
+						<!--{foreach $allsites $alias $sidat}-->
+						<span style="padding: 0 10px"><input type="checkbox" name="config[audit_flow_enable_{$alias}]" value="1" {if $config['audit_flow_enable_'.$alias]==1}checked{/if}/> {$sidat['sitename']}</span>
+						<!--{/foreach}-->
+					</td>
+				</tr>
+				<tr >
+					<td class="tdL" width="15%">表单内容系统: </td>
+					<td class="tdR" width="85%">
+						<!--{foreach $formmods $alias $sidat}-->
+							<span style="padding: 0 10px"><input type="checkbox" name="config[audit_flow_enable_forms_{$alias}]" value="1" {if $config['audit_flow_enable_forms_'.$alias]==1}checked{/if}> {$sidat['alias']} </span>
+						<!--{/foreach}-->
+					</td>
+				</tr>
+
+		<tr>
+			<td class="tdL">&nbsp;</td>
+			<td class="tdR"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn" /></td>
+			<td class="tdR">	<input type="hidden" name="update" value="0" /></td>
+		</tr>
+	</table>
+	</form>
+
+	</div>
+</div>
+
+<!--{/php168}-->

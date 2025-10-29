@@ -1,0 +1,174 @@
+﻿<!--{php168}-->
+<!--{template $core header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/style.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/style_yuanxi.css" />
+<div class="breadwte"></div>
+<div class="maincon">
+	<div class="container">
+		<div class="row">
+			<div class="contain-left fl">	
+				<div class="border1">
+					<div class="head1">
+						<span class="title1">$label[form_menu_title]</span>
+					</div>	
+					<div class="main1">
+						$label[form_menu2]
+					</div>
+				</div>
+			</div>
+			<div class="contain-right fr">
+				<div class="border1">
+					<div class="gov-head">
+						<div class="bigtitle fl">$this_model[alias]</div>
+						<div class="position3 fr">
+							当前位置：
+							<a href="{$core.controller}">首页</a>
+							&gt; <a href="#">$this_model[alias]</a>
+						</div>
+					</div>
+					<div class="gov-main" id='rightbox'>
+						<div class="formsborder">
+							<form  name="request" id="form" action="$this_url" method="get" onsubmit="search_item(1);return false;">
+								<table class="formtable">
+									<tr>	
+										<td class="headerbtn_list">
+											<!--{foreach $this_model['filterable_fields'] $field $field_data}-->
+											<div class="search_option">
+												<strong>{$field_data['alias']}:</strong>
+												<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+											</div>
+											<!--{/foreach}-->
+											<!--{if $this_model['CONFIG']['captcha']}-->										
+											<div class="search_option">
+												<strong>验证码:</strong>
+												<input type="text" class="txt" onfocus="$('#captcha_msg').empty();" name="captcha" style="border:#7F9DB9 1px solid;width:100px;" /> <span id="captcha"></span><span id="captcha_msg"></span>
+											</div>
+											<script type="text/javascript">
+											captcha($('#captcha'), $('#form input[name="captcha"]'));											
+											</script>	
+											<!--{/if}-->
+											<div class="search_option" style="width:130px;height:25px;">
+												<input type="button" style="float:left" class="search_btn" value="" onclick="search_item(1)" />
+												<input type="hidden" name="mid" value="$mid" />
+												<input type="hidden" name="ids" value="" />
+											</div>
+										</td>
+									</tr>
+								</table>
+								</form>
+								<script type="text/javascript">
+									var PAGE;
+									function search_item(page){										
+										$('#list').empty();
+										$('#pages').empty();
+										$.ajax({
+											url: '$this_url-mid-$mid',
+											data: $('#form').serialize() +'&page='+ (page === undefined ? 1 : page),
+											dataType: 'json',
+											cache: false,										
+											success: function(json){
+												PAGE = page;
+												$('#list').empty();
+												$('#pages').empty();
+												$('#captcha_msg').empty();
+												if(json.message){
+													$('#captcha_msg').html('<b style="color:red">&nbsp;不正确，请点击刷新！</b>');
+												}else{
+													if(json.list.length){
+														$('.notice_luqu').show();
+														for(var i in json.list){
+															_list_item(json.list[i]);
+														}
+														$('#pages').html(json.pages);												
+														window.scrollTo(0, 0);					
+													}else{				
+														$('#list').append($('<div style="text-align:center;">很抱歉，查询不到结果！</div>'));
+													}
+												}
+											}
+										});
+									}
+
+									function _list_item(json){										
+										var props = $props;
+										var tr = '<tr id="item_"'+json.id+'">';
+										
+										for(var i = 0; i < props.length; i++){
+											if(json[props[i]] === undefined) json[props[i]] = '';
+											tr += '<td><span>'+json[props[i]]+'</span></td>';										
+										}
+										tr +='<td><a class="icon_view" href="'+json.url+'" target="_blank">查看</a></td></tr>';	
+										$('#list').append($(tr));
+									}
+								</script>
+							
+							<table width="100%" cellpadding="0" cellspacing="1" class="hover_table supplierTable" bgcolor="#C1D1FF">
+								<tr align="center" height="18" class="head">
+									<!--{if $mid}-->
+									<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+									<td width="10%">$field_data[alias]</td>
+									<!--{/foreach}-->
+									<!--{/if}-->
+									<td width="10%" >详情</td>
+								</tr>
+								<tbody id="list">
+									<!--{foreach $list $key $value}-->
+									<tr id="item_$value[id]">
+										<!--{if $mid}-->
+										<!--{php $i = 1;}-->
+										<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+										
+										<td {if $i }style="font-weight:bold"{/if}>
+										<!--{php $i = 0;}-->
+										<span style="{if !empty($field_data['color'])}color:$field_data[color]{/if}">
+											<!--{if isset($value[$field]) && ($field_data['widget']=='radio' || $field_data['widget']=='select' || $field_data['widget']=='city')}-->
+											{$field_data['data'][$value[$field]][0]}
+											<!--{elseif isset($value[$field]) && ($field_data['widget']=='checkbox' || $field_data['widget']=='multi_select')}-->
+											<!--{foreach $value[$field] $v}-->
+											{$field_data['data'][$v][0]},
+											<!--{/foreach}-->
+											<!--{elseif isset($value[$field])}-->
+											$value[$field]
+											<!--{/if}-->
+											</span>
+											<!--{if !empty($field_data['units'])}-->
+												$field_data[units]
+											<!--{/if}-->
+										</td>
+										<!--{/foreach}-->
+										<!--{/if}-->
+										<td align="center" id="status_$value[id]"> <a class="icon_view" href="$value[url]" target="_blank">查看</a> </td>
+									</tr>
+									<!--{/foreach}-->
+								</tbody>
+							</table>
+							<div style="margin-top:10px;text-align:center">
+								<div class="pages" id="pages">$pages</div>
+								<!--{if $manage}-->
+								<a href="{$core.U_controller}/core/forms-intranetforms?mid=$mid&se=0&ac=manage" target="_blank">【处理】</a>
+								<!--{/if}-->
+								<!--{if $download}-->
+								<span class="download"><a href="{$this_router}-download" onclick="download_forms();return false;">【导出】</a></span>
+								<script type="text/javascript">
+								function download_forms(){
+								$('#request').attr('action',"{$this_router}-download");
+								$('#request').attr('method',"post");
+								$('#request').submit();
+								}
+								</script>
+								<!--{/if}-->
+								<!--{if $import_list}-->
+								<span class="download"><a href="{$this_router}-import_list?mid=$mid" target="_blank">【导入】</a></span>
+								<!--{/if}-->
+							</div>
+							<div class="clearfix"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $core footer}-->
+<!--{/php168}-->

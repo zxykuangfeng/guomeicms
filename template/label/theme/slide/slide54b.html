@@ -1,0 +1,48 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+.sliderbox{$label['id']}{width:100%;position:relative;overflow:hidden;}
+.slick-slide .item img{width:100%;height:auto;}
+.sliderbox{$label['id']} .slick-slide .image{position:relative;overflow:hidden;}
+.sliderbox{$label['id']} .slick-slide .image:before{content:"";position:absolute;left:0;bottom:0;right:0;height:80px;background:linear-gradient(to top,rgba(9,27,64,0.7),rgba(0,0,0,0));}
+.sliderbox{$label['id']} .number{position: absolute;width:100%;bottom:50px;color: #fff;text-align: center;line-height:1;}
+.sliderbox{$label['id']} .number li{width:18px;height:18px;font-size:0;background: #789bae;border-radius:50%;margin:0 10px;cursor: pointer;vertical-align: middle;display:inline-block;}
+.sliderbox{$label['id']} .number li.slick-active{background: #0c639e;}
+.sliderbox{$label['id']} .slick-slide .item .title{position:absolute;left:0;bottom:50px;font-size:30px;color:#fff;line-height:30px;padding-left:40px;}
+@media (max-width: 767px){
+    .sliderbox{$label['id']} .frame,.slick-slide .item img{width:100%;height:auto;}
+    .sliderbox{$label['id']} .number{display:none;}
+}
+</style>
+<div class="sliderbox{$label['id']}">
+	<div class="slider frame">
+		<!--{foreach $list $value}-->
+		<div class="child">
+			<div class="image">
+				<a class="item" href="$value[url]" target="_blank" title="$value[full_title]">
+                    <img src="$value[frame]" alt="$value[full_title]" >
+                </a>
+			</div>
+		</div>
+		<!--{/foreach}-->
+	</div>
+	<div class="number"></div>
+</div>
+<script type="text/javascript" src="{$RESOURCE}/js/slick.min.js"></script>
+<script type="text/javascript">
+$(".sliderbox{$label['id']} .frame").slick({
+    autoplay:true,
+    autoplaySpeed:6000,
+    pauseOnDotsHover:true,
+    pauseOnFocus:false,
+    speed:600,
+    arrows:false,
+    dots:true,
+    appendDots:".sliderbox{$label['id']} .number",
+    pauseOnHover:false,
+    customPaging: function(slider, i) {  
+        return i + 1;
+    },
+});
+</script>
+<!--{/php168}-->

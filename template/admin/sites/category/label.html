@@ -1,0 +1,204 @@
+<!--{php168}-->
+<!--{template $LABEL header admin}-->
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+
+<script type="text/javascript">
+_order_by_offset = -1;
+
+var label_type = 'module_data';
+var action = '$action';
+var _system;
+var _module;
+</script>
+<form action="$this_url?action=$action" id="form" method="post">
+<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable ">
+						<tr class="title fix">
+							<td class="title">编辑标签 标签类型：<span style="color:blue;font-weight:700;">【分站系统 > 栏目链接】</span></td>
+						</tr>
+						<tr><td>
+							<div id="tabs"  class="tab_box mtop">
+								<div class="head">
+									<span><a>基本设置</a></span>
+									<span><a>其它设置</a></span>
+								</div>
+								<div class="main">
+									<div class="content">
+										<table width="100%" class="hover_table">
+											<tr>
+												<td class="tdL">请选择显示哪个栏目</td>
+												<td class="tdR">
+													<input type="text" class="txt" id="option_category" name="option[category]" value="{if !empty($option['category'])}<!--{php if(is_array($option['category']))$option['category'] = implode(',', $option['category']);echo $option['category'];}-->{/if}" onchange="category_path(this.value.split(','))" />
+													<input type="button" value="选择栏目" onclick="dialog.show()" />
+													<div id="category_path"></div>
+													<input type="hidden" id="categories" />
+												</td>
+											</tr>
+											<tr>
+												<td class="tdL">{$P8LANG['label_template']} <span class="help">模板选择即可，一般不用编辑。编辑功能是用于修改模板</span></td>
+												<td class="tdR">
+													<input type="text" class="txt" name="option[template]" id="template" value="{if !empty($option['template'])}$option[template]{else}cms/category/more{/if}" size="30" />
+													<input type="button" value="选择模板.." onclick="template_dialog.show()" /><input type="button" class="usethistpl" value="编辑此模板" onclick="useThisTpl()" >(想自己进一步修改可用此功能)<br />
+												<img style="max-height:300px; max-width:500px;display:block; border:1px solid #ff0000; padding:2px; " id="templateshowimg" src="{$RESOURCE}/images/nopic.jpg" onerror="this.src='{$RESOURCE}/images/nopic.jpg'"  />
+											
+												<script type="text/javascript">
+												$(document).ready(function(){
+													$('#templateshowimg').attr('src',function(){
+														return P8CONFIG.RESOURCE +'/{$core.CONFIG['template_dir']}label/'+$('#template').val()+'.jpg';
+													});
+												});
+												
+												</script>
+												</td>
+											</tr>									
+											<tr>
+												<td class="tdL">模板代码 <span class="help">一般为空，保证自己掌握了标签模板规则才可编辑，否则页面会报错</span></td>
+												<td class="tdR">
+													<textarea name="option[tplcode]" id="tplcode" style="display:{if !empty($option['tplcode'])}{else}none{/if}" rows="15" cols="100" wrap=off>{if !empty($option['tplcode'])}{$option['tplcode']}{/if}</textarea>
+													<a href="javascript:void(0);" id="toshow" onclick="$('#tplcode').show();$(this).hide();">查看</a>
+													<input type="button" value="标签模板语法检测" class="submit_btn" onclick="checktpl(1)" />
+												</td>										
+											</tr>											
+										</table>
+									</div>
+									<div class="content">
+										<!--{template $LABEL other_set admin}-->
+									</div>
+								</div>
+							</div>
+						</td></tr>
+						<tr>
+							<td align="center">
+								<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<input type="hidden" name="site" value="{if !empty($data['site'])}{$data['site']}{elseif isset($_GET['site'])}{$_GET['site']}{/if}" />
+								<input type="button" value="{$P8LANG['explain_sql']}" class="submit_btn" onclick="explain_sql()" />
+								<input type="button" value="{$P8LANG['preview']}" class="submit_btn" onclick="preview()" />
+								<input type="hidden" name="verify" value="0" />
+							</td>
+						</tr>
+						<tr>
+							<td id="explain">
+						</tr>
+					</table>
+				</td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable ">
+			<tr class="title fix">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					{$P8LANG['label_submit_fail_note']}
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+MoveTabs("tabs",0);
+function change_model(model){
+	if(!model) return;
+	
+	var url = window.location.href;
+	url = /&model\=[^&]*/ig.test(url) ? url.replace(/&model\=[^&]*/ig, '&model='+ model) : url + '&model='+ model;
+	
+	window.location.href = url;
+	
+}
+
+function valid_add_time(time, obj){
+	var time1 = $('#timestamp1').val();
+	var time2 = $('#timestamp2').val();
+	
+	if(time2 && time1 >= time2){
+		$(obj).val('');
+	}
+}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 890,
+	height: 500,
+	ok: function(){
+		var values = cs.get_value();
+		$('#form input[name="option[category]"]').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$this_system.siteurl}/category-json',
+	values: $('#form input[name="option[category]"]').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			//item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

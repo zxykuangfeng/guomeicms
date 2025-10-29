@@ -1,0 +1,208 @@
+<!--{php168}-->
+<!--{template $core header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/letter/style.css" />
+<div class="breadbanner mb20">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_letter_gg]
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="maincon">
+		<div class="boxouter">
+			<h1 style="text-align:center">$label[reply_title]</h1>
+			<div class="table_hd clearfix">
+				<div class="fl b">编号:<span>{$data['number']}（{$data['code']}）</span></div>
+				<div class="fr b">申请日期:<span><input type="text" name="create_time" value="<!--{php echo date('Y-m-d h:i',$data['create_time']);}-->" autocomplete="off" onclick="rcalendar(this, 'full')"/></span></div>
+			</div>
+			<div class="table-responsive">
+				<table class="mailtb table table-bordered" width="100%" cellspacing="0" cellpadding="0" border="1" style="border-collapse: collapse;border:1px solid #ddd;">
+					<tr>
+						<td width="143" class="grey b center">申请人</td>
+						<td width="168" class="red">{$data['username']}</td>
+						<td width="246" class="grey b center">性别</td>
+						<td width="255" class="red">{if $data['gender']==1}男{else}女{/if}</td>
+					</tr>
+					<tr>
+						<td class="grey b center">年龄</td>
+						<td width="168" class="red">{$data['age']}</td>
+						<td class="grey b center">身份</td>
+						<td width="168" class="red">{$data['profession']}</td>
+					</tr>
+					<tr>
+						<td class="grey b center">联系电话</td>
+						<td width="168" class="red">{$data['phone']}</td>
+						<td class="grey b center">电子邮件</td>
+						<td width="168" class="red">{$data['email']}</td>
+					</tr>
+					<tr>
+						<td class="grey b center">联系地址</td>
+						<td colspan="3" class="red">{$data['address']}</td>
+					</tr>
+					<tr>
+						<td class="grey b center">主题</td>
+						<td colspan="3" class="red">{$data['title']}</td>
+					</tr>
+					<tr>
+						<td class="grey b center">内容</td>
+						<td colspan="3" class="fonty">
+							<span lang="zh-cn" xml:lang="zh-cn">{$data['data'][0]['content']}</span></td>
+					</tr>
+					<!--{if !empty($data['data'][0]['attachment'])}-->
+					<tr>
+						<td class="grey b center">附件</td>
+						<td colspan="3" class="red"><a href="{$data['data'][0]['attachment']}" target="_blank">{$data['data'][0]['attachment_name']}</a></td>
+					</tr>
+					<!--{/if}-->
+				</table>
+			</div>
+			<div class="clear"></div>
+			<!--{php $item=$data['data'][0];}-->
+			<div class="rlink"><a>信件处理</a></div>
+			<form action="" method="post">
+				<div class="table-responsive">
+					<table class="mailtb table table-bordered" width="100%" cellspacing="0" cellpadding="0" border="1" style="border-collapse: collapse;border:1px solid #ddd;">
+						<tr>
+							<td width="155" class="grey b center">报送建议</td>
+							<td class=" red">
+								{$item['turntig']}
+							</td>
+						</tr>
+					</table>
+				</div>
+				<br/>
+				<div class="table-responsive">
+					<table class="mailtb table table-bordered" width="100%" cellspacing="0" cellpadding="0" border="1" style="border-collapse: collapse;border:1px solid #ddd;">
+						<tr>
+							<td width="143" class="grey b center">信件流转</td>
+							<td width="168" class=" red">
+							<select name="department" id="department">
+								<!--{foreach $departments $key $val}-->
+								<option value="$key" {if !empty($data['department']) && $data['department']==$key}selected{/if}>{$val['name']}</option>
+								<!--{/foreach}-->   
+							</select></td>
+							<td width="246" class="grey b center">问题类别</td>
+							<td width="255" class="red">
+								<select name="type" id="type">
+									<!--{foreach $cates['type'] $key $row}-->
+									<option value="{$row['id']}" {if !empty($data['type']) && $data['type']==$row['id']}selected{/if}>{$row['name']}</option>
+									<!--{/foreach}--> 
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="grey b center">报送建议</td>
+							<td colspan="3">&nbsp;<input type="text" name="turntig" value="{$data['turntig']}" class="txt" style="width:500px"/>
+								
+							</td>
+						</tr>
+						<!--{if $endtime}-->
+						<tr>
+							<td class="grey b center">计划完成时间</td>
+							<td colspan="3">&nbsp;<input type="text" name="finish_time" value="" class="txt" autocomplete="off" onclick="rcalendar(this, 'YYYY-MM-DD')"/>
+								
+							</td>
+						</tr>
+						<!--{/if}-->
+						<!--{if $display}-->
+						<tr>
+							<td class="grey b center">是否公开显示</td>
+							<td colspan="3">&nbsp;&nbsp;
+								<input type="radio" name="undisplay"  value="0"  {if empty($data['undisplay'])}checked{/if}/>
+									公开显示
+									<input type="radio" name="undisplay"  value="1" {if !empty($data['undisplay'])}checked{/if} />
+									不公开显示 （一般由某管控人员确定内容需显示与否,只有审核通过后才会显示）
+								</td>
+						</tr>	
+						<!--{/if}-->
+						<tr>
+							<td class="grey b center">写信人是否要公开</td>
+							<td colspan="3">&nbsp;
+								<input type="radio" name="visual"  value="1"  {if !empty($data['visual'])}checked{/if}/>
+									公开
+									<input type="radio" name="visual"  value="0" {if empty($data['visual'])}checked{/if} />
+									不公开
+							</td>
+						</tr>
+						<tr>
+							<td class="grey b center">状态</td>
+							<td colspan="3">&nbsp;
+								<input type="radio" name="status" value="0" {if $data['status']==0}checked{/if}/>{$P8LANG['status']['status_0']}
+								<input type="radio" name="status" value="1" {if $data['status']==1}checked{/if}/>{$P8LANG['status']['status_1']}
+								<input type="radio" name="status" value="2" {if $data['status']==2}checked{/if}/>{$P8LANG['status']['status_2']}
+								<input type="radio" name="status" value="3" {if $data['status']==3}checked{/if}/>{$P8LANG['status']['status_3']}
+							</td>
+						</tr>
+						<tr>
+							<td class="grey b center">是否推荐</td>
+							<td colspan="3">&nbsp;
+								<input type="radio" name="recommend" value="1" {if $data['recommend']==1}checked{/if}/>推荐
+								<input type="radio" name="recommend" value="0" {if $data['recommend']==0}checked{/if}/>不推荐
+							</td>
+						</tr>
+						<tr>
+							<td class="grey b center">回复：</td>
+							<td style="padding:10px" colspan="3">
+								<textarea id="content" name="reply[{$item['id']}]" style="width:100%; height:80px" onchange="ifedit(this)">$item[reply]</textarea>
+								<input type="hidden" name="reply_id[{$item['id']}]" value="{$item['id']}"/>
+								<!--{if !empty($item['reply_time'])}-->
+								<div class="mtop10">回复时间：<input type="text" name="reply_time" class="txt" value="<!--{php echo date("Y-m-d H:i",$item['reply_time']);}-->" autocomplete="off" onclick="rcalendar(this, 'full')"/></div>
+								<!--{/if}-->
+							</td>
+						</tr>
+					</table>
+				</div>
+				<!--{if $vefify}-->
+				<div class="rlink"><a>审核管理</a></div>
+				<div class="table-responsive">
+					<table class="mailtb table table-bordered" width="100%" cellspacing="0" cellpadding="0" border="1" style="border-collapse: collapse;border:1px solid #ddd;">
+						<tr>
+							<td width="155" class="grey b center">领导审核</td>
+							<td class=" red">&nbsp;<input type="text" name="finish_name" value="{$data['finish_name']}"/></td>
+						</tr>
+						<tr>
+							<td width="155" class="grey b center">审核</td>
+							<td class=" red">&nbsp;&nbsp;
+							<input type="radio" name="vefify"  value="1"  {if !empty($data['vefify'])}checked{/if}/>
+								通过
+								<input type="radio" name="vefify"  value="0" {if empty($data['vefify'])}checked{/if} />
+								不通过（只有审核通过和设置为显示的才会显示）
+							</td>
+						</tr>
+						<tr>
+							<td class="grey b center">审核意见：</td>
+							<td style="padding:10px" colspan="3">
+								<textarea name="vefify_content[{$item['id']}]" style="width:100%; height:80px">$item[vefify_content]</textarea>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<!--{/if}-->
+				<div class="clear"></div>
+				<div style="text-align:center;padding:10px"><input type="submit" value=" 确定 "/>     <input type="reset" value=" 取消 "/>      <input type="button" value=" 关闭 " onclick="javascript:window.close()"/></div>
+				<input type="hidden" name="token" value="{$token}" />
+				<input type="hidden" name="id" value="$id"/>
+				<input type="hidden" name="visual" value="1"/>
+			</form>
+			<p style="text-align:right; margin:30px 0 20px 0">
+				【<a href="javascript:;" onclick="message.send($data[uid],$data[id])"><img src="{$RESOURCE}/images/qyfa.gif" border="0" align="top"/></a>】 
+				<!--{if $delletter}-->【<a  href="{$this_url}?act=del&id={$data['id']}" onclick="javascript:if(!confirm('确定要删？'))return false;" target="_blank">删除</a>】<!--{/if}-->
+				【<a href="javascript:;"  onclick="window.close()">关闭</a>】 
+			</p>
+		</div>
+	</div>
+</div>
+<div class="clear"></div>
+<script type="text/javascript">
+var message = new Message();
+function ifedit(obj){
+$(obj).next().val(1)
+}
+function inputextarea(obj){
+	$('#content').val($(obj).val());
+}
+</script>
+<!--{template $core footer}-->
+<!--{/php168}-->

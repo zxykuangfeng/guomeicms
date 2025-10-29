@@ -1,0 +1,225 @@
+<!--{php168}-->
+<!--{template $core header}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/style.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/common/style.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/letter/style.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/images/dialog.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<script type="text/javascript">
+$().ready(function() {
+    $("#form").validate();
+});
+(function( factory ) {
+	if ( typeof define === "function" && define.amd ) {
+		define( ["jquery", "../jquery.validate"], factory );
+	} else {
+		factory( jQuery );
+	}
+}(function($) {
+	$.extend($.validator.messages, {
+		required: "必填或必选",
+		remote: "请修正",
+		email: "请输入有效的电子邮件地址",
+		url: "请输入有效的网址",
+		date: "请输入有效的日期",
+		dateISO: "请输入有效的日期 (YYYY-MM-DD)",
+		number: "请输入有效的数字",
+		digits: "只能输入数字",
+		equalTo: "你的输入不相同",
+		extension: "请输入有效的后缀",
+		maxlength: $.validator.format("最多可以输入 {0} 个字符"),
+		minlength: $.validator.format("最少要输入 {0} 个字符"),
+		rangelength: $.validator.format("请输入长度在 {0} 到 {1} 之间"),
+		range: $.validator.format("请输入范围在 {0} 到 {1} 之间的数值"),
+		max: $.validator.format("请输入不大于 {0} 的数值"),
+		min: $.validator.format("请输入不小于 {0} 的数值")
+	});
+}));
+$.validator.addMethod('valid_email', function(value, element){
+	return value.length > 3 && /^[\w\-\.]+@[\w\-\.]+(\.\w+)+$/.test(value);
+});
+$.validator.addMethod('valid_phone', function(value, element){
+	return value.length > 3 && /^[0-9_-]+$/.test(value);
+});
+var MODEL = '$MODEL';
+var attachment_hash = '$attachment_hash';
+</script>
+<script type="text/javascript">
+	var uploader = new P8_Upload({
+		element: {
+			src: $('#attachment'),
+			attribute: 'value'
+		},
+		callback: function(json){
+			$('input[name="attachment_name"]').val(json.attachments[0].name);
+			$('input[name="attachment"]').val(json.attachments[0].file);
+		}
+	});
+
+</script>
+<div class="maincon">
+	<div class="container">
+		<div class="coordinate">
+			<div class="position3">
+				<a href="{$core.controller}">首页</a>
+				&gt;&gt; 平台信箱
+			</div>
+		</div>
+		<div class="row">
+			<div class="show_box_govs email4">
+				<div class="form_content">
+					<div class="formp">$label[hdjl-letter_top]</div>
+					<form id="form" action="" method="post">
+					  <table width="100%" cellspacing="0" cellpadding="0" border="none" style="border:#f0f0f0 1px solid">
+						<tr class="tt">
+						  <td colspan="4"><span style="color:#ff0000;"><b>写信人信息</b>(注意标有<span class="start">*</span>的必须填写； 个人敏感信息只有管理员和您本人有权限查看到)</span></td>
+
+						</tr>
+						<tr>
+						  <td class="grey" width="85">姓名:</td>
+						  <td class="white" width="250"><input type="text" name="username" id="username" rangelength=[2,20] value="{if !empty($data['username'])}{$data['username']}{else}{if $member}{$member[name]}{/if}{/if}" required/>
+							<span class="start">*</span><span style="color:#808069"> 仅自己可见</span></td>
+						  <td class="grey" width="103">性别:</td>
+						  <td class="white"><select name="gender" id="gender" required>
+							  <option value="1" {if !empty($data['gender']) && $data['gender']==1}selected{/if}>男</option>
+							  <option value="2" {if !empty($data['gender']) && $data['gender']==2}selected{/if}>女</option>
+							</select><span class="start">*</span></td>
+						</tr>
+						<tr>
+						  <td class="grey">年龄:</td>
+						  <td class="white"><input type="number" name="age" id="age" rangelength=[2,99] max="99" value="{if !empty($data['age'])}{$data['age']}{/if}" required/></td>
+						  <td class="grey">身份:</td>
+						  <td class="white"><input type="text" name="profession" id="profession"  value="{if !empty($data['profession'])}{$data['profession']}{/if}"/></td>
+						</tr>
+						<tr>
+						  <td class="grey">电子邮件:</td>
+						  <td class="white" colspan="3"><input type="email" name="email" id="email"  value="{if !empty($data['email'])}{$data['email']}{/if}" required/>
+							<span class="start">*</span><span style="color:#808069">请填写真实邮件地址，以方便我们向您反馈处理信息！ (格式:123@123.com)</span></td>
+						</tr>
+						<tr>
+						  <td class="grey">联系地址:</td>
+						  <td  class="white" colspan="3"><input type="text" name="address" id="address"  value="{if !empty($data['address'])}{$data['address']}{/if}" style="width:520px" />
+							</td>
+						</tr>
+						<tr class="tt">
+						  <td colspan="4"><b>信访事项信息</b>(注意标有<span class="start">*</span>的必须填写)</td>
+						</tr>
+						<!--{if !empty($letterconfig['receive']) && !empty($letterconfig['redepartment'])}-->
+						<input type="hidden" name="department" id="department" value="{$letterconfig['redepartment']}"/>
+						<!--{else}-->
+						<tr>
+						  <td class="grey">选择部门:</td>
+						  <td  class="white" colspan="3">
+						  <select name="department" id="department" required>
+							<option value="">请选择</option>
+						  <!--{foreach $cates['department'] $key $row}-->
+							  <option value="{$row['id']}" {if !empty($data['department']) && $data['department']==$row['id']}selected{/if}>{$row['name']}</option>
+						   <!--{/foreach}-->   
+							</select> <span class="start">*</span> <span style="color:#808069">若不知部门，可选“公共信箱”</span></td>
+						</tr>
+						<!--{/if}-->
+						<tr>
+						  <td class="grey">问题类别:</td>
+						  <td  class="white" colspan="3"><select name="type" id="type" required>
+							<option value="">----请选择类别----</option>
+							 <!--{foreach $cates['type'] $key $row}-->
+							  <option value="{$row['id']}" {if !empty($data['type']) && $data['type']==$row['id']}selected{/if}>{$row['name']}</option>
+						   <!--{/foreach}--> 
+							</select>
+							<span class="start">*</span></td>
+						</tr>
+						<tr>
+						  <td class="grey">主题:</td>
+						  <td  class="white" colspan="3"><input type="text" name="title" id="title" maxlength="80" value="{if !empty($data['title'])}{$data['title']}{/if}" style="width:520px" required/>
+							<span class="start">*</span></td>
+						</tr>
+						<tr>
+						  <td class="grey">内容:</td>
+						  <td  class="white" colspan="3"><textarea name="content" id="content" cols="80" rows="10" required>{if !empty($data['content'])}{$data['content']}{/if}</textarea>
+							<span class="start">*</span></td>
+						</tr>
+						<tr>
+						  <td class="grey">是否公开:</td>
+						  <td  class="white" colspan="3"><input type="radio" name="visual"  value="1"  {if !empty($data['visual'])}checked{/if}/>
+								公开
+								<input type="radio" name="visual"  value="0" {if empty($data['visual'])}checked{/if} />
+								不公开
+								<span style="color:#808069">（此内容是否愿意公开显示出来）</span>
+							</td>
+						</tr>
+						{if $mobile_confirm}
+						<tr>
+						  <td class="grey">手机号码:</td>
+						  <td class="white" colspan="3"><input type="text" name="phone" id="phone" minlength="11" maxlength="11" value="{if !empty($data['phone'])}{$data['phone']}{/if}" required/>
+							<span class="start">*</span><span style="color:#808069">必须填写您的手机号码才能收到手机短信动态验证码，否则无法提交信息。</span></td>						  
+						</tr>
+						<tr>
+						  <td class="grey">手机验证码：</td>
+						  <td class="white" colspan="3"><input type="text" name="checkcode" id="checkcode"  value=""/>
+							<span class="start">*</span><img id="p8_sendsms" src="{$RESOURCE}/images/dtyzm.gif" />
+							<script type="text/javascript">
+								$(document).ready(function(){
+								  $("#p8_sendsms").click(function(){
+									var phone = $('#phone').val();
+									if(phone.length==11){
+										$.ajax({
+											url: '{$core.url}/index.php/core/letter-checksms',
+											type: 'post',
+											dataType: 'json',
+											cache: false,
+											data: ajax_parameters({phone: phone, uid: $UID}),
+											beforeSend: function(){
+												ajaxing({});
+											},
+											success: function(json){
+												ajaxing({action: 'hide'});
+												if(json=='OK')
+													alert('手机短信发送成功！');
+												else
+													alert('发送失败！'+json);
+											}
+										});
+									}else{
+										alert('请正确输入手机号！');
+									}
+								  })
+								})
+							</script>
+							</td>
+						 </tr>
+						 {else}
+						 <tr>
+						  <td class="grey">手机号码:</td>
+						  <td class="white" colspan="3"><input type="text" name="phone" id="phone" minlength="11" maxlength="11" value="{if !empty($data['phone'])}{$data['phone']}{/if}" required/>
+							<span class="start">*</span><span style="color:#808069">必须填写您的手机号码才能接收信息。</span></td>						  
+						</tr>
+						 {/if}
+						 {if $captcha_enable}
+						<tr>
+						  <td class="grey">验证码:</td>
+						  <td  class="white" colspan="3"><input name="captcha" type="text" id="captcha" class="input" required/>
+							<span id="captcham"></span>
+							<script type="text/javascript">captcha($('#captcham'), $('#captcha'));</script>
+							<span style="color:#808069">（点击验证码图片可刷新）</span><span class="start">*</span>					
+						  </td>
+						</tr>
+						 {/if}
+						<tr>
+						  <td  class="last" colspan="4"><input type="submit" name="submitbutton" value="提交" />
+							<input type="reset" name="reset" value="重置" />
+							<input type="hidden" name="id" value="{if !empty($id)}{$id}{/if}" />
+							<input type="hidden" name="visual"  value="1">
+							<input type="hidden" name="attachment_hash" value="{$attachment_hash}" />
+						   </td>
+						</tr>
+					  </table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="clear"> </div>
+<!--{template $core footer}-->
+<!--{/php168}-->

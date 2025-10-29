@@ -1,0 +1,25 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="mainbox mainborder">
+			<tr><td>
+			<table class="formtable">
+				<tr><td class="headerbtn_list first_level">
+					<ul>
+						<li><a href="{$core.admin_controller}/cms/statistic-statistic_data"><i class="fa fa-line-chart"></i>主站内容统计</a></li>
+						<!--{if $core->systems['sites']['enabled']}-->
+						<li><a href="{$core.admin_controller}/cms/statistic-statistic_sites_content"><i class="fa fa-line-chart"></i>子站内容统计</a></li>
+						<!--{/if}-->
+						<li><a href="$this_router-statistic_credit"><i class="fa fa-bar-chart"></i>绩效评分统计</a></li>
+						<li><a href="{$core.admin_controller}/cms/statistic-statistic_dept"><i class="fa fa-line-chart"></i>组织机构统计</a></li>
+					</ul>
+				</td>
+				</tr>
+			</table>
+			
+			</td></tr>
+		</table>
+	</div>
+</div>
+<!--{/php168}-->

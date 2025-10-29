@@ -1,0 +1,47 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+#first-focus{$label['id']} .item h3 {position: absolute;margin: 0;left: 0px;right: 0px;font-size:16px;text-align:left;color:#fff;z-index: 5;height:44px;line-height:44px;bottom: 0;padding-left:20px;padding-right: 20px;background: rgba(0,0,0,0.53);}
+#first-focus{$label['id']} .item img{width:100%;height:{$sheight}px;}
+#first-focus{$label['id']} .owl-dots { position: absolute; right: 8px; bottom: 12px; z-index: 20; }
+#first-focus{$label['id']} .owl-dots .owl-dot.active span, .owl-theme .owl-dots .owl-dot:hover span { background: #7c0609;opacity: 1;filter: alpha(opacity=100);}
+#first-focus{$label['id']} .owl-dots .owl-dot span {margin: 0 10px;width:13px;height:13px;border-radius:50%;background:#fff;display:inline-block;transition: height .1s;}
+#first-focus{$label['id']} .owl-prev { left: 0; }
+#first-focus{$label['id']} .owl-next { right: 0; background-position: -60px 0; }
+#first-focus{$label['id']} .owl-next:hover, #first2-focus{$label['id']} .owl-prev:hover { opacity: 1; }
+#first-focus{$label['id']} .owl-prev { cursor: pointer; position: absolute; z-index: 100; top: 45%; background: url({$RESOURCE}/skin/label/theme/prevnext.png) no-repeat; height: 60px; width: 35px; transition: left .3s; border-radius: 0; left: -80px; transition: left .3s; }
+#first-focus{$label['id']} .owl-next { cursor: pointer; position: absolute; z-index: 100; top: 45%; background: url({$RESOURCE}/skin/label/theme/prevnext.png) no-repeat; height: 60px; width: 35px; transition: left .3s; border-radius: 0; right: -80px; transition: right .3s; background-position: -49px 0; }
+#first-focus{$label['id']} {overflow: hidden;}
+#first-focus{$label['id']}:hover .owl-prev { left: 0px; }
+#first-focus{$label['id']}:hover .owl-next { right: 0px; }
+#first-focus{$label['id']} .owl-next:hover { background-position: -143px 0; }
+#first-focus{$label['id']} .owl-prev:hover { background-position: -99px 0; }
+@media (max-width: 767px){
+	#first-focus{$label['id']} .item img{width:100%;height:auto;}
+}
+</style>
+<div id="first-focus{$label['id']}" class="owl-carousel owl-theme">
+	<!--{foreach $list $value}-->
+	<div class="item">
+		<a href="$value[url]" target="_blank" title="$value[full_title]">
+			<img src="$value[frame]" alt="$value[full_title]">
+			<h3>$value[title]</h3>
+		</a>
+	</div>
+	<!--{/foreach}--> 
+</div>
+<script type="text/javascript">
+	$('#first-focus{$label['id']}').owlCarousel({
+	    items:1,
+		margin:10,
+		loop:true,
+	    smartSpeed:450,
+	    autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+		dots:true,
+		nav:true,
+		navText:["", ""],
+	});
+</script>
+<!--{/php168}-->	

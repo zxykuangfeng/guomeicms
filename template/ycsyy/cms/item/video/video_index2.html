@@ -1,0 +1,91 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style_cms.css" />
+<!--中间内容部分-->
+<div class="breadbanner">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_video_con1]
+		</div>
+		<div class="container">
+			<div class="banner_title">
+				<h2>$CAT[name]</h2>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="layout">
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<div class="breadnav clearfix">
+						<div class="position fl">
+							<a href="{$core.controller}">首页</a>
+							<!--{foreach $parent_cats $v}-->
+							/ <a href="$v[url]">$v[name]</a><!--{/foreach}-->
+							/ <a href="$CAT[url]">$CAT[name]</a> / 列表
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-7 col-sm-6 col-xs-12">
+					<div class="focus mb20">
+						$label[list_video_focus]
+					</div>
+				</div>
+				<div class="col-md-5 col-sm-6 col-xs-12">
+					<div class="hotnews mb20">
+						<div class="hd clearfix">
+							<h3>$label[list_video_hot_tit1]</h3>
+							<div class="more">$label[list_video_hot_more1]</div>
+						</div>
+						<div class="bd">
+								$label[list_video_hot_con1]
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12 col-sm-12">
+					<div class="subsection">
+						<div class="hd clearfix">
+							<h3>$label[list_video_column_tit1]</h3>
+							<div class="more">$label[list_video_column_more1]</div>
+						</div>
+						<div class="bd">
+							<div class="row">$label[list_video_column_con1]</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 col-sm-12">
+					<div class="subsection">
+						<div class="hd clearfix">
+							<h3>$label[list_video_column_tit2]</h3>
+							<div class="more">$label[list_video_column_more2]</div>
+						</div>
+						<div class="bd">
+							<div class="row">$label[list_video_column_con2]</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 col-sm-12">
+					<div class="subsection mb20">
+						<div class="hd clearfix">
+							<h3>$label[list_video_column_tit3]</h3>
+							<div class="more">$label[list_video_column_more3]</div>
+						</div>
+						<div class="bd">
+							<div class="row">$label[list_video_column_con3]</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">jQuery(".mtab").slide({});</script>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+

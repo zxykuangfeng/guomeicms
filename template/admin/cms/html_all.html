@@ -1,0 +1,123 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-cache"><i class="fa fa-refresh"></i>一键更新网站缓存</a></li>
+						<li><a href="{$core.admin_controller}/cms-html_all"><i class="fa fa-wpforms"></i>一键静态网站内容</a></li>
+					</ul>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/cms-html_all"><i class="icon icon-ico11"></i>主站快捷静态</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/cms/category-list" target="_blank"><i class="icon icon-ico15"></i>进入主站栏目静态</a></li>
+						<li class="btn-color3"><a href="{$core.admin_controller}/sites-index" target="_blank"><i class="icon icon-ico30"></i>子站静态</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td colspan="2" class="title">生成HTML</td>
+			</tr>			
+			<form action="{$core.admin_controller}/cms-index_to_html" method="post" target="_blank">
+			<tbody>
+			<tr>
+				<td width="45%" align="right">
+					<input type="submit" class="html_btn" value="一键静态主站首页" onclick="this.form.type.value = 'index_to_html'" />
+				</td>
+				<td width="50%">&nbsp;&nbsp;此操作包括：首页静态、最近10篇内容静态、标签与模板缓存更新；</td>
+			</tr>
+			</tbody>
+			</form>
+			
+			<form action="{$core.admin_controller}/{$this_system.name}/item-view_to_html" method="post">
+			<tbody>
+			<tr>
+				<td align="right" ><input class="html_btn" type="submit" value="一键静态主站60天内容" /></td>
+				<td>&nbsp;&nbsp;此操作包括：首页静态、最近60天内容静态、标签与模板缓存更新；</td>
+			</tr>
+			</tbody>
+			</form>
+			
+			<form action="{$core.admin_controller}/{$this_system.name}/item-list_to_html" method="post">
+			<tbody>
+			<tr>
+				<td align="right" ><input class="html_btn" type="submit" value="一键静态主站栏目" /></td>
+				<td>&nbsp;&nbsp;此操作包括：首页静态、所有栏目静态、标签与模板缓存更新；</td>
+			</tr>
+			</tbody>
+			</form>
+			
+			<form action="{$core.admin_controller}/{$this_system.name}/item-view_to_html" method="post">
+			<tbody>
+			<tr>
+				<td align="right" ><input class="html_btn" type="submit" value="一键静态某时间段内容" /></td>
+				<td>
+					<input type="text" class="txt" id="time1" name="time_range[]" onclick="rcalendar(this, 'full', _valid_time_range)" autocomplete="off" />
+					-
+					<input type="text" class="txt" id="time2" name="time_range[]" onclick="rcalendar(this, 'full', _valid_time_range)" autocomplete="off" />
+					<input type="button" value="1小时内" onclick="_set_time_range(mktime(_H, 0, 0, _m, _d, _Y), mktime(_H +1, 0, 0, _m, _d, _Y))" />
+					<input type="button" value="今天" onclick="_set_time_range(mktime(0, 0, 0, _m, _d, _Y), mktime(0, 0, 0, _m, _d +1, _Y))" />
+					<input type="button" value="近3天" onclick="_set_time_range(mktime(0, 0, 0, _m, _d -3, _Y), mktime(0, 0, 0, _m, _d, _Y))" />
+					<input type="button" value="本周" onclick="_set_time_range(mktime(0, 0, 0, _m, _d - _j, _Y), mktime(0, 0, 0, _m, _d + 7 - _j, _Y))" />
+					<input type="button" value="本月" onclick="_set_time_range(mktime(0, 0, 0, _m, 1, _Y), mktime(0, 0, 0, _m +1, 1, _Y));" />
+					<script type="text/javascript">
+						var _obj = new Date(<!--{php echo P8_TIME;}-->000);
+						var _Y = _obj.getFullYear();
+						var _m = _obj.getMonth() +1;
+						var _d = _obj.getDate();
+						var _H = _obj.getHours();
+						var _j = _obj.getDay();
+						
+						function _set_time_range(t1 ,t2){
+							$('#time1').val(date('Y-m-d H:i:s', t1));
+							$('#time2').val(date('Y-m-d H:i:s', t2));
+						}
+						
+						function _valid_time_range(time, obj){
+							var time1 = $('#time1').val();
+							var time2 = $('#time2').val();
+							if(time2 && time1 >= time2){
+								$(obj).val('');
+							}
+						}
+					</script>
+					<span style="float:right;">&nbsp;&nbsp;此操作包括：首页静态、自定义时间段的内容静态、标签与模板缓存更新；</span>
+				</td>
+			</tr>
+			</tbody>
+			</form>
+			
+			<form action="{$core.admin_controller}/{$this_system.name}/item-view_to_html" method="post">
+			<tbody>
+			<tr>
+				<td align="right" style="border-bottom:0;"><input class="html_btn" type="submit" value="一键静态ID段内容" /></td>
+				<td style="border-bottom:0;">
+					<input type="text" class="txt" name="id_range" size="50" />&nbsp;&nbsp;此操作包括：首页静态、ID段之间内容静态、标签与模板缓存更新；
+				</td>
+			</tr>
+			</tbody>
+			</form>
+		</table>
+	</div>
+	
+</div>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,60 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="container">
+		<div class="fluid">
+			<div class="bigbanner">
+
+$label[bigbanner]
+</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="position2">
+		<a href="{$core.controller}">首页</a>
+		<!--{foreach $parent_cats $v}-->
+		&gt; <a href="$v[url]">$v[name]</a>
+		<!--{/foreach}-->
+		&gt; <a href="$CAT[url]">$CAT[name]</a> 
+	</div>
+	<div class="row">
+		<div class="trainbox fl">
+			<div class="train">
+				<div class="pic"><img src="{$SKIN}images/training_img1.jpg" alt=""></div>
+				<div class="title">$label[list_train_tt1]</div>
+				<div class="text">$label[list_train_text1]</div>
+				<div class="tbtn">$label[list_train_btn1]</div>
+			</div>
+		</div>
+		<div class="trainbox fr">
+			<div class="train">
+                <div class="pic"><img src="{$SKIN}images/training_img3.jpg" alt=""></div>
+                <div class="title">$label[list_train_tt2]</div>
+                <div class="text">$label[list_train_text2]</div>
+                <div class="tbtn">$label[list_train_btn2]</div>
+            </div>
+		</div>
+		<div class="trainbox fl">
+			<div class="train">
+                <div class="pic"><img src="{$SKIN}images/training_img2.jpg" alt=""></div>
+                <div class="title">$label[list_train_tt3]</div>
+                <div class="text">$label[list_train_text3]</div>
+                <div class="tbtn">$label[list_train_btn3]</div>
+            </div>
+		</div>
+		<div class="trainbox fr">
+			<div class="train">
+                <div class="pic"><img src="{$SKIN}images/training_img4.jpg" alt=""></div>
+                <div class="title">$label[list_train_tt4]</div>
+                <div class="text">$label[list_train_text4]...</div>
+				<div class="tbtn">$label[list_train_btn4]</div>
+            </div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+

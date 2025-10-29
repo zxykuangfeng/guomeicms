@@ -1,0 +1,137 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<div class="mainbox mainborder">
+		<div class="section">
+    <table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu" style="margin:0;">
+							<li><a href="$this_router-pushlist" class="bm_l">{$P8LANG['pushlogs']}</a></li>
+							<li class="active"><a href="$this_url?aid=$aid" class="bm_l">评论列表</a></li>
+							<li style="float:right;color:red;width:auto;background:none;padding-right:10px;font-weight:600;">《{$row['title']}》的评论列表</li>
+						</ul>
+					</td>				
+				</tr>
+			</table>
+	<form id="form" action="$this_url" method="post" name="form">
+			<table width="100%" class="columntable formtable hover_table click_changeable">				
+				<tr class="title">
+				<td width="1%" align="center" class="title"><input type="checkbox" onclick="check_all(this, 'ids[]', $('#form'));" /></td>
+				<td width="12%" align="center" class="title">用户</td>
+				<td width="15%" align="center" class="title">评论内容</td>
+				<td width="15%" align="center" class="title">回复内容</td>
+				<td width="15%" align="center" class="title">评论时间</td>
+				<td width="15%" align="center" class="title">操作</td>
+          </tr>
+          <!--{foreach $dataList  $messageRow}-->
+          <tr id="reply_{$messageRow['user_comment_id']}">
+            <td align="center"><input type="checkbox" name="ids[]" value="{$messageRow['user_comment_id']}" /></td>				
+				<td>{$messageRow['user']}</td>
+            <td>{$messageRow['comment_type_str']}{$messageRow['content']}</td>
+            <td>{$messageRow['reply_content']}</td>
+            <td align="center">{$messageRow['create_time']}</td>
+            <td align="center">
+              {if $messageRow['comment_type']==1}
+              <a href="$this_url?action=unmarkelect&msg_id={$row['msg_data_id']}&comment_id={$messageRow['user_comment_id']}&aid={$aid}" onclick="return _unmarkelect(['$messageRow[id]'])" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">取消精选</a>
+			  {else}
+              <a href="$this_url?action=markelect&msg_id={$row['msg_data_id']}&comment_id={$messageRow['user_comment_id']}&aid={$aid}" onclick="return _markelect(['$messageRow[id]'])" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">精选</a>	  
+             {/if}
+              {if empty($messageRow['reply_content'])}
+					<a href="$this_url?action=replycomment&aid={$aid}&msg_id={$row['msg_data_id']}&no={$row['no']}&comment_id={$messageRow['user_comment_id']}" onclick="return _replycomment({$messageRow['user_comment_id']})" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">回复</a>
+			  {/if}
+			  <a href="$this_url?action=deletecomment&aid={$aid}&msg_id={$row['msg_data_id']}&no={$row['no']}&comment_id={$messageRow['user_comment_id']}" onclick="return deletecomment(['$messageRow[id]'])" class="edit_btn btn-success" style="padding-top:2px;padding-bottom:2px;">删除</a>
+			</td>
+          </tr>
+         <!--{/foreach}-->
+         {if empty($dataList)}
+          <tr>
+            <td colspan="6" class="text-center">无记录</td>
+          </tr>
+          {/if}
+        </table>
+      </form>
+	  <table width="100%" class="columntable formtable">
+				<tr>
+					<td align="center" id="pages" class="pages">$pages</td>
+				</tr>
+				<tr>
+					<td align="left"><a href="javascript:" onclick="check_all(true, 'ids[]')">{$P8LANG['select_all']}</a> / <a href="javascript:" onclick="check_all(false, 'ids[]')">{$P8LANG['select_back']}</a> <input type="button" name="Submit" value="{$P8LANG['delete']}" class="submit_btn" onclick="_delete()"></td>
+				</tr>
+			</table>
+  </div>
+</div>
+<script>
+$(".headerbtn_list li:nth-child(3)").addClass("active");
+var aid = {$aid};
+var msg_id = {$row['msg_data_id']};
+var no = {$row['no']};
+
+function CheckAll(va){
+	var form=document.form_work;
+	for (var i=0;i<form.elements.length;i++){
+		var e = form.elements[i];
+		if(va=='all'){
+			e.checked = true;
+		}else{
+			e.checked == true ? e.checked = false : e.checked = true;
+		}
+	}
+}
+function get_ids(){
+	var array = checked_values('ids[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	return id;
+}
+function _delete(){
+	comment_id=get_ids();
+	_deletecomment(comment_id);
+}
+
+function _deletecomment(comment_id){	
+	//if(confirm('{$P8LANG['confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({comment_id:comment_id,msg_id:msg_id,no:no,action:'deletecomment'}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#reply_'+ json[i]).remove();
+					}
+				}
+			});
+		}
+	});
+	
+	return false;
+}
+
+var edit_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['reply']}',
+	width: 700,
+	height: 440
+});
+
+function _replycomment(comment_id){
+	edit_dialog.show();
+	edit_dialog.content.load('{$this_url}?action=replycomment&aid='+aid+'&msg_id='+msg_id+'&no='+no+'&comment_id='+comment_id);
+	return false;
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

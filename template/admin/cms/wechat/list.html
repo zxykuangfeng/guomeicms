@@ -1,0 +1,384 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/cms/item/admin.js"></script>
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td width="30%">
+						<ul class="boxmenu fleft">
+							<li class="active"><a href="$this_url?cid=$cid" class="bm_l">{$P8LANG['pushlist']}</a></li>
+							<li><a href="$this_router-pushlist" class="bm_l">{$P8LANG['pushlogs']}</a></li>
+						</ul>
+					</td>
+					<td width="70%">
+						<form action="$this_url" method="get" id="request" onsubmit="request_item(1);return false;">
+							<input type="hidden" name="verified" value="1" id="verified1" checked />
+							<div class="boxmenu fright" style="height:29px;padding:5px 2px;">													
+							<div class="mr20 fright">
+								<select name="model" id="model" onchange="MODEL = this.value">
+									<option value="">{$P8LANG['cms_model']}</option>
+									<option value="article">文章内容</option>
+								</select>
+								
+								<select name="order">
+									<option value="0" selected="selected">降序</option>
+									<option value="1">升序</option>
+								</select>
+								<select onchange="$('#cond').attr('name', this.value);">
+									<option value="keyword">{$P8LANG['cms_item']['search_by_keyword']}</option>
+									<option value="id"{if !empty($id)} selected{/if}>{$P8LANG['cms_item']['search_by_id']}</option>
+									<option value="username"{if !empty($username)} selected{/if}>按作者</option>
+									<option value="verifier">按审核人</option>
+								</select>
+								<input type="text" class="txt" id="cond" size="15" {if !empty($keyword)} name="word" value="$keyword"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{elseif !empty($username)}name="username" value="$username"{else} name="word"{/if} />
+								<input type="submit" value="{$P8LANG['search']}" class="submit"/>
+								<input type="button" value="{$P8LANG['refresh']}" class="refreshbtn" onclick="request_item(PAGE)" />
+							</div>
+							<div class="mr20 fright">
+								<span id="cids"></span>
+								<input type="button" value="{$P8LANG['cms_item']['filter_by_category']}" class="screenbtn" onclick="category_dialog.show()" />
+								<input type="hidden" id="cid" name="cid" value="$cid" />
+							</div>
+							</div>
+						</form>
+					</td>
+				</tr>
+			</table>
+			<form action="$this_router-push" method="post" id="form" name="form2">
+				<table width="100%" class="columntable formtable hover_table click_changeable">				
+					<tr class="title fix_head">
+						<td width="3%" align="center" class="title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+						<td width="5%" align="center" class="title">ID</td>
+						<td width="30%" class="title">{$P8LANG['title']}</td>
+						<td width="10%" align="center" class="title">{$P8LANG['cms_category_name']}</td>
+						<td width="5%" align="center" class="title">{$P8LANG['author']}</td>
+						<td width="5%" align="center" class="title">{$P8LANG['verifier']}</td>
+						<td width="5%" align="center" class="title">{$P8LANG['view']}</td>
+						<td width="14%" align="center" class="title">{$P8LANG['addtime']}</td>
+						<td width="5%" align="center" class="title">{$P8LANG['level']}</td>
+						<td width="15%" align="center" class="title">{$P8LANG['operation']}</td>
+					</tr>
+				
+				<tbody id="list">
+					
+				</tbody>
+				
+				</table>
+				<table width="100%" class="columntable formtable">
+				<tr>
+					<td align="center" id="pages" class="pages"></td>
+				</tr>
+				<tr>
+					<td>
+						<a name="op"></a>
+						<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+						<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a>
+						<input  type="submit" class="edit_btn" value="推送至微信公众号" />
+					</td>
+				</tr>
+			</table>
+			</form>			
+		</div>		
+	</div>
+<input type="hidden" id="select_cid" />
+
+<script type="text/javascript">
+$(".headerbtn_list li:nth-child(2)").addClass("active");
+var move_item_id = [],
+	clone_item_id = [],
+	verify_item_id = [],
+	up_down_id = [],
+	verified = 1,
+	MODEL = '$MODEL',
+	
+	MODEL_JSON = $model_json,
+	ATTR_JSON = $attr_json,
+	PAGE;
+
+
+function request_item(page){
+	
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			PAGE = page;
+			verified = $('#request input[name=verified]:checked').val();
+			
+			$('#list').empty();
+			for(var i in json.list){
+				_list_item(json.list[i]);
+			}
+			
+			$('#pages').html(json.pages);
+			
+			ajaxing({action: 'hide'});
+			
+			window.scrollTo(0, 0);
+			
+			$('input[name=cl]').prop('checked', false);
+			
+			if($('#request input[name=id]').val()){
+				check_all(true, 'id[]');
+			}
+			
+			init_tr($('#form'));
+			
+			var keywords = $.trim($('#request input[name=keyword]').val());
+			if(!keywords.length) return;
+			
+			var keywords = keywords.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+			
+			$('.list_item').each(function(){
+				for(var i = 0; i < keywords.length; i++){
+					var html = $(this).find('.item_title').get(0).innerHTML;
+					$(this).find('.item_title').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+				}
+			});
+			
+		}
+	});
+}
+
+function _list_item(json){
+	
+	var props = ['id', 'cid', 'attributes', 'title', 'push_back_reason', 'model', 'timestamp', 'views', 'level', 'username', 'pages'];
+	
+	for(var i = 0; i < props.length; i++){
+		if(json[props[i]] === undefined) json[props[i]] = '';
+	}
+	
+	json.otitle = json.title;
+	json.title = '<span class="item_title">'+ json.title +'</span>';
+	json.title_bold == 1 && (json.title = '<b>'+ json.title +'</b>');
+	json.title_color && (json.title = '<font color="'+ json.title_color +'">'+ json.title +'</font>');
+	json.title = '<span style="width: 240px;display: inline-block; height:28px;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">'+ json.title +'</span>';
+	var cmp = json.list_order - json.timestamp;
+	if(verified == 1 && cmp != 0){
+		if(cmp > 0){
+			json.title += '<img src="{$_SKIN}/up.png" />';
+			json.otitle += lang_array('{$P8LANG['cms_item']['list_order']['up_to']}', [date('Y-m-d H:i:s', json.list_order)]);
+		}else{
+			json.title += '<img src="{$_SKIN}/down.png" />';
+			json.otitle += lang_array('{$P8LANG['cms_item']['list_order']['down_to']}', [date('Y-m-d H:i:s', json.list_order)]);
+		}
+		
+	}
+	
+	json.model = MODEL_JSON[json.model] || {id: 0, name: MODEL, alias: ''};
+	
+	var attr = json.attributes.split(',');
+	var attrs = '';
+	for(var i in attr){
+		if(!attr[i]) continue;
+		
+		attrs += '<font color="red">'+ ATTR_JSON[attr[i]] +'</font> ';
+	}
+	
+	var update_link = '{if $allow_update}<a href="{$core.admin_controller}/cms/item-update?model='+ json.model.name +'&id='+ json.id +'&verified='+ json.verified +'" class="edit_btn" style="padding-top:2px;padding-bottom:2px;" title="{$P8LANG['edit']}" target="_blank">{$P8LANG['edit']}</a>{/if} ';
+	var push_link = '{if $allow_push}<a href="{$this_router}-push?id='+ json.id +'" title="{$P8LANG['push']}" class="edit_btn btn-success" style="padding-top:2px;padding-bottom:2px;">{$P8LANG['push']}</a>{/if}';
+	
+	var tr = 
+	'<tr class="list_item">'+
+		'<td align="center"><input type="checkbox" name="id[]" value="'+ json.id +'" /></td>'+
+		'<td align="center">'+ json.id +'</td>'+
+		'<td>'+
+			'<a href="{$core.controller}/cms/item-view-id-'+ json.id +'?verified='+ json.verified +'" target="_blank" title="{if !empty($value['push_back_reason'])}$value[push_back_reason]{else}'+ json.otitle +'{/if}" alt="'+ json.otitle +'">'+ json.title +'</a>&nbsp;'+ attrs +
+		'</td>'+
+		'<td align="center" id="item_cat_'+ json.id +'" title="'+ json.cid +'">'+ json.category_name +'</td>'+		
+		'<td align="center">'+ json.username +'</td>'+
+		'<td align="center">'+ json.verifier +'</td>'+
+		'<td align="center">'+ json.views +'</td>'+
+		'<td align="center">'+ date('Y-m-d H:i', json.timestamp) +'</td>'+
+    	'<td align="center"><span class="level" id="item_level_'+ json.id +'">'+ json.level +'</span></td>'+
+		'<td align="center">'+ update_link + push_link + '</td>'+
+	'</tr>';
+	
+	$('#list').append($(tr));
+}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['cms_item']['move']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		cs.init();
+	},
+	ok: function(){
+		
+		var cid = $('#move_cid').val();
+		if(!cid) return false;
+		
+		var cat = cs.get_by_id(cid);
+		
+		$.ajax({
+			url: '$this_router-move',
+			type: 'post',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: move_item_id, cid: cid, verified: verified === undefined ? 1 : verified}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				
+				for(var i = 0; i < json.length; i++){
+					$('#item_cat_'+ json[i]).html('<a href="'+ cat['url'] +'" target="_blank">'+ cat['name'] +'</a>');
+				}
+				
+				request_item(PAGE);
+			}
+		});
+	}
+});
+
+var cs = new Recursive_Selector({
+	input: $('#move_cid'),
+	dialog: dialog,
+	sub_property: 'categories',
+	url: '{$this_system.controller}/category-json?verify=1',
+	item_callback: function(cat, item){
+		if(MODEL && cat.model != '$MODEL')
+			item.css({opacity: '0.3', alpha: '(opacity=30)'});
+		
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	change: function(select){
+		var cat = cs.get_by_id(select.data('value'));
+		
+		if(MODEL && cat.model != MODEL && !cat.categories) p8_window.alert('你选了一个非本模型的分类');
+	}
+});
+
+var category_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		category_filter.init();
+	},
+	ok: function(){
+		var cid = $('#select_cid').val();
+		$('#cid').val(cid);
+
+		category_selected(cid);
+
+		if(cid != 0){
+
+			var cat = category_filter.get_by_id(cid);
+
+			var check = new _check_model(cat.model);
+			check.check(cat);
+
+			MODEL = check.checked ? cat.model : '';
+			$('#model').val(MODEL);
+
+		}else{
+			$('#model').val('');
+		}
+	}
+});
+
+var category_filter = new Recursive_Selector({
+	input: $('#select_cid'),
+	sub_property: 'categories',
+	url: '{$this_system.controller}/category-json?verify=1',
+	value: $cid,
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	init_callback: function(){
+		category_selected(this.get_value());
+	},
+	dialog: category_dialog
+});
+
+function category_selected(cid){
+	if(cid == 0){
+		$('#cids').html('');
+		return;
+	}
+
+	var tmp = category_filter.get_by_id(cid);
+	var html = '';
+
+	while(true){
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+
+		tmp = category_filter.get_by_id(tmp.parent);
+	}
+
+	$('#cids').html(html);
+}
+
+function _check_model(model){
+	this.checked = true;
+	this.last_model = model;
+	
+	this.check = function(cat){
+		if(this.last_model != cat.model){
+			this.checked = false;
+		}
+		
+		this.last_model = cat.model;
+		
+		if(cat.categories){
+			for(var i in cat.categories)
+				this.check(cat.categories[i]);
+		}
+	};
+}
+
+var _obj = new Date({$timestamp}000);
+var _Y = _obj.getFullYear(),
+	_m = _obj.getMonth() +1,
+	_d = _obj.getDate(),
+	_H = _obj.getHours(),
+	_j = _obj.getDay();
+
+function list_order_date(timestamp){
+	$('#list_order_input').val(date('Y-m-d H:i:s', timestamp));
+}
+
+
+var up_down_html = '<div><input type="text" id="list_order_input" autocomplete="off" onclick="rcalendar(this, \'full\');">'+
+	'<input type="button" value="{$P8LANG['cms_item']['list_order']['up_to_1d']}" onclick="list_order_date(mktime(0, 0, 0, _m, _d +1, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['cms_item']['list_order']['up_to_1w']}" onclick="list_order_date(mktime(0, 0, 0, _m, _d +7, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['cms_item']['list_order']['up_to_1m']}" onclick="list_order_date(mktime(0, 0, 0, _m +1, _d, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['cms_item']['list_order']['down_to_1d']}" onclick="list_order_date(mktime(0, 0, 0, _m, _d -1, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['cms_item']['list_order']['down_to_1w']}" onclick="list_order_date(mktime(0, 0, 0, _m, _d -7, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['cms_item']['list_order']['down_to_1m']}" onclick="list_order_date(mktime(0, 0, 0, _m -1, _d, _Y))" /> '+
+	'</div><div>{$P8LANG['cms_item']['list_order']['note']}</div>';
+
+$(function(){
+	request_item(1);
+	
+	<!--{if $cid}-->
+	category_filter.init();
+	<!--{/if}-->
+});
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,658 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="X-Csrf-Token" content="{$CSRF_TOKEN}">
+<meta name="renderer" content="webkit">
+<title>分站系统后台管理平台</title>
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap-switch.min.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$_SKIN}/style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap-switch.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+P8CONFIG.admin_controller = '{$core.admin_controller}';
+var P8_ROOT = '$P8_ROOT';
+
+<!--{template_init_js}-->
+</script>
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+</head>
+<body>
+<div id="container" class="sites-container">
+	<div class="main-header">
+		<div class="header-container">
+			<div class="header-left">
+				<div class="logo"><a href="{$core.admin_controller}/sites-index_new"><img src="{if isset($config['logo_sites']) && !empty($config['logo_sites'])}{$config['logo_sites']}{else}{$_SKIN}/logo2.png{/if}" /></a></div>
+				<div class="header-menu">
+					<ul class="header-menu-item" id="core_menu">
+						<li><a href="{$core.admin_controller}/sites-index_new"><i class="icon icon-nav1"></i>我的桌面</a></li>
+						<li class="dropdown"><a href="{$core.admin_controller}/sites/item-list" target="sites_main" class="m3"><i class="icon icon-nav2"></i>内容管理</a></li>
+						<!--{if $site_list || $mysites}-->
+						<li>
+							<a href="{$core.admin_controller}/sites/farm-list" target="sites_main" class="m1"><i class="icon icon-nav3"></i>站群建设</a>
+						</li>
+						<!--{/if}-->
+						<li><a href="{$core.admin_controller}/sites-index?frame=/sites-action_log"><i class="icon icon-nav4"></i>安全管理</a></li>
+						<li><a href="{$core.admin_controller}/sites-index_new"><i class="icon icon-nav5"></i>统计平台</a></li>
+						<li><a href="{$core.admin_controller}/sites-index_new"><i class="icon icon-nav6"></i>快捷中心</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="header-right">
+				<div class="header-message">
+					<a href="{$core.U_controller}/message-inbox" target="_blank"><i class="icon icon-nav7"></i>消息<span>0</span></a>
+				</div>
+				<div class="header-clik">
+					<ul class="header-nav">	
+						<li class="dropdown">
+							<!--{if count($mysites)>1}-->
+							<select name="site" id="this_site" class="select" onchange="set_site(this)">
+								<option value="">请选择</option>
+								<!--{foreach $mysites $site}-->
+								<option value="$site" {if !empty($this_system->SITE) && $site==$this_system->SITE}selected{/if}>{$allsites[$site]['sitename']}</option>
+								<!--{/foreach}-->
+							</select>
+							<!--{else}--> 
+							<input type="hidden" id="this_site" value="{$this_system->SITE}" />
+							<!--{/if}-->
+						</li>
+						<li class="topimg"><a href="javascript:;" onclick="show_edit_label()"><img src="{$RESOURCE}/skin/admin/topimg.png" />首页可视化</a></li>
+						<li class="dropdown">
+							<a><i class="icon icon-nav8"></i>快捷入口</a>
+							<ul class="dropdown-menu">
+								<li><a href="{$core.admin_controller}/cms-index_to_html" target="_blank"><i class="fa fa-angle-right"></i>静态主站首页</a></li>
+								<li><a href="javascript:;" onclick="$('#list_to_html').submit()"><i class="fa fa-angle-right"></i>静态主站栏目</a></li>
+								<li><a href="javascript:;" onclick="$('#view_to_html').submit()"><i class="fa fa-angle-right"></i>静态最近内容</a></li>
+								<li><a href="javascript:;" onclick="do_cache('base')"><i class="fa fa-angle-right"></i>更新基础缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('template')"><i class="fa fa-angle-right"></i>更新模板缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('label')"><i class="fa fa-angle-right"></i>更新标签缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('all')"><i class="fa fa-angle-right"></i>更新全站缓存</a></li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="javascript:;" onclick="open_site()"><i class="icon icon-nav9"></i>网站首页</a>
+							<ul class="dropdown-menu">
+								<li><a href="{$RESOURCE}" target="_blank"><i class="fa fa-angle-right"></i>网站静态首页</a></li>
+								<li><a href="{if $core->controller}{$core.controller}{else}{$STATIC_URL}/index.php{/if}" target="_blank"><i class="fa fa-angle-right"></i>网站动态首页</a></li>
+								<li><a href="{$RESOURCE}/dl.html" target="_blank"><i class="fa fa-angle-right"></i> 统一登录入口</a></li>
+								<li><a href="{$core.U_controller}?site=mainstation" target="_blank"><i class="fa fa-angle-right"></i>主站会员中心</a></li>
+								<li><a href="{$core.U_controller}/member-mysites" target="_blank"><i class="fa fa-angle-right"></i>子站会员中心</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="content-main content-top">
+		<div class="content-container content-container-bg">
+			<div class="content-side sider-menu-left sider-menu-container">			
+				<div class="current-sites">
+					<div class="current-sites-nav">
+						<!--{if count($mysites)>1}-->
+						<select name="site" id="this_site" class="select" onchange="set_site(this)">
+							<option value="">请选择</option>
+							<!--{foreach $mysites $site}-->
+							<option value="$site" {if !empty($this_system->SITE) && $site==$this_system->SITE}selected{/if}>{$allsites[$site]['sitename']}</option>
+							<!--{/foreach}-->
+						</select>
+						<!--{else}--> 
+						<input type="hidden" id="this_site" value="{$this_system->SITE}" />
+						<!--{/if}-->
+					</div>
+				</div>
+				<div class="sites-info">
+					<ul id="sites-info-tab" class="nav nav-info">
+						<li class="active"><a href="#survey" data-toggle="pill">基本概况</a></li>
+						<li><a href="#service" data-toggle="pill">咨询问答</a></li>
+						<li><a href="#problem" data-toggle="pill">常见问题</a></li>
+					</ul>
+					<div id="myTabContent" class="tab-content">
+						<div class="tab-pane active fade in" id="survey">
+							<ul class="info-list clearfix">
+								<li><span>创建时间：2022-12-15</span></li>
+								<li><span>模版编号：xxx</span></li>
+								<li><span>站点别名：xxxxx</span></li>
+								<li><span>访问域名：xxxxx</span></li>
+							</ul>
+						</div>
+						<div class="tab-pane fade" id="service">
+							<ul class="sites-tab-list">
+								<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+								<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+								<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+							</ul>
+						</div>
+						<div class="tab-pane fade" id="problem">
+							<ul class="sites-tab-list">
+								<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+								<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+								<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="sites-left-box">
+					<div class="sites-left-head">
+						<div class="title"><span class="arrow"></span>站点状态</div>
+					</div>
+					<div class="sites-left-main">
+						<ul class="sites-state clearfix">
+							<li class="col-md-6 col-sm-6">
+								<div class="sites-state-btn">
+									<input type="radio" name="radio2" checked data-radio-all-off="true" data-size="mini" class="switch-radio2">
+								</div>	
+								开启
+								
+							</li>
+							<li class="col-md-6 col-sm-6">
+								<div class="sites-state-btn">
+									<input type="radio" name="radio2" data-radio-all-off="true" data-size="mini" class="switch-radio2">
+								</div>
+								一键关闭站点
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="sites-left-box">
+					<div class="sites-left-head">
+						<div class="title"><span class="arrow"></span>访问统计</div>
+					</div>
+					<div class="sites-left-main">
+						<ul class="sites-statistics clearfix">
+							<li class="col-md-6 col-sm-6">
+								<span class="blue">1200</span>
+								本月访问
+							</li>
+							<li class="col-md-6 col-sm-6">
+								<span class="green">39</span>
+								今日访问
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="sites-left-box">
+					<div class="sites-left-head">
+						<div class="title"><span class="arrow"></span>站点账号</div>
+						<span class="caret"></span>
+					</div>
+					<div class="sites-left-main">
+						<div class="sites-account">
+							<table class="table">
+								<tr>
+									<td class="name">某某某</td>
+									<td class="tel">15989053976</td>
+									<td class="style">站点管理员</td>
+								</tr>
+								<tr>
+									<td class="name">某某某</td>
+									<td class="tel">15989053976</td>
+									<td class="style">站点管理员</td>
+								</tr>
+								<tr>
+									<td class="name">某某某</td>
+									<td class="tel">15989053976</td>
+									<td class="style">站点管理员</td>
+								</tr>
+								<tr>
+									<td class="name">某某某</td>
+									<td class="tel">15989053976</td>
+									<td class="style">站点管理员</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class="sites-left-box">
+					<div class="sites-left-head">
+						<div class="title"><span class="arrow"></span>最新登录</div>
+					</div>
+					<div class="sites-left-main">
+						<ul class="sites-login clearfix">
+							<li class="col-md-4 col-sm-4">
+								<i class="icon icon-user"></i>
+								<p>xxx账号</p>
+							</li>
+							<li class="col-md-4 col-sm-4">
+								<i class="icon icon-ip"></i>
+								<p>xxxxx</p>
+							</li>
+							<li class="col-md-4 col-sm-4">
+								<i class="icon icon-time"></i>
+								<p>2022-0816</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="sites-left-box">
+					<div class="sites-left-head">
+						<div class="title"><span class="arrow"></span>站点公告</div>
+					</div>
+					<div class="sites-left-main">
+						<ul class="sites-notice clearfix">
+							<li><a href="#">xxxxxxxx</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="sites-contact">
+					<ul class="sites-contact-list clearfix">
+						<li class="col-md-6 col-sm-6">
+							<a href="#"><i class="icon-course"></i>站群服务教程</a>
+						</li>
+						<li class="col-md-6 col-sm-6">
+							<a href="#"><i class="icon-follow"></i>关注国微原厂</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="content-main">
+				<div class="content-main-inner">
+					<div class="sites-top clearfix">
+						<ul class="nav navbar-nav sites-nav" id="sites-nav">
+							<li class="dropdown">
+								<a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span><img src="{$_SKIN}/images/nav1.png"/></span>内容发布</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$core.admin_controller}/sites/item-add" target="sites_main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-clone_log" target="sites_main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-report" target="sites_main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list_to_html" target="sites_main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-set_lan" target="sites_main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span><img src="{$_SKIN}/images/nav2.png"/></span>内容管理</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$core.admin_controller}/sites/item-add" target="sites_main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-clone_log" target="sites_main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-report" target="sites_main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list_to_html" target="sites_main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-set_lan" target="sites_main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span><img src="{$_SKIN}/images/nav3.png"/></span>可视化管理</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$core.admin_controller}/sites/item-add" target="sites_main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-clone_log" target="sites_main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-report" target="sites_main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list_to_html" target="sites_main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-set_lan" target="sites_main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+							<!--{if $site_list || $mysites}-->
+							<li class="dropdown">
+								<a href="{$core.admin_controller}/sites/farm-list" target="sites_main" class="m1"><span><img src="{$_SKIN}/images/nav4.png"/></span>更新站点</a>
+								<ul class="dropdown-menu">
+									<!--{if $site_create}--><li><a href="{$core.admin_controller}/sites/farm-add" target="sites_main"><span class="arrow"></span>创建一个分站</a></li><!--{/if}-->
+									<li><a href="{$core.admin_controller}/sites/farm-list" target="sites_main"><span class="arrow"></span>所有管理分站</a></li>
+									<li><a href="{$core.admin_controller}/sites-main" target="sites_main"><span class="arrow"></span>所有站群内容</a></li>
+									<li><a href="{$core.admin_controller}/sites-list" target="sites_main"><span class="arrow"></span>所有栏目列表</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-config" target="sites_main"><span class="arrow"></span>子站全局设置</a></li>					
+									<!--{if $model_list}--><li><a href="{$core.admin_controller}/sites/model-list" target="sites_main"><span class="arrow"></span>系统模型管理</a></li><!--{/if}-->
+									<!--{if $site_recycle}--><li><a href="{$core.admin_controller}/sites/farm-list_recycle" target="sites_main"><span class="arrow"></span>恢复误删分站</a></li><!--{/if}-->
+									<li><a href="javascript:;" onclick="cache_all_site();" target="sites_main" ><span class="arrow"></span>更新站群缓存</a></li>					
+								</ul>
+							</li>
+							<!--{/if}-->
+							<li class="dropdown">
+								<a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span><img src="{$_SKIN}/images/nav5.png"/></span>会员中心</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$core.admin_controller}/sites/item-add" target="sites_main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-clone_log" target="sites_main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-report" target="sites_main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list_to_html" target="sites_main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-set_lan" target="sites_main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span><img src="{$_SKIN}/images/nav6.png"/></span>资源管理员</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$core.admin_controller}/sites/item-add" target="sites_main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list" target="sites_main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-clone_log" target="sites_main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-report" target="sites_main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-list_to_html" target="sites_main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$core.admin_controller}/sites/item-set_lan" target="sites_main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+					<div class="sites-news">
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">最新内容</div>
+									</div>
+									<div class="sites-news-main">
+										<ul class="sites-news-list">
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">快捷发布内容</div>
+									</div>
+									<div class="sites-news-main">
+										<ul class="sites-news-list">
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="sites-news-box media">
+									<div class="sites-news-head2 pull-left">
+										<div class="title">统计数据</div>
+									</div>
+									<div class="sites-news-main2 media-body">
+										<ul class="sites-data">
+											<li><a href="#"><i class="data data-icon1"></i>内容敏感词</a></li>
+											<li><a href="#"><i class="data data-icon2"></i>大数据内容敏感词</a></li>
+											<li><a href="#"><i class="data data-icon3"></i>外链扫描</a></li>
+											<li><a href="#"><i class="data data-icon4"></i>死链接扫描</a></li>
+											<li><a href="#"><i class="data data-icon5"></i>本月推送数据</a></li>
+											<li><a href="#"><i class="data data-icon6"></i>登录次数</a></li>
+											<li><a href="#"><i class="data data-icon7"></i>统计预警</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<ul id="sites-tab" class="nav-sites">
+											<li class="active"><a href="#zxnr" data-toggle="pill">最新内容</a><span>/</span></li>
+											<li><a href="#dshnr" data-toggle="pill">待审核内容</a><span>/</span></li>
+											<li><a href="#sjts" data-toggle="pill">数据推送内容</a></li>
+										</ul>
+									</div>
+									 <div id="myTabContent" class="tab-content sites-news-main">
+										<div class="tab-pane active fade in" id="zxnr">
+											<ul class="sites-news-list">
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											</ul>
+										</div>
+										<div class="tab-pane fade" id="dshnr">
+											<ul class="sites-news-list">
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											</ul>
+										</div>
+										<div class="tab-pane fade" id="sjts">
+											<ul class="sites-news-list">
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">快捷发布内容</div>
+									</div>
+									<div class="sites-news-main">
+										<ul class="sites-news-list">
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">最新内容</div>
+									</div>
+									<div class="sites-news-main3">
+										
+									</div>                                               
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<ul id="sites-tab2" class="nav-sites">
+											<li class="active"><a href="#qtrk" data-toggle="pill">其他入口</a><span>/</span></li>
+											<li><a href="#cjwt" data-toggle="pill">常见问题</a></li>
+										</ul>
+									</div>
+									<div id="myTabContent" class="tab-content sites-news-main3">
+										<div class="tab-pane active fade in" id="qtrk">
+											<ul class="sites-links row">
+												<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav10"></i>数据备份</a></li>
+												<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav11"></i>内容静态</a></li>
+												<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav12"></i>数据备份</a></li>
+												<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav13"></i>数据备份</a></li>
+												<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav14"></i>数据备份</a></li>
+												<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav15"></i>数据备份</a></li>
+												<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav16"></i>数据备份</a></li>
+												<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav17"></i>数据备份</a></li>
+											</ul>
+										</div>
+										<div class="tab-pane fade" id="cjwt">
+											<ul class="sites-news-list">
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+												<li><a href="http://schoolzqbz2021.php168.net/s.php/mbty/item-view-id-15684?verified=1" target="_blank" title="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alt="本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度" alert="left">本科就有导师 岳麓书院把制度做成了“温度”岳麓书院把制度</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script language="JavaScript">
+var url = window.location.href;
+index = url.indexOf("flag");
+if(index !=-1) html_index();
+function show_edit_label(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+
+function html_index(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_router}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   success: function(msg){
+			   if(msg==-1)
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	})
+	
+}
+
+function set_site(obj){
+
+	sites_main_src = sites_main.window.location.href;
+	sites_main_src=sites_main_src.replace(/[&?]site=\w*/,'');
+	$('#sites_main').attr('src',sites_main_src+((sites_main_src.indexOf('?')>-1)?'&':'?')+'site='+$(obj).val());
+}
+
+function open_site(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/s.php/'+thisSite);
+}
+
+function open_acl(){
+	thisSite = $('#this_site').val();
+	window.location.href = '{$core.admin_controller}/sites/farm-acl?alias='+thisSite;
+}
+
+function open_ucenter(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/u.php?site='+thisSite);
+}
+
+function cache_all(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->admin_controller}/sites/farm-cacheall?site='+thisSite,'sites_main');
+}
+function cache_category(){
+	$.ajax({
+		url:'{$core.admin_controller}/sites/farm-cacheall',
+		type: 'post',
+		dataType: 'json',
+		data:ajax_parameters({cache: ['category']}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({text:'缓存中…'});
+		},
+		success: function(msg){
+			ajaxing({text:'操作成功！',action: 'hide'});
+		}
+	});	
+}
+function cache_all_site(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){			
+			$.ajax({
+				url:'{$core.admin_controller}/sites/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({text:'操作成功！',action: 'hide'});
+				}
+			});			
+		}else{
+			return false;
+		}
+	});
+}
+function list_only_html(){
+	$('#list_only_html').empty();
+	$('#list_only_html').append($('<input type="hidden" name="pages" value="0" />'));
+	$('#list_only_html').submit();	
+	html_dialog.show();	
+	$('#list_only_html').empty();
+}
+
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 400,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+
+$(document).ready(function(){
+	$("input[type=\"checkbox\"], input[type=\"radio\"]").not("[data-switch-no-init]").bootstrapSwitch();
+    $("[data-switch-get]").on("click", function() {
+      var type;
+      type = $(this).data("switch-get");
+      return alert($("#switch-" + type).bootstrapSwitch(type));
+    });
+	$('#menu_td .sec_menu').each(function(i){
+		$(this).parent().hover(
+			function(){ $(this).find('.sec_menu').show(); },
+			function(){ $(this).find('.sec_menu').hide(); }
+		)
+	});
+	$(".content-side").niceScroll({styler:"fb",cursorcolor:"#429cd8", cursorwidth: '3', cursorborderradius: '10px', background: '#d5dddf', cursorborder: '',cursorfixedheight:70});
+	$(".sites-account").niceScroll({cursorcolor:"#71a6d7", cursorwidth: '9', cursorborderradius: '0', background: '#448aca', cursorborder: '',autohidemode:false,cursorfixedheight:40});
+	$(function () {
+	  $(".dropdown").mouseover(function () {
+		$(this).addClass("open");
+	  });
+	  $(".dropdown").mouseleave(function(){
+		$(this).removeClass("open");
+	  })
+	});
+})
+
+$(document).ready(function(){
+	$('#system li').mouseover(function(){
+		clearTimeout(system_menu_hide_timeout);
+		$('#system li dl').show();
+	});
+	$('#system li').mouseout(function(){
+		system_menu_hide_timeout = setTimeout(function(){ $('#system li dl').hide();}, 200);
+	});
+	$('#system_list').
+	mouseover(function(){
+		clearTimeout(system_menu_hide_timeout);
+	});
+
+	window.onresize();
+	
+	if(self != top){
+		parent.window.location.href = '{$core.admin_controller}';
+	}
+});
+
+//一级菜单变换CSS
+core_menu_change_css();
+
+//窗口调整
+window.onresize = function(){
+    var widths = document.body.scrollWidth;
+    var heights = document.documentElement.clientHeight-100;
+	$('#sites_main').height(heights);
+};
+
+</script>
+</body>
+</html>
+<!--{/php168}-->

@@ -1,0 +1,204 @@
+<!--{php168}-->
+<!--{if $inajax}-->
+	<div style="width:690px;">
+<!--{else}-->
+	<!--{template $this_system header}-->
+	<div class="wrapbox light_blue_border">
+<!--{/if}-->
+<link rel="stylesheet" href="{$RESOURCE}/images/category_selector.css" type="text/css">
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+   <div class="topic_title<!--{if !$inajax}--> light_blue_bg<!--{/if}-->"><h3 class="mark">{$P8LANG['ask_edit']}</h3></div>
+   <div class="postbox">
+     <form  action="{$this_router}-post_edit" name="AskForm" id="AskForm" method="post">
+     	<div class="form-group">
+			<div class="col-sm-12">
+		    	<div class="grey_dash_bg">
+		   	  		<div class="tips">{$P8LANG['ask_category']}：</div>
+		   	  		<div class="setting" style="padding-top:3px;*padding-top:6px;">
+		   	  			<span id="categoryList"></span>
+						<a href="javascript:void(0);" onclick="dialog.show()" style="color:#333;padding:1px 2px;font-size:12px;border:1px solid #767676;background:#efefef;border-radius:3px;text-decoration:none;"><span class="u">请选择问答分类</span></a>
+						<input type="hidden" name="cid" value="{if !empty($data['cid'])}$data[cid]{/if}"/>
+						<input type="hidden" id="cid" value="{if !empty($data['cid'])}$data[cid]{/if}" />
+	         		</div>
+			   </div>
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-12">
+				<div class="row">
+					<div class="col-sm-10 col-xs-12">
+						<div class="grey_dash_bg">
+							<div class="itemform_con">
+							 	<div class="tips">{$P8LANG['ask_title']}：</div>
+							 	<div class="con">
+							 		<input type="text" name="title" id="title" value="{$data['title']}" class="input topic_input_text"/>
+							 	</div>
+							</div>
+							<div class="itemform_con">
+								<div class="tips">{$P8LANG['ask_content']}：</div>
+								<div class="con">
+									<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+									<script name="content" id="content" type="text/plain">{$data['content']}</script>
+									<script type="text/javascript">
+									$(function(){
+										P8_UEDITOR({
+											id: 'content',
+											config: {
+												initialFrameWidth:null,
+												toolbars : [['fullscreen', 'source',
+												'|', 'undo', 'redo',
+												'|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', 
+												'|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc']],			
+											}
+										});
+									});
+									</script>									
+								</div>
+							</div>
+				     	</div>
+				    </div>
+			     	<div class="col-sm-2 col-xs-12">
+						<!--{if !$inajax}-->
+					 	<div class="notice_tips mt10">
+						   <div class="notice_tips_title">平均<span>4分59秒</span>得到回答</div>
+						   	<div class="notice_tips_content">
+						      <ul>
+							    {$P8LANG['ask_question_post_li'] $urgent_credit}
+							  </ul>
+						   	</div>
+						</div>
+						<!--{/if}-->
+			     	</div>
+				</div>
+		     </div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-12">
+			   	<div class="grey_dash_bg" style="display:none">
+			      <div class="tips">{$P8LANG['ask_additional_info']}：</div>{$P8LANG['ask_additional_email']}&nbsp;<input type="text" name="info" id="info" class="input" size="25" value="{$data['info']}"/>&nbsp;&nbsp;&nbsp;&nbsp;{$P8LANG['ask_telephone']}&nbsp;<input type="text" class="input" name="tel" id="tel" size="25" value="{$data['tel']}"/>
+			   	</div>
+			   	<div class="grey_dash_bg">
+			      <label>{$P8LANG['ask_topic_tags']}：</label>
+				  <input type="text" name="tags" id="tags" value="{$data['tags']}" style="width: 300px;" class="input topic_input_text"/> {$P8LANG['ask_tags_tips']}
+			   	</div>
+			   	<div class="postbtn_li text-center">
+			   		<input type="submit" value="{$P8LANG['ask_submit_topic']}" class="postbtn"/>
+			   		<input type="hidden" name="id" value="{$id}"/>
+			   		<input type="hidden" name="inajax" value="<!--{if $inajax}-->1<!--{else}-->0<!--{/if}-->"/>
+			   	</div>
+			</div>
+		</div>
+	 </form>
+	 <div class="clear"></div>
+   </div>
+   <div class="clear"></div>
+</div>
+<script type="text/javascript">
+var title_error = '{$P8LANG['ask_error_title']  $this_system->CONFIG['title_length']}';
+var content_error ='{$P8LANG['ask_error_content'] $this_system->CONFIG['content_min_length'],$this_system->CONFIG['content_max_length']}';
+var category_error = '{$P8LANG['ask_error_not_choose_category']}';
+
+
+$('#AskForm').validate({
+	rules: {
+		title: {
+			required: true,
+			rangelength: [{$this_system.CONFIG['title_length']}, 80]
+		},		
+		content: {
+			required: true,
+			rangelength: [{$this_system.CONFIG['content_min_length']}, {$this_system.CONFIG['content_max_length']}]
+		}
+	},
+	
+	messages: {
+		title: {
+			required: title_error,
+			rangelength: title_error
+		},		
+		content: {
+			required: content_error,
+			rangelength: content_error
+		}
+	},
+	
+	errorPlacement: function(error, element) {
+		if(element.attr('name') == 'content'){
+			error.insertAfter(element.next());
+		}else{
+			error.insertAfter(element);
+		}
+	},
+	
+	onkeyup: false
+	
+});
+
+var dialog = new P8_Dialog({
+	title_text: '选择分类',
+	button: true,
+	width: 700,
+	height: 300,
+	zIndex: 20002,
+	ok: function(){
+		var values = cs.get_value();
+		$('#AskForm input[name=cid]').val(values);
+		
+		parent_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+var cs = new Recursive_Selector({
+	input: $('#cid'),
+	dialog: dialog,
+	url: '{$this_system.controller}/category-json',
+	value: $('#AskForm input[name=cid]').val(),
+	sub_property: 'categories',
+	
+	init_callback: function(){
+		parent_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+function parent_path(cid){
+
+	if(!cid){
+		$('#cids').html('');
+		return;
+	}
+	
+	var tmp = cs.get_by_id(cid);
+	var html = '';
+	
+	while(true){
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+		
+		tmp = cs.get_by_id(tmp.parent);
+	}
+	
+	$('#cids').html(html);
+	
+	$('#categoryList').html(html);
+}
+$(document).ready(function(){
+cs.init();
+ })
+</script>
+<!--{if $inajax}-->
+<!--{else}-->
+	<!--{template $this_system footer}-->
+	</body>
+	</html>
+<!--{/if}-->
+<!--{/php168}-->

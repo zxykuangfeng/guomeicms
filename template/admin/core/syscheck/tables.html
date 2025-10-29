@@ -1,0 +1,119 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $core menu_safe admin}-->
+<link rel="stylesheet" href="{$SKIN}/cms/bootstrap.min.css" type="text/css" />
+<style>
+body{font-size:12px;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="$this_url" method="get" id="request" onsubmit="request_item();return false;">
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">升级数据表完整性自检</td>
+			</tr>
+			<tr>
+				<td align="center">今天日期：{date('Y-m-d', $timestamp)}
+					当前版本号：{$core->CONFIG['build']}
+					&nbsp;&nbsp;&nbsp;&nbsp;
+					系统/模块 
+					<select name="system">
+						<option value="">不限</option>
+						<!--{foreach $systems $sys}-->
+						<option value="{$sys['name']}">{$sys['alias']}</option>
+						<!--{/foreach}-->
+					</select>
+					<input type="submit" value="{$P8LANG['search']}" class="submit"/>
+					<input type="button" value="{$P8LANG['refresh']}" class="refreshbtn" onclick="request_item()" />
+				</td>
+			</tr>			
+		</table>
+		</form>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" class="columntable formtable hover_table click_changeable table table-hover">
+			<tr class="title fix_head">
+				<td class="title" align="center">序号</td>
+				<td class="title" align="center">文件名</td>			
+				<td class="title" align="center">影响系统/模块</td>
+				<td class="title" align="center">影响数据表</td>
+				<td class="title" align="center">影响代表性字段</td>
+				<td class="title" align="center">升级时间</td>
+				<td class="title" align="center">升级描述</td>				
+				<td class="title" align="center">是否已升级</td>
+				<td class="title" align="center">操作说明</td>
+				<td class="title" align="center">操作</td>
+			</tr>
+			<tbody id="list">
+			</tbody>			
+			<tr>
+				<td colspan="10"><input type="button" value="{$P8LANG['refresh']}" class="refreshbtn" onclick="request_item()" /></td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function request_item(){	
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize(),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			var tr = '';
+			var fileint = 0;
+			var filepath;
+			var action;
+			var action_note;
+			$('#list').empty();
+			for(var i in json){
+				fileint++;
+				filepath = '/upgrade/'+json[i].file;
+				action = '';
+				action_note = '无需操作';
+				if(json[i].upgrade == 'N' || json[i].upgrade == 'N2'){
+                    action_note ='';
+                    if(json[i].upgrade == 'N2'){
+                        action_note = '<apan style="color:#FFA500">表不存在,</span>';
+                    }
+					action = '<a href="..'+filepath+'" class="edit_btn" target="_blank">去执行升级</a>';
+					if(json[i].file_exists == 'N'){
+						action_note += '<apan style="color:red;font-weight:700;">请上传'+filepath+'并执行升级</span>';
+					}else{
+						action_note += '<apan style="color:red;font-weight:700;">请执行升级</span>';
+					}		
+				}
+                if(json[i].upgrade == 'Y'){
+					action_note = '<apan>无需操作</span>';
+					action = '';
+				}
+				tr =
+				'<tr class="list_item">'+
+					'<td align="center">'+ fileint +'</td>'+
+					'<td>'+ json[i].file+'</td>'+
+					'<td align="center">'+ json[i].system+'</td>'+
+					'<td>'+ json[i].table+'<a style="float:right;" href="{$core->admin_controller}/core/dbm-struct?name='+ json[i].table+'" target="_blank">{$P8LANG[view]}</a></td>'+
+					'<td align="center">'+ json[i].fields+'</td>'+
+					'<td align="center">'+ json[i].timestamp+'</td>'+
+					'<td align="center">'+ json[i].summary+'</td>'+
+					'<td align="center"><img src="{$SKIN}/'+ (json[i].upgrade == 'Y' ? 'check_yes.gif' : 'check_no.gif') +'"></td>'+
+					'<td align="center">'+action_note+'</td>'+
+					'<td align="center">'+action+'</td>'+
+				'</tr>';				
+				$('#list').append($(tr));
+			}
+			ajaxing({action: 'hide'});
+		}
+	});
+}
+$(function(){
+	request_item();
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

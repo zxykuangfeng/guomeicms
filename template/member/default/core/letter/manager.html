@@ -1,0 +1,191 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<form name="form" id="searchFrom" action="" method="get" target="_self">
+<div class="search_box">
+	 部门: <!--{if $select_size>=2}-->
+		<!--{php
+		for($i=0;$i<$select_size;$i++){
+			$this_value = empty($data_field[$i])? '' : $data_field[$i];
+			if($i==0){
+				$selectdata = $select_data;
+			}elseif($data_field){
+				$selectdata = (empty($selectdata[$data_field[$i-1]])? array() : $selectdata[$data_field[$i-1]]['s']);
+			}else{
+				$selectdata = array();
+			}
+			$inputname = $select_size-1==$i?'department':'parent_department';
+		}-->
+		<select name="$inputname" id="department" onchange="department_select.change(this)">
+			<option value="">--请选择--</option>
+			<!--{foreach $selectdata $key $value}-->
+			<option value="{$value['i']}" {if $this_value==$key}selected{/if}>{$value['n']}</option>
+			<!--{/foreach}-->
+		</select>
+		<!--{php }}-->							
+		<script type="text/javascript">
+		var department_select = {
+		CAT : <!--{$select_json_data}-->,
+		change : function (obj){
+			var shtml = dhtml = '<option value="">--请选择--</option>';
+			var thisv = $(obj).val();
+			$(obj).nextAll('select').html(dhtml);
+			if(!thisv){
+				return false;
+			}
+			var path = thisv.split('-');
+			var temp = this.CAT;
+			if(path.length==1)
+				temp=this.CAT[path]['s'];
+			else{
+				for (var k in path)
+					temp = temp[path[k]]['s'];
+			}
+			if(temp !=''){
+				for(var j in temp)
+					shtml += '<option value="'+temp[j]['i']+'">'+temp[j]['n']+'</option>';	
+				$(obj).next().html(shtml);	
+		}}}
+		</script>
+	<!--{else}-->
+		<select name="department" id="department">
+			<option value="">请选择</option>
+			<!--{foreach $cates['department'] $key $row}-->
+			<option value="{$row['id']}" {if !empty($data['department']) && $data['department']==$row['id']}selected{/if}>{$row['name']}</option>
+			<!--{/foreach}-->   
+		</select>
+	<!--{/if}-->
+    类别: <select name="type">
+			<option value="">所有</option>
+			<!--{foreach $cates['type'] $key $val}-->
+			<option value="$val[id]" {if !empty($type) && $type == $val['id']}selected{/if}>$val[name]</option>
+			<!--{/foreach}-->
+		</select>
+	办理状态：<select name="status">
+				<option value="-1">所有</option>
+				<option value="0"{if isset($status) && $status == 0}selected{/if}>{$P8LANG['status_0']}</option>
+				<option value="2" {if !empty($status) && $status == 2}selected{/if}>{$P8LANG['status_2']}</option>
+				<option value="3" {if !empty($status) && $status == 3}selected{/if}>{$P8LANG['status_3']}</option>
+				<option value="4" {if !empty($status) && $status == 4}selected{/if}>{$P8LANG['status_4']}</option>
+				</select>
+     分发状态：<select name="fengfa">
+				<option value="-1" {if !isset($fengfa) || $fengfa == -1}selected{/if}>所有</option>
+				<option value="0" {if isset($fengfa) && $fengfa == 0}selected{/if}>未分发</option>
+				<option value="1" {if !empty($fengfa) && $fengfa == 1}selected{/if}>已分发</option>
+				</select>
+	<!--{if $display}-->
+	显示状态：<select name="undisplay">
+				<option value="-1">所有</option>
+				<option value="0"{if isset($undisplay) && $undisplay == 0}selected{/if}>显示</option>
+				<option value="1" {if !empty($undisplay) && $undisplay == 1}selected{/if}>不显示</option>
+				</select>
+	<!--{/if}-->
+	满意度：<select name="comment">
+		<option value="0">所有</option>
+		<!--{foreach $comments $ck $com}-->
+		<option value="$ck"{if isset($comment) && $comment == $ck}selected{/if}>$com</option>
+		<!--{/foreach}-->		
+	</select>
+	提交时间：<input name="begin" value="{if $begin}$begin{/if}" class="txt" size="10" autocomplete="off" onclick="rcalendar(this, 'date')" />-<input name="end" class="txt" value="{if $end}$end{/if}" size="10" autocomplete="off" onclick="rcalendar(this, 'date')" />
+	查找类型：<select name="key_type">
+		<option value="title" {if !empty($key_type) && $key_type == 'title'}selected{/if}>标题</option>
+		<option value="solve_name" {if !empty($key_type) && $key_type == 'solve_name'}selected{/if}>处理人</option>
+		<option value="username" {if !empty($key_type) && $key_type == 'username'}selected{/if}>提交人</option>
+		<option value="number" {if !empty($key_type) && $key_type == 'number'}selected{/if}>问题编号</option>
+	</select>
+	<input name="word" type="text" class="txt" value="$keyword" size="10"/>
+	<input type="hidden" name="act" value="search"/>
+	<input type="image" src="{$MEMBERSKIN}/letter/search_btn.gif" onclick="searchthis()" align="top"/>
+</div>
+</form>
+<form id="list_form" action="" method="post">
+<table width="100%" align="center" cellspacing='1' cellpadding='3' class="formtable columntable hover_table letter_list_table">
+	<tr class="head">
+		<th width="2%" style="border-left:1px solid #dedede"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#list_form'));init_tr($('#list_form'));" /></th>
+		<th width="3%">序号</th>
+		<th width="180">编号</th>
+		<th width="80">提交人</th>
+		<th width="*">标题</th>
+		<th width="70">类型</th>
+		<th width="130">来信时间</th>
+		<th width="90">办理状态</th>
+		<!--{if $display}-->
+		<th width="70">显示状态</th>
+		<!--{/if}-->
+		<!--<th width="70">审核</th>-->
+		<th width="120">受理部门</th>
+		<th width="100">受理人</th>
+		<th width="70">评价</th>
+		<th width="136">操作</th>
+	</tr>
+	<!--{foreach $list $k $v}-->
+	<tr>
+		<td><input type="checkbox" name="id[]" value="{$v['id']}"/></td>
+		<td>{$v['id']}</td>
+		<td><a href="{$this_module.controller}-view?id={$v['id']}" target="_blank">$v[number]</a></td>
+		<td><font color="#009900">$v[username]</font></td>
+		<td  style="text-align:left"><img src="{$MEMBERSKIN}/letter/letter.jpg"/> <a href="{$this_module.controller}-view?id={$v['id']}" target="_blank">$v[title]</a><img style="float:right;" src="{$RESOURCE}/skin/default/core/{$this_module.name}/dp{$v['dp']}.gif"/></td>
+		<td><a href="{$this_url}?type={$v['type']}" onclick="dosearch('type','{$v['type']}');return false;">{$cates['type'][$v['type']]['name']}</a></td>
+		<td><!--{php echo date("Y-m-d H:i",$v['create_time']);}--></td>
+		<td><span class="status_$v[status]">{if $v['status']==3}√{else}＝{/if}{$P8LANG['status_'.$v['status']]}</span></td>
+		<!--{if $display}-->
+		<td width="90"><a href="{$this_url}?undisplay={$v['undisplay']}" onclick="dosearch('undisplay','{$v['undisplay']}');return false;">{if $v['undisplay']}不显示{else}显示{/if}</a></td>
+		<!--{/if}-->
+		<!--<td width="90">{if $v['vefify']}审核{else}未审核{/if}</td>-->
+		<td><a href="{$this_url}?department={$v['department']}" onclick="dosearch('department','{$v['department']}');return false;">{$cates_departments[$v['department']]['name']}</a></td>
+		<td>{$v['solve_name']}</td>
+		<td>{$comments[$v['comment']]}</td>
+		<td><a href="{$this_module.controller}-reply?id={$v['id']}" target="_blank">回复</a> / 
+		<a href="{$this_module.controller}-vefify?id={$v['id']}" target="_blank">审核</a> / 
+		<a href="{$this_url}?act=del&id={$v['id']}" onclick="javascript:if(!confirm('确定要删？'))return false;">删除</a> </td>
+	</tr>
+	<!--{/foreach}-->
+</table>
+</form>
+<table width="100%" class="columntable formtable">
+	<tr>
+		<td align="center" id="pages" class="pages">
+		<span style="float:left;">
+			<a href="javascript:void(0)" onclick="check_all(true, 'id[]')">全选</a>
+			<a href="javascript:void(0)" onclick="check_all(false, 'id[]')">全不选</a>
+			<a href="javascript:;" onclick="doItem('delete')">删除</a>
+		</span>
+		{$pages}
+		</td>
+	</tr>
+</table>
+<script type="text/javascript">
+function printthis(){
+	$('#searchFrom input[name="act"]').val('print');
+	$('#searchFrom').attr('target','_blank').submit();
+}
+function searchthis(){
+	$('#searchFrom input[name="act"]').val('search');
+	$('#searchFrom').attr('target','_self').submit();
+}
+function doItem(act){
+	//if(!confirm('确定要'+(act=='delete'?'删除':'受理')))return false;
+	var array = checked_values('id[]', $('#list_form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	p8_window.confirm('确定要'+(act=='delete'?'删除':'受理'), function (r) {
+		if(r){
+			$('#list_form').attr('action','{$this_url}?act='+act).submit();
+		}else{
+			return false;
+		}
+	});
+}
+
+function dosearch(item,value){
+	$('#searchFrom select[name="'+item+'"]').val(value);
+	$('#searchFrom').submit();
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

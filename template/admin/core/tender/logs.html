@@ -1,0 +1,24 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="columntable formtable hover_table">
+		<tr align="center" height="18" class="head title">
+			<td class="title" width="10%">序号</td>
+			<td class="title" width="15%">操作人</td>
+			<td class="title" width="10%">操作</td>
+			<td class="title" width="20%">时间/IP</td>
+			<td class="title" width="45%">内容</td>
+		</tr>
+		<!--{foreach $list $key $value}-->
+		<tr>
+			<td align="center">{$value['index']}</td>
+			<td align="center">{$value['username']}{if $member_info[$value['name']]}<br>{$member_info[$value['name']]}{/if}</td>
+			<td align="center">{$P8LANG[$value['action']]}</td>
+			<td align="center">{date('Y-m-d H:i',$value['timestamp'])}<br>{$value['ip']}</td>
+			<td>{$value['log_det']}</td>				
+		</tr>
+		<!--{/foreach}-->
+	</table>
+</div>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

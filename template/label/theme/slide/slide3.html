@@ -1,0 +1,48 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+#first2-focus{$label['id']} .item h3 {font-size:18px;color:#272727;height:60px;line-height:30px;margin-top:30px;overflow:hidden;}
+#first2-focus{$label['id']} .item img{width:100%;height:{$sheight}px;}
+#first2-focus{$label['id']} .owl-prev {left:0;}
+#first2-focus{$label['id']} .owl-next {right:0;background-position:-60px 0;}
+#first2-focus{$label['id']} .owl-next:hover, #first2-focus{$label['id']} .owl-prev:hover{opacity: 1;}
+#first2-focus{$label['id']} .owl-prev {cursor:pointer;position: absolute;z-index: 100;top:35%;background: url({$RESOURCE}/skin/label/theme/prevnext.png) no-repeat;height:60px;width:35px;transition:left .3s;border-radius:0;left:-80px;transition: left .3s;}
+#first2-focus{$label['id']} .owl-next {cursor:pointer;position:absolute;z-index:100;top:35%; background: url({$RESOURCE}/skin/label/theme/prevnext.png) no-repeat;height:60px;width:35px;transition: left .3s;border-radius:0;right:-80px;transition: right .3s;background-position: -49px 0;}
+#first2-focus{$label['id']} {overflow: hidden;}
+#first2-focus{$label['id']}:hover .owl-prev {left:0px;}
+#first2-focus{$label['id']}:hover .owl-next {right:0px;}
+#first2-focus{$label['id']} .owl-next:hover {background-position: -143px 0;}
+#first2-focus{$label['id']} .owl-prev:hover {background-position: -99px 0;}
+@media (max-width: 767px){
+	#first2-focus{$label['id']} .item img{height:300px !important;}
+}
+@media screen and (max-width: 480px){
+	#first2-focus{$label['id']} .item img{height:200px !important;}
+	#first2-focus46414 .item h3{font-size:16px;height:50px;line-height:25px;margin-top:10px;}
+}
+</style>
+<div id="first2-focus{$label['id']}" class="owl-carousel owl-theme">
+	<!--{foreach $list $value}-->
+	<div class="item">
+		<a href="$value[url]" target="_blank" title="$value[full_title]">
+			<img src="$value[frame]" alt="$value[full_title]">
+		</a>
+		<h3><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></h3>
+	</div>
+	<!--{/foreach}--> 
+</div>
+<script type="text/javascript">
+	$('#first2-focus{$label['id']}').owlCarousel({
+	    items:1,
+		margin:10,
+		loop:true,
+	    smartSpeed:450,
+	    autoplay: true,
+        autoplayTimeout: 3000,
+        autoplayHoverPause: true,
+		dots:false,
+		nav:true,
+		navText:["", ""],
+	});
+</script>
+<!--{/php168}-->	

@@ -1,0 +1,73 @@
+<?php
+return array (
+  'name' => 'news_paper',
+  'config' => 
+  array (
+  ),
+  '#fields' => 
+  array (
+    'content' => 
+    array (
+      'name' => 'content',
+      'alias' => '内容',
+      'type' => 'mediumtext',
+      'list_table' => '0',
+      'filterable' => '0',
+      'orderby' => '0',
+      'not_null' => '1',
+      'length' => '0',
+      'is_unsigned' => '0',
+      'editable' => '1',
+      'default_value' => '',
+      'data' => '',
+      'config' => '',
+      'widget' => 'editor',
+      'widget_addon_attr' => '',
+      'display_order' => '99',
+      'units' => '',
+      'description' => '',
+    ),
+    'map' => 
+    array (
+      'name' => 'map',
+      'alias' => '报纸热区',
+      'type' => 'text',
+      'list_table' => '0',
+      'filterable' => '0',
+      'orderby' => '0',
+      'not_null' => '1',
+      'length' => '',
+      'is_unsigned' => '0',
+      'editable' => '1',
+      'default_value' => '',
+      'data' => 'a:0:{}',
+      'config' => 'a:0:{}',
+      'widget' => 'news_paper_map',
+      'widget_addon_attr' => '',
+      'display_order' => '0',
+      'units' => '',
+      'description' => '',
+    ),
+    'paper_thumb' => 
+    array (
+      'name' => 'paper_thumb',
+      'alias' => '报纸缩略图',
+      'type' => 'varchar',
+      'list_table' => '0',
+      'filterable' => '0',
+      'orderby' => '0',
+      'not_null' => '1',
+      'length' => '255',
+      'is_unsigned' => '0',
+      'editable' => '1',
+      'default_value' => '',
+      'data' => 'a:0:{}',
+      'config' => 'a:0:{}',
+      'widget' => 'uploader',
+      'widget_addon_attr' => '',
+      'display_order' => '0',
+      'units' => '',
+      'description' => '',
+    ),
+  ),
+);

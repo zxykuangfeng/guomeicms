@@ -1,0 +1,8 @@
+<!--{php168}-->
+<table border="0" width="100%" style="line-height:24px;color:#4A4A4A">
+<tr><th width="20%" align="left">排序</th><th width="50%" align="left">部门名称</th><th width="30%">主站/总数</th></tr>
+<!--{foreach $list $key $value}-->
+<tr><td>{$key}</td><td>$value[title]</td><td>{$value[item_count]}/{$value[all]}</td></tr>
+<!--{/foreach}-->
+</table>
+<!--{/php168}-->

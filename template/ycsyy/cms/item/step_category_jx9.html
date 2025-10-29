@@ -1,0 +1,114 @@
+<!--{php168}-->
+<!--{php 
+$i = sizeof($CAT['parents']);
+$j = $i>1? $i-2 : 0;
+if($CAT['parents'])
+$stepcat = $category->categories[$CAT['parents'][$j]]['categories'];
+else
+$stepcat = $category->categories[$cid]['categories'];
+}-->
+<div class="apppage">
+	<div class="foucs">
+		<div class="frame">
+			<!--{foreach $stepcat $v}-->
+				<div>
+					<div class="child <!--{if $cid == $v['id']}-->now<!--{/if}-->"><a href="$v[url]">$v[name]</a></div>
+				</div>
+			<!--{/foreach}-->				
+		</div>
+	</div>
+</div>	  
+<script type="text/javascript">
+$(".apppage .foucs .frame").slick({
+	autoplay: false,
+	infinite: false,
+	slidesToShow: 7,
+	slidesToScroll: 1,
+	speed: 500,
+	touchMove: false,
+	responsive: [
+		{
+			breakpoint: 768,
+			settings: {
+				autoplay: false,
+				infinite: false,
+				slidesToShow: 3
+
+			}
+		}
+	]
+});
+</script>
+
+           
+<!--<script>
+  $(function () {
+	$('.apppage .foucs .child').bind('click', function () {
+	  var url = $(this).find('a').attr('data-href');
+	  if (url && url != 'javascript:void(0);') {
+		if (window.is_loading == true) {
+		  return false;
+		}
+		window.is_loading = true;
+		$(this).addClass('now').siblings().removeClass('now');
+		$.get(url, { _json: Math.random() }, function (data) {
+		  $('#datalist').html(data);
+		  $('#datalist .mCustomScrollbar').mCustomScrollbar();
+		  if (width <= 750) {
+			if ($('.apppage .tabs_box .block').find(".tbright").next(".tbleft").length != 0) {
+			  return false;
+			}
+			$('.apppage .tabs_box .block').each(function () {
+			  var tableft = $(this).find('.tbleft').clone(true);
+			  $(this).find(".tbleft .part2").remove();
+			  tableft.find(".part1").remove();
+			  $(this).append(tableft);
+			});
+		  }
+		  window.is_loading = false;
+		})
+		  }
+		  })
+		  var child = $('.apppage .foucs .child'),
+		  block = $('.apppage .tabs_box .block');
+		var num;
+		var index = $('.apppage .foucs .frame .child.now').index();    //  ----------------  此处 为  当前选中的  索引值 
+		var idx = index + 1;
+		var width = $(this).width();
+		if (width > 1279) {
+		  num = 7;
+		} else if (width <= 1279 && width > 750) {
+		  num = 4;
+		} else if (width <= 750) {
+		  num = 3;
+		  if (width <= 750) {
+			if ($('.apppage .tabs_box .block').find(".tbright").next(".tbleft").length != 0) {
+			  return false;
+			}
+			$('.apppage .tabs_box .block').each(function () {
+			  var tableft = $(this).find('.tbleft').clone(true);
+			  $(this).find(".tbleft .part2").remove();
+			  tableft.find(".part1").remove();
+			  $(this).append(tableft);
+			});
+		  }
+		}
+		$('.apppage .foucs .frame').slick({
+		  autoplay: false,
+		  infinite: false,
+		  slide: ".child",
+		  speed: 300,
+		  slidesToShow: num,
+		  slidesToScroll: 1,
+		  touchMove: false
+		});
+		var len = idx - num;
+		if (len <= -1) {
+		  $('.apppage .foucs .frame').slickGoTo(index)
+			} else {
+			$('.apppage .foucs .frame').slickGoTo(len)
+			}
+			})
+</script>-->
+<!--{/php168}-->
+

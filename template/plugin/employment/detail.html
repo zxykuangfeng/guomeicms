@@ -1,0 +1,158 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=2.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="renderer" content="webkit">
+<title>$TITLE</title>
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link type="text/css" rel="stylesheet" href="{$RESOURCE}/skin/plugin/employment_date.css">
+<link rel="stylesheet" type="text/css" href="{$SKIN}../core/header/common.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/jquery-ui.min.css">
+<script type="text/javascript" src="{$RESOURCE}/js/jquery-1.8.3.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <div class="topR">
+            <span>今天是</span>
+            <span id="datehtml">
+                <script language="JavaScript">
+                    today=new Date();
+                    function initArray(){
+                    this.length=initArray.arguments.length
+                    for(var i=0;i<this.length;i++)
+                    this[i+1]=initArray.arguments[i]  }
+                    var d=new initArray(
+                        "星期日",
+                        "星期一",
+                        "星期二",
+                        "星期三",
+                        "星期四",
+                        "星期五",
+                        "星期六")
+                        document.write(
+                        today.getFullYear(),"/",
+                        today.getMonth()+1,"/",
+                        today.getDate(),"&nbsp;&nbsp;",
+                        d[today.getDay()+1],"&nbsp;&nbsp;|&nbsp;&nbsp;");
+                </script>
+            </span>
+            <span><a herf="{$core.STATIC_URL}">返回主站</a></span>
+			<span id="header_t"></span>
+        </div>
+        <div class="logo">
+			$label[plugin_logo]
+        </div>
+    </div>
+</div>
+<div class="container">
+	<div class="maincon">
+		<div class="row">
+			<div class="position2">
+				<a href="{$core.controller}">首页</a> &gt; <a href="{$core.url}/plugin.php/employment-detail">就业信息</a>
+			</div>
+		</div>
+		<div class="contain-left fl" style="width:30%;">
+			<div class="box">
+				<section class="date">
+					<div class="head">
+						<div class="prev">上一月</div>
+						<div class="tomon"><span class="year"></span>年 <span class="month"></span>月<span class="day" style="display:none;"></span></div>
+						<div class="next">下一月</div>
+					</div>
+					<ol><li>周日</li><li>周一</li><li>周二</li><li>周三</li><li>周四</li><li>周五</li><li>周六</li></ol>
+					<ul>
+					</ul>
+				</section>
+			</div>
+		</div>
+		<div class="contain-right fr" style="width:67%;">
+			<div class="forms_main">
+				<div class="layout_txtcontent_title">今日（<span id="employment_today">{$today}</span>）信息</div>
+				<div id="employment_list">
+					<!--{if empty($list)}-->
+						暂无信息
+					<!--{else}-->
+					<!--{foreach $list $dates}-->
+					<div class="details">
+						<!--{foreach $dates $key $row}-->
+						<div class="dboxs">
+							<ul>
+							<li><a href="$row[url]" target="_blank">$row[name]</a></li>
+							<!--{if $row['url']}--><li><a href="$row[url]" target="_blank">$row[url]</a></li><!--{/if}-->
+							<!--{if $row['event']}--><li>$row[event]</li><!--{/if}-->
+							</ul>
+						</div>
+						<!--{/foreach}-->
+					</div>
+					<!--{/foreach}-->
+					<!--{/if}-->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+var USERNAME = get_username();
+$(document).ready(function(){
+	//**show_edit**//
+	init_labelshows('header_t');
+})
+//日历开始
+$(function(){
+    var date=new Date();            //定义一个日期对象；
+    var year={$today_array[0]};
+    var month={$today_array[1]};
+    var day={$today_array[2]};
+	var url="{$this_url}";
+	//回填数据
+    $('.year').text(year);
+    $('.month').text(month);
+	$('.day').text(day);
+    datt(year,month,day,url);
+    $('.next').click(function(){
+        next(url);
+    });
+    $('.prev').click(function(){
+        prev(url);
+    });
+    $('.tomon').click(function(){
+        datt(year,month,'',url);
+        $('.year').text(year);
+        $('.month').text(month);
+		$('.day').text(day);
+    });
+});
+</script>
+<script type="text/javascript" src="{$RESOURCE}/js/mobile_emp.js"></script>
+<div class="footer">
+    <div class="container">
+        <div class="copyright">
+            <ul>
+                <li>{$core.CONFIG['copyright']}</li>
+                <!--{if !empty($core->CONFIG['statistics'])}-->
+                <li>{$core.CONFIG['statistics']}</li>
+                <!--{/if}-->
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+<!--{/php168}-->

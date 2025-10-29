@@ -1,0 +1,215 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-filter_link"><i class="fa fa-shield"></i>$P8LANG[filter_link]</a></li>
+						<li><a href="{$core.admin_controller}/core-word_scan_config"><i class="fa fa-shield"></i>$P8LANG[word_scan_config]</a></li>						
+						<li><a href="{$core.admin_controller}/core-word_scan"><i class="fa fa-shield"></i>$P8LANG[word_scan]</a></li>
+						<li><a href="{$core.admin_controller}/core-word_censor_config"><i class="fa fa-shield"></i>$P8LANG[word_censor_config]</a></li>						
+						<li><a href="{$core.admin_controller}/core-word_censor"><i class="fa fa-shield"></i>$P8LANG[word_censor]</a></li>
+						<li><a href="{$core.admin_controller}/core-word_filter"><i class="fa fa-shield"></i>$P8LANG[word_filter]</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-set_lan"><i class="fa fa-shield"></i>$P8LANG[set_lan]</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="$this_url" method="post">
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">{$P8LANG['filter_word_config']}</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['filter_word_enable']}</td>
+					<td class="tdR">
+						<input name="config[filter_word_enable]" type="checkbox" value="1" {if isset($config['filter_word_enable']) && $config['filter_word_enable']=='1'}checked{/if} />{$P8LANG['enabled']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['filter_word_group']}</td>
+					<td class="tdR" id="filter_words_box">
+						{$P8LANG['filter_word_group_note']}<br>						
+						<!--{foreach $config['filter_word_group'] $k $v}-->
+						<!--{if $v['filter_word']}-->
+						<p>敏感词：<input type="text" name="filter_word_group[filter_word][]" value="{$v[filter_word]}" />
+						对应不敏感词：<input name="filter_word_group[nofilter_word][]" type="text" value="{$v[nofilter_word]}"/>					
+						<input name="delete[]" value="{$k}" id="del_{$k}" type="checkbox"/> <label for="del_{$k}">{$P8LANG['delete']}</label>
+						</p>
+						<!--{/if}-->
+						<!--{/foreach}-->
+						<span id="more_filter_words"></span>
+						<input type="button" value="添加敏感词组" onclick="addmore()" />
+						<input type="checkbox" name="" value="" style="margin-left:347px" onclick="javascript:$('#filter_words_box input[type=checkbox]').prop('checked',$(this).prop('checked'))"/>全选
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div style="text-align:center;">
+							<input type="hidden" name="type" value="config">
+							<input type="submit" value="{$P8LANG['config']}" class="submit_btn"/>
+						</div>
+					</td>
+				</tr>		
+			</table>			
+		</form>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">
+			<tr class="title fix_head">
+				<td class="title">自定义敏感词搜索</td>
+			</tr>
+			
+			<tr>
+				<td>
+				<form action="$this_url" method="get">
+					<input type="text" class="txt" size = "38" name="word" value="{if !empty($keyword)}$keyword{/if}" />
+					<input type="submit" value="搜索" class="submit_btn"/>
+				</form>				
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="$this_url" method="post" id="form">
+			<table class="columntable formtable hover_table click_changeable">
+				<tr class="title fix_head">
+					<td class="title" width="5%"><input type="checkbox" onclick="check_all(this,'id[]');init_tr($('#form'));" /></td>
+					<td class="title">自定义敏感词</td>
+				</tr>
+				
+				<!--{foreach $filter_words $v}-->
+				<tr id="word_$v[id]">
+					<td><input type="checkbox" name="id[]" value="$v[id]" /></td>
+					<td>
+						<input type="text" class="new_name" name="$v[id]" value="$v[filter_word]" />
+					</td>
+				</tr>
+				<!--{/foreach}-->
+				
+				<tr id="clone">
+					<td></td>
+					<td>
+						<input type="text" name="word[]" value="" />
+					</td>
+				</tr>
+				
+				<tr id="add">
+					<td></td>
+					<td>
+						<input type="button" value="{$P8LANG['add']}" class="submit_btn" onclick="add()" />
+					</td>
+				</tr>
+				
+				<tr>
+					<td colspan="5" align="center">
+						<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+						<input type="button" value="删除选中" onclick="deleteAll();" class="submit_btn"/>
+						<input type="button" value="导出词库" onclick="window.location='$this_url?type=export'" class="submit_btn"/>
+						<input type="button" value="导入词库" onclick="window.location='$this_url?type=import'" class="submit_btn"/>
+					</td>
+				</tr>
+			</table>
+			<div id="new_word"></div>
+		</form>
+		<div id="page" class="pages">$pages</div>
+	</div>
+</div>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">					
+					支持常用模糊匹配过滤：<br>
+					超链接：^http:\/\/<br>
+					手机号码：^(13[0-9]|14[5|7]|15[0-9]|18[0-9]|17[0-9])\d{8}$<br>
+					电话号码：^(\(\d{3,4}-)|\d{3.4}-)?\d{7,8}$<br>
+					身份证号码：^d{15,18}|[0-9x]{15,18}|[0-9X]{15,18}?$<br>
+					身份证+手机号：^d{8,18}|[0-9x]{8,18}|[0-9X]{8,18}?$<br>
+					腾讯QQ号：^[0-9]{5,20}$<br>
+					Email地址：^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$<br>
+					一行一个关键字。中间如要匹配，可以写 “和.{0,3}谐”,这样就会把“和谐”中间包含的3个字一起过滤。<br/>
+					</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<script type="text/javascript">	
+function add(){
+	var copy = $('#clone').clone(true).show();
+	
+	copy.insertBefore($('#add')).find('input').val('');
+}
+
+function _delete(array){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	
+	//if(confirm('{$P8LANG['confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({type: 'del', id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#word_'+ json[i]).remove();
+					}
+				}
+			});
+		}
+	});
+}
+
+function deleteAll(){
+	var inputs = $("input[name='id[]']:checked");
+	var ids = new Array();
+	for(var i=0;i<inputs.length;i++){
+		ids[i]=$(inputs[i]).attr("value");
+	}
+	_delete(ids);
+}
+
+$('#form input.new_name').change(function(){
+	$(this).css({border: '1px solid #ff0000'});
+	
+	$('#new_word').append($('<input type="hidden" name="new_name['+ $(this).attr('name') +']" value="'+ $(this).val() +'" />'));
+});
+
+function addmore(){
+	$('#more_filter_words').append('<p>敏感词：<input type="text" name="filter_word_group[filter_word][]" value="" /></b>&nbsp;对应不敏感词：<input name=\"filter_word_group[nofilter_word][]\" type=\"text\" /><input type="button" value="移除" onclick="removeItem(this)"/></p>');
+}
+function removeItem(obj){
+	$(obj).parent().remove();
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

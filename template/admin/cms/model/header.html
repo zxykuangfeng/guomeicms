@@ -1,0 +1,27 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr><td>
+			<table class="formtable">
+				<tr><td class="headerbtn_list">
+					<ul>
+						<li><a href="$this_router-add"><i class="fa fa-check-square-o"></i>{$P8LANG['add_cms_model']}</a></li>
+						<li><a href="$this_router-list"><i class="fa fa-list-ul"></i>{$P8LANG['cms_model_list']}</a></li>
+						<li><a href="{$core.admin_controller}/$SYSTEM/item-config"><i class="fa fa-gear"></i>内容基本设置</a></li>
+						<!--{if !empty($model)}-->
+						<li id="list_field"><a href="$this_router-list_field?model=$model"><i class="fa fa-wpforms"></i>字段管理</a></li>
+						<!--{/if}-->						
+					</ul>
+				</td>
+				</tr>
+			</table>
+			
+			</td></tr>
+		</table>
+	</div>
+</div>
+
+<!--{/php168}-->

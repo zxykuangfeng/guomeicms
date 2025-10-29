@@ -1,0 +1,228 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-filter_link"><i class="fa fa-shield"></i>风险外链扫描</a></li>
+						<li><a href="{$core.admin_controller}/core-word_scan"><i class="fa fa-shield"></i>内容扫描体检</a></li>
+						<li><a href="{$core.admin_controller}/core-word_censor_config"><i class="fa fa-shield"></i>大数据内容扫描体检</a></li>
+						<li><a href="{$core.admin_controller}/core-word_filter"><i class="fa fa-shield"></i>内容敏感词</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-set_lan"><i class="fa fa-shield"></i>超年限内容限定访问</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="$this_url" method="post" id="cache">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/cms/item-set_lan"><i class="icon icon-ico26"></i>主站超年限内容限定访问</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/sites-index?frame=/sites/item-set_lan" target="_blank"><i class="icon icon-ico30"></i>子站超年限内容限定访问</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			
+			<table class="columntable formtable hover_table">			
+				<tr class="title fix_head">
+					<td colspan="2" class="title">配置</td>
+				</tr>
+				<tr>
+					<td class="tdL">应用场景说明</td>
+					<td class="tdR">
+						1、当需要设置某个时间节点（如3年）前的内容为局域网访问。<br>
+						2、时间节点前的信息在列表页面将不显示。<br>
+						3、时间节点前的信息不再生成静态页面。<br>
+						4、确需启用的，请务必备份数据后按流程1-6操作。
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">主站是否启用</td>
+					<td class="tdR">
+						<input name="config[lan_date_enable]" type="checkbox" value="1" id="lan_date_enable" {if isset($config['lan_date_enable']) && $config['lan_date_enable']=='1'}checked{/if} /><label for="lan_date_enable">{$P8LANG['enabled']}</label> 默认不启用
+						<input type="hidden" id="cache_type" name="type"  value="config" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">配置参数</td>
+					<td class="tdR">
+						时间节点：<input type="text" name="config[lan_date]" class="txt" value="{if isset($config['lan_date'])}$config[lan_date]{/if}" autocomplete="off" onclick="rcalendar(this, 'full')" /><br/>
+						例外栏目：<input type="text" class="txt" id="option_category" name="config[lan_category]" value="{if !empty($config['lan_category'])}<!--{php if(is_array($config['lan_category']))$config['lan_category'] = implode(',', $config['lan_category']);echo $config['lan_category'];}-->{/if}" onchange="category_path(this.value.split(','))" />
+						<input type="button" value="选择例外栏目" onclick="dialog.show()" />
+						<div id="category_path" style="padding-left:66px;"></div>
+						<input type="hidden" id="categories" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL"></td>
+					<td class="tdR">
+						<input type="submit" value="{$P8LANG['config']}" class="submit_btn" onclick="do_cache('config')"/> &nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="submit" value="{$P8LANG['html_unset']}" class="submit_btn" onclick="do_cache('unlan')"/> {$P8LANG['html_unset_note']}					
+					</td>
+				</tr>					
+			</table>
+		</form>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">
+			<tr class="title fix_head">
+				<td colspan="2" class="title">操作流程</td>
+			</tr>
+			<tbody>
+			
+			<tr>
+				<td class="tdL">步骤1：批量设置限局域网访问</td>
+				<td class="tdR">
+					<input type="submit" value="{$P8LANG['html_init']}" class="cache_btn2" onclick="do_cache('html_init')" size="30"/>{$P8LANG['html_init_note']}										
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤2：更新标签缓存</td>
+				<td class="tdR">
+					<input type="submit" value="{$P8LANG['cache_label']}" class="cache_btn2" onclick="do_cache('label')" size="30"/>
+				</td>
+			</tr>			
+			</tbody>
+			
+			
+			<form action="{$core.admin_controller}/cms/category-list" method="post">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤3：更新栏目内容统计</td>
+				<td class="tdR">
+				<input type="hidden" name="action" value="fix" />
+				<input type="submit" class="cache_btn2" value="更新栏目内容统计" />
+				更新设置局域网化后栏目的内容数统计（真实数据以查看后台栏目为准）
+				</td>
+			</tr>
+			</tbody>
+			</form>	
+			<form action="{$core.admin_controller}/cms/item-delete_html" method="post">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤4：删除限定内容静态页面</td>
+				<td class="tdR"><input type="submit" class="cache_btn2" value="删除时间节点前页面" /> 建议备份/html文件夹，仅删除限定内容静态页面</td>
+			</tr>
+			</tbody>
+			</form>	
+			<form action="{$core.admin_controller}/cms/item-list_to_html" method="post" target="_blank">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤5：更新静态主站栏目</td>
+				<td class="tdR"><input type="submit" class="cache_btn2" value="一键静态主站栏目" /></td>
+			</tr>
+			</tbody>
+			</form>			
+			
+
+			<form action="{$core.admin_controller}/cms/item-view_to_html" method="post" target="_blank">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤6：重新静态化所有内容</td>
+				<td class="tdR"><input class="cache_btn2" type="submit" value="一键静态所有内容" /></td>
+			</tr>
+			</tbody>
+			</form>
+			
+			<form action="{$core.admin_controller}/cms-index_to_html" method="post" target="_blank">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤7：静态化首页</td>
+				<td class="tdR">
+					<input type="submit" class="cache_btn2" value="一键静态主站首页" onclick="this.form.type.value = 'index_to_html'" />
+				</td>
+			</tr>
+			</tbody>
+			</form>
+		</table>		
+	</div>
+</div>
+
+<script type="text/javascript">
+	function do_cache(cache_type){		
+		$('#cache_type').val(cache_type);
+		ajaxing({'text':'处理中…'});
+		$('#cache').submit();	
+	}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var values = cs.get_value();
+		$('#option_category').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$this_system.controller}/category-json',
+	values: $('#option_category').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

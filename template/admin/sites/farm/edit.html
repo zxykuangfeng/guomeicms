@@ -1,0 +1,1217 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<div class="section">
+	<table class="formtable" width="100%">
+		<tr>
+			<td class="headerbtn_list">
+				<ul class="sites-top-menu">
+					<li><a href="{$this_system.admin_controller}/farm-list"><i class="fa fa-cog"></i>站点列表</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-config"><i class="fa fa-cog"></i>本站点设置</a></li>
+					<li><a href="{$this_system.admin_controller}/category-list"><i class="fa fa-cog"></i>栏目管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_list"><i class="fa fa-cog"></i>菜单管理</a></li>
+					<li><a href="{$this_system.admin_controller}-Visualization"><i class="fa fa-refresh"></i>页面可视化</a></li>
+					<li><a href="{$this_system.admin_controller}-publishing"><i class="fa fa-refresh"></i>站点发布</a></li>
+					<li><a href="javascript:void(0);" onclick="cache_base_sites()"><i class="fa fa-refresh"></i>更新本站缓存 </a></li>
+					<li><a href="javascript:;" onclick="list_to_html('{$this_system->SITE}')"><i class="fa fa-refresh"></i>静态本站数据</a></li>
+					<!--{if $ACTION != 'add'}-->
+					<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($data['ipordomain'])}{$core->CONFIG['url']}/s.php/{$alias}{else}{$data['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$data['sitename']}</a></li>
+					<!--{/if}-->
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="$this_url" method="post" id="form">
+			<table width="100%" border="0" class="mainbox">
+				<tbody>
+					<tr>
+						<td>
+							<ul class="sites-down-menu">
+								<li class="btn-color1"><a href="{$this_system.admin_controller}/farm-add"><i class="icon icon-ico10"></i>站点基本设置</a></li>
+								<li class="btn-color2"><a href="{$this_system.admin_controller}/farm-logo"><i class="icon icon-ico11"></i>站点logo管理</a></li>
+								<li class="btn-color3"><a href="{$this_system.admin_controller}/farm-template"><i class="icon icon-ico11"></i>站点模板</a></li>
+								<li class="btn-color9"><a href="{$this_system.admin_controller}/farm-add" target="_blank"><i class="icon icon-ico44"></i>新增站点</a></li>
+								<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/xinzenzhandian.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 新增站点教程>></a></li>
+								<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/zhandianshezhi.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 站点设置教程>></a></li>
+							</ul>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table">
+				<tbody>
+				<tr class="title fix_head">
+					<td width="20%"  class="list_top">{$P8LANG['config']}</td > <td width="35%" class="list_top">参数</td><td width="45%" class="list_top">备注</td>
+				</tr>
+				<tr>
+					<td class="tdL" style="color:#1e4972;"><img src="{$_SKIN}/ico23.png" /><strong>站点名称</strong></td>
+					<td class="tdR bold"> <input type="text" class="txt" name="sitename" value="{if !empty($data['sitename'])}$data[sitename]{/if}" /></td>
+					<td class="tdR"><font color="red">此项必填；</font> 请添加站点名称，名称可任意填写，如计算机学院，后续可修改；
+					{if $ACTION !='add'}
+						{if !empty($data['ipordomain']) && !empty($data['domain'])}
+						<a class="edit_btn" href="{$data['domain']}" target="_blank">查看本站首页</a>
+						{else}
+						<a class="edit_btn" href="{$core->CONFIG['url']}/s.php/{$data['alias']}/" target="_blank">查看本站首页</a>
+						{/if}
+					{/if}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL" style="color:#1e4972;"><img src="{$_SKIN}/ico23.png" /><strong>站点别名</strong></td>
+					<td class="tdR bold"> 
+					<!--{if !empty($data['alias'])}-->
+					{$data['alias']}
+					<input type="hidden" id="alias" name="alias" value="{if !empty($data['alias'])}$data[alias]{/if}" />
+					<!--{else}-->
+					<input type="text" class="txt" id="alias" name="alias" value="{if !empty($data['alias'])}$data[alias]{/if}" /> 
+					<!--{/if}-->
+					</td>
+					<td class="tdR"><font color="red">此项必填；</font>请添加站点别名，只能是数字或字母的组合，最好是有意义的简称，提交后不得修改；</td>
+				</tr>
+				<!--{if $ACTION=='add'}-->
+				<tr>
+					<td class="tdL" style="color:#1e4972;"><img src="{$_SKIN}/ico23.png" /><strong>初始化内容（一键克隆目标站点）</strong></td>
+					<td class="tdR">
+					<select name="init">
+					<option value="">空白站点</option>
+					<!--{foreach $allsites $tname $tdata}-->
+					<option value="$tname">$tdata[sitename]</option>
+					<!--{/foreach}-->
+					</select>
+					</td>
+					<td class="tdR"><font color="red">强烈建议选择；</font>请选择所需参考的站点；可以节约80%工作量，模板和内容都可以复制过来；<a href="javascript:;" class="popup edit_btn" style="padding-top:2px;padding-bottom:2px;">详细查看</a></span>
+						<div class="popupbox popitem1">
+							<div class="title">
+								<a href="javascript:;" title="关闭" class="close">×</a>
+							</div>
+							<div class="popupbd">
+								<p>一键克隆目标站点说明：<br/>
+									本站系统默认安装有数十个站点；里面每个站点有默认的数据标签和模板；<br/>
+									利用克隆模式建立一个新站点，可以节约80%的工作量。<br/>
+									第一步：先在站点列表里面预览并认定自己喜欢的站点；<br/>
+									第二步：创建站点的时候，就选择此目标站点，进行克隆创建。<br/>
+									然后点击提交！<br/>
+									备注：选择克隆站点后，本页面下面很多的设置不需再填，会自动生成的，到时可再修改；<br/>
+									现在填写了也没有用，因为克隆后会覆盖。
+								</p>
+							</div>
+						</div>
+					</td>
+				</tr>
+		        <!--{/if}-->
+				<tr>
+					<td class="tdL"><strong>启用访问地址形式</strong></td>
+					<td class="tdR" style="padding:10px;">
+					<input name="ipordomain" value="1" type="radio" {if !empty($data['ipordomain'])}checked{/if}/><font color="#0079bd">使用【二级域名】或【主域名/目录】形式访问</font>
+					<!--{if !empty($data['domain'])}-->
+					{$data['domain']}
+					<!--{/if}-->
+					<br/><br/>
+					<input name="ipordomain" value="0" type="radio" {if empty($data['ipordomain'])}checked{/if}/><font color="#0079bd">使用默认【动态目录】访问，格式为【主域名
+					<!--{if !empty($data['alias'])}-->
+					{$core->CONFIG['url']}/s.php/{$data['alias']}
+					<!--{/if}-->】</font>
+					</td>
+					<td class="tdR">先默认即可；先用目录访问；绑定并且输入域名后，可以设置域名访问；<br/>
+		           <!--{if !empty($data['alias'])}--> 当用绑定域名时，需要域名指向本站所在目录:<font color="#FF0000"> <!--{php echo PHP168_PATH;}-->{$this_system.name}/html/$data[alias]</font><!--{/if}--></td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>绑定域名/目录</strong></td>
+					<td  class="tdR">
+						<input type="text" class="txt" name="domain" value="{if !empty($data['domain'])}$data[domain]{/if}" size="40" />
+						<input type="button" onclick="make_domain('1')" value="静态目录地址" />
+						<input type="button" onclick="make_domain('2')" value="静态简短目录地址" />
+						<input type="button" onclick="make_domain('3')" value="二级域名地址" />
+					</td>
+					<td class="tdR">默认先不填；域名需先绑定服务器，再此处输入二级域名，格式：http://www.xxx.com；<a href="javascript:;" class="popup edit_btn" style="padding-top:2px;padding-bottom:2px;">查看设置</a>
+						<div class="popupbox popitem2">
+							<div class="title">
+								<a href="javascript:;" title="关闭" class="close">×</a>
+							</div>
+							<div class="popupbd">
+								<p>绑定域名说明：<br/>
+									子站实现域名访问，先需要事先域名在服务器里面绑定对应目录（绑定后需重启环境）；<br/>
+									然后再在此处填写二级域名即可（更新下站群缓存）。<br/>
+									linux绑定域名方法：以oninstack为例，配置文件在：/usr/local/nginx/conf/vhost/xxx.conf<br/>
+									conf就是某某站点的配置文件，修改此文件对应域名和程序所在目录；然后重启环境即可。<br/>
+									windows绑定域名方法:以wamp为例，配置文件在：wamp\bin\apache\apache2.4.39\conf\extra\httpd-vhosts.conf；<br/>
+									进行各个目录绑定即可，然后重启环境。
+								</p>
+							</div>
+						</div>
+					</td>
+				</tr>
+				
+				
+				<tr>
+					<td class="tdL"><strong>站点状态</strong></td>
+					<td class="tdR">
+		            <input name="status" value="1" type="radio" {if !empty($data['status'])}checked{/if}/>启用 
+					<input name="status" value="0" type="radio" {if empty($data['status'])}checked{/if}/>关闭
+					</td>
+					<td class="tdR">先默认即可；建站后，如果网站正常使用就“开启”，如果不需要运行就“关闭”</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>登录访问</strong></td>
+					<td class="tdR">
+		            <input name="config[login]" value="1" type="radio" {if !empty($data['config']['login'])}checked{/if}/>启用 
+					<input name="config[login]" value="0" type="radio" {if empty($data['config']['login'])}checked{/if}/>关闭
+					</td>
+					<td class="tdR">先默认即可；一般是“关闭”的；如果“开启”则表示必须登录才能访问网站；</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>站点否启用密码访问</strong></td>
+					<td class="tdR">
+						<input type="radio"  name="config[need_password]" value="1" {if !empty($data['config']['need_password'])}checked{/if}/>启用
+						<input type="radio" name="config[need_password]" value="0" {if empty($data['config']['need_password'])}checked{/if}/>关闭 
+						<span class="help">默认不启用。</span>
+					</td>
+					<td class="tdR">一旦启用，则访问时需输入密码，全站时仅需一次密码进行验证。</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>站点访问密码</strong></td>
+					<td class="tdR"><input type="text" class="txt" name="config[site_password]"  value="{$data['config']['site_password']}" size="30" /> <span class="help">启用站点密码访问时的访问密码，不启用则设置无效</span>
+					</td>
+					<td class="tdR">默认不填。</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>禁止访问动态页</strong></td>
+					<td class="tdR">
+		            <input name="config[forbidden_dynamic]" value="1" type="radio" {if !empty($data['config']['forbidden_dynamic'])}checked{/if}/>启用 
+					<input name="config[forbidden_dynamic]" value="0" type="radio" {if empty($data['config']['forbidden_dynamic'])}checked{/if}/>关闭
+					</td>
+					<td class="tdR">先默认即可；一般为关闭，“启用”则必须静态首页，关闭则以“模块配置”的静态化设置为准；</td>
+				</tr>		
+				<!--tr>
+					<td class="tdL"><strong>首页静态</strong></td>
+					<td class="tdR">
+		            自动静态<input name="config[indexhtml]" value="1" type="checkbox" {if !empty($data['config']['indexhtml'])}checked{/if}/> 
+					执行间隔<input name="config[indexhtml_ex]" size="6" value="{if isset($data['config']['indexhtml_ex'])}{$data['config']['indexhtml_ex']}{else}60{/if}" type="text"/>分钟
+					</td>
+					<td class="tdR">先默认即可；正式建立站点改为“启用”；首页自动静态可以配套linux服务器脚本触发；<a href="{$core.admin_controller}/{$SYSTEM}/item-config" target="_blank" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">详细</a></td>
+				</tr-->
+		        <tr>
+					<td class="tdL"><strong>列表静态</strong></td>
+					<td class="tdR">
+		            <input name="config[html_list_size]" type="input" size="5" value="{if isset($config['html_list_size'])}{$config['html_list_size']}{else}5{/if}" />页
+					</td>
+					<td class="tdR">先默认即可；当发布内容时自动静态栏目的页数；</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>站点归属</strong></td>
+					<td class="tdR">
+						<select name="parent">
+							<option value="0" {if $data['parent']==0}selected="selected"{/if}>二级站点</option>
+							<!--{foreach $allsites $tname $tdata}-->
+							<option value="$tdata[id]" {if $data['parent']==$tdata['id']}selected="selected"{/if}>$tdata[sitename]</option>
+							<!--{/foreach}-->
+						</select>
+					</td>
+					<td class="tdR">先默认即可；一般是二级站点；也可以选择某子站点成为三级子站点；<a href="javascript:;" class="popup edit_btn" style="padding-top:2px;padding-bottom:2px;">查看设置</a>
+						<div class="popupbox popitem3">
+							<div class="title">
+								<a href="javascript:;" title="关闭" class="close">×</a>
+							</div>
+							<div class="popupbd">
+								<p>站点归属说明：<br/>
+									本站群系统支持多级站点模式；<br/>
+									一般选择“二级站点”，即子站点（主站门户下一级的站点）；<br/>
+									如果属于三级站点，选择某个“二级站点”下的子站，即孙站点；<br/>
+								</p>
+							</div>
+						</div>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>
+					组织架构统计</strong></td>
+					<td class="tdR">
+						<!--{if $select_size>=2}-->
+						<!--{php
+						for($i=0;$i<$select_size;$i++){
+							$this_value = empty($data_field[$i])? '' : $data_field[$i];
+							if($i==0){
+								$selectdata = $select_data;
+							}elseif($data_field){
+								$selectdata = (empty($selectdata[$data_field[$i-1]])? array() : $selectdata[$data_field[$i-1]]['s']);
+							}else{
+								$selectdata = array();
+							}
+							$inputname = $select_size-1==$i?'config[department]':'config[parent_department]';
+						}-->
+						<select name="$inputname" id="department" onchange="department_select.change(this)">
+							<option value="">--请选择--</option>
+							<!--{foreach $selectdata $key $value}-->
+							<option value="{$value['i']}" {if $this_value==$key}selected{/if}>{$value['n']}</option>
+							<!--{/foreach}-->
+						</select>
+						<!--{php }}-->							
+						<script type="text/javascript">
+						var department_select = {
+						CAT : <!--{$select_json_data}-->,
+						change : function (obj){
+							var shtml = dhtml = '<option value="">--请选择--</option>';
+							var thisv = $(obj).val();
+							$(obj).nextAll('select').html(dhtml);
+							if(!thisv){
+								return false;
+							}
+							var path = thisv.split('-');
+							var temp = this.CAT;
+							if(path.length==1)
+								temp=this.CAT[path]['s'];
+							else{
+								for (var k in path)
+									temp = temp[path[k]]['s'];
+							}
+							if(temp !=''){
+								for(var j in temp)
+									shtml += '<option value="'+temp[j]['i']+'">'+temp[j]['n']+'</option>';	
+								$(obj).next().html(shtml);	
+						}}}
+						</script>
+						<!--{else}-->
+							<select name="department" id="department">
+								<option value="">请选择</option>
+								<!--{foreach $cates['department'] $key $row}-->
+								<option value="{$row['id']}" {if !empty($data['department']) && $data['department']==$row['id']}selected{/if}>{$row['name']}</option>
+								<!--{/foreach}-->   
+							</select>
+						<!--{/if}-->
+						当前设置状态：
+						<!--{if $item_config['sites_show_dept']}-->
+							显示 
+						<!--{else}-->
+							不显示 
+						<!--{/if}-->						
+				   </td>
+					<td class="tdR">先默认即可；需分站首页模板配合使用，不选则显示顶级架构的统计排名，选择则显示所选架构的所有下一级架构的统计排名；<a href="{$this_system.admin_controller}/item-config#sites_show_dept" target="_blank" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">查看设置</a></td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>导航菜单静态化模式</strong></td>
+					<td class="tdR">
+		             <input name="config[menu_mode]" value="1" type="radio" {if !empty($data['config']['menu_mode'])}checked{/if}/>相对地址 
+					<input name="config[menu_mode]" value="0" type="radio" {if empty($data['config']['menu_mode'])}checked{/if}/>绝对地址（默认）
+					</td>
+					<td class="tdR">先默认即可；启用动静分离时建议启用相对地址模式</td>
+				</tr>
+				<!--{if $allow_template}-->
+				<tr>
+					<td class="tdL"><strong>风格模板</strong></td>
+					<td class="tdR" ><span id="template_name">{$templates[$data['template']]['name']}</span>
+					<input type="hidden" name="template" id="template" value="$data[template]" readonly/>
+					<input type="button" value="选择模板" onclick="dialog.show()"/>			
+					<!--{if !empty($data['template_logs'])}--><br/>近10次更换记录：<!--{/if}-->
+					<!--{foreach $data['template_logs'] $logs}-->
+						<br/>{$logs}
+					<!--{/foreach}-->
+					</td>
+					<td class="tdR">先默认即可；一般不改模板；也可以选择所需模板，然后批量导入标签；<a href="javascript:;" class="popup edit_btn" style="padding-top:2px;padding-bottom:2px;">详细</a>
+						<div class="popupbox popitem4">
+							<div class="title">
+								<a href="javascript:;" title="关闭" class="close">×</a>
+							</div>
+							<div class="popupbd">
+								<p>风格模板说明：<br/>
+									系统中存在多套模板，管理员可以一键替换；<br/>
+									特别注意:（一般不要轻易替换弄好的模板）<br/>
+									替换后logo需要重新校正大小和位置；<br/>
+									另外替换模板后，首页所有的标签需要重新添加；<br/>
+									（可以在利用原始数据方式，超管一键导入标签方式）<br/>
+								</p>
+							</div>
+						</div>
+					</td>
+				</tr>	
+				<!--{/if}-->
+				<tr id="statistic">
+					<td class="tdL"><strong>内容统计重点栏目</strong></td>
+					<td class="tdR" >
+						<input type="text" class="txt" name="config[statistic_cats]" size="38" value="{if !empty($data['config']['statistic_cats'])}<!--{php if(is_array($data['config']['statistic_cats']))$data['config']['statistic_cats'] = implode(',', $data['config']['statistic_cats']);echo $data['config']['statistic_cats'];}-->{/if}" onchange="category_path(this.value.split(','))" />
+						<input type="button" value="选择重点栏目" onclick="statistic_dialog.show()" />
+						<div id="category_path"></div>
+						<input type="hidden" id="categories" />
+					</td>
+					<td class="tdR">默认将统计所有的栏目，有选择时则在内容统计时仅统计重点栏目</td>
+				</tr>
+				<tr id="statistic">
+					<td class="tdL"><strong>限局域网访问例外栏目</strong></td>
+					<td class="tdR" >
+						<input type="text" class="txt" name="config[lan_category]" size="38" value="{if !empty($data['config']['lan_category'])}<!--{php if(is_array($data['config']['lan_category']))$data['config']['lan_category'] = implode(',', $data['config']['lan_category']);echo $data['config']['lan_category'];}-->{/if}" onchange="category_path(this.value.split(','))" />
+						<input type="button" value="选择例外栏目" onclick="lan_category_dialog.show()" />
+						<div id="lan_category_path"></div>
+						<input type="hidden" id="lan_categorys" />
+					</td>
+					<td class="tdR">默认限局域网访问针对所有栏目，有选择时则对例外栏目设置限局域网访问不生效 
+					<a class="edit_btn" href="{$this_system.admin_controller}/item-set_lan" target="_blank">查看限局域网访问</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>{$P8LANG['logo']}</strong></td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo]" id="logo_img" size="38"  value="{if !empty($data['config']['logo'])}{$data['config']['logo']}{/if}" />
+							<input type="button" onclick="imgupload.choseup()" value="{$P8LANG['upload']}" class="u" />
+					  </span>
+					</td>
+					<td class="tdR">先默认即可；正式建立站点后，后续可以上传logo.png透明格式，后续可以修改；调用:{\$SITE['config']['logo']}</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>{$P8LANG['logo_motto']}</strong></td>
+					<td class="tdR">
+					  <span>
+							<input type="text" class="txt" name="config[logo_motto]" id="logo_motto" size="38"  value="{if !empty($data['config']['logo_motto'])}{$data['config']['logo_motto']}{/if}" />
+							<input type="button" onclick="imgupload_motto.choseup()" value="{$P8LANG['upload']}" class="u" />
+							<a href="javascript:void(0)" onclick="showmorebox()"><span id="more_logo">&#8744; 更多LOGO设置 &#8744;</span></a>
+					  </span>
+					</td>
+					<td class="tdR">先默认即可；正式建立站点后，后续可以上传logo.png透明格式，后续可以修改；调用:{\$SITE['config']['logo_motto']}</td>
+				</tr>
+				<tbody id="morechose" style="display:none">
+				<tr>
+					<td class="tdL"><strong>{$P8LANG['logo_1']}</strong></td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_1]" id="logo_img_1" size="38"  value="{if !empty($data['config']['logo_1'])}{$data['config']['logo_1']}{/if}" />
+							<input type="button" onclick="imgupload_1.choseup()" value="{$P8LANG['upload']}" class="u" />
+					  </span>
+					</td>
+					<td class="tdR">先默认即可；正式建立站点后，后续可以上传logo.png透明格式，后续可以修改；调用:{\$SITE['config']['logo_1']}</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>{$P8LANG['logo_1']}</strong></td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_2]" id="logo_img_2" size="38"  value="{if !empty($data['config']['logo_2'])}{$data['config']['logo_2']}{/if}" />
+							<input type="button" onclick="imgupload_2.choseup()" value="{$P8LANG['upload']}" class="u" />
+					  </span>
+					</td>
+					<td class="tdR">先默认即可；正式建立站点后，后续可以上传logo.png透明格式，后续可以修改；调用:{\$SITE['config']['logo_2']}</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>{$P8LANG['logo_1']}</strong></td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_3]" id="logo_img_3" size="38"  value="{if !empty($data['config']['logo_3'])}{$data['config']['logo_3']}{/if}" />
+							<input type="button" onclick="imgupload_3.choseup()" value="{$P8LANG['upload']}" class="u" />
+					  </span>
+					</td>
+					<td class="tdR">先默认即可；正式建立站点后，后续可以上传logo.png透明格式，后续可以修改；调用:{\$SITE['config']['logo_3']}</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>{$P8LANG['logo_header']}</strong></td>
+					<td class="tdR">
+					  <span>
+							<input type="text" class="txt" name="config[logo_header]" id="logo_header" size="38"  value="{if !empty($data['config']['logo_header'])}{$data['config']['logo_header']}{/if}" />
+							<input type="button" onclick="imgupload_header.choseup()" value="{$P8LANG['upload']}" class="u" />
+					  </span>
+					</td>
+					<td class="tdR">先默认即可；需要模板配合，正式建立站点后，可以修改上传透明格式图片；调用:{\$SITE['config']['logo_header']}</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>{$P8LANG['logo_footer']}</strong></td>
+					<td class="tdR">
+					  <span>
+							<input type="text" class="txt" name="config[logo_footer]" id="logo_footer" size="38"  value="{if !empty($data['config']['logo_footer'])}{$data['config']['logo_footer']}{/if}" />
+							<input type="button" onclick="imgupload_footer.choseup()" value="{$P8LANG['upload']}" class="u" />					
+					  </span>
+					</td>
+					<td class="tdR">先默认即可；需要模板配合，正式建立站点后，可以修改上传透明格式图片；调用:{\$SITE['config']['logo_footer']}</td>
+				</tr>
+				</tbody>
+				<tr>
+					<td class="tdL"><strong>站点标题</strong></td>
+					<td class="tdR"> <input type="text" class="txt" name="config[title]" value="{if !empty($data['config']['title'])}{$data['config']['title']}{/if}" size="60" /> </td>
+					<td class="tdR">先默认即可；正式建立站点后，再设定该站点标题Title；</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>站点关键字</strong></td>
+					<td class="tdR"> <input type="text" class="txt" name="config[keyword]" value="{if !empty($data['config']['keyword'])}{$data['config']['keyword']}{/if}" size="60" /> </td>
+					<td class="tdR">先默认即可；再设定该站点关键字Keyword。</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>站点描述</strong></td>
+					<td class="tdR"> <textarea cols="100" rows="5" name="config[description]">{if !empty($data['config']['description'])}{$data['config']['description']}{/if}</textarea> </td>
+					<td class="tdR">先默认即可；再设定该站点描述Description。</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>站点版权</strong></td>
+					<td class="tdR"> <textarea cols="100" rows="5" name="config[copyright]">{if !empty($data['config']['copyright'])}{$data['config']['copyright']}{/if}</textarea> </td>
+					<td class="tdR">先默认即可；再设定该站点copyright。</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>站点统计</strong></td>
+					<td class="tdR"> <textarea cols="100" rows="5" name="config[statistics]">{if !empty($data['config']['statistics'])}{$data['config']['statistics']}{/if}</textarea> </td>
+					<td class="tdR">先默认即可；再设定该站点站点统计代码,如CNZZ。</td>
+				</tr>
+				</tbody>
+				<tbody id="more_option" style="display:none"> 
+				<tr>
+					<td class="tdL"><strong>是否启用标记认证</strong></td>
+					<td class="tdR">
+		                <input type="radio" name="config[authentication_mark]" value="0" {if empty($data['config']['authentication_mark'])} checked{/if}/>不开启
+						<input type="radio" name="config[authentication_mark]" value="1" {if !empty($data['config']['authentication_mark'])} checked{/if}/>开启
+						
+					</td>
+					<td class="tdR">默认不启用，开启后将在站点列表中显示认证图标 <i class="fa fa-flag-checkered" style="color:green;font-size:24px;"></i></td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>是否启用IP允许</strong></td>
+					<td class="tdR">
+		                <input type="radio" name="config[allow_ip][enabled]" value="0" {if empty($data['allow_ip']['enabled'])} checked{/if}/>不开启
+						<input type="radio" name="config[allow_ip][enabled]" value="2" {if !empty($data['allow_ip']['enabled']) && $data['allow_ip']['enabled']==2} checked{/if}/>启用仅限局域网访问
+						<input type="radio" name="config[allow_ip][enabled]" value="1" {if !empty($data['allow_ip']['enabled']) && $data['allow_ip']['enabled']==1} checked{/if}/>开启（选开启时下面的IP设置才有效）
+						
+					</td>
+					<td class="tdR">默认不启用，使用IP白名单策略</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>允许IP</strong></td>
+					<td class="tdR">
+						<textarea cols="30" rows="5" name="config[allow_ip][collectip]" style="float:left;width:208px;margin-right:10px;">
+						<!--{if !empty($data['allow_ip']['collectip'])}-->
+							<!--{foreach $data['allow_ip']['collectip'] $key $value}-->
+								<!--{if $value}-->
+									{$value}*
+								<!--{/if}-->
+							<!--{/foreach}-->
+							<!--{/if}-->
+						</textarea><div style="float;margin-left:10px;">访问的客户端必须是固定IP或者在固定的IP段内<br/>
+						否则很有可能导致客户端无法正常访问<br/>
+						书写格式每行一个IP，行尾后以*结束,示例如下：<br/>
+						12.*.*.**<br/>
+						12.34.56.79*</div>
+					</td>
+					<td class="tdR">设置IP白名单，允许的IP地址</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>允许IP段</td>
+					<td class="tdR">
+		                 <textarea cols="30" rows="5" name="config[allow_ip][area_ip]">
+		                <!-- {if !empty($data['allow_ip']['area_ip'])} -->
+		                    <!-- {foreach $data['allow_ip']['area_ip'] $key $value} -->
+		                        $key
+		                    <!-- {/foreach} -->
+		                <!-- {/if} -->
+		                </textarea>
+		                
+		                <span class="point"></span>
+					</td>
+					<td class="tdR">设置IP白名单，允许的IP范围<br/>
+		                                        192.168.0.2-192.168.0.255<br/>
+		                                        192.168.1.0-192.168.254.255</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>允许IP段内例外IP</strong></td>
+					<td class="tdR">
+						<textarea cols="30" rows="5" name="config[allow_ip][ruleoutip]" style="float:left;width:208px;margin-right:10px;">
+						<!--{if !empty($data['allow_ip']['ruleoutip'])}-->
+							<!--{foreach $data['allow_ip']['ruleoutip'] $key $value}-->
+								<!--{if $value}-->
+									{$value}*
+								<!--{/if}-->
+							<!--{/foreach}-->
+							<!--{/if}-->
+						</textarea>
+						<div style="float;margin-left:10px;">在允许IP段内，可以限制例外的IP地址<br/>
+							书写格式每行一个IP，行尾后以*结束,示例如下：<br/>
+							12.*.*.**<br/>
+							12.34.56.79*</div>
+					</td>
+					<td class="tdR">设置IP白名单，允许的IP范围内，不允许访问的IP</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>是否启用IP禁止</strong></td>
+					<td class="tdR">
+						<input type="radio" name="config[stop_ip][enabled]" value="1" {if !empty($data['stop_ip']['enabled'])} checked{/if}/>开启
+						<input type="radio" name="config[stop_ip][enabled]" value="0" {if empty($data['stop_ip']['enabled'])} checked{/if}/>不开启
+					</td>
+					<td class="tdR">默认不启用，使用IP黑名单策略</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>禁止IP</strong></td>
+					<td class="tdR">
+							<textarea cols="30" rows="5" name="config[stop_ip][forbidip]" style="float:left;width:208px;margin-right:10px;">
+							<!--{if !empty($data['stop_ip']['forbidip'])}-->
+								<!--{foreach $data['stop_ip']['forbidip'] $key $value}-->
+								<!--{if $value}-->
+									{$value}*
+								<!--{/if}-->
+								<!--{/foreach}-->
+								<!--{/if}-->
+							</textarea>
+						<div style="float;margin-left:10px;">访问的客户端必须是固定IP或者在固定的IP段内<br/>
+							否则很有可能导致客户端依然能正常访问<br/>
+							书写格式每行一个IP，行尾后以*结束,示例如下：<br/>
+							12.*.*.**<br/>
+							12.34.56.79*</div>
+							</div>
+					</td>
+					<td class="tdR">
+						设置IP黑名单，要禁止的IP地址
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL"><strong>禁止IP段</strong></td>
+					<td class="tdR">
+		                <textarea cols="30" rows="5" name="config[stop_ip][area_ip]">
+		                <!-- {if !empty($data['stop_ip']['area_ip'])} -->
+		                    <!-- {foreach $data['stop_ip']['area_ip'] $key $value} -->
+		                        $key
+		                    <!-- {/foreach} -->
+		                <!-- {/if} -->
+		                </textarea>
+		                <span class="point"></span>
+					</td>
+					<td class="tdR">
+						设置IP白名单，允许的IP范围<br/>
+		                192.168.0.2-192.168.0.255<br/>
+		                192.168.1.0-192.168.254.255
+					</td>
+				</tr>
+				<tr>
+		             <td colspan="3" class="text-center"><a href="javascript:;" onclick="javascript:$('#more_option').css('display','none');$('#more_but').show()">收起更多</a></td>
+		        </tr>
+				</tbody>
+				<tbody>
+				<tr id="more_but">
+		            <td colspan="3" class="text-center"><a href="javascript:;" onclick="javascript:$('#more_option').css('display','');$(this).parent().parent().hide()">更多选项....</a></td>
+		        </tr>
+				<tr>
+					<td colspan="3" class="text-center"><input type="submit" value=" {$P8LANG['submit']} " class="submit_btn"/></td>
+				</tr>
+				</tbody>
+			</table>
+			<input type="hidden" name="config[independent_verify]" value="{if !empty($data['config']['independent_verify'])}1{else}0{/if}" />
+			<input type="hidden" name="id" value="{if !empty($id)}$id{/if}" />
+			<!--{if !$allow_template}-->
+			<input type="hidden" name="template" id="template" value="$data[template]" readonly/>
+			<!--{/if}-->
+		</form>
+	</div>
+</div>
+<div style="display:none; height:350px;padding-top:3px; overflow-y:auto" id="forcolone">
+<style>
+.tpl_li{width:120px; height:188px; overflow:hidden;margin:5px;padding:5px; float:left;border:1px solid #ccc;text-align: center;}
+.tpl_li .each_img{background:url('{$RESOURCE}/images/nopic.jpg') 0% 0% / 100% 100% no-repeat;width:105px;height:130px;}
+.active{background-color: #dff1ff;}
+#show {display: none;z-index: 999;width: 220px;height: 286px;overflow: hidden;position: absolute;border:1px solid #008000;}
+</style>
+<input type="text" class="txt" id="template_keyword" value="" placeholder="搜索模板" onFocus="if(this.value=='搜索模板') this.value='';" autocomplete="off"/>
+<button type="button" class="submit" onclick="_search_template()">搜索</button>
+<ul class="boxmenu3">
+	<li class="btn-color2"><a onclick="css_dialog.show();"><i class="icon icon-ico38"></i>编辑子站模板CSS</a></li>
+	<li class="btn-color1"><a onclick="template_dialog.show();"><i class="icon icon-ico1"></i>编辑子站模板html</a></li>	
+</ul>
+<ul id="template_select_box">
+<!--{foreach $templates $tname $tdata}-->
+<li class="tpl_li {if !empty($data['template']) && $data['template']==$tname}active{/if}" title="$tdata[name]" onclick="select_template('template_$tname')">
+	<div class="each_img" title="单击选择&#13;双击看大图" style="background-image:url('{$RESOURCE}/{$core.CONFIG['template_dir']}sites/$tname/preview.jpg');" ondblclick="show_bigimg(this)" onmouseover="show_preview(this)" onmouseout="$('#show').hide()"></div>	
+	<input type="radio" name="template" id="template_$tname" value="$tname" {if !empty($data['template']) && $data['template']==$tname}checked{/if} />
+	<label for="template_$tname">$tdata[name]</label>
+</li>
+<!--{/foreach}-->
+</ul>
+<div id="show"></div>
+</div>
+<form action="" method="post" id="reflash" target="__reflash_statistic__">
+	<input type="hidden" name="type" value="rebuild" id="reflash_type" />
+	<input type="hidden" name="system" value="sites" />	
+	<input type="hidden" name="site" value="{$this_system->SITE}" />	
+</form>
+<iframe style="display: none;" name="__reflash_statistic__"></iframe>
+<form action="$this_router-list?site={$this_system->SITE}" method="post" id="form">
+<input type="hidden" name="action" value="" />
+</form>
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend style="font-size:14px;">列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+
+<fieldset class="field" id="shower2">
+	<legend style="font-size:14px;">内容页</legend>
+	<iframe name="shower2" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+
+<form id="list_to_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<form id="view_to_html" action="{$this_system.admin_controller}/item-view_to_html" method="post" target="shower2"></form>
+<form id="list_only_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<script type="text/javascript">
+$('.headerbtn_list li').removeClass();
+$(".headerbtn_list li:nth-child(2)").addClass("active");
+
+var url = window.location.href;
+index = url.indexOf("flag");
+if(index !=-1) html_index();
+function make_domain(type){
+	switch(type){
+		case '1':
+			if($('#alias').val() == ''){p8_window.alert('站点别名必填写');return;}
+			$('input[name="domain"]').val("{$RESOURCE_VICE}/sites/html/"+$('#alias').val());
+		break;
+		case '2':
+			if($('#alias').val() == ''){p8_window.alert('站点别名必填写');return;}
+			$('input[name="domain"]').val("{$RESOURCE_VICE}/"+$('#alias').val());
+		break;			
+		case '3':
+			$('input[name="domain"]').val('http://xxxxx.xxx.edu.cn');
+		break;
+	}
+	if($("input[name='ipordomain']:checked").val() == '0'){
+		p8_window.alert('填写绑定【域名】或【目录】后，必须同步选择上方的“使用【二级域名】或【主域名/目录】形式访问”的选项！');
+	}
+}
+function show_edit_label(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+function site_reflash(site){
+	//更新标签缓存  更新魔板缓存   静态首页   静态最近10天的内容
+	var cache_data = ['template','label'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'更新中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			//静态首页
+			html_index();
+			//静态最近10天的内容
+			view_to_html(10);
+			html_dialog.hide();
+			p8_window.alert('操作成功');
+		}
+	});	
+}
+function cache_site(site){
+	var cache_data = ['farm','template','label','manu','model','category','menu_custom'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});
+}
+function list_to_html(site){
+	$('#list_to_html').empty();
+	$('#view_to_html').empty();	
+	var pages = 0;
+	var items = -1;
+	
+	$('#list_to_html').append($('<input type="hidden" name="pages" value="'+ pages +'" />'));
+	$('#list_to_html').submit();	
+	html_dialog.show();	
+	$('#view_to_html').append($('<input type="hidden" name="items" value="'+ items +'" />'));
+	$('#view_to_html').submit();
+	if(!site) return false;
+	$.ajax({
+			url:'{$this_system.admin_controller}-index_to_html',
+			type: 'post',
+			dataType: 'json',
+			data: ajax_parameters({site:site}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({'text':'处理中…'});
+			},
+			success: function(msg){
+				ajaxing({action: 'hide'});
+				if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态首页');
+				}else{
+					//p8_window.alert('静态成功！');
+				}
+		   }
+	});
+}
+function view_to_html(time){
+	$('#view_to_html').empty();
+	if(time){
+		var _obj = new Date(<!--{php echo P8_TIME;}-->000);
+		var _Y = _obj.getFullYear();
+		var _m = _obj.getMonth() +1;
+		var _d = _obj.getDate();
+		var _H = _obj.getHours();
+		var _j = _obj.getDay();
+		var time1 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d -30, _Y));
+		var time2 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time1 +'" />'));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time2 +'" />'));
+	}
+	$('#view_to_html').submit();
+	html_dialog.show();
+}
+
+function html_index(thisSite){
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_system.admin_controller}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   success: function(msg){
+			   if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				}else if(msg==-2){
+					p8_window.alert('静态首页锁定中，请10秒后操作！');
+				}else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	})	
+}
+
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 400,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+function change_cache(){
+	if($('#check_all_cache').prop('checked')){
+		$('#cache_form').find('input[type=checkbox]').prop('checked','checked');
+	}else{
+		$('#cache_form').find('input[type=checkbox]').prop('checked',false);
+	}
+}
+function cache_base_sites(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({text:'操作成功！',action: 'hide'});
+				}
+			});
+		}else{
+			return false;
+		}
+	});	
+}
+
+
+function select_template(template_name){
+	$('.tpl_li').removeClass('active');
+	$('#'+template_name).prop('checked','checked');
+	$('#'+template_name).parent().addClass('active');
+}
+function show_preview(img_obj){
+	var bgstyle = $(img_obj).attr('style');
+	var bgimg = bgstyle.match(/'(\S*)'/)[1];
+	var offset = $(img_obj).offset();	
+	var lefts = offset.left - parseInt((get_scrollLeft() + get_document_width() - 650)/2) + 105;
+	var tops = offset.top - parseInt(get_scrollTop() + (get_document_height() - 420)/2) - 11;
+	if(bgimg){
+		$('#show').show();
+		$('#show').css({'background': 'url('+bgimg+') 0% 0% / 100% 100% no-repeat'});			
+		$('#show').css({'top': tops+'px','left':lefts+'px'});			
+	}	
+	return false;
+}
+
+function show_bigimg(img_obj){
+	var bgstyle = $(img_obj).attr('style');
+	var bgimg = bgstyle.match(/'(\S*)'/)[1];
+	if(bgimg) window.open(bgimg);
+}
+	
+var imgupload = new P8_Upload({
+	element: {
+		src: $('#logo_img'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+            jpeg: 1024000,
+            png: 1024000,
+            bmp: 1024000
+		}
+	}
+});
+var imgupload_1 = new P8_Upload({
+	element: {
+		src: $('#logo_img_1'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+            jpeg: 1024000,
+            png: 1024000,
+            bmp: 1024000
+		}
+	}
+});
+var imgupload_2 = new P8_Upload({
+	element: {
+		src: $('#logo_img_2'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+            jpeg: 1024000,
+            png: 1024000,
+            bmp: 1024000
+		}
+	}
+});
+var imgupload_3 = new P8_Upload({
+	element: {
+		src: $('#logo_img_3'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+            jpeg: 1024000,
+            png: 1024000,
+            bmp: 1024000
+		}
+	}
+});
+var imgupload_motto = new P8_Upload({
+	element: {
+		src: $('#logo_motto'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+            jpeg: 1024000,
+            png: 1024000,
+            bmp: 1024000
+		}
+	}
+});
+var imgupload_header = new P8_Upload({
+	element: {
+		src: $('#logo_header'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+            jpeg: 1024000,
+            png: 1024000,
+            bmp: 1024000
+		}
+	}
+});
+var imgupload_footer = new P8_Upload({
+	element: {
+		src: $('#logo_footer'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+            jpeg: 1024000,
+            png: 1024000,
+            bmp: 1024000
+		}
+	}
+});
+function showmorebox(){
+	var stype = $("#morechose").css('display');
+	if(stype == 'none' ){
+		$("#morechose:hidden").show();
+		$("#more_logo").html('&#8743; 更多LOGO设置 &#8743;');
+	}else{
+		$("#morechose").hide();
+		$("#more_logo").html('&#8744; 更多LOGO设置 &#8744;');
+	}
+}
+$.validator.addMethod('valid_alias', function(value, element){
+	return /^(\w*[a-zA-Z]+\w*){1,}$/.test(value);
+});
+
+$('#form').validate({
+	rules: {
+		sitename: {required: true},
+		alias: { required: true<!--{if empty($data['alias'])}-->,
+			valid_alias:true,
+			remote: {
+				url: '$this_router-check_alias',
+				cache: false,
+				type: 'post',
+				data: {name: function(){return $('#alias').val();}},
+				beforeSend: function(){
+					ajaxing({});
+				},
+				complete: function(){
+					ajaxing({action: 'hide'});
+				}
+			}<!--{/if}-->
+		}
+	},
+	
+	messages: {
+		sitename: {	required: '站点名必填'	},
+		alias: {	required: '别名必填',
+		valid_alias:'格式错误',
+		remote: '别名已存在，请另填一个'	
+		}
+	}
+});
+
+var dialog = new P8_Dialog({
+	title_text:'选择风格模板',
+	width: 700,
+	height: 500,
+	button: true,
+	ok:function(){
+		$('#template').val(dialog.content.find('input:checked').val())
+		$('#template_name').html(dialog.content.find('input:checked').parent().text())
+	}
+});
+dialog.content.html($('#forcolone').clone().show());
+
+var edit_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['module_config']}',
+	width: 700,
+	height: 500
+});
+
+function _search_template(){
+	var keywords = $.trim($('#template_keyword').val());
+	if(keywords.length){
+		$('#template_select_box li').each(function(){
+			var name = $(this).find('label').get(0).innerHTML;
+			if(name.indexOf(keywords) == "-1"){
+				$(this).hide();	
+			}else{
+				$(this).show();
+			}
+		});	
+	}else{
+		$('#forcolone li').each(function(){			
+			$(this).show();
+		});
+	}
+}
+function _set_item_config(site){
+	edit_dialog.show();
+	edit_dialog.content.load('{$core.admin_controller}/{$SYSTEM}/item-config?site='+site);
+	return false;
+}
+$(".zq_list  .popup").click(function(){
+	var formsIndex=$(".zq_list .popup").index($(this));
+	$(".popupbox ").hide();
+	$(".popupbox ").eq(formsIndex).slideDown("normal");
+})
+$(".popupbox .close").click(function(){
+	$(".popupbox ").hide();
+})
+function set_site(alias){
+	sites_main_src = sites_main.window.location.href;
+	sites_main_src=sites_main_src.replace(/[&?]site=\w*/,'');
+	$('#sites_main').attr('src',sites_main_src+((sites_main_src.indexOf('?')>-1)?'&':'?')+'site='+alias);
+}
+
+var lan_category_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var values = lan_category_cs.get_value();
+		$('#form input[name="config[lan_category]"]').val(values.join(','));
+		
+		lan_category_path(values);
+	},
+	show: function(){
+		lan_category_cs.init();
+	}
+});
+lan_category_dialog.content.height(240);
+var lan_category_cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#lan_categorys'),
+	dialog: lan_category_dialog,
+	url: '{$this_system.siteurl}/category-json',
+	values: $('#form input[name="config[lan_category]"]').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		lan_category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+function lan_category_path(cids){
+	$('#lan_category_path').empty();
+	
+	cids = array_filter(cids);
+	
+	var html = '';
+	for(var i in cids){
+		
+		statistic_cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = statistic_cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#lan_category_path').html(html);
+}
+
+
+var statistic_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var values = statistic_cs.get_value();
+		$('#form input[name="config[statistic_cats]"]').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		statistic_cs.init();
+	}
+});
+statistic_dialog.content.height(240);
+var statistic_cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: statistic_dialog,
+	url: '{$this_system.siteurl}/category-json',
+	values: $('#form input[name="config[statistic_cats]"]').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	
+	var html = '';
+	for(var i in cids){
+		
+		statistic_cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = statistic_cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+var template_dialog = new P8_Dialog({
+	title_text:'编辑模板HTML',	
+	width: 1000,
+	height: 500,
+	zIndex:20001,
+	show: function(){
+		template_selector.init();		
+	}
+});
+
+var template_selector = new Template_Selector({
+	base_dir: '/sites/',
+	template_dir: '{$core.CONFIG['template_dir']}',
+	dialog: template_dialog
+});
+function select_template(template_name){
+	$('.each_template').removeClass('active');
+	$('#'+template_name).prop('checked','checked');
+	$('#'+template_name).parent().addClass('active');
+}
+var css_dialog = new P8_Dialog({
+	title_text:'编辑模板CSS',	
+	width: 1000,
+	height: 500,
+	zIndex:20001,
+	show: function(){
+		template_css_selector.init();
+	}
+});
+
+var template_css_selector = new Css_Selector({
+	base_dir: '/skin/sites/',
+	template_dir: 'skin/',
+	dialog: css_dialog
+});
+$(function(){
+	statistic_cs.init();
+	lan_category_cs.init();
+});
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,53 @@
+<!--{php168}-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$core.CONFIG['page_charset']}" />
+<title>$TITLE</title>
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<link rel="stylesheet" type="text/css" href="{$SKDIR}core/common.css" />
+<link rel="stylesheet" type="text/css" href="{$SKDIR}core/head_foot.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<link rel="Shortcut Icon" href="favicon.ico">
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+<!--{if $core->CONFIG['site_gray']}-->
+<!--[if IE]>
+<style>html{filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);}</style>
+<!--<![endif]-->
+<!--[if !IE]><-->
+<style>html{
+filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);filter: grayscale(100%);
+-webkit-filter: grayscale(100%);-moz-filter: grayscale(100%);
+-ms-filter: grayscale(100%);-o-filter: grayscale(100%);
+filter: progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);filter: gray;
+-webkit-filter: grayscale(1);
+}</style>
+<!--<![endif]-->
+<!--{/if}-->
+</head>
+<body>
+<div class="gov_frame">
+	<div class = "gov_head2">
+		<div class = "gov_logo2">
+			$label[intranet_logo]
+		</div>
+		<div class = "gov_head_ad_image2">
+			$label[intranet_img]
+		</div>
+	</div>
+	<div class="gov_nav2">
+       <span class="intranet_nav">$label[intranet_title]</span>
+	</div>
+</div>
+<div class="gov_frame">
+<!--{/php168}-->
+

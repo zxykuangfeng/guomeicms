@@ -1,0 +1,77 @@
+/* CSS Document Government Style */
+body {background:none; margin:0px; padding:0px;}
+img { border:none; }
+.gov_frame { width:990px; border:none; clear:both; overflow:hidden; margin:0px auto; text-align:left; }
+.gov_frame2 { width:760px; border:none; clear:both; overflow:hidden; margin:0px auto; text-align:left; }
+/*头部样式*/
+.gov_top_bar {width:100%; height:33px; background:url(gov_top_bg.gif) repeat; overflow:hidden; }
+.top_bar{width:990px; margin:auto; font-size:12px}
+#header_t { float:right; margin-top:5px; padding-left:15px; }
+#header_t .each_item{ margin:5px;color:#003278}
+#header_t .each_item .rss{background:url(rss_bg.gif) no-repeat;width:30px;height:13px;display:inline-block}
+#header_login { float:left; margin-top:5px; padding-right:15px; }
+#header_login span { float:left; line-height:23px; margin-left:5px; }
+#header_login input { float:left; margin:0 3px; }
+#header_login .input { width:100px; height:19px; line-height:19px; border-width:1px; border-color:#AAA #EEEEEE #EEEEEE #AAA}
+#header_login .submit { width:55px; height:20px; line-height:17px; letter-spacing:2px; text-align:center; border:1px solid #d8d8d8; background:#ECE9D8 url(submit_btn_bg.gif) repeat-x 0 -1px; color:#555 }
+
+.gov_top_bar_content { width:990px; padding:0px; height:27px; margin:10px auto; _height:21px; _margin:13px auto; text-align:left; overflow:hidden; color:#FFFFFF; }
+.gov_top_bar_content a:hover, .gov_top_bar_content a:active, .gov_top_bar_content a:link, .gov_top_bar_content a:visited { color:#FFFFFF; }
+.gov_head { height:70px; border:none; overflow:hidden; clear:both; }
+.gov_head2{height:43px;border:none;overflow:hidden;clear:both;}
+.gov_logo { height:70px; overflow:hidden; float:left; valign:buttom;margin-top:8px; }
+.gov_logo2 { height:35px; overflow:hidden; float:left; valign:buttom;margin-top:8px; }
+.gov_head_ad_image{height:70px; overflow:hidden; float:left; valign:buttom;width:468;margin:8px 10px 0 10px;}
+.gov_head_ad_image2{height:35px; overflow:hidden; float:left; valign:buttom;width:468;margin:8px 10px 0 10px;}
+.gov_head_ad_artical{border:1px solid #B8D3EE; float:right;margin:8px auto; padding:5px; height:48px;width:250px}
+.gov_head_ad_artical .mymesg{margin:0 6px 0 5px;font-size:12px;line-height:22px}
+.gov_head_ad_artical .mymesg a{color:#BA2636; font-weight:bold;text-decoration:underline}
+.gov_head_ad_artical li {font-size:12px; text-decoration:none; display:block;line-height:25px; outline:none;}
+.gov_head_ad_artical li a{font-size:12px; text-decoration:none; display:block;line-height:25px; outline:none;}
+.gov_head_ad_artical li a:hover, .gov_head_ad_artical li a:active, .gov_head_ad_artical li a:link, .gov_head_ad_artical li a:visited { font-size:12px; text-decoration:underline;}
+.gov_small_nav { height:70px; float:right; overflow:hidden; padding:5px; }
+.gov_nav {height:46px; background:url(gov_nav_bg.gif) no-repeat; margin:10px auto 0px auto; overflow:hidden; }
+.gov_nav2 {height:35px; background:url(intranet_nav_bg.gif) no-repeat; margin:5px auto 0px auto; overflow:hidden; }
+.intranet_nav{float:right;font-size:12px;color:#ffffff;margin-right:20px;height:35px;line-height:35px;}
+.gov_nav_bar {margin-left:12px; height:46px; color:#FFFFFF; font-size:14px; font-weight:bold; overflow:hidden; }
+/**导航条**/
+#topnav li.gov_nav_bar_right {height:24px; padding-top:12px; margin-right:10px; color:#FFFFFF; font-size:12px; float:right; width:180px;}
+#keyword{width:120px;}
+.gov_nav_bar_right input{border:0 none;color:#999999;font:12px/18px simsun;height:20px;padding-left:4px;float:left;}
+#topnav li{ height:30px; font-size:14px; font-weight:bold; width:74px;padding:9px 0 0 0; text-align:center; overflow:hidden; float:left; clear:none; margin:0}
+#topnav li.separator {background:url(gov_nav_separator.gif) no-repeat; height:32px; width:10px; margin-top:4px; float:left; }
+#topnav li a{  font-size:14px; font-weight:bolder; text-decoration:none; color:#FFFFFF;display:block;line-height:30px; outline:none;blr:expression(this.onFocus=this.blur());}
+#topnav li a:hover, #topnav li a:active, #topnav li a:link, #topnav li a:visited { font-size:14px; font-weight:bolder; text-decoration:none; color:#FFFFFF; }
+#topnav .over {color:#ffffff; width:74px; height:30px; font-size:14px; font-weight:bold; text-align:center; padding:9px 0 0 0; overflow:hidden; float:left; }
+#topnav .over a:hover, #topnav .over a:active, #topnav .over a:link, #topnav .over a:visited { font-size:14px; font-weight:bolder; color:#FFFFFF; text-decoration:underline;}
+#wrapper {background:url(qub.gif) repeat-x scroll transparent;display:inline;float:left;height:56px;width:990px;}
+#wrapper ul {display:block;float:left;margin-left:8px;margin-right:8px;margin-top:10px;}
+#wrapper ul a {color:#000000;padding:2px 3px 2px 4px;}
+#wrapper li {font-size:13px;}
+#wrapper li {font-size:13px; text-decoration:none; }
+#wrapper li a{font-size:13px; text-decoration:none;}
+#wrapper li a:link{ font-size:13px; text-decoration:none;}
+#wrapper li a:hover{ font-size:13px; text-decoration:none; background:#3a69aa;color:#FFFFFF;}
+#wrapper li a:active{ font-size:13px; text-decoration:none;}
+#wrapper li a:visited { font-size:13px; text-decoration:none;}
+
+#wrapper .b {font-weight:700;}
+#wrapper .line {border-left:1px solid #B6D1E6;border-right:1px solid #FFFFFF;display:block;float:left;height:36px;margin:10px 2px;width:0;}
+
+#topnav dl {display:none; z-index:99;position:absolute;font-size:12px; margin-top:2px;  border:1px solid #cccccc; border-top:none;background:#F0F6F8;}
+#topnav dl dt { height:22px; line-height:1.2em;width:80px; float:left; display:inline-table;border-left:1px solid #ffffff}
+#topnav .over dt a:link, #topnav .over  dt a:visited { color:#666; font-weight:normal; padding:2px; font-weight:normal }
+#topnav .over dt a:hover { color:#003685; background-color:#e3e3e3 ;font-weight:normal}
+
+.gov_nav_tip { height:26px; padding:3px; overflow:hidden; }
+.gov_nav_tip_left { height:16px; padding:5px 0 0 8px; overflow:hidden; float:left; margin-left:12px; font-size:12px; }
+.gov_nav_tip_left a:hover, .gov_nav_tip_left a:link, .gov_nav_tip_left a:active, .gov_nav_tip_left a:visited { color:#666666; text-decoration:none; }
+.gov_nav_tip_right { height:25px; margin-top:3px; overflow:hidden; float:right; text-align:right; margin-right:12px; }
+.gov_nav_fright { width:32px; overflow:hidden; }
+/*底部*/
+.frindlink{background:url(frdlink_bg.png) repeat-x;clear:both;margin:0 auto;width:990px;height:38px;line-height:36px; color: #FFFFFF;text-align: center;overflow:hidden}
+.frindlink  span{color:#454545}
+#footer { background: url("footer.jpg") repeat-x  #fafafa; clear:both; display:block; font-family:Tahoma;width:990px;margin:0 auto; overflow:hidden}
+#footer ul { padding:10px 0px; }
+#footer ul li { color:#333; text-align:center; }
+#footer a.vison{color:#669900;}

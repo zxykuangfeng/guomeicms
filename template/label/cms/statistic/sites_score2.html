@@ -1,0 +1,24 @@
+<!--{php168}-->
+<style type="text/css">
+.label_forms_table2{margin-bottom:0;}
+.label_forms_table2 .head td{padding: 2px 2px;font-size: 14px;color: #323232;font-weight: normal;text-align: center;background-color: #e3ecff;}
+.label_forms_table2 td {padding: 1px 2px;text-align: center;font-size: 14px;color: #525252;background-color: #fafafa;}
+.label_forms_table2 .tr1 td{background-color: #ffffff;}
+</style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="label_forms_table2">
+	<tr class="head title">
+		<td>单位名称</td>		
+		<td>投稿内容数</td>
+		<td>优秀内容数</td>
+	</tr>
+	<!--{php $i=0;}-->
+	<!--{foreach $list $key $value}-->
+	<!--{php $i++;$j=$i%2;}-->  
+	<tr class="tr$j" id="item_$value[id]">
+		<td>$value[name]</td>		
+		<td>{$value[count]}</td>
+		<td>{$value[score]}</td>
+	</tr>
+	<!--{/foreach}-->
+</table>
+<!--{/php168}-->

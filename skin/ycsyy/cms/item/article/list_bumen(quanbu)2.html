@@ -1,0 +1,61 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="container">
+		<div class="fluid">
+			<div class="bigbanner">
+
+$label[bigbanner_daohan]
+
+</div>
+		</div>
+	</div>
+</div>
+<div class="breadnav">
+	<div class="container">
+		<div class="row">
+			<div class="position fr">
+				<a href="{$core.controller}">首页</a>
+				<!--{foreach $parent_cats $v}-->
+				&gt; <a href="$v[url]">$v[name]</a>
+				<!--{/foreach}-->
+				&gt; <a href="$CAT[url]">$CAT[name]</a> 
+			</div>
+		</div>
+	</div>
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="row">
+			<div class="contain-left fl">	
+				<div class="border1">
+					<div class="head1">
+						<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+						<span class="title1">$parent_name</span>
+					</div>	
+					<div class="main1">
+						<!--{template $this_module step_category_jx3}-->
+					</div>
+				</div>
+			</div>
+			<div class="contain-right fr">
+				<div class="departbox">
+					<h2 class="title">$label[list_bumen_title]</h2>
+					<div class="decon clearfix">$label[list_bumen_con]</div>
+				</div>
+				<div class="departbox">
+					<h2 class="title">$label[list_bumen_title2]</h2>
+					<div class="decon clearfix">$label[list_bumen_con2]</div>
+				</div>
+				<div class="departbox">
+					<h2 class="title">$label[list_bumen_title3]</h2>
+					<div class="decon clearfix">$label[list_bumen_con3]</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

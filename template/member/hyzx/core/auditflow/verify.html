@@ -1,0 +1,67 @@
+<!--{php168}-->
+
+
+<script type="text/javascript">
+var verified = '{$verified}',
+verify_item_id = [];
+
+var audit_verify_html = '';
+
+function verify_flow(verify_item_id, verified){
+	if(!verify_item_id) return false;
+	var sync_index_to_html = {$sync_index_to_html};
+	var theight=230;
+	var value = 0;
+	var reason = '';
+	$.ajax({url:'{$auditFlow.U_controller}-item?module='+(SYSTEM!='core'?SYSTEM:MODULE) +'&doact=getitem&id='+verify_item_id+'&verified='+verified,dataType:'json',type:'get',success:function(dat){ audit_verify_html =dat.htmlstr;theight+=dat.line*35; },async:false })
+	var verify_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['verify']}',
+	width: 550,
+	height: theight,
+	button: true,
+	
+	ok: function(){
+		value = this.content.find('input[name=value]:checked').val();
+		reason = this.content.find('textarea').val();
+		
+		$.ajax({
+			url: '{$auditFlow.U_controller}-item?module='+(SYSTEM!='core'?SYSTEM:MODULE) +'&id='+verify_item_id+'&doact=verifyitem',
+			type: 'POST',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: verify_item_id, value: value, verified: verified, push_back_reason: reason}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				
+				if(json.code==1){		
+					ids = 	json.id		
+					for(var i in ids){
+						if(verified==8){
+							$('#v_'+ ids[i]).remove();
+						}
+					}
+					if(value=='1' && sync_index_to_html){
+						$("#__reflash_index__").submit();
+					}
+					p8_window.alert('{$P8LANG['done']}',function(){ location.reload(); });
+					
+				}else{
+					p8_window.alert('{$P8LANG['fail']}');
+				}
+			}
+		});
+		},
+		show: function(){
+			this.content.html(audit_verify_html);
+			
+			this.content.find('input[type=radio][value='+verified+']').attr('checked',true);
+		}
+	});
+	verify_dialog.show();
+	
+}
+</script type="text/javascript">
+<!--{/php168}-->

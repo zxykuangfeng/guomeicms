@@ -1,0 +1,36 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+.slider55-focus{$label['id']} .child{position:relative;overflow:hidden;}
+.slider55-focus{$label['id']} .child .item img{width:100%;height:{$sheight}px;}
+.slider55-focus{$label['id']} .child .text{width:100%;padding:10px 15px;background-color:rgba(0,0,0,0.34);position:absolute;bottom:0;right:0;}
+.slider55-focus{$label['id']} .child .text a{display:block;width:75%;font-size:16px;color:#fff;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+@media (max-width: 767px){
+    .slider55-focus{$label['id']} .child .item img{height:auto;}
+}
+</style>
+<div class="slider55-focus{$label['id']}">
+    <div class="frame">
+        <!--{foreach $list $value}-->
+        <div class="child">
+            <a class="item" href="$value[url]" target="_blank" title="$value[full_title]"><img src="$value[frame]" alt="$value[full_title]" ></a>
+            <div class="text">
+                <a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a>
+            </div>
+        </div>
+        <!--{/foreach}-->
+    </div>
+</div>
+<script type="text/javascript">
+$(".slider55-focus{$label['id']} .frame").slick({
+    autoplay:true,
+    autoplaySpeed:6000,
+    speed:600,
+    dots:false,
+    arrows:false,
+    customPaging: function(slider, i) {  
+        return i + 1;
+    },
+})
+</script>
+<!--{/php168}-->

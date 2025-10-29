@@ -1,0 +1,13 @@
+<!--{php168}-->
+<table style="line-height:180%;font-size:14px;" width="100%" cellspacing="0" cellpadding="0">
+<tr height="25" class="head title" style="background:#F7F7EF;">
+<td width="25%"><b>办事编号</b></td><td width="40%"><b>办事名称</b></td><td width="10%"><b>状态</b></td><td width="15%"><b>申请人</b></td><td width="20%"><b>审批</b></td>
+</tr>
+<!--{foreach $list $value}-->
+	<tr>
+		<td><font color="#993300"><b>$value[rnumber]</b></font></td><td>$value[title]</td>
+		<td><font color="#993300">$value[status]</font></td><td>$value[username]</td><td><!--{php echo date('m-d',$value['verifytime']);}--></td>
+	</tr>
+<!--{/foreach}-->
+</table>
+<!--{/php168}-->

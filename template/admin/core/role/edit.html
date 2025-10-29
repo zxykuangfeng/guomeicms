@@ -1,0 +1,131 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+
+<form action="$this_router-$ACTION" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core/role-add"><i class="icon icon-ico44"></i>添加角色</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core/role-list_group"><i class="icon icon-ico12"></i>角色列表</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table border="0" width="100%" cellpadding="0" cellspacing="0" >
+				<tr><td>
+					<table class="columntable formtable hover_table">
+						<tr class="title fix_head">
+							<td colspan="2" class="title"><!--{if $ACTION == 'add'}-->{$P8LANG['add_role']}<!--{else}-->{$P8LANG['update_role']}<!--{/if}--></td>
+						</tr>
+						<tr>
+							<td class="tdL">{$P8LANG['role_id']}</td>
+							<td class="tdR">$data[id]</td>
+						</tr>
+						<!--{if empty($core->CONFIG['use_core_roles_only'])}-->
+						<tr>
+							<td class="tdL">{$P8LANG['role_system']}</td>
+							<td class="tdR">
+								<select name="system">
+									<option value="core">{$P8LANG['core']}</option>
+									
+									<!--{foreach $systems $k $v}-->
+									<!--{if $v['enabled']}-->
+									<option value="$k"{if !empty($data['system']) && $data['system'] == $k} selected{/if}>{$v['alias']}</option>
+									<!--{/if}-->
+									<!--{/foreach}-->
+								</select>
+							</td>
+						</tr>
+						<!--{/if}-->
+						
+						<tr>
+							<td class="tdL">{$P8LANG['role_group']}</td>
+							<td class="tdR">
+								<select name="gid">
+									<!--{foreach $this_module->groups $id $v}-->
+									<option value="$id"{if !empty($data['gid']) && $data['gid'] == $id} selected{/if}>{$v['name']}</option>
+									<!--{/foreach}-->
+								</select>
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">{$P8LANG['role_type']}</td>
+							<td class="tdR">
+								<select name="type">
+									<option value="normal"{if !empty($data['type']) && $data['type'] == 'normal'} selected{/if}>{$P8LANG['normal_role']}</option>
+									<option value="system"{if !empty($data['type']) && $data['type'] == 'system'} selected{/if}>{$P8LANG['system_role']}</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">{$P8LANG['list_order']}</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="display_order" size="5"  value="{if !empty($data['display_order'])}{$data['display_order']}{else}0{/if}" />
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">{$P8LANG['role_name']}</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="name" size="30"  value="{if !empty($data['name'])}{$data['name']}{/if}" />
+							</td>
+						</tr>
+						<!--{if $data['type'] == 'normal'}-->
+						<tr>
+							<td class="tdL">{$P8LANG['role_url']}</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="url" size="80"  value="{if !empty($data['url'])}{$data['url']}{/if}" />
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">{$P8LANG['forward_url']}</td>
+							<td class="tdR">
+								优先级：{$P8LANG['role_url']}带&forward=参数 > 本角色登录转向URL > 系统会员登陆转向 <a href="{$core.admin_controller}/core/member-config" target="_blank">[查看设置]</a><br/>	
+								<input type="text" class="txt" name="forward" size="80"  value="{if !empty($data['forward'])}{$data['forward']}{/if}" />								
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">{$P8LANG['role_template']}</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="role_template"  value="{if !empty($data['role_template'])}{$data['role_template']}{else}center{/if}" />
+								<input type="button" value="$P8LANG[select_template]" onclick="member_edit_dialog.show()" />
+							</td>
+						</tr>
+						<!--{/if}-->
+						<tr>
+						  <td colspan="2"><div style="text-align:center;"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></div></td>
+					  </tr>
+					</table>
+				</td></tr>
+			</table>
+		</div>
+	</div>
+	<input type="hidden" name="id" value="{if !empty($data['id'])}{$data['id']}{/if}" />
+</form>
+<script type="text/javascript">
+
+var member_edit_dialog = new P8_Dialog({
+	title_text: '$P8LANG[select_template]',
+	width: 700,
+	height: 300,
+	button: true,
+	ok: function(){
+		
+		$('#form input[name="role_template"]').val(member_template_selector.value);
+	},
+	show: function(){
+		member_template_selector.init();
+	}
+});
+var member_template_selector = new Template_Selector({
+	base_dir: 'member/default/core/member/',
+	selected: $('#form input[name="role_template"]').val(),
+	dialog: member_edit_dialog
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

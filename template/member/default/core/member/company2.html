@@ -1,0 +1,293 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$core.CONFIG['page_charset']}" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<title>项目招标管理中心</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/newlabel/label.css" rel="stylesheet" type="text/css" />
+<link type="text/css" rel="stylesheet" href="{$RESOURCE}/images/dialog.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<script type="text/javascript">var site_tmp = '<!--{php echo $menu_flag ? $siteflag : 'mainstation';}-->';</script>
+<script type="text/javascript" src="{$RESOURCE}/js/member_common.js?rid=<!--{php echo P8_TIME;}-->"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<style>
+body {margin: 0;font-size: 14px;font-family: "Helvetica Neue",Helvetica,STHeiTi,Arial,sans-serif;line-height: 1.5;color: #333;background-color: #fafafa;min-height: 100%;height: 100%;width: 100%;}
+html, body, div, ul, li, dl, dt, dd, form, input, select, h1, h2, h3, h4, h5, p { margin:0px; padding:0px; }
+ul, li { list-style:none; }
+img { border:0px; margin:0px; padding:0px; }
+a {color: #333;text-decoration: none;}
+a:hover{color: #1955ae;text-decoration: none;}
+.pt-top{height: 42px;line-height: 42px;background-color: #1955ae;width: 100%;z-index: 100;position: fixed;top: 0;left: 0;right: 0;}
+.pt-login,.pt-login a{color:#fff;}
+.pt-login a{margin:0 20px}
+.pt-login a.home{padding-left:25px;background: url({$MEMBERSKIN}/core/pingtai/home.png) left center no-repeat;}
+.pt-header{padding: 40px 0 0;background-color:#fff;box-sizing: border-box;height: auto;border: 1px solid transparent;}
+.pt-header .navbar-brand{height:auto;padding:24px 15px;}
+.pt-header .navbar-brand>img{max-width:100%;height:auto;}
+.navbar-toggle .icon-bar{background-color:#1955ae;}
+.navbar-nav>li{margin-top:40px;}
+.navbar-nav>li>a{color:#2362e9;font-size:16px;padding:10px 26px;border:1px solid #2362e9;border-radius:20px;}
+.pt-content{padding-bottom:50px;}
+.pt-content .breadcrumb{height: 39px;line-height: 39px;margin-bottom: 20px;padding: 0 10px;background-color: #fff;font-size: 14px;}
+.breadcrumb-list li{float:left;margin:0 5px;}
+.breadcrumb-list li a{color:#484747;display:block;}
+.breadcrumb-list li a.home{padding-left:25px;background: url({$MEMBERSKIN}/core/pingtai/home2.png) left center no-repeat;}
+.side-head{height:55px;line-height:55px;margin-bottom:12px;background: url({$MEMBERSKIN}/core/pingtai/bg.png) center center no-repeat;background-size:cover;}
+.side-head a{color:#fff;font-size:18px;display:block;text-align:center;}
+.side-head span{width:9px;height:14px;display:inline-block;margin-left:10px;background: url({$MEMBERSKIN}/core/pingtai/arr.png) center center no-repeat;}
+.side-nav-box{position:relative;}
+.side-nav-box .side-head2{height:40px;line-height:40px;font-size: 18px;color: #fff;padding:0 15px;box-sizing: border-box;background-color:#1955ae;position: relative;}
+.navbar-head{position: absolute;top: 12px;right: 20px;}
+.navbar-head .navbar-toggle{padding:0;margin:0;}
+.navbar-head .navbar-toggle .icon-bar{background-color:#ddd;}
+.side-nav{padding:0;}
+.side-nav .panel {border: 0;margin: 0;}
+.side-nav .panel .panel-heading {color:#fff;font-size:14px;text-align:center;background-color: #1955ae;border-radius:0;}
+.side-nav .panel ul li:first-child {border-top: 0;}
+.side-nav .panel ul li {position: relative;display: block;padding: 10px 15px;margin-bottom: -1px;background-color: #f8faff;border: 1px solid #d8e5f7;font-size: 14px;}
+.side-nav .panel ul li a {display: block;text-align:center;position:relative;}
+.side-nav .panel ul li img {position: absolute;top: 5px;right:0;vertical-align: top;}
+.pt-module{padding:30px 25px;background-color:#ffffff;}
+.pt-user{margin-bottom:30px;}
+.pt-user-pic img{max-width:100%;height:auto;border-radius:50%;}
+.pt-user-title{color:#1955ae;font-size:22px;margin-bottom:20px;}
+.pt-user-info li{color:#4f586b;font-size:15px;margin-bottom:15px;}
+.pt-box{border:1px solid #d2d2d2;margin-bottom:20px;}
+.pt-box .head{height:38px;line-height:38px;border-bottom:1px solid #d2d2d2;background-color:#f8faff;}
+.pt-box .head .title{color:#1955ae;font-size:16px;padding:0 15px;position:relative;}
+.pt-box .head .title:after{width:100%;height:4px;position:absolute;left:0;bottom:-2px;content:"";background-color:#1955ae;}
+.pt-box .head .more{margin-right:15px;}
+.pt-box .head .more a{color:#1955ae;}
+.pt-box .main{padding:20px 30px 25px 30px;}
+.side-list li{height:40px;line-height:40px;font-size:15px;padding-left:25px;background:url({$MEMBERSKIN}/core/pingtai/arr3.png) left center no-repeat;text-overflow: ellipsis;white-space: nowrap;position:relative;overflow: hidden;}
+.side-list .datatime{float: right;}
+.pt-footer{background-color:#1955ae;color: #fff;}
+.pt-copyright{padding:20px 0;}
+.pt-copyright a{color:#fff;}
+@media (min-width: 1440px){
+	.container {
+		width: 1420px;
+	}
+}
+@media (max-width: 767px){
+	.pt-header .navbar-brand{padding:10px;}
+	.pt-header .navbar-brand>img{max-width:100%;height:30px;}
+	.navbar-nav>li{margin-top:0;}
+}
+</style>
+<body>
+<div class="pt-top">
+	<div class="container">
+	<div class="pt-login text-right" id="header_t"><span>您好，欢迎访问本网站！ </span><a href="{$core.url}/u.php/member-logout" onclick="return ajax_logout()">安全退出</a><a href="/index.html" 
+ target="_blank" class="home">网站首页</a></div>
+	</div>
+</div>
+<div class="navbar pt-header">
+	<div class="container">
+		<div class="header">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="/u.php/member-center" class="navbar-brand navbar-logo"><img src="http://zhaobiao.php168.net/skin/member/default/core/pingtai/logo.png"/></a>
+			</div>
+			<div class="navbar-collapse navbar-collapse-toolbar collapse navbar-main" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						$label[pt_post_btn]
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="pt-content">
+	<div class="container">
+		<div class="breadcrumb">
+			<ul class="breadcrumb-list clearfix">
+				<li><a href="{$core.controller}" class="home">首页</a></li>
+				<li>></li>
+				<li><a href="{$core.U_controller}">管理中心</a></li>
+			</ul>
+		</div>
+		<div class="row">
+			<div class="col-md-2 col-sm-3 col-xs-12 col-wd-20">
+				<div class="side-left">
+					<div class="side-head"><a href="{$core.U_controller}/member-center">企业用户中心<span></span></a></div>
+				</div>
+				<div class="side-nav-box">
+					<div class="side-head2 visible-sm-block visible-xs-block">
+						菜单导航
+					</div>
+					<div class="navbar-head">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>	
+					<div class="side-nav navbar-collapse collapse" id="bs-example-navbar-collapse-2" aria-expanded="false" style="height: 1px;">
+						<div class="panel">
+							<div class="panel-heading">招标管理</div>
+							<ul>
+								$label[qiyezhaopin_1]
+							</ul>
+						</div>
+						
+						<div class="panel">
+							<div class="panel-heading">账号信息</div>
+							<ul>
+								<li class="">
+									<a href="/u.php/member-profile" target="_blank">基本信息<img src="{$MEMBERSKIN}/core/pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="/u.php/member-profile" target="_blank">修改密码<img src="{$MEMBERSKIN}/core/pingtai/arr2.png"></a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-10 col-sm-9 col-xs-12 col-wd-80">
+				<div class="pt-module">
+					<div class="pt-user">
+						<div class="row">
+							<div class="col-md-2 col-sm-3 col-xs-3">
+								<div class="pt-user-pic text-center"><img src="{$MEMBERSKIN}/core/pingtai/user.jpg"/></div>
+							</div>
+							<div class="col-md-10 col-sm-9 col-xs-9">
+								<div class="pt-user-title">{$member_info[username]} {$member_info[name]}，欢迎您</div>
+							
+								<ul class="pt-user-info row">
+									
+									<li class="col-md-4 col-sm-6 col-xs-12">上次登陆时间：<!--{php echo date('Y-m-d H:i',$member_info['last_login']);}--></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				<div class="pt-box">
+						<div class="head clearfix">
+							<div class="title pull-left">$label[pt_box1_t11]</div>
+							<div class="more pull-right">$label[pt_box1_m11]</a></div>
+						</div>
+						<div class="main">
+							$label[pt_box1_c11]
+						</div>
+					</div>
+
+
+<div class="pt-box">
+						<div class="head clearfix">
+							<div class="title pull-left">$label[pt_box2_t12]</div>
+							<div class="more pull-right">$label[pt_box2_m12]</a></div>
+						</div>
+						<div class="main">
+							$label[pt_box1_c12]
+						</div>
+					</div>
+
+					<div class="pt-box">
+						<div class="head clearfix">
+							<div class="title pull-left">$label[pt_box3_t14]</div>
+							<div class="more pull-right">$label[pt_box3_m14]</a></div>
+						</div>
+						<div class="main">
+							$label[pt_box2_c14]
+						</div>
+					</div>
+
+
+			
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="pt-footer">
+	<div class="container">
+		<div class="pt-copyright text-center">
+			$label[pt_copyright]
+		</div>
+	</div>
+</div>
+<input type="hidden" name="#field_city_posted" />
+<input type="hidden" id="fields_city" name="field#[city]" value="{if isset($member_info[city])}$member_info[city]{else}0{/if}" />
+<script type="text/javascript">
+$(document).ready(function(){
+	//**show_edit**//
+	init_labelshows('header_t');
+})
+</script>
+<script type="text/javascript">
+$(function(){
+	var dialog = new P8_Dialog({
+		title_text: '{$P8LANG['select_city']}',
+		width: 700,
+		height: 300,
+		button: true,
+		show: function(){
+			selector.init();
+		},
+		ok: function(){}
+	});	
+	var selector;
+	include_once('{$RESOURCE}/js/recursive_city.js', function(){
+		selector = new Recursive_Selector({
+			dialog: dialog,
+			sub_property: 'areas',
+			input: $('input[name="#field_city_posted"]'),
+			value: $('#fields_city').val(),
+			url: P8CONFIG.url +'/api/city.php',
+			item_callback: function(area, item){},
+			init_callback: function(){
+				var id = this.get_value();				
+				path(id);
+			}
+		});
+		
+		if($('#fields_city').val()){
+			selector.init();
+		}
+	});
+	
+	function path(id){
+		if(id == 0){
+			$('#city_path').html('');
+			return;
+		}		
+		var tmp = selector.get_by_id(id);
+		var html = '';		
+		while(true){
+			html = tmp.name +' &gt; '+ html;
+			if(tmp.parent == 0) break;			
+			tmp = selector.get_by_id(tmp.parent);
+		}		
+		$('#city_path').html(html);
+	}
+});
+</script>
+</body>
+</html>
+<!--{/php168}-->

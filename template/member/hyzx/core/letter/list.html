@@ -1,0 +1,113 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="list_box">
+			<div class="head" id="boxhead">
+				<span {$sta[0]}><a href="$this_router-list?status=0">未解决问题</a></span>
+				<span {$sta[1]}><a href="$this_router-list?status=1">已解决问题</a></span>
+				<a href="{$this_module.controller}-post" target="_blank" class="sendmsg_link_bg">我要写信</a>
+			</div>
+		</div>
+		<form name="form" id="searchFrom" action="" method="post" target="_self">
+		<div class="mtop">
+			 部门: <!--{if $select_size>=2}-->
+					<!--{php
+					for($i=0;$i<$select_size;$i++){
+						$this_value = empty($data_field[$i])? '' : $data_field[$i];
+						if($i==0){
+							$selectdata = $select_data;
+						}elseif($data_field){
+							$selectdata = (empty($selectdata[$data_field[$i-1]])? array() : $selectdata[$data_field[$i-1]]['s']);
+						}else{
+							$selectdata = array();
+						}
+						$inputname = $select_size-1==$i?'department':'parent_department';
+					}-->
+					<select name="$inputname" id="department" onchange="department_select.change(this)">
+						<option value="">--请选择--</option>
+						<!--{foreach $selectdata $key $value}-->
+						<option value="{$value['i']}" {if $this_value==$key}selected{/if}>{$value['n']}</option>
+						<!--{/foreach}-->
+					</select>
+					<!--{php }}-->							
+					<script type="text/javascript">
+					var department_select = {
+					CAT : <!--{$select_json_data}-->,
+					change : function (obj){
+						var shtml = dhtml = '<option value="">--请选择--</option>';
+						var thisv = $(obj).val();
+						$(obj).nextAll('select').html(dhtml);
+						if(!thisv){
+							return false;
+						}
+						var path = thisv.split('-');
+						var temp = this.CAT;
+						if(path.length==1)
+							temp=this.CAT[path]['s'];
+						else{
+							for (var k in path)
+								temp = temp[path[k]]['s'];
+						}
+						if(temp !=''){
+							for(var j in temp)
+								shtml += '<option value="'+temp[j]['i']+'">'+temp[j]['n']+'</option>';	
+							$(obj).next().html(shtml);	
+					}}}
+					</script>
+				<!--{else}-->
+					<select name="department" id="department">
+						<option value="">请选择</option>
+						<!--{foreach $cates['department'] $key $row}-->
+						<option value="{$row['id']}" {if !empty($data['department']) && $data['department']==$row['id']}selected{/if}>{$row['name']}</option>
+						<!--{/foreach}-->   
+					</select>
+				<!--{/if}-->
+			类别: <select name="type">
+					<option value="">所有</option>
+					<!--{foreach $cates['type'] $key $val}-->
+					<option value="$val[id]" {if !empty($type) && $type == $val['id']}selected{/if}>$val[name]</option>
+					<!--{/foreach}-->
+				</select> 
+			问题编号：<input name="number" type="text" value="$number" size="10"/> 
+			关键词：<input name="word" type="text" value="$word" size="15"/> 
+			<input type="hidden" name="act" value="search"/>
+			<input type="button" value="搜索" onclick="searchthis()"/>
+		</div>
+		</form>
+		<table width='99%' align="center" cellspacing='1' cellpadding='3' class="formtable columntable hover_table mtop20">
+			<tr class="head">
+				<td width="25" align="center">编号</td>
+				<td width="50" align="center">状态</td>
+				<td width="*">标题</td>
+				<td width="120" align="center">提问时间</td>
+				<td width="100" align="center"><!--{if isset($sta[1])}-->解决时间<!--{else}-->提交人<!--{/if}--></td>
+				<td width="85" align="center">操作</td>
+			</tr>
+		<!--{foreach $list $k $v}-->	
+			<tr>
+				<td align="center">$v[number]</td>
+				<td style="color:#009900" align="center">{$P8LANG['status_'.$v['status']]}</td>
+				<td><font color="#bb9900">[{$cates_departments[$v['department']]['name']}/{$cates['type'][$v['type']]['name']}]</font> <a  href="{$this_module.controller}-detail?id={$v['id']}"  target="_blank">$v[title]</a></td>
+				<td align="center"><!--{php echo date("Y-m-d H:i",$v['create_time']);}--></td>
+				<td align="center"><!--{if isset($sta[1])}-->{date('Y-m-d H:i',$v['create_time'])}<!--{else}--><font color="#009900">$v[username]</font><!--{/if}--></td>
+				<td align="center"><a  href="{$this_module.controller}-detail?id={$v['id']}"  target="_blank">查看</a><!--{if $v['status']==0}--> <a  href="{$this_module.controller}-update?id={$v['id']}" target="_blank">编辑</a> <a  href="$this_router-delete?id={$v['id']}" >删除</a><!--{/if}--></td>
+			</tr>
+		<!--{/foreach}-->	
+			
+			<tr><td colspan="6" align="center" class="pages">{$pages}</td></tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function printthis(){
+	$('#searchFrom input[name="act"]').val('print');
+	$('#searchFrom').attr('target','_blank').submit();
+}
+function searchthis(){
+	$('#searchFrom input[name="act"]').val('search');
+	$('#searchFrom').attr('target','_self').submit();
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

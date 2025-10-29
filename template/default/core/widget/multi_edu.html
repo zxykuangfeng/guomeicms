@@ -1,0 +1,44 @@
+<!--{php168}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<input type="hidden" name="#field_{$field}_posted" />
+<table width="100%" cellpadding="0" cellspacing="0" id="tab_{$field}">
+	<tr>
+		<td align="center" style="background:#fafafa;">{$P8LANG['edu']['date_attended_from']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['edu']['date_attended_to']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['edu']['schoolname']}</td>										
+		<td align="center" style="background:#fafafa;">{$P8LANG['edu']['diploma_received']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['edu']['fieldofstudy']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['action']}</td>
+	</tr>
+	<tbody id="{$field}_holder"></tbody>
+</table>
+<div id="p8_form_btn_{$field}"><input type="button" value="{$P8LANG['add']}" /></div>
+<script type="text/javascript">
+$(function(){
+	
+	function {$field}_copy(date_attended_from,date_attended_to,schoolname,diploma_received,fieldofstudy){
+		var tr = $('<tr><td align="center"></td><td align="center"></td><td align="center"></td><td align="center"></td><td align="center"></td><td align="center"></td></tr>');
+		$('<input class="txt" type="text" name="field#[$field][date_attended_from][]" size="10" onclick="rcalendar(this);"/>').val(date_attended_from === undefined ? '' : date_attended_from).appendTo(tr.find('td:eq(0)'));
+		$('<input class="txt" type="text" name="field#[$field][date_attended_to][]" size="10" onclick="rcalendar(this);"/>').val(date_attended_to === undefined ? '' : date_attended_to).appendTo(tr.find('td:eq(1)'));
+		$('<input class="txt" type="text" name="field#[$field][schoolname][]" size="10" />').val(schoolname === undefined ? '' : schoolname).appendTo(tr.find('td:eq(2)'));
+		$('<input class="txt" type="text" name="field#[$field][diploma_received][]" size="10" />').val(diploma_received === undefined ? '' : diploma_received).appendTo(tr.find('td:eq(3)'));
+		$('<input class="txt" type="text" name="field#[$field][fieldofstudy][]" size="10" />').val(fieldofstudy === undefined ? '' : fieldofstudy).appendTo(tr.find('td:eq(4)'));
+		$('<input type="button" class="up_botton" value="'+ P8LANG['delete'] +'" />').click(function(){
+			$(this).parent().parent().remove();
+		}).appendTo(tr.find('td:eq(5)'));
+		$('#{$field}_holder').append($(tr));
+	}	
+	$('#p8_form_btn_{$field} input').click(function(){
+		{$field}_copy();
+	});
+	
+	<!--{foreach $data[$field] $vv}-->
+		{$field}_copy('$vv[date_attended_from]', '$vv[date_attended_to]', '$vv[schoolname]', '$vv[diploma_received]', '$vv[fieldofstudy]');
+	<!--{/foreach}-->
+	<!--{foreachelse}-->
+		{$field}_copy();
+		{$field}_copy();
+	<!--{/foreachelse}-->
+});
+</script>
+<!--{/php168}-->

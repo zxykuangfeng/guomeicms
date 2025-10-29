@@ -1,0 +1,73 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+.pic-responsive{$label['id']}{margin:0 -10px;}
+.pic-responsive{$label['id']} .slider-item .item{display:block;padding:10px 10px;height:100%;position:relative;overflow:hidden;}
+.pic-responsive{$label['id']} .slider-item .item .inner {overflow: hidden;padding:70% 0;position: relative;border-radius: 5px;}
+
+
+.pic-responsive{$label['id']} .slider-item .item .inner .pic{position:absolute;left: 0;top: 0;width: 100%;height: 100%;}
+.pic-responsive{$label['id']} .slider-item .item .inner .pic img{width:100%;height:100%;position:absolute;top:0;left:0;transition: .5s;-moz-transition: .5s; /* Firefox 4 */-webkit-transition: .5s; /* Safari 和 Chrome */-o-transition: .5s; /* Opera */}
+.pic-responsive{$label['id']} .slider-item .item .inner .text{width:100%;padding:11px 10px;background-color: rgba(27,27,27,.53);position:absolute;bottom:0;left:0;}
+.pic-responsive{$label['id']} .slider-item .item .inner .text h3{font-size:16px;color:#fff;overflow:hidden;margin-top:0;margin-bottom:10px;font-weight:normal;}
+.pic-responsive{$label['id']} .slider-item .item .inner .text h3 span{font-size:14px;float:right;}
+.pic-responsive{$label['id']} .slider-item .item .inner .post{font-size:14px;color:#fff;}
+.pic-responsive{$label['id']} .slider-item .item:hover img {transform: scale(1.1);}
+@media (max-width: 767px){
+	.pic-responsive{$label['id']} .slider-item .item .inner{padding:60% 0;}
+}
+</style>
+<div class="sliderbox-responsive{$label['id']}">
+	<div class="slider pic-responsive{$label['id']}">
+		<!--{foreach $list $value}-->
+			<div class="slider-item">
+				<div class="item">
+					<div class="inner">
+						<div class="pic"><a href="$value[url]" target="_blank" title="$value[full_title]"><img src="$value[frame]" alt="$value[full_title]" ></a></div>
+						<div class="text">
+							<a href="$value[url]" target="_blank" title="$value[full_title]"><h3>$value[title]<span class="ks">$value[custom_c]</span></h3>
+							<p class="post">$value[custom_d]</p></a>
+						</div>
+					</div>
+				</div>
+			</div>
+		<!--{/foreach}-->
+	</div>
+</div>
+<script type="text/javascript">
+$(".pic-responsive{$label['id']}").slick({
+	dots: false,
+	arrows: false,
+	infinite: true,
+	speed: 300,
+	slidesToShow: 6,
+	slidesToScroll: 6,
+	autoplay: true,
+	autoplaySpeed: 3000, 
+	responsive: [
+		{
+			breakpoint: 1024,
+			settings: {
+			slidesToShow: 3,
+			slidesToScroll: 1,
+			infinite: true,
+		  }
+		},
+		{
+			breakpoint: 600,
+			settings: {
+			slidesToShow: 2,
+			slidesToScroll: 1
+		  }
+		},
+		{
+			breakpoint: 480,
+			settings: {
+			slidesToShow: 1,
+			slidesToScroll: 1
+		 }
+	   }
+	]
+});
+</script>
+<!--{/php168}-->

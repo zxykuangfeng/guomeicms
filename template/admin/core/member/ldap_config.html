@@ -1,0 +1,70 @@
+<!--{php168}-->
+<!--LDAP config-->
+<tbody id="ldap" style="display: none;">
+<input type="hidden" name="config[ldap][client]" value="1"/>
+<input type="hidden" name="config[ldap][param]" value="?ldap=1&"/>
+<tr>
+	<td class="tdL">LDAP服务器IP地址</td>
+	<td class="tdR">
+		<input type="text" class="txt" name="config[ldap][adip]" value="{$config['ldap']['adip']}" size="32" />
+	</td>
+</tr>
+<tr>
+	<td class="tdL">LDAP服务器端口</td>
+	<td class="tdR">
+		<input type="text" class="txt" name="config[ldap][port]" value="{if !empty($config['ldap']['port'])}{$config['ldap']['port']}{else}389{/if}" size="32" /> 默认389
+	</td>
+</tr>
+<tr>
+	<td class="tdL">LDAP登录入口</td>
+	<td class="tdR">
+		<input type="text" class="txt" name="config[ldap][api]" value="{if !empty($config['ldap']['api'])}{$config['ldap']['api']}{else}http://你的域名/api/ldap.php{/if}" size="60" />
+	</td>
+</tr>
+<tr>
+	<td class="tdL">处理脚本</td>
+	<td class="tdR">
+		<input type="text" class="txt" name="config[ldap][script]" value="{if !empty($config['ldap']['script'])}{$config['ldap']['script']}{else}ldap.php{/if}" size="32" />
+        不同的服务端加密方式不同，对于特殊认证方式另外加载脚本处理
+	</td>
+</tr>
+<tr>
+	<td class="tdL">运行环境</td>
+	<td class="tdR">		
+		<!--{if $var_support}-->
+		<img src="{$SKIN}/check_yes.gif" style="cursor: pointer;" title="支持" />
+		<!--{else}-->
+		<img src="{$SKIN}/check_no.gif" style="cursor: pointer;" title="不支持" />
+		<!--{/if}-->
+		<a href="javascript:;" onclick="$('#ldap_help').toggle('normal')">查看教程</a>
+	</td>
+</tr>
+</tbody>
+<tbody id="ldap_help" style="display: none;">
+			<tr>
+				<td colspan="2" class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td colspan="2" class="headerbtn_list"> 
+一、Windows下LDAP安装<br>
+1、如果你的php已经有 php_ldap.dll文件，打开php.ini文件， 找到 “;extension=php_ldap.dll” 去掉分号后保存。<br>
+2、如果没有 php_ldap.dll文件，你可以从网上找的符合自己php版本的 php_ldap.dll 文件，将文件放在相应的目录，重复上过程。<br>
+3、重启Apache或Nginx服务。 <br>
+<br>
+二、Linux下LDAP安装<br>
+1、如果你的php是编译安装的，那么你需要加“--with-ldap”参数，重新编译安装。<br>
+在php安装包下的 ext/ldap 目录下执行以下指令：<br>
+/usr/local/php/bin/phpize<br>
+./configure --with-php-config=/usr/local/php/bin/php-config --with-ldap<br>
+make<br>
+make install<br>
+2、如果你的php是通过Linux的包管理器安装的，你可以通过包管理器安装php_ldap。<br>
+以Debian为例，执行apt-get install php7.0-ldap或yum install php7.0-ldap<br>
+3、重启Apach或Nginx服务。<br><br>
+三、其它参考教程<br>
+https://www.php.cn/php-weizijiaocheng-434233.html<br>
+https://www.wzxaini9.cn/article/342
+				</td>
+			</tr>
+</tbody>
+<!--{/php168}-->

@@ -1,0 +1,92 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $core menu_bar admin}-->
+<form action="$this_url" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core-navigation_menu_add" target="_blank"><i class="icon icon-ico44"></i>添加主站菜单</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core-navigation_menu_list"><i class="icon icon-ico30"></i>主站菜单列表</a></li>
+							<li class="btn-color5"><a href="{$core.admin_controller}/core-navigation_menu_config"><i class="icon icon-ico10"></i>主站菜单配置</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">{$P8LANG['config']}</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_show_menu']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[ShowMenu]" value="1"{if !empty($config['ShowMenu'])} checked{/if} />
+						{$P8LANG['Y']}
+						<input type="radio" name="config[ShowMenu]" value="0"{if empty($config['ShowMenu'])} checked{/if} />
+						{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_core_menu']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[CoreMenu]" value="1"{if !empty($config['CoreMenu'])} checked{/if} />
+						{$P8LANG['Y']}
+						<input type="radio" name="config[CoreMenu]" value="0"{if empty($config['CoreMenu'])} checked{/if} />
+						{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_menu_mode']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[MenuMode]" value="1"{if !empty($config['MenuMode'])} checked{/if} />
+						{$P8LANG['Y']}
+						<input type="radio" name="config[MenuMode]" value="0"{if empty($config['MenuMode'])} checked{/if} />
+						{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_mode_html']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[MenuModeHtml]" value="1"{if !empty($config['MenuModeHtml'])} checked{/if} />
+						{$P8LANG['Y']}
+						<input type="radio" name="config[MenuModeHtml]" value="0"{if empty($config['MenuModeHtml'])} checked{/if} />
+						{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_button_show']}</td>
+					<td class="tdR">
+						<p>
+							<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['html_menu']}" /></span>
+							<span class="opion_radio">
+								<input type="radio" name="config[menu_html_menu]" value="1"{if !empty($config['menu_html_menu'])} checked{/if} />{$P8LANG['N']}
+								<input type="radio" name="config[menu_html_menu]" value="0"{if empty($config['menu_html_menu'])} checked{/if} />{$P8LANG['Y']}
+							</span>
+							<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['dynamic_menu']}" /></span>
+							<span class="opion_radio">
+								<input type="radio" name="config[menu_dynamic_menu]" value="1"{if !empty($config['menu_dynamic_menu'])} checked{/if} />{$P8LANG['N']}
+								<input type="radio" name="config[menu_dynamic_menu]" value="0"{if empty($config['menu_dynamic_menu'])} checked{/if} />{$P8LANG['Y']}
+							</span>
+							<br/>
+						</p>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">&nbsp;</td>
+					<td class="tdR">
+						<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+$('.headerbtn_list li').removeClass();
+$(".headerbtn_list li:nth-child(1)").addClass("active");
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

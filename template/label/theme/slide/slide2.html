@@ -1,0 +1,61 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+.carousel-slider{$label['id']}{position: relative;height:100%;}
+.carousel-slider{$label['id']} .slider-item{position:relative;}
+.carousel-slider{$label['id']} .child a{width: 100%;height:100%;display:block;position:relative;}
+.carousel-slider{$label['id']} .child .pic{width:100%;position:relative;}
+.carousel-slider{$label['id']} .child .pic img{width:100%;height:{$sheight}px;}
+.carousel-slider{$label['id']} .child .title{width:100%;height:44px;line-height:44px;color:#fff;background: rgba(0,0,0,0.53);padding:0 20px;position:absolute;bottom:0;left:0;z-index:200;}
+.carousel-slider{$label['id']} .child .text h3{font-size:18px;color:#534544;font-weight:bold;margin:20px 0;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;}
+.carousel-slider{$label['id']} .child .text p{font-size:16px;color:#555;display:block;}
+.carousel-slider{$label['id']} .child .text span{color:#790e14;}
+.carousel-slider{$label['id']} .slider-item .number{position:absolute;z-index:100;right:0;bottom:95px;}
+.carousel-slider{$label['id']} .slider-item .number .slick-dots{text-align:right;}
+.carousel-slider{$label['id']} .slider-item .number li{width:13px;height:13px;font-size:0;display:inline-block;margin:0 5px;background:#a4a6a8;border-radius:50%;cursor:pointer;}
+.carousel-slider{$label['id']} .slider-item .number li.slick-active{background:#fff;}
+.carousel-slider{$label['id']} .slick-dots li button:hover:before,.campus-slider{$label['id']}  .slick-dots li button:before{content:"";}
+@media screen and (max-width: 999px){
+	.carousel-slider{$label['id']} .child .pic,.carousel-slider{$label['id']} .child .text{width:100%;}
+	.carousel-slider{$label['id']} .child .pic img{width:100%;height:auto;}
+	.carousel-slider{$label['id']} .slider-item .number .slick-dots{text-align:center;}
+}
+</style>
+<div class="carousel-slider{$label['id']}">
+	<div class="slider-item">
+		<div class="frame">
+			<!--{foreach $list $value}-->
+			<div class="child">
+				<a href="$value[url]" target="_blank" title="$value[full_title]">
+					<div class="pic">
+						<img src="$value[frame]" alt="$value[full_title]">
+						<div class="title">$value[title]</div>
+					</div>
+					<div class="text">
+						<h3>$value[title]</h3>
+						<p>$value[summary]<span>《详情》</span></p>
+					</div>
+				</a>
+			</div>
+			<!--{/foreach}-->
+		</div>
+		<div class="number"></div>
+	</div>
+</div>
+<script type="text/javascript">
+  $('.slider-item .frame').slick({
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    centerMode: false,
+    arrows:false,
+    dots:true,
+    appendDots:".carousel-slider{$label['id']} .number",
+        customPaging: function(slider, i) {  
+            return i + 1;
+        },
+    autoplaySpeed:4000,
+    });
+</script>
+<!--{/php168}-->	

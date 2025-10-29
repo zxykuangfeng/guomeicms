@@ -1,0 +1,21 @@
+<?php
+defined('PHP168_PATH') or die();
+
+/**
+* 删除积分日志
+**/
+
+//如果要很详细的权限用$ACTION,如果合并权限用manage
+//$this_controller->check_admin_action('manage') or message('no_privilege');
+$this_controller->check_admin_action($ACTION) or message('no_privilege');
+
+if(REQUEST_METHOD == 'POST'){
+	
+	$id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+	//内置积分类型不允许删除
+	if($id<=3) exit('0');
+	$this_module->delete_credit_log($id) or exit('0');
+	
+	exit('1');
+}
+exit('0');

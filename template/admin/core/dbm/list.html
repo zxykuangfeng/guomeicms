@@ -1,0 +1,325 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<!--{if $job=='backup'}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<form  action="$this_router-backup" target="_blank" method="post">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="$this_router-db_backup"><i class="icon icon-ico49"></i>备份数据</a></li>
+							<li class="btn-color2"><a onclick="javascript:$.post( '$this_url',{ act:'unlock' },function(ret){ p8_window.alert('数据库解锁成功') });"><i class="icon icon-ico46"></i>解除数据备份锁定</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="formtable columntable">
+				<tr class="title fix_head">
+					<td colspan="2">&nbsp;数据库操作导航</td>
+				</tr>
+				<!--<tr>
+					<td>导出编码</td>
+					<td>
+						<input type="text" id="charset" size="10" name="charset" value="" />
+						<span class="pointer" >默认留空即可</span></td>
+				</tr>-->
+				<tr>
+					<td width="25%"> 每次导出条数</td>
+					<td>
+						<input type="text" size="10" id="rows" name="rows" value="1"/> 默认为1，无特殊情况不需修改
+					</td>
+				</tr>
+				<tr>
+					<td> 数据类型:</td>
+					<td>
+						<!--<input type="radio" name="ours" value="0" />
+						备份所有系统数据-->
+						<input type="radio" name="ours" value="1" checked="checked" />
+						备份本系统所有数据
+						<!--{if $sitesd}--><input type="radio" name="ours" value="2" />
+						仅备份主站的数据<!--{/if}-->&nbsp;&nbsp;&nbsp;&nbsp;<span class="help">一般情况选择“备份本系统所有数据；</span></td>
+				</tr>
+				<tr>
+					<td>数据大小:</td>
+					<td>
+						<!--{if ($tmp = round($size / pow(1024, 3))) > 1}-->
+						$tmp GB
+						<!--{elseif ($tmp = round($size / pow(1024, 2))) > 0}-->
+						$tmp MB
+						<!--{elseif ($tmp = round($size / pow(1024, 1))) > 0}-->
+						$tmp KB
+						<!--{else}-->
+						$size B
+						<!--{/if}-->
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td>
+						<input type="submit" class="submit_btn" value="备份" />
+						<a href="{$core.admin_controller}/core/crontab-list" style="margin-left:50px;"><font color="#0033ff">自动备份设置>></font></a>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['operation']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list"> 
+					<p><b>数据备份文件下载：</b>点击【备份】后--------点击顶部【备份数据列表】按钮------输入备份下载密码即可（下载密码由管理员提供）。</br>
+					<b>数据备份文件在服务器的位置：</b>备份的文件保存在<font color="#0033ff"><!--{php echo PHP168_PATH;}-->data/db_backup</font>目录。</br>
+					<b>备份频率：</b>备份数据小于500M的，基本上可以每周点击下手工备份。</br>
+					<b>后台自动备份设置：进入计划任务；</b>脚本填写：db_backup.php；后台备份作为备份的补充。  最重要的是务必记得服务器里面设置脚本进行自动备份文件和数据库。</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<!--{/if}-->
+<!--{if $job=='optimize'}-->
+<form action="$this_router-manage" method="POST" id="form" style="display:;">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="columntable formtable hover_table click_changeable">
+							<tr class="title fix_head">
+								<td class="title" width="3%">
+									<input type="checkbox" onclick="check_all(this, 'name[]'); init_tr($('#form'));" />
+								</td>
+								<td width="*" class="title" align="center">表名</td>
+								<td width="5%" class="title" align="center">行数</td>
+								<td width="5%" class="title" align="center">大小</td>
+								<td width="6%" class="title" align="center">字符集</td>
+								<td width="10%" class="title" align="center">创建时间</td>
+								<td width="10%" class="title" align="center">最后修改</td>
+								<td width="5%" class="title" align="center">引擎</td>
+								<td width="18%" class="title" align="center">操作</td>
+							</tr>
+							<!--{foreach $list $value}-->
+							<tr id="$value[Name]">
+								<td align="center">
+									<input type="checkbox" name="name[]" value="$value[Name]" id="$value[Name]" />
+								</td>
+								<td>$value[Name] <font color="#cccccc">$value[alias]</font></td>
+								<td align="center">$value[Rows]</td>
+								<td align="center">
+									<!--{if ($tmp = round($value['Data_length'] / pow(1024, 3))) > 1}-->
+									$tmp GB
+									<!--{elseif ($tmp = round($value['Data_length'] / pow(1024, 2))) > 0}-->
+									$tmp MB
+									<!--{elseif ($tmp = round($value['Data_length'] / pow(1024, 1))) > 0}-->
+									$tmp KB
+									<!--{else}-->
+									$value[Data_length] B
+									<!--{/if}-->
+								</td>
+								<td align="center">$value[Collation]</td>
+								<td align="center">$value[Create_time]</td>
+								<td align="center">$value[Update_time]</td>
+								<td align="center">$value[Engine]</td>
+								<td align="center"><a href="$this_router-struct?name=$value[Name]" target="_blank">字典</a> / 
+								<a href="javascript:;" onclick="_submits('truncate','$value[Name]')">清空数据</a> / 
+								<a href="javascript:;" onclick="_backup('$value[Name]')">备份数据表</a> / 
+								<a href="javascript:;" onclick="_submits('drop','$value[Name]')">删除</a></td>
+							</tr>
+							<!--{/foreach}-->
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+							<tr>
+								<td>
+									<input type="button" class="edit_btn" value="优化" onclick="_submit('optimize')" />
+									<input type="button" class="edit_btn" value="修复" onclick="_submit('repair')" />
+									<input type="button" class="edit_btn" value="备份数据表" onclick="_backup()" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<input type="hidden" name="rows" value="1" />
+	<input type="hidden" name="act" value="" />
+	<input type="hidden" name="ours" value="" />
+</form>
+<script type="text/javascript">
+function _submit(action){
+	ajaxing({});
+	$('#form input[name=act]').val(action);
+	$('#form').get(0).submit();
+}
+function _submits(action,table){	
+	var confirm_info = action == 'drop' ? '{$P8LANG[confirm_to_drop]}' : '{$P8LANG[confirm_to_truncate]}';
+	var row = $('#'+table);    
+	var fullText = row.find('td:eq(1)').text().replace(/<[^>]*>/g, '');	
+	confirm_info += '<br><span style="color:blue;text-align:centet;">'+fullText+'</span>'
+
+	p8_window.confirm(confirm_info, function (r) {
+		if(r){
+			var act = action;
+			var name = table;
+			$.ajax({
+				url: '$this_router-manage',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({act:act,name:name}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					if(act == 'drop'){
+						$('#'+name).remove();				
+					}
+					p8_window.alert('{$P8LANG['done']}');
+				}
+			});
+		}
+	});
+	
+	return false;
+}
+function _backup(table){
+	if(table){
+		$('#form').append('<input type="hidden" name="name[]" value="'+ table +'" />');
+		$('#form input[name=ours]').val('3');
+		$('#form').attr('action', '$this_router-backup');
+		$('#form').get(0).submit();
+	}else{
+		if(!checked_values('name[]', $('#form')).length){
+			p8_window.confirm('{$P8LANG['dbm_confirm_to_backup']}', function (r) {
+				if(r){
+					ajaxing({text:'处理中...'});
+					$('#form input[name=ours]').val('3');
+					$('#form').attr('action', '$this_router-backup');
+					$('#form').submit();
+				}
+			});
+		}else{
+			ajaxing({text:'处理中...'});
+			$('#form input[name=ours]').val('3');
+			$('#form').attr('action', '$this_router-backup');
+			$('#form').submit();
+		}		
+	}
+}
+
+</script>
+<!--{/if}-->
+<!--{if $job=='restore'}-->
+<form action="$this_router-restore" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="columntable formtable">
+							<tr class="title fix_head">
+								<td class="title">操作管理</td>
+							</tr>
+							<tr>
+								<td class="headerbtn_list">
+									<select name="name">
+										<option value="">选择还原点</option>
+										<!--{foreach $list $value}-->
+										<option value="$value[1]">$value[0]</option>
+										<!--{/foreach}-->
+									</select>
+									<input type="submit" value="$P8LANG[submit]" onclick="return confirm('$P8LANG[confirm_to_do]');" />
+									
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<!--{/if}-->
+<!--{if $job=='query'}-->
+<form action="$this_url" method="POST" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="columntable formtable hover_table click_changeable">
+							<tr class="title">
+								<td class="title" colspan="100">sql</td>
+							</tr>
+							<tr>
+								<td colspan="100">
+									<textarea name="sql" style="width: 100%;">{if isset($sql)}$sql{/if}</textarea>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3">
+						<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+							<tr>
+								<td>
+									<input type="button" onclick="postdb()" class="edit_btn" value="提交" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="columntable formtable hover_table click_changeable">
+							<tr class="title">
+								<td class="title" colspan="100">sql</td>
+							</tr>
+							<tr class="title">
+								<!--{foreach $fields $v}-->
+								<td class="title">$v</td>
+								<!--{/foreach}-->
+							</tr>
+							<!--{foreach $list $v}-->
+							<tr>
+								<!--{foreach $v $vv}-->
+								<td>$vv</td>
+								<!--{/foreach}-->
+							</tr>
+							<!--{/foreach}-->
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<input type="hidden" name="act" value="sql" />
+</form>
+<script type="text/javascript">
+    function postdb(){
+		ajaxing({text:'处理中...'});
+		$('textarea').val(base64_encode($('textarea').val()));
+		$('#form').submit();
+	}
+</script>
+<!--{/if}-->
+<!--{template $core footer admin}-->
+<!--{/php168}-->

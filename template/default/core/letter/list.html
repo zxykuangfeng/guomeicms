@@ -1,0 +1,179 @@
+<!--{php168}-->
+<!--{template $core header}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/letter/style.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/style_list.css">
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_letter_gg]
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="layout">
+		<div class="row">
+			<div class="col-md-12 col-sm-12">
+				<div class="menubar">
+					<div class="menu">
+						<div class="menulist">
+							$label[letter_top_nav_con2]
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8 col-sm-8 col-xs-12">
+				<div class="optab">
+					<div class="hd">
+						<ul>
+							<li>$label[letter_tab1_tit1]</li>
+						</ul>
+					</div>
+					<div class="optext">$label[letter_tab1_con]</div>
+					<div class="bd">
+						<div class="mtab">
+							<div class="inHd">
+								<ul>
+									<!--{if !$keyword}-->
+									<li>$label[letter_tab2_tit1]</li>
+									<li>$label[letter_tab2_tit2]</li>
+									<li>$label[letter_tab2_tit3]</li>
+									<!--{else}-->
+										<li>搜索结果</li>
+									<!--{/if}-->
+								</ul>
+							</div>
+							<div class="inBd">
+								<div class="tablist" style="display:block;">
+									<div class="nlist">
+										<table width="100%" class="letters">
+											<!--{foreach $list $key $row}-->
+											<tr>
+												<td class="ltitle"><a href="$row[url]" title="$row[title]" target="_blank">$row[title_s]{if $row[undisplay]}<span style="color:red;"> (密)</span>{/if}</a>[<!--{php echo date('m-d',$row['create_time']);}-->]</td>
+												<td><span style="color:{if $row['status']==3}#4b9f04{else}#c9302c{/if};border:1px solid {if $row['status']==3}#4b9f04{else}#c9302c{/if}">{if $row['status']==3}{else}{/if}$row[status_name]</span></td>
+											</tr>
+											<!--{/foreach}-->
+											<tr>
+												<td id="page" class="no_right" colspan="6"> {$pages}  </td>
+											</tr>
+										</table>
+									</div>
+								</div>
+								<div class="tablist" style="display:none;">
+									<div class="nlist">
+										$label[letter_tab2_con2]
+									</div>
+									<div class="more">$label[letter_tab2_more2]</div>
+								</div>
+								<div class="tablist" style="display:none;">
+									<div class="nlist">
+										$label[letter_tab2_con3]
+									</div>
+									<div class="more">$label[letter_tab2_more3]</div>
+								</div>
+							</div>
+						</div>
+						<div class="mtab">
+							<div class="inHd">
+								<ul>
+									<li>$label[letter_tab3_tit1]</li>
+								</ul>
+							</div>
+							<div class="inBd">
+								$label[letter_tab3_con1]
+							</div>
+						</div>
+						<div class="mtab">
+							<div class="inHd">
+								<ul>
+									<li>$label[letter_tab4_tit1]</li>
+								</ul>
+							</div>
+							<div class="inBd">
+								$label[letter_tab4_con1]
+							</div>
+						</div>
+						<div class="mtab">
+							<div class="inHd">
+								<ul>
+									<li>$label[letter_tab5_tit1]</li>
+								</ul>
+							</div>
+							<div class="inBd">
+								$label[letter_tab5_con1]
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<div class="letternav">
+					$label[letter_nav_con1]
+				</div>
+				<div class="rtj">
+					<div class="row">
+						<div class="col-md-9 col-sm-8 col-xs-12">
+							<div class="tj">
+								<div class="mailtotal">共有来信：<span>{$alldata[0]}</span> 条</div>
+								<div class="mailresponsed">回复来信：<span>$alldata[2]</span> 条</div>
+							</div>
+						</div>
+						<div class="col-md-3 col-sm-4 col-xs-12">
+							<div class="lyxz"><a href="javascript:void(0);" class="click">来信须知</a></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="backdrop"></div>
+		<div class="tipsbox">
+			<div class="dialog">
+				<div class="hd clearfix">
+					<h3>$label[letter_tips_tit1]</h3>
+					<span class="close">Ｘ</span>
+				</div>
+				<div class="bd">
+					$label[letter_tips_con1]
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+	/* 内层inBox渐显切换，注意titCell、mainCell等不能与外层相同 */
+	jQuery(".mtab").slide({ titCell:".inHd li",mainCell:".inBd" });
+	/* 外层outBox左滚动切换 */
+	jQuery(".optab").slide({ effect:"fade" });
+</script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.close').click(function () {
+            $('.backdrop ,.tipsbox').hide();
+			$('body').removeClass('open');
+        });
+        $('.click').click(function () {
+            $('.backdrop ,.tipsbox').show();
+			$('body').addClass('open');
+        });
+    })
+
+</script>
+<script type="text/javascript">
+	jQuery(document).ready(function($) {
+        $(".letternav li").hover(function() {
+            $(this).children("ul").slideDown();
+        }, function() {
+            $(this).children("ul").stop(true,false).slideUp();
+        });
+ });
+</script>
+<!--{if $addcontent}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/images/dialog.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<!--{/if}-->
+<!--{template $core footer}-->
+<!--{/php168}-->

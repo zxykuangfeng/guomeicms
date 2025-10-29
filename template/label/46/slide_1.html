@@ -1,0 +1,32 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+\'
+<div id="p8_46_$data[id]">测试
+<!--{foreach $list $value}-->
+	<a href="$value[url]"><img src="$value[image]" alt="$value[name]" /></a>
+<!--{/foreach}-->
+</div>
+
+<ul>
+<!--{foreach $list $value}-->
+	<li><a href="$value[url]"><img src="$value[thumb]" alt="$value[name]" /></a></li>
+<!--{/foreach}-->
+</ul>
+
+<script type="text/javascript">
+(function(){
+
+alert('ff"\'\\');
+
+var a = '';
+})();
+</script>
+
+</body>
+</html>
+<!--{/php168}-->

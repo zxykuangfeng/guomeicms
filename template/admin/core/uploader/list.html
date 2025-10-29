@@ -1,0 +1,171 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<form id="searchForm" action="$this_url" method="GET">
+<div class="mainbox mainborder">
+	<div class="section">			
+		<table class="formtable">
+		<tr>
+			<td class="headerbtn_list" align="center">
+				&nbsp;系统：
+				<select name="system" onchange="change_system(this.value)">
+					<option value="core" {if $system == 'core'}selected{/if}>{$P8LANG['core']}</option>	
+					<!--{foreach $systems $k $v}-->	
+					<!--{if isset($this_module->CONFIG['enables'][$k]) && $v['enabled']}-->
+					<option value="{$k}" {if $system == $k}selected{/if}>{$v['alias']}</option>
+					<!--{/if}-->
+					<!--{/foreach}-->
+				</select>
+				&nbsp;模块：
+				<select name="module">
+					<option value="" {if empty($module)}selected{/if}>{$P8LANG['unlimited']}</option>	
+					<!--{foreach $modules $k $v}-->	
+					<!--{if isset($this_module->CONFIG['enables'][$system][$k]) && $v['enabled']}-->
+					<option value="{$k}" {if $module == $k}selected{/if}>{$v['alias']}</option>
+					<!--{/if}-->
+					<!--{/foreach}-->
+				</select>
+				&nbsp;类型：
+				<select name="key_type" id="selected_type">
+					<option value="path"{if !empty($path)} selected{/if}>上传后的文件名与路径</option>	
+					<option value="filename"{if !empty($filename)} selected{/if}>上传文件名</option>
+					<option value="username"{if !empty($username)} selected{/if}>上传者</option>									
+				</select>
+				&nbsp;关键字：
+				<input type="text" class="txt" id="cond" size="15" name="word" value="$word"/>
+				&nbsp;附件后缀：
+				<select name="ext" id="selected_ext">
+					<option value="" {if empty($ext)} selected{/if}>不限</option>
+					<!--{foreach $exts $tmp_ext}-->
+					<option value="$tmp_ext"{if $ext == $tmp_ext} selected{/if}>{$tmp_ext}</option>
+					<!--{/foreach}-->
+				</select>
+				<input type="submit" class="submit_btn" value="{$P8LANG['search']}" />
+			</td>
+		</tr>
+		</table>
+	</div>
+</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color5"><a href="{$core.admin_controller}/core/uploader-list?system=core"><i class="icon icon-ico34"></i>核心附件管理</a></li>
+						<!--{foreach $systems $k $v}-->
+						<!--{if isset($this_module->CONFIG['enables'][$k]) && $v['enabled']}-->
+						<li class="btn-color5"><a href="{$core.admin_controller}/core/uploader-list?system={$k}"><i class="icon icon-ico34"></i>{$v['alias']}附件管理</a></li>
+						<!--{/if}-->
+						<!--{/foreach}-->
+						<li class="btn-color1"><a href="{$core.admin_controller}/core/uploader-config"><i class="icon icon-ico23"></i>上传配置</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/core-static_config"><i class="icon icon-ico24"></i>内容与资源配置</a></li>
+						<li class="btn-color3"><a href="{$core.admin_controller}/core/uploader-dfjshangchuan"><i class="icon icon-ico31"></i>大附件上传设置</a></li>
+						<li class="btn-color4"><a href="{$core.admin_controller}/core/uploader-role_filter"><i class="icon icon-ico12"></i>角色细分上传权限</a></li>						
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<form action="" method="post" id="form">
+		<table width="100%" class="columntable formtable hover_table click_changeable">
+		<tr class="title">
+			<td class="title" align="center"><input type="checkbox" onclick="check_all(this, 'id[]');init_tr($('#form'));" /></td>
+			<td class="title" align="center">ID</td>
+			<td class="title" align="center">{$P8LANG['upload_username']}</td>
+			<td class="title" align="center">{$P8LANG['thumb_image']}</td>
+			<td class="title" align="center">{$P8LANG['upload_filename']}</td>
+			<td class="title" align="center">{$P8LANG['upload_path']}</td>
+			<td class="title" align="center">{$P8LANG['upload_time']}</td>
+			<td class="title" align="center">{$P8LANG['upload_ext']}</td>
+			<td class="title" align="center">{$P8LANG['operation']}</td>
+		</tr>
+		
+		<!--{foreach $list $value}-->
+		<tr id="item_$value[id]">
+			<td align="center"><input type="checkbox" name="id[]" value="{$value['id']}" /></td>
+			<td align="center">{$value['id']}</td>
+			<td align="center">{$value['username']}</td>
+			<td align="center">
+				<!--{if $value['is_image']}-->
+				<div style="padding:5px;">
+				<a href="{$core.url}{$core.attachment_url}/{$value['path']}" target="_blank">
+					<img src="{$core.url}{$core.attachment_url}/{$value['path']}" width="210" height="140" onError="this.src='{if $core->CONFIG['nopic_img']}{$core.CONFIG['nopic_img']}{else}{$RESOURCE}/images/nopic.jpg{/if}'"  />
+				</a>
+				</div>
+				<!--{else}-->
+				<i class="fa {$value['file_icons']} fa-7x" style="font-size: 24px;"></i>
+				<!--{/if}-->
+			</td>
+			<td><a href="{$core.url}{$core.attachment_url}/{$value['path']}" target="_blank">{$value['filename']}</a></td>
+			<td><a href="{$core.url}{$core.attachment_url}/{$value['path']}" target="_blank">{$value['path']}</a></td>
+			<td align="center">{date('Y-m-d H:i', $value['timestamp'])}</td>
+			<td align="center">{$value['ext']}</td>
+			<td align="center">
+				<!--{if $value['view_url']}-->
+				<a href="{$value['view_url']}" target="_blank">源头预览</a> | 
+				<!--{/if}-->
+				<a href="{$core.url}{$core.attachment_url}/{$value['path']}" target="_blank">{$P8LANG['view']}</a> | 
+				<a href="###" onclick="_delete_item(['$value[id]'])">{$P8LANG['delete']}</a>				
+			</td>
+		</tr>
+		<!--{/foreach}-->
+		
+		</table>
+		</form>
+		
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+		<tr>
+			<td align="center" class="pages">
+				$pages
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<input type="button" value="{$P8LANG['delete']}" onclick="_delete_item(checked_values('id[]', $('#form')))" class="edit_btn" />
+			</td>
+		</tr>
+		</table>
+	</div>
+</div>
+
+<script type="text/javascript">
+function change_system(system){	
+	var url = window.location.href;
+	url = /system\=[^&]*/ig.test(url) ? url.replace(/system\=[^&]*/ig, 'system='+ system) : url + '?system='+ system;	
+	window.location.href = url;	
+}
+function _delete_item(array){
+	var id = [];
+	$(array).each(function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!id.length) return;
+	
+	//if(!confirm('{$P8LANG['confirm_to_delete']}')) return;
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'post',
+				dataType: 'json',
+				cache: false,
+				data: ajax_parameters({system: '$system', id: id}),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i = 0; i < json.length; i++){
+						$('#item_'+ json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});	
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

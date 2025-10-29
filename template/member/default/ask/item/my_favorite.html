@@ -1,0 +1,98 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table" id="list">
+	<tr class="head">
+		<td>标题</td>
+		<td>{$P8LANG['ask_asker']}</td>
+		<td>{$P8LANG['ask_status']}</td>
+		<td>{$P8LANG['ask_reply']}</td>
+		<td>{$P8LANG['ask_post_time']}</td>
+		<td>操作</td>
+	</tr>
+	
+	<!--{foreach $list $k $v}-->
+	<tr id="fav_{$v['fav_id']}">
+		<td class="al"><input type="checkbox" name="ids[]" value="{$v['fav_id']}"/><a href="{$this_module.controller}-view-id-$v[id]" target="_blank">$v[title]</a>&nbsp;[<a href="{$this_url}?cid=$v[cid]" >{$category.categories[$v['cid']]['name']}</a>]</td>
+		<td>
+			<a >{$v['pusername']}</a>
+		</td>
+		<td><!--{if $v['status']=='3'}-->
+				已解决
+			<!--{else}-->
+				未解决
+			<!--{/if}--></td>
+		<td>{$v['replies']}</td>
+		<td><!--{php echo date('Y-m-d',$v['addtime']);}-->
+		</td>
+		
+		<td>
+			<a href="{$this_router}-delete_myfavorite?id=$v[fav_id]" onclick="return confirm('{$P8LANG['ask_delete_tips']}');">{$P8LANG['delete']}</a>
+		</td>
+	</tr>
+	<!--{/foreach}-->
+	
+	<tr>
+		<td align="center" colspan="6" class="pages">
+			<div style="float:left;padding-left:20px;">
+				&nbsp;<input type="checkbox" name="ChkAll" class="edit_btn" id="ChkAll" value="1" onclick="check_all(this, 'ids[]', $('#list'))"/>{$P8LANG['ask_checkall']}
+				&nbsp;<input type="button" name="delete" class="edit_btn" value="{$P8LANG['delete']}" onclick="javascript:delete_favorites();"/>
+			</div>
+		</td>
+	</tr>
+		<tr>
+		<td align="center" colspan="6" class="pages">$pages</td>
+	</tr>
+</table>
+<script type="text/javascript">
+//选择ID
+function  chose_ids()
+{
+	var ids = [];
+	$("input[name='ids[]']", $('#list').parent()).each(function(){
+		if($(this).attr("checked")==true){
+			ids.push(this.value);
+		}			
+	});
+	return ids;
+}
+
+function delete_favorites()
+{
+	var ids = [];
+	ids = chose_ids();
+
+	if(ids.length<1){
+		p8_window.alert('{$P8LANG['ask_not_chose_record']}');
+		return false;
+	}
+	/*
+	if(!confirm('{$P8LANG['ask_delete_tips']}')){
+		return false;
+	}
+	*/
+	*/
+	p8_window.confirm("{$P8LANG['ask_delete_tips']}", function (r) {
+		if(r){
+			$.ajax({
+				url: '{$this_router}-delete_myfavorite',
+				type: 'POST',
+				dataType: 'json',
+				data: '_ajax_request=1'+ajax_parameters({ids:ids}),
+				cache: false,
+				success: function(json){
+					for(var i in json){
+						$('#fav_' + json[i]).remove();
+					}
+
+				}
+			});
+		}else{
+			return false;
+		}
+	});
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

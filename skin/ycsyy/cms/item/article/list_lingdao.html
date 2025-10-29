@@ -1,0 +1,69 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner">
+	<div class="container">
+		<div class="fluid">
+			<div class="bigbanner">
+				$label[bigbanner_daohan]
+			</div>
+			<div class="banner_title">
+				<h2>$CAT[name]</h2> 
+			</div>
+		</div>
+	</div>
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="row">
+			<div class="contain-left fl">	
+				<div class="border1">
+					<div class="head1">
+						<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+						<span class="title1">$parent_name</span>
+					</div>	
+					<div class="main1">
+						<!--{template $this_module step_category_jx3}-->
+					</div>
+				</div>
+			</div>
+			<div class="contain-right fr">
+				<div class="border1">
+					<div class="gov-head3">
+						<div class="bigtitle fl">$CAT[name]</div>
+						<div class="position3 fr">
+							当前位置：
+							<a href="{$core.controller}">首页</a>
+							<!--{foreach $parent_cats $v}-->
+							&gt; <a href="$v[url]">$v[name]</a>
+							<!--{/foreach}-->
+							&gt; <a href="$CAT[url]">$CAT[name]</a> 
+						</div>
+					</div>
+					<div class="gov-leader">
+						<div class="row">
+							<div class="leader text-center">
+								<h4>$label[list_lead_name1]</h4>
+								<div class="ldpic">$label[list_lead_pic1]</div>
+								<div class="ldinfo">
+									$label[list_lead_con1]
+								</div>
+							</div>
+							<div class="leader text-center">
+								<h4>$label[list_lead_name2]</h4>
+								<div class="ldpic">$label[list_lead_pic2]</div>
+								<div class="ldinfo">
+									$label[list_lead_con2]
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+

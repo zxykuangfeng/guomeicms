@@ -1,0 +1,251 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<script type="text/javascript">
+var label_type = 'sql';
+var action = '$ACTION';
+var _system;
+var _module;
+</script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+
+<form action="$this_url" method="POST" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="columntable formtable ">
+							<tr class="title fix_head">
+								<td colspan="2" class="title">{$P8LANG['label_scope']} 标签类型：<span style="color:blue;font-weight:700;">【公共标签 > {$P8LANG['label_type']['sql']}】</span></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<div id="tabs"  class="tab_box mtop">
+										<div class="head">
+											<span><a>基本设置</a></span>
+											<span><a>风格样式</a></span>
+											<span><a>其它设置</a></span>
+										</div>
+										<div class="main">
+										<div class="content">
+											<table width="100%" class="hover_table">
+												<tr>
+													<td class="tdL"> SQL </td>
+													<td class="tdR">
+														<textarea id="content" name="content" cols="100" rows="10"><!--{if !empty($data['content'])}-->{$data['content']}<!--{/if}--></textarea>
+													</td>
+												</tr>
+											</table>
+										</div>
+										<div class="content">
+											<table width="100%" class="hover_table">
+												<tr>
+													<td class="tdL">{$P8LANG['label_template']}</td>
+													<td class="tdR"> <input type="text" class="txt" name="option[template]"  id="template" value="{if !empty($option['template'])}$option[template]{else}bz/ico_title/dot_title_14px-1{/if}" size="30" /> <input type="button" class="submit_btn" value="选择" onclick="template_dialog.show()" /><input type="button" class="usethistpl" value="使用此模板" onclick="useThisTpl()" >(想自己进一步修改的可选)<br />
+													<img style="max-height:300px; max-width:500px;display:block; border:1px solid #ff0000; padding:2px; " id="templateshowimg" src="{$RESOURCE}/images/nopic.jpg" onerror="this.src='{$RESOURCE}/images/nopic.jpg'" />
+												
+													<script type="text/javascript">
+													$(document).ready(function(){
+														$('#templateshowimg').attr('src',function(){
+															return P8CONFIG['RESOURCE']+'/{$core->CONFIG['template_dir']}label/'+$('#template').val()+'.jpg';
+														});
+													});
+													</script>
+													</td>
+												</tr>
+												
+												<tr>
+													<td class="tdL">显示几行</td>
+													<td class="tdR">
+														<input name="textfield" type="text" class="txt" id="textfield" value="5" />
+													</td>
+												</tr>
+												<tr>
+													<td class="tdL">显示几列</td>
+													<td class="tdR">
+														<input name="textfield2" type="text" class="txt" id="textfield2" value="1" />
+													</td>
+												</tr>
+												<tr>
+													<td class="tdL">标题不能超过几个字</td>
+													<td class="tdR">
+														<input name="textfield3" type="text" class="txt" id="textfield3" value="60" />
+													</td>
+												</tr>
+												<tr>
+													<td class="tdL">标题超过字数是否用省略号表示</td>
+													<td class="tdR">
+														<input type="radio" name="radio" id="radio" value="radio" />
+														用
+														<input name="radio" type="radio" id="radio2" value="radio" checked="checked" />
+														不用</td>
+												</tr>
+												<tr>
+													<td class="tdL">内容简介显示几个字</td>
+													<td class="tdR">
+														<input name="textfield4" type="text" class="txt" id="textfield4" value="120" />
+													</td>
+												</tr>
+												<tr>
+													<td class="tdL">模板代码</td>
+													<td class="tdR">
+													<textarea name="option[tplcode]" id="tplcode" style="display:{if !empty($option['tplcode'])}{else}none{/if}" rows="15" cols="100" wrap=off>{if !empty($option['tplcode'])}{$option['tplcode']}{/if}</textarea>
+													<a href="javascript:void(0);" id="toshow" onclick="$('#tplcode').show();$(this).hide();">查看</a>
+												</td>
+												
+											</tr>											
+											</table>
+										</div>
+										
+										<div class="content">
+											<!--{template $this_module other_set admin}-->
+										</div>
+										
+										</div>
+									</div>									
+								</td>
+							</tr>
+							<tr>
+								<td align="center">
+									<input type="hidden" name="type" value="sql" />
+									<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="button" value="{$P8LANG['explain_sql']}" class="submit_btn" onclick="explain_sql()" />
+									<input type="button" value="{$P8LANG['preview']}" class="submit_btn" onclick="preview()" />
+									<input type="hidden" name="verify" value="0" />
+									{$P8LANG['label_submit_fail_note']}
+								</td>
+							</tr>
+							<tr>
+								<td id="explain">
+							</tr>
+						</table>
+					</td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+	
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable ">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					如果创建可供JS调用的标签，则在“其它设置”页的设置如下：<br>
+					【{$P8LANG['label_scope_system']}】选项必须为“核心”<br>
+					【{$P8LANG['label_scope_module']}】选项必须为“无”<br>
+					【{$P8LANG['label_postfix']}】选项必须为空<br/>					
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+MoveTabs("tabs",1);
+function explain_sql(){
+	$.ajax({
+		url: '$this_router-explain',
+		type: 'post',
+		data: {sql: $('#content').val()},
+		success: function(data){
+			$('#explain').html(data);
+		}
+	});
+}
+
+function preview(){
+	$.ajax({
+		url: '$this_router-preview',
+		type: 'post',
+		cache: false,
+		data: $('#form').serialize(),
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(data){
+			ajaxing({action: 'hide'});
+			$('#explain').html(data);
+		}
+	});
+}
+
+$('#content').textarea_tab();
+
+var template_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	show: function(){
+		template_selector.init();
+	},
+	ok: function(){
+		$('#template').val(template_selector.value);
+		$('#templateshowimg').attr('src', P8CONFIG['RESOURCE']+'/'+'{$core.CONFIG['template_dir']}'+'label/'+template_selector.value+'.jpg');
+		
+		$('#form input[name=verify]').val(Math.random());
+	}
+});
+
+var template_selector = new Template_Selector({
+	template_dir: '{$core.CONFIG['template_dir']}/',
+	base_dir: 'label/',
+	selected: $('#template').val(),
+	dialog: template_dialog
+});
+
+function useThisTpl(){
+	
+	var tpl=$('#template').val();
+	$('#tplcode').show();
+	$('#toshow').hide();
+	$.ajax({
+		type:'POST',
+		url:'{$core.admin_controller}/core/label-edit_template',
+		datatype:'html',
+		data:'bdir=label/&tpl='+tpl,
+		success:function(mesg){
+		 $('#tplcode').val(mesg); 
+		}
+	});
+}
+
+$(function(){
+	
+	$('#form #tplcode').change(function(){
+		$('#form input[name=verify]').val(Math.random());
+	});
+	
+	$('#form input[name=verify]').rules('add', {
+		remote: function(){
+			
+			return {
+				url: '$this_router-preview?_verify=1',
+				
+				type: 'post',
+				data: $('#form').serialize(),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				complete: function(xhr, text){
+					ajaxing({action: 'hide'});
+				}
+			}
+		},
+		messages: {
+			remote: '{$P8LANG['label_template_syntax_error']}'
+		}
+	});
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

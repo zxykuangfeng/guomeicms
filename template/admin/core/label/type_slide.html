@@ -1,0 +1,233 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<script type="text/javascript">
+var label_type = 'slide';
+var action = '$ACTION';
+var _system;
+var _module;
+var imageCount = 0;
+</script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<form action="$this_url" method="POST" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="columntable formtable ">
+							<tr class="title fix_head">
+								<td colspan="2" class="title">{$P8LANG['label_scope']} 标签类型：<span style="color:blue;font-weight:700;">【公共标签 > {$P8LANG['label_type']['slide']}】</span></td>
+							</tr>
+							<tr>
+								<td colspan="2">
+									<div id="tabs"  class="tab_box mtop">
+										<div class="head">
+											<span><a>风格样式</a></span>
+											<span><a>其它设置</a></span>
+										</div>
+										<div class="main">
+											<div class="content">
+											<table width="100%" class="hover_table">
+												<tr>
+													<td class="tdL">幻灯片尺寸</td>
+													<td class="tdR"> 
+														宽<input name="option[width]" type="text" class="txt" value="{if !empty($option['width'])}$option[width]{else}100%{/if}" /><br/>
+														高<input name="option[height]" type="text" class="txt" value="{if !empty($option['height'])}$option[height]{else}auto{/if}" />
+													</td>
+												</tr>
+												
+												<tr>
+													<td class="tdL">{$P8LANG['label_template']}</td>
+													<td class="tdR"> <input type="text" class="txt" name="option[template]" id="template" value="{if !empty($option['template'])}$option[template]{else}cms/slide/gov_slide2{/if}" /> <input type="button" class="submit_btn" value="选择" onclick="template_dialog.show()" />
+													</td>
+												</tr>
+												
+												<tr id="clone" style="display: none;" class="data">
+													<td class="tdL">幻灯片图片</td>
+													<td class="tdR">
+														<b style="width:21px;display: inline-block;cursor: move;background: url({$RESOURCE}/images/draggable2.png) no-repeat center center;">&nbsp;&nbsp;</b>
+														图片标题：<input type="text" class="txt" />
+														网址链接：<input type="text" class="txt" />
+														图片：<input type="text" class="txt" style="width:270px" /><label id="title-error" class="error" for="title"></label>
+														<input type="button" value="选择图片" />														
+														<input type="button" value="删除图片" />														
+														<a href="###" onclick="image_cuts(this)">[$P8LANG[image_cut]]</a>
+														摘要：<textarea class="txt" style="vertical-align: middle;" cols="45" rows="1"></textarea>
+													</td>
+												</tr>
+												
+												<tbody id="images">
+													
+												</tbody>
+												<script type="text/javascript">
+												function image_cuts(imageobj){
+													var uploader = new P8_Upload({
+														element: {
+															src: $(imageobj).siblings('input').eq(2),
+															attribute: 'value'
+														},
+														callback: function(json){															
+															if(json.attachments.length > 1){
+																var files = json.attachments;
+																for(var i = 1; i < files.length; i++){
+																	_add({
+																		title: files[i].name,
+																		src: files[i].file
+																	});
+																}
+															}else{
+																var files = json.attachments;
+																const millions = files[0].size / 1048576;
+																$(imageobj).siblings('input').eq(0).val(files[0].name);
+																$(imageobj).siblings('input').eq(2).val(files[0].file);
+																if(millions>2.0){
+																	$(imageobj).siblings('input').eq(2).next().html(P8LANG.thumb_oversize + millions.toFixed(2)+P8LANG.thumb_oversize_note);
+																}else{
+																	$(imageobj).siblings('input').eq(2).next().html('');																
+																}
+															}
+														}
+													});
+													uploader.image_cut();													
+												}
+												function _add(data){
+													var data = data === undefined ? {} : data;
+													console.log(data);
+													var copy = $('#clone').clone(true).attr('id', '').show();													
+													var thisuploader = new P8_Upload({
+														element: {
+															src: copy.find('input[type=text]:eq(2)'),
+															attribute: 'value'
+														},
+														callback: function(json){															
+															if(json.attachments.length > 1){
+																var files = json.attachments;
+																for(var i = 1; i < files.length; i++){
+																	_add({
+																		title: files[i].name,
+																		src: files[i].file
+																	});
+																}
+															}else{
+                                                                var files = json.attachments;
+																const millions = files[0].size / 1048576;
+                                                                copy.find('input[type=text]:eq(0)').val(files[0].name);
+                                                                copy.find('input[type=text]:eq(2)').val(files[0].file);																
+																if(millions>2.0){
+																	copy.find('input[type=text]:eq(2)').next().html(P8LANG.thumb_oversize + millions.toFixed(2)+P8LANG.thumb_oversize_note);
+																}else{
+																	copy.find('input[type=text]:eq(2)').next().html('');																
+																}																		
+                                                            }
+														}
+													});													
+													copy.find('input[type="text"]:eq(0)').attr('name', 'option[images][title][]').val(data.title ? data.title : '');
+													copy.find('input[type=text]:eq(1)').attr('name', 'option[images][url][]').val(data.url ? data.url : '');
+													copy.find('input[type=text]:eq(2)').attr('name', 'option[images][src][]').val(data.src ? data.src : '');
+													copy.find('input[type=text]:eq(2)').next().html(data.size !== undefined && data.size ? data.size : '');
+													copy.find('textarea:eq(0)').attr('name', 'option[images][summary][]').val(data.summary ? data.summary : '');
+													copy.find('input[type=button]:eq(0)').click(function(){
+														thisuploader.choseup();
+													});
+													copy.find('input[type="button"]:eq(1)').click(function(){
+														copy.remove();
+													});
+													
+													copy.appendTo($('#images'));
+												}
+												
+												$(function(){
+												<!--{foreach $option['images']['title'] $k $v}-->
+												_add({
+													title: '{$option['images']['title'][$k]}',
+													src: '{$option['images']['src'][$k]}',
+													url: '{$option['images']['url'][$k]}',
+													summary: '{$option['images']['summary'][$k]}',
+													size: '{$option['images']['size'][$k]}'
+												});
+												<!--{/foreach}-->
+												<!--{foreachelse}-->
+												_add();
+												<!--{/foreachelse}-->
+                                                 $('#images').sortable({
+                                                    axis:"y",
+                                                    items:"tr",
+                                                    handle:"b",
+                                                    containmentType:"parent"
+                                                })
+												});
+												</script>
+												<tbody id="addmore"></tbody>
+												<tr>
+													<td class="tdL">添加更多图片</td>
+													<td class="tdR">
+													<input value="增加" type="button" class="submit_btn" onclick="_add();"/>
+												</tr>
+											</table>
+											</div>
+											<div class="content">
+												<!--{template $this_module other_set admin}-->
+											</div>
+										</div>
+									</div>
+									
+								</td>
+							</tr>
+							<tr>
+								<td align="center">
+									<input type="hidden" name="type" value="slide" />
+									<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+								</td>
+							</tr>							
+						</table>
+					</td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+	
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable ">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					如果创建可供JS调用的标签，则在“其它设置”页的设置如下：<br>
+					【{$P8LANG['label_scope_system']}】选项必须为“核心”<br>
+					【{$P8LANG['label_scope_module']}】选项必须为“无”<br>
+					【{$P8LANG['label_postfix']}】选项必须为空<br/>					
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+MoveTabs("tabs", 0);
+var template_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		$('#template').val(template_selector.value);
+	},
+	show: function(){
+		template_selector.init();
+	}
+});
+var template_selector = new Template_Selector({
+	base_dir: 'label/',
+	template_dir: '{$core.CONFIG['template_dir']}/',
+	selected: $('#template').val(),
+	dialog: template_dialog
+});
+
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

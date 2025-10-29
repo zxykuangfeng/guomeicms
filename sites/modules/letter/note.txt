@@ -1,0 +1,44 @@
+
+
+p8_leaderletter_item 主要信息
+id
+department 部门
+type 类型
+number 查询用
+uid
+visual 是否公开
+username 姓名
+gender 性别
+age
+profession 职业
+id_type
+id_num
+tel
+email
+address
+create_time
+title
+status 状态 0：未处理，1：处理中，2：完成，3：完结
+status_change_time 状态改变时间
+finish_time 完成时间
+finish_name 处理完人
+comment 评分 1,2,3
+comment_time评分时间
+
+
+
+p8_leaderletter_content 问与答
+type 1：问，2：答
+reply_uid 回复人
+reply_name 回复人名
+attachment 附件
+attachment_title 附件名
+add_time
+content 内容
+
+
+
+p8_leaderletter_cat 分类
+id
+name
+type 1：部门，2：类型

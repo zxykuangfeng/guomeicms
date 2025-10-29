@@ -1,0 +1,1 @@
+<?php die();?>a:1:{s:9:"sm_offset";i:99;}

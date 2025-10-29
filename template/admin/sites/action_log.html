@@ -1,0 +1,196 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$this_system.admin_controller}-action_log"><i class="fa fa-pencil-square-o"></i>本站操作日志</a></li>
+						<li><a href="{$this_system.admin_controller}/item-list?verified=88" target="_blank"><i class="fa fa fa-list-ul"></i>误删内容恢复</a></li>
+						<li><a href="{$core.admin_controller}/core-filter_link?system=sites" target="_blank"><i class="fa fa-cog"></i>风险外链/死链扫描</a></li>
+						<li><a href="{$core.admin_controller}/core-word_scan?system=sites" target="_blank"><i class="fa fa-line-chart"></i>现有内容扫描体检</a></li>
+						<li><a href="{$core.admin_controller}/core-word_censor?system=sites" target="_blank"><i class="fa fa fa-list-ul"></i>大数据扫描体检</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="zq_list" width="100%" style="text-align:left">
+			<tr>
+				<td class="headerbtn_list" style="border-bottom:0;">
+					<form action="$this_url" method="get" id="request">						
+						<div class="screen-title mr20 fleft">							
+							模块：
+							<select name="module" id="module">
+								<option value="" class="_top_option">{$P8LANG['unlimited']}</option>
+								<!--{foreach $all_modules['sites'] $key $m}-->
+								<option value="$key" {if $module == $key} selected{/if}>{$m['alias']}</option>
+								<!--{/foreach}-->
+							</select>
+							操作:
+							<select name="action" id="action">
+								<option value="" class="_top_option">选择常规操作</option>
+								<option value="login" {if $action == 'login'} selected{/if}>用户登录</option>
+								<option value="add" {if $action == 'add'} selected{/if}>添加内容</option>
+								<option value="update"{if $action == 'update'} selected{/if}>修改内容</option>
+								<option value="delete"{if $action == 'delete'} selected{/if}>删除内容</option>
+								<option value="verify"{if $action == 'verify'} selected{/if}>审核内容</option>
+								<option value="cluster_push"{if $action == 'cluster_push'} selected{/if}>推送数据(分站->主站)</option>								
+								<option value="sites_push_sites"{if $action == 'sites_push_sites'} selected{/if}>推送数据(分站->分站)</option>
+							</select>							
+							排序：
+							<select name="order">
+								<option value="0" selected="selected">降序</option>
+								<option value="1">升序</option>
+							</select>
+							<select name="page_size">
+								<option value="20" {if $page_size == 20}selected="selected"{/if}>每页20条</option>
+								<option value="50" {if $page_size == 50}selected="selected"{/if}>每页50条</option>
+								<option value="100" {if $page_size == 100}selected="selected"{/if}>每页100条</option>
+								<option value="200" {if $page_size == 200}selected="selected"{/if}>每页200条</option>
+							</select>
+							<select onchange="$('#cond').attr('name', this.value);">
+								<option value="word">按关键字</option>
+								<option value="iid">按关联ID</option>								
+								<option value="username"{if !empty($username)} selected{/if}>按用户名</option>
+							</select>							
+							<input type="text" class="txt" id="cond" size="15" {if !empty($word)} name="word" value="$word"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{elseif !empty($username)}name="username" value="$username"{else} name="word"{/if} />
+							时间范围：
+							<input type="text" class="txt" name="starttime" value="{$starttime}" autocomplete="off" onclick="rcalendar(this, 'full')" />
+							至
+							<input type="text" class="txt" name="endtime" value="{$endtime}" autocomplete="off" onclick="rcalendar(this, 'full')" />
+							<input type="hidden" name="act" id="act" value="query"/>
+							<input type="submit" value="{$P8LANG['search']}" class="submit"/>							
+							<input type="button" value="{$P8LANG['refresh']}" class="refresh" onclick="request_item(PAGE)" />
+							<input type="button" class="screenbtn" value="导出日志" onclick="download()" />
+						</div>
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="section">
+	<ul class="boxmenu" id="boxmenu">
+		<li><a href="$this_url?cid=$cid" class="btn-color1"><i class="icon icon-ico1"></i>本站点所有日志</a></li>
+		<li><a href="$this_url?action=login" class="btn-color2" ><i class="icon icon-ico6"></i>登录日志</a></li>
+		<li><a href="$this_url?action=add" class="btn-color3"><i class="icon icon-ico44"></i>发布内容日志</a></li>
+		<li><a href="$this_url?action=update" class="btn-color5"><i class="icon icon-ico45"></i>修改内容日志</a></li>
+		<li><a href="$this_url?action=delete" class="btn-color6"><i class="icon icon-ico46"></i>删除内容日志</a></li>
+		<li><a href="$this_url?action=verify" class="btn-color7"><i class="icon icon-ico2"></i>审核内容日志</a></li>
+		<li><a href="$this_url?action=cluster_push" class="btn-color8"><i class="icon icon-ico47"></i>推送数据给主站日志</a></li>
+		<li><a href="$this_url?action=sites_push_sites" class="btn-color9"><i class="icon icon-ico47"></i>推送数据给子站日志</a></li>
+	</ul>
+	<form action="$this_url" method="post" id="form">
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td width="3%" class="list_top title" align="center"><input type="checkbox" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+				<td width="3%" class="list_top title" align="center">ID</td>
+				<td width="6%" class="list_top title" align="center">{$P8LANG['operator']}</td>
+				<td width="*" class="list_top title" align="center">{$P8LANG['operate_matter']}</td>
+				<td width="3%" class="list_top title" align="center">{$P8LANG['iid']}</td>
+				<td width="3%" class="list_top title" align="center">{$P8LANG['cid']}</td>
+				<td width="5%" class="list_top title" align="center">{$P8LANG['module']}</td>
+				<td width="5%" class="list_top title" align="center">{$P8LANG['action']}</td>
+				<td width="20%" class="list_top title" align="center">{$P8LANG['url']}</td>
+				<td width="8%" class="list_top title" align="center">{$P8LANG['operate_date']}</td>
+				<td width="8%" class="list_top title" align="center">{$P8LANG['operate_ip']}</td>
+				<td width="5%" class="list_top title" align="center">{$P8LANG['operate_detail']}</td>
+			</tr>
+			<tbody id="list">
+			<!--{foreach $list $value}-->
+			<tr id="item_$value[id]" align="center">
+				<td align="center"><input type="checkbox" name="id[]" value="$value[id]" /></td>
+				<td align="center">$value[id]</td>
+				<td align="center"><a href="$this_url?uid=$value[uid]">$value[username]{if $value['name']} | {$value[name]}{/if}</a></td>
+				<td><a href="###" onclick="view_log($value[id])">$value[title]</a></td>
+				<td align="center">$value[iid]</td>
+				<td align="center">$value[cid]</td>
+				<td align="center">{if $all_modules[$value['system']][$value['module']]['alias']}{$all_modules[$value['system']][$value['module']]['alias']}{else}{$value['module']}{/if}</td>
+				<td align="center">
+				<!--{if strpos($value['url'],'admin.php')}-->
+				<!--{if $all_actions[$value['system']][$value['module']]['admin_actions'][$value['action']]}-->
+					{$all_actions[$value['system']][$value['module']]['admin_actions'][$value['action']]}
+				<!--{else}-->
+					{if in_array($value['action'],array('login','logout'))}账号{/if}{$P8LANG[$value['action']]}
+				<!--{/if}-->
+				<!--{else}-->
+				<!--{if $all_actions[$value['system']][$value['module']]['actions'][$value['action']]}-->
+					{$all_actions[$value['system']][$value['module']]['actions'][$value['action']]}
+				<!--{else}-->
+					{if in_array($value['action'],array('login','logout'))}账号{/if}{$P8LANG[$value['action']]}
+				<!--{/if}-->
+				<!--{/if}-->
+				</td>
+				<td>$value[url]</td>
+				<td align="center">{date('Y-m-d H:i:s', $value['timestamp'])}</td>
+				<td align="center">$value[ip]</td>
+				<td align="center">
+					<a href="###" onclick="view_log($value[id])">{$P8LANG['view']}</a>									
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			</tbody>
+		</table>
+		<input type="hidden" name="act" />
+	</form>
+</div>
+<script type="text/javascript">
+var PAGE;
+var view_dialog = new P8_Dialog({
+	width: 800,
+	height: 400
+});
+view_dialog.content.css({overflow: 'auto'});
+
+function view_log(id){
+	$.ajax({
+		url: '$this_url',
+		data: {act: 'view', id: id},
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(s){
+			view_dialog.show();
+			view_dialog.content.html('<pre>'+ s +'</pre>');
+			ajaxing({action: 'hide'});
+		}
+	});
+}
+function request_item(page){
+	$.ajax({
+		url: '{$this_url}',
+		type: 'GET',
+		dataType: 'html',
+		data: '',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			var url = '{$this_url}?page='+page+'&word={$keyword}';
+			{if $module} url += "&module={$module}";{/if}
+			{if $action} url += "&action={$action}";{/if}
+			{if $iid} url += "&iid={$iid}";{/if}
+			{if $username} url += "&username={$username}";{/if}
+			{if $starttime} url += "&starttime={$starttime}";{/if}
+			{if $endtime} url += "&endtime={$endtime}";{/if}			
+			window.open(url,"_self");
+		}
+	});
+}
+function download(){	
+	$('#act').val('download');
+	$('#request').submit();
+}
+</script>
+</body>
+</html>
+<!--{/php168}-->

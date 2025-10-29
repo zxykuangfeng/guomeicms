@@ -1,0 +1,185 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<div class="list_box mtop20">
+	<div class="head" id="boxhead">
+		<span class="$all_over"><a href="$this_url?job=all">全部</a></span>
+		<span class="$unverify_over" ><a href="$this_url?job=unverify">未审</a></span>
+		<span  class="$verify_over"><a href="$this_url?job=verify">已审</a></span>
+		<span  class="$best_over"><a href="$this_url?job=best">{$P8LANG['ask_best_answered']}</a></span>
+		
+	</div>
+</div>
+<form id="form" name="form" action="$this_url" method="POST">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table" id="list">
+	<tr class="head">
+		<td width="10%">ID</td>
+		<td width="28%">内容</td>
+		<td width="28%">标题</td>
+		<td width="10%">回答者</td>
+		<td width="8%">{$P8LANG['ask_answer_time']}</td>
+		<td width="15%">操作</td>
+	</tr>
+	
+	<!--{foreach $list $k $v}-->
+	<tr id="ask_{$v['aid']}">
+		<td ><input type="checkbox" name="id[]" value="{$v['aid']}"/> {$v['aid']}</td>
+		<td class="al">$v[small_content]</td>
+		<td class="al"><a href="{$this_system.controller}/item-view-id-$v[id]" title="$v[itle]" target="_blank">$v[small_title]</a></td>
+		<td>
+			<a>{$v['username']}</a>
+		</td>
+		<td><!--{php echo date('y-m-d',$v['addtime']);}--></td>
+		<td>
+			<a href="{$this_router}-verify?id=$v[aid]" onclick="verify($v[aid],$v[verify]);return false;">审核</a>
+			<a href="{$this_module.controller}-edit?id=$v[aid]" target="_blank">修改</a>
+			<a href="{$this_router}-delete?id=$v[aid]" onclick="delete_items($v[aid]);return false;">删除</a>
+			<span id="set_best_{$v['tid']}_{$v['aid']}_<!--{if $v['bestanswer']}-->1<!--{else}-->0<!--{/if}-->"><!--{if $v['bestanswer']}--><a href="javascript:void(0);" onclick="javascript:set_best_answer({tid:{$v['tid']},id:{$v['aid']},bestanswer:0});">{$P8LANG['ask_cancel_best_answer']}</a><!--{else}--><a href="javascript:void(0);" onclick="javascript:set_best_answer({tid:{$v['tid']},id:{$v['aid']},bestanswer:1});">{$P8LANG['ask_set_best_answer']}</a><!--{/if}--></span>
+			<span id="vote_{$v['aid']}">
+				<!--{if $v['bestanswer']}--> | <a href="javascript:void(0);" onclick="javascript:view_votes({id:{$v['aid']}});">{$P8LANG['ask_view_vote']}</a><!--{/if}-->
+			</span>
+		</td>
+	</tr>
+	<!--{/foreach}-->
+	<tr>
+		<td align="center" colspan="6" >
+			<div style="float:left;padding-left:20px;">
+				&nbsp;<input type="checkbox" name="ChkAll" class="edit_btn" id="ChkAll" value="1" onclick="check_all(this, 'id[]', $('#list'))"/>{$P8LANG['ask_checkall']}
+				<!--{if $job != 'all'}-->
+				&nbsp;<input type="button" name="delete" class="edit_btn" value="{$P8LANG['ask_verify']}" onclick="javascript:verify('',0);"/>
+				<!--{/if}-->
+				<!--{if $job != 'unverify'}-->
+				&nbsp;<input type="button" name="delete" class="edit_btn" value="{$P8LANG['ask_unverify']}" onclick="javascript:verify('',1);"/>
+				<!--{/if}-->
+				&nbsp;<input type="button" name="delete" class="edit_btn" value="{$P8LANG['delete']}" onclick="javascript:delete_items();"/>
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td align="center" colspan="6" class="pages">
+			$pages
+		</td>
+	</tr>
+</table>
+</form>
+<script type="text/javascript">
+var reg = /^[0-9]*$/;
+function check_ids(){
+	var ids=[];
+	$.each(checked_values('id[]'), function(k, v){
+	ids.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(ids.length<1)return false;
+	return true;
+	
+}
+//设置最佳答案
+function set_best_answer(options)
+{
+	if(options.id == undefined || !reg.test(options.id) || options.bestanswer == undefined || !reg.test(options.bestanswer)){
+		p8_window.alert('{$P8LANG['ask_error']}');
+		return false;
+	}
+
+	$.ajax({
+		url: '{$this_router}-set_best_answer',
+		type: 'POST',
+		dataType: 'json',
+		data: {id:options.id,tid:options.tid, bestanswer:options.bestanswer},
+		cache: false,
+		success: function(json){
+			p8_window.alert("{$P8LANG['done']}");
+			if(options.bestanswer){
+				//设置按纽
+				$("span[id^='set_best_"+options.tid+"_']").each(function(){
+					e = $(this).attr('id').split('_');
+					if(e[3] == options.id || e[4] == 1){
+						$(this).html('<a onclick="javascript:set_best_answer({tid:'+options.tid+',id:'+e[3]+',bestanswer:0});" href="javascript:void(0);">{$P8LANG['ask_cancel_best_answer']}</a>');
+						$(this).attr('id','set_best_'+options.tid+'_'+e[3]+'_1');
+						$('#best_'+options.id).attr('src','{$SKIN}/check_yes.gif');
+						$('#vote_'+options.id).html(' / <a onclick="javascript:view_votes({id:'+options.id+'});" href="javascript:void(0);">{$P8LANG['ask_view_vote']}</a>');
+					}else{
+						$(this).html('<a onclick="javascript:set_best_answer({tid:'+options.tid+',id:'+e[3]+',bestanswer:1});" href="javascript:void(0);">{$P8LANG['ask_set_best_answer']}</a>');	
+						$('#best_'+e[3]).attr('src','{$SKIN}/check_no.gif');
+						$('#vote_'+e[3]).html('');
+					}
+				});	
+			}else{
+				$('#set_best_'+options.tid+'_'+options.id+'_1').attr('id','set_best_'+options.tid+'_'+options.id+'_0');
+				$('#set_best_'+options.tid+'_'+options.id+'_0').html('<a onclick="javascript:set_best_answer({tid:'+options.tid+',id:'+options.id+',bestanswer:1});" href="javascript:void(0);">{$P8LANG['ask_set_best_answer']}</a>');
+				$('#vote_'+options.id).html('');
+				$('#best_'+options.id).attr('src','{$SKIN}/check_no.gif');
+			}
+		}
+	});
+}
+function delete_items(id)
+{
+	if(id==undefined){	
+		if(!check_ids())return false;
+	}
+	/*
+	if(!confirm("{$P8LANG['ask_delete_tips']}")){
+		return false;
+	}
+	*/
+	p8_window.confirm("{$P8LANG['ask_delete_tips']}", function (r) {
+		if(r){
+			$.ajax({
+				url: '{$this_url}',
+				type: 'POST',
+				dataType: 'json',
+				data: 'action=delete_item&oid='+id+'&'+$('#form').serialize(),
+				cache: false,
+				beforeSend: function(){
+						ajaxing({});
+				},
+				success: function(json){
+					if(json=='no_privilege'){ ajaxing({action: 'hide',text: "{$P8LANG['no_privilege']}",fadeOut:3000}); return; }
+					if(json=='no_category_privilege'){ ajaxing({action: 'hide',text: "{$P8LANG['no_category_privilege']}",fadeOut:3000});return; }
+					ajaxing({action: 'hide',text: "{$P8LANG['done']}",fadeOut:3000});
+					for(var i in json){
+						$('#ask_' + json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return false;
+		}
+	});	
+
+}
+function verify(id, verify)
+{
+	if(id==undefined){	
+		if(!check_ids())return false;
+	}
+	verify = verify==undefined? 1 : Math.abs(1-verify);
+	msg = verify? "{$P8LANG['ask_verify']}??" : "{$P8LANG['ask_unverify']}??";
+	if(!confirm(msg)){
+		return false;
+	}
+	
+	$.ajax({
+		url: '{$this_url}',
+		type: 'POST',
+		dataType: 'json',
+		data: 'action=verify&oid='+id+'&verify='+verify+'&'+$('#form').serialize(),
+		cache: false,
+		beforeSend: function(){
+				ajaxing({});
+			},
+		success: function(json){
+			if(json=='no_privilege'){ ajaxing({action: 'hide',text: "{$P8LANG['no_privilege']}",fadeOut:3000}); return; }
+			if(json=='no_category_privilege'){ ajaxing({action: 'hide',text: "{$P8LANG['no_category_privilege']}",fadeOut:3000});return; }
+			ajaxing({action: 'hide',text: "{$P8LANG['done']}",fadeOut:3000});
+			for(var i in json){
+				$('#ask_' + json[i]).remove();
+			}
+		}
+	});
+	return false;
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

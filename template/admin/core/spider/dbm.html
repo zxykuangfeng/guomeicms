@@ -1,0 +1,116 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<!--{template $this_module dbm_menu admin}-->
+<form action="$this_url" method="post" id="request">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable hover_table">
+						<tr class="title fix_head">
+							<td colspan="2" class="title">MySQL数据库采集配置</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">数据库主机</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="_db_host" value="{if $config['_db_host']}{$config['_db_host']}{else}localhost{/if}" />
+								<input type="button" onclick="dbm_action_config('setconfig')" value="使用本系统数据库配置" class="submit_btn"/>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">数据库端口</td>
+							<td class="tdR">
+							<input type="text" class="txt" name="_db_port" value="{if $config['_db_port']}{$config['_db_port']}{else}3306{/if}" />		
+							</td>
+						</tr>
+						<tr>
+						  <td class="tdL">数据库用户</td>
+						  <td class="tdR"><input class="txt" type="text" name="_db_user" value="{if $config['_db_user']}{$config['_db_user']}{else}root{/if}" /></td>
+						</tr>
+						<tr>
+						  <td class="tdL">数据库密码</td>
+						  <td class="tdR"><input class="txt" type="text" name="_db_password" value="{if $config['_db_password']}{$config['_db_password']}{/if}"" /></td>
+						</tr>
+						<tr>
+						  <td class="tdL">数据库名</td>
+						  <td class="tdR"><input class="txt" type="text" name="_db_name" value="{if $config['_db_name']}{$config['_db_name']}{/if}"" /></td>
+						</tr>
+						<tr>
+						  <td class="tdL">数据库编码</td>
+						  <td class="tdR">
+							<select name="_db_charset">
+								<option value="gbk" {if $config['_db_charset'] && $config['_db_charset']=='gbk'}selected{/if}>gbk</option>
+								<option value="utf8" {if $config['_db_charset'] && $config['_db_charset']=='utf8'}selected{/if}>utf8</option>
+							</select>
+							</td>
+						</tr>
+						<tr>
+						  <td class="tdL">页面编码</td>
+						  <td class="tdR">
+							<select name="_page_charset">
+								<option value="gbk" {if $config['_page_charset'] && $config['_page_charset']=='gbk'}selected{/if}>gbk</option>
+								<option value="utf8" {if $config['_page_charset'] && $config['_page_charset']=='utf-8'}selected{/if}>utf-8</option>
+							</select>
+							</td>
+						</tr>
+						<tr>
+						  <td class="tdL">操作步骤</td>
+						  <td class="tdR">
+							<input type="hidden" name="action" value="config"/>							
+							<input type="button" onclick="dbm_action_config('config')" value="1.1{$P8LANG['config']}" class="submit_btn"/><span style="font-weight:700;font-size:14px;"> --> </span>
+							<input type="button" onclick="dbm_action_config('test')" value="1.2MySQL连接测试" class="submit_btn"/>
+							</td>
+					  </tr>
+					</table>
+				</td></tr>
+				</table>
+			</div>
+		</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">			
+			<tr>
+				<td class="title">应用场景说明</td>
+			</tr>
+			<tr>
+				<td>
+					1、当需要将某个使用MySQL数据库的系统数据采集入库到本系统中时使用。<br>
+					2、如遇到提示“严正警告！！！您的攻击行为已经被记录在案，我们已保留证据！”，请在全局设置中暂时关闭“开启攻击防护模式”再操作。
+					<a style="color:blue;" href="{$core.admin_controller}/core-global_config" target="_blank">后台全局设置</a>
+				</td>
+			</tr>							
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+$('.mysqlboxmenu li').removeClass('active');
+$(".mysqlboxmenu li:nth-child(5)").addClass("active");
+function dbm_action_config(action){
+	$('#request input[name=action]').val(action);
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize(),
+		type:'POST',
+		dataType: 'text',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({'text':'操作中...'});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			if(action == 'test'){
+				p8_window.alert(json);
+			}else if(action == 'setconfig'){
+				p8_window.alert('{$P8LANG['done']}');
+				location.reload();
+			}else{
+				p8_window.alert('{$P8LANG['done']}');
+			}
+		}
+	});
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,59 @@
+<!--{php168}-->
+<!--{template $core header}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/letter/style.css" />
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_letter_gg]
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="layout">
+		<div class="menubar">
+			<div class="menu">
+				<div class="menulist">
+					$label[letter_top_nav_con2_2]
+				</div>
+			</div>
+		</div>
+		<div class="letter-grey mb20">
+			<div class="conbox">
+				<div class="innerbox clearfix">
+					<form action="{$this_router}-detail" method="post" onsubmit="return checkform()" class="form-horizontal">		
+						<div class="form-group">
+							<label for="inputPassword3" class="col-sm-3 control-label" style="color: #2e2d29;font-size: 24px;font-weight:normal;">信件查询码：</label>
+							<div class="col-sm-6">
+								<input type="text" name="snumber" value="" id="snumber" class="txt form-control"/>
+								<input type="hidden" name="token" value="{$token}" />
+							</div>
+							<div class="col-sm-3">
+								<button type="submit" class="submit btn btn-default btn-submit">进度查询</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="query-description text-center">$label[letter_query_con1]</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+function checkform(){
+if($('#susername').val()==''){
+	alert('姓名必须要填哦！');return false;
+}
+if($('#snumber').val()==''){
+	alert('查询码必须要填哦！');return false;
+}
+return true;
+}
+</script>
+<!--{if $addcontent}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/images/dialog.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<!--{/if}-->
+<!--{template $core footer}-->
+<!--{/php168}-->

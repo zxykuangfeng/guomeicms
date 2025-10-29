@@ -1,0 +1,309 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/cms-set_admin_acl"><i class="fa fa-cog"></i>主站权限设置</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-attribute_acl"><i class="fa fa-cog"></i>属性权限设置</a></li>
+						<li><a href="{$core.admin_controller}/core/uploader-role_filter"><i class="fa fa-cog"></i>上传权限设置 </a></li>
+						<li><a href="{$core.admin_controller}/sites-set_admin_acl"><i class="fa fa-cog"></i>子站权限设置</a></li>
+					</ul>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+
+<form id="form" action="$this_url" method="post" >
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core/member-set_member_acl"><i class="icon icon-ico12"></i>单个用户子站权限设置</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core/role-set_role_acl"><i class="icon icon-ico12"></i>角色子站权限设置 </a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable hover_table click_changeable">
+						<tr class="title fix_head">
+							<td width="2%" class="title"><input type="checkbox" name="check_all" onclick="m_check_all(this)" /></td>
+							<td width="3%" class="title">ID</td>
+							<td width="8%" class="title">{$P8LANG['username']}</td>
+							<td width="6%" class="title">中文名(名称)</td>
+							<!--{if empty($_GET['_dialog'])}-->
+							<td width="7%" class="title">最后登录时间</td>
+							<td width="6%" class="title">最后登录IP</td>
+							<td width="7%" class="title">注册时间</td>
+							<!--{/if}-->
+							<td width="5%" class="title">所属部门</td>
+							<td width="3%" class="title">手机号码</td>
+							<td width="5%" class="title">用户权限</td>
+							<td width="4%" class="title">状态</td>
+							<td width="3%" class="title">排序</td>
+							<!--{if empty($_GET['_dialog'])}-->
+							<td width="16%" class="title">操作</td>
+							<!--{/if}-->
+							
+						</tr>
+						
+						<tbody id="list">
+						
+						</tbody>
+					  
+					</table>
+		
+				</td></tr>
+				<tr><td>
+					<table class="formtabletwo columntable">
+						<tr>
+							<td>
+								<div id="pages" align="center" class="pages"></div>
+							</td>
+						</tr>
+					</table>
+					</td></tr>
+			</table>
+
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">			
+				<tr>
+					<td>
+						<a name="op"></a>
+						<a href="javascript:void(0)" onclick="m_check_all(true)">全选</a> /
+						<a href="javascript:void(0)" onclick="m_check_all(false);">反选</a>
+						<!--{if empty($_GET['_dialog'])}-->
+							<!--{if $allow_delete}-->
+							<input type="submit" value="批量删除" class="edit_btn" onclick="delete_member(checked_values('id[]'))" />
+							<!--{/if}-->
+							<!--{if $allow_send}-->
+							<input type="submit" value="发送邮件" class="edit_btn" onclick="batch_send()" />
+							<!--{/if}-->
+							<!--{if $IS_FOUNDER}-->
+							<input type="submit" value="设置排序" class="edit_btn" onclick="javascript:$('#form').submit()" />
+							<!--{/if}-->
+						<!--{/if}-->
+					</td>	
+				</tr>
+			</table>
+		</div>		
+	</div>
+</form>
+
+<form action="$this_router-batch_send" method="get" id="send" target="_blank">
+	<input type="hidden" name="where" />
+</form>
+					
+<script type="text/javascript">
+var ROLE_GROUP_JSON = $role_group_json,
+	ROLE_JSON = $role_json,
+	status_json = $status_json,
+	checked_ids = {};
+
+
+function batch_send(){
+	var ids = checked_values('id[]');
+	if(ids.length){
+		$('input[name=where]', $('#send')).val('id='+ ids.join(','));
+	}else{
+		//$('input[name=where]', $('#send')).val($('#request').serialize());
+	}
+	
+	$('#send').attr('action', '$this_router-batch_send').submit();
+}
+
+function request_item(page){
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			PAGE = page;
+			
+			$('#list').empty();
+			for(var i in json.list){
+				_list_item(json.list[i]);
+			}
+			
+			$('#pages').html(json.pages);
+			
+			ajaxing({action: 'hide'});
+			
+			window.scrollTo(0,0);
+			
+			$('#form input[name=check_all]').prop('checked', false);
+			
+			<!--{if !empty($_GET['_dialog'])}-->
+			$('#form input[name="id[]"]').click(function(){
+				var _this = this;
+				var tr = $(this).parent().parent();
+				
+				var json = {id: this.value, username: tr.find('td:eq(2) a').html(), role: tr.find('td:eq(5)').html()};
+				
+				setTimeout(function(){ parent.member_single_select_callback(_this.checked, json); }, 1);
+			});
+			<!--{/if}-->
+			
+			init_tr($('#form'));
+			
+			var keywords = $.trim($('#request input[name=keyword]').val());
+			if(!keywords.length) return;
+			
+			var keywords = keywords.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+			
+			$('.list_item').each(function(){
+				for(var i = 0; i < keywords.length; i++){
+					var html = $(this).find('.item_title').get(0).innerHTML;
+					$(this).find('.item_title').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+				}
+			});
+			
+		}
+	});
+}
+
+function _list_item(json){
+	
+	var update_link = '{if $allow_update}<a href="$this_router-update?id='+ json.id +'&role_gid='+ json.role_gid +'" target="_blank">{$P8LANG['edit']}</a> {/if}';
+	var delete_link = '{if $allow_delete}<a href="###" id="delete_'+ json.id +'" onclick="return delete_member([this.id]);" target="_blank">{$P8LANG['delete']}</a> {/if}';
+	var set_core_acl_link = '{if $allow_core_set_acl}<a href="{$core.admin_controller}/core-set_member_acl?user_id='+json.id+'" target="_blank"><font style="color:blue;">{$P8LANG['set_core_acl']}</font></a> {/if}';
+	var set_cms_acl_link = '{if $allow_cms_set_acl}<a href="{$core.admin_controller}/cms-set_member_acl?user_id='+json.id+'" target="_blank"><font style="color:blue;">{$P8LANG['set_cms_acl']}</font></a> {/if}';
+	var set_sites_acl_link = '{if $allow_set_acl}<a href="{$core.admin_controller}/sites-set_member_acl?user_id='+json.id+'" target="_blank"><font style="color:blue;">{$P8LANG['set_sites_acl']}</font></a> {/if}';
+	var copyacl_link = '{if $allow_copy_acl}<a href="{$core.admin_controller}/core-copy_member_acl?username='+json.username+'">{$P8LANG['copy_acl']}</a> {/if}';
+	
+	var tr = 
+	'<tr>'+
+		'<td align="center"><input type="checkbox" name="id[]" value="'+ json.id +'"'+ (checked_ids[json.id] ? ' checked' : '') +' /></td>'+
+		'<td align="center">'+ json.id +'</td>'+
+		'<td><a href="{$core.admin_controller}/core/member-view?id='+ json.id +'&role_gid='+ json.role_gid +'" target="_blank">'+ json.username +'</a></td>'+
+		'<td align="center">'+ json.name +'</td>'+
+		<!--{if empty($_GET['_dialog'])}-->
+		'<td align="center">'+ (json.last_login != 0 ? date('Y-m-d H:i', json.last_login) : '') +'</td>'+
+		'<td align="center">'+ json.last_login_ip +'</td>'+
+		'<td align="center">'+ date('Y-m-d H:i', json.register_time) +'</td>'+
+		<!--{/if}-->
+		'<td align="center">'+ json.dept +'</td>'+
+		'<td align="center">'+ json.cell_phone +'</td>'+
+		'<td align="center">'+ (ROLE_JSON[json.role_id] ? ROLE_JSON[json.role_id].name : '') +'</td>'+
+		'<td align="center">'+ status_json[json.status] +'</td>'+
+		'<td align="center"><input type="text" class="txt" name="display_order['+ json.id +']" value="'+ json.display_order +'" onchange="change_order(this)" size="4" /></td>'+
+		<!--{if empty($_GET['_dialog'])}-->
+		'<td class="cleartd" align="center">'+set_cms_acl_link + set_sites_acl_link + set_core_acl_link + copyacl_link + update_link  + delete_link +'</td>'+
+		<!--{/if}-->
+	'</tr>';
+	
+	$('#list').append($(tr));
+}
+
+function m_check_all(checked){
+	
+	check_all(checked, 'id[]', $('#form')); init_tr($('#form'));
+	
+	<!--{if !empty($_GET['_dialog'])}-->
+	$('#form input[name="id[]"]').click();
+	<!--{/if}-->
+}
+function change_order(obj){
+
+		obj.value = obj.value.replace(/[^0-9]/g, '') || 0;
+		if(obj.value > 255) obj.value = 255;
+		if(obj.value < 0) obj.value = 0;
+		$('#form').append('<input type="hidden" name="_display_order['+ obj.name.replace(/[^0-9]/g, '') +']" value="'+ obj.value +'" />');
+		$(obj).css({border: '1px solid #ff0000'});
+
+}
+
+$(function(){
+	
+	for(var i in ROLE_GROUP_JSON){
+		$('#role_gid').append($('<option value="'+ ROLE_GROUP_JSON[i].id +'">'+ ROLE_GROUP_JSON[i].name +'</option>'));
+	}
+	<!--{if $role_gid && $role_id}-->
+	change_role_group({$role_gid});
+	$('#role_id').val({$role_id});
+	
+	<!--{/if}-->
+	setTimeout(request_item(1),1000);
+	
+	
+	if(\$_GET['checked_ids']) checked_ids = \$_GET['checked_ids'];
+	
+	if(window.opener){
+		$('#opener_hide').hide();
+		
+		$('#button_bar').append($('<input type="button" value="确定选择" class="edit_btn" />').click(function(){
+			
+			var ids = checked_values('id[]');
+			if(ids.length){
+				window.opener.member_select_callback(ids);
+			}else{
+				window.opener.member_select_callback($('input[name=where]', $('#send')).val());
+			}
+			
+			window.close();
+		}));
+	}
+	
+	
+});
+
+function change_role_group(gid){
+	$('#role_id').attr('length', 1);
+	for(var i in ROLE_JSON){
+		if(ROLE_JSON[i].gid != gid) continue;
+		
+		$('#role_id').append($('<option value="'+ ROLE_JSON[i].id +'">'+ ROLE_JSON[i].name +'</option>'));
+	}
+	
+	request_item(1);
+}
+
+function delete_member(obj){
+	
+	var id = [];
+	$.each(obj, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!id.length) return;
+	
+	//if(confirm('{$P8LANG['confirm_to_delete_member']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete_member']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					if(json.length == 0) return false;
+					
+					for(var i in json){
+						$('#delete_'+ json[i]).parent().parent().remove();
+					}
+				}
+			});
+		}
+	});
+	
+	return false;
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,400 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $core config/menu_bar admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript">
+var SYSTEM = 'core';
+var MODULE = '';
+</script>
+
+<form action="$this_url" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core-base_config"><i class="icon icon-ico10"></i>{$P8LANG['base_config']}</a></li>
+							<li class="btn-color14"><a href="{$core.admin_controller}/core-global_config"><i class="icon icon-ico11"></i>{$P8LANG['total_config']}</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core-reg_config"><i class="icon icon-ico12"></i>{$P8LANG['reg_config']}</a></li>
+							<li class="btn-color9"><a href="{$core.admin_controller}/core/member-set"><i class="icon icon-ico12"></i>{$P8LANG['member_config']}</a></li>
+							<li class="btn-color15"><a href="{$core.admin_controller}/core-mobile_config"><i class="icon icon-ico13"></i>{$P8LANG['mobile_config']}</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">全局设置</td>
+				</tr>
+				<tr>
+					<td class="tdL">开启调试模式 <span class="help">一般不开启，如网站出现问题时候，可开启查看错误提示。</span></td>
+					<td class="tdR">
+						<input type="radio" name="config[debug]" value="1"{if !empty($config['debug'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[debug]" value="0"{if empty($config['debug'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">开启攻击防护模式</td>
+					<td class="tdR"><input type="radio" name="config[safe_enable]" value="0"{if empty($config['safe_enable'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[safe_enable]" value="1"{if !empty($config['safe_enable'])} checked{/if} />{$P8LANG['N']}
+						<span class="point">网站实施完成后开启防护，需要在线修改模板及标签时关闭</span></td>
+				</tr>
+				<tr>
+					<td class="tdL">开启禁发内容模式</td>
+					<td class="tdR"><input type="radio" name="config[canot_addable]" value="1"{if !empty($config['canot_addable'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[canot_addable]" value="0"{if empty($config['canot_addable'])} checked{/if} />{$P8LANG['N']}
+						<span class="point">此模式下只能浏览不能发布内容</span></td>
+				</tr>
+				<tr>
+					<td class="tdL">开启图片延时加载</td>
+					<td class="tdR"><input type="radio" name="config[lazyload]" value="1"{if !empty($config['lazyload'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[lazyload]" value="0"{if empty($config['lazyload'])} checked{/if} />{$P8LANG['N']}
+						<span class="point">页面图片仅在浏览器的当前窗口时再加载，可明显降低访问量很大的站点的服务器负担</span> <input type="button" onclick="show_invoke()" value="启用必读说明" /></td>
+				</tr>
+				<tr>
+					<td class="tdL">攻击日志保存时间</td>
+					<td class="tdR"> <input type="text" class="txt" name="config[admin_io_day]" size="5"  value="{if !empty($config['admin_io_day'])}{$config['admin_io_day']}{else}0{/if}" />天 <span class="point">(存放于根目录/data/log/目录下,0则不保存日志文件)</span></td>
+				</tr>				
+				<tr>
+					<td class="tdL">分站推送给主站数据量</td>
+					<td class="tdR"> <input type="text" class="txt" name="config[push_allow_max_number]" size="5"  value="{if !empty($config['push_allow_max_number'])}{$config['push_allow_max_number']}{/if}" />条/每天 <span class="point">一般留空或填写0，则不限制</span></td>
+				</tr>
+				<tr>
+					<td class="tdL">开启动静态分离 <span class="help">一般不开启，动静态网站部署在不同服务器上</span></td>
+					<td class="tdR">
+						<input type="radio" name="config[static_enable]" onclick="showoutlink(1)" value="1"{if !empty($config['static_enable'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[static_enable]" onclick="showoutlink(2)" value="0"{if empty($config['static_enable'])} checked{/if} />{$P8LANG['N']}
+						<span class="point">选择是开启时，需填写下方的主站域名</span>
+					</td>
+				</tr>
+				<tr id="site_enable" style="display:{if empty($config['static_enable'])} none{/if}">
+					<td class="tdL">主站动态管理域名 <span class="help">开启动静态分离时填写</span></td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[static_url]" size="38"  value="{if !empty($config['static_url'])}{$config['static_url']}{/if}" />
+						<span class="point">示例 http://www.123.com</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">反跨站请求伪造（CSRF）</td>
+					<td class="tdR">
+						<input type="radio" name="config[csrf_enable]" value="1"{if !empty($config['csrf_enable'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[csrf_enable]" value="0"{if empty($config['csrf_enable'])} checked{/if} />{$P8LANG['N']}
+						<a href="###" style="color:blue" onclick="csrf_dialog.show()">查看引入代码</a>
+					<div id="csrf" style="display: none;">
+					<input type="hidden" name="token" value="{$token}" />
+					</div>
+					<script type="text/javascript">
+					var csrf_html = "需要加代码的重要模板:<br>"+
+						"1、领导信箱模块：template/default/core/letter/edit.html<br>"+
+						"2、意见征集模块：template/default/core/opinion/edit.html<br>"+
+						"3、问卷调查模块：template/default/core/survey/edit.html<br>"+
+						"4、投票模块：template/default/core/vote/edit.html<br>"+
+						"5、表单模块：template/default/core/forms/tpl/edit.htm等表单发布及管理模板<br>"+
+						"<br>在上述模板中的表单中适当位置引入代码：<br/>"+
+						"<xmp><input type=\"hidden\" name=\"token\" value=\$"+"token\" /></xmp>";
+					var csrf_dialog = new P8_Dialog({
+						width: 600,
+						height: 400,
+						show: function(){
+							this.content.html(csrf_html);
+						}
+					});
+					</script>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">防止重复发布信息</td>
+					<td class="tdR">
+						<input type="radio" name="config[repeatable]" value="1"{if !empty($config['repeatable'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[repeatable]" value="0"{if empty($config['repeatable'])} checked{/if} />{$P8LANG['N']}
+						<span class="point">防止误点重复发布，在采集入库时建议关闭</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">优先使用局域网IP</td>
+					<td class="tdR">
+						<input type="radio" name="config[wlan_enable]" value="1"{if !empty($config['wlan_enable'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[wlan_enable]" value="0"{if empty($config['wlan_enable'])} checked{/if} />{$P8LANG['N']}
+						<span class="point">当前检测客户端的IP是：<!--{php echo P8_IP;}--> 如果IP识别错误会影响有关IP的权限判断</span>
+					</td>
+				</tr>				
+				<tr>
+					<td class="tdL">{$P8LANG['admin_controller']}</td>
+					<td class="tdR"> <input type="text" class="txt" name="config[admin_controller]" size="8"  value="{if !empty($config['admin_controller'])}{$config['admin_controller']}{/if}" /> (可修改后台登陆地址，但“.php”必须保留，如：xxx.php )</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">序列号(授权码)</td>
+					<td class="tdR"> <input type="text" class="txt" name="config[serial_number]" size="38"  value="{if !empty($config['serial_number'])}{$config['serial_number']}{/if}" />  </td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['p8_key']}</td>
+					<td class="tdR"> <input type="text" class="txt" name="config[p8_key]" size="38"  value="{if !empty($config['p8_key'])}{$config['p8_key']}{/if}" /><span class="point">(系统安装后，务必修改通信密码，可添加或修改任意数字)</span></td>
+				</tr>
+				<tr>
+					<td class="tdL">API授权认证码</td>
+					<td class="tdR"> <input type="text" class="txt" name="config[p8_api_token]" id="p8_api_token" size="38"  value="{if !empty($config['p8_api_token'])}{$config['p8_api_token']}{/if}" /><input type="button" onclick="_getRandomString(24);" value="生成随机字符串"/> <span class="point">(系统安装后，务必修改API授权认证码)</span></td>
+				</tr>
+				<tr>
+					<td class="tdL">后台登录安全码 <span class="help">输入安全码后，每次登录后台需输入此安全码才能进入。</span></td>
+					<td class="tdR"> <input type="text" class="txt" name="config[admin_login_code]" size="8" value="{if !empty($config['admin_login_code'])}$config[admin_login_code]{/if}" /> </td>
+				</tr>
+				<tr>
+					<td class="tdL">后台登录验证码</td>
+					<td class="tdR"> <input type="radio" name="config[admin_login_with_captcha]" value="1"{if !empty($config['admin_login_with_captcha'])} checked{/if} />{$P8LANG['Y']} <input type="radio" name="config[admin_login_with_captcha]" value="0"{if empty($config['admin_login_with_captcha'])} checked{/if} />{$P8LANG['N']} </td>
+				</tr>
+				<tr>
+					<td class="tdL">后台登录手机验证码</td>
+					<td class="tdR"> <input type="radio" name="config[admin_login_with_mobile_captcha]" value="1"{if !empty($config['admin_login_with_mobile_captcha'])} checked{/if} />{$P8LANG['Y']} <input type="radio" name="config[admin_login_with_mobile_captcha]" value="0"{if empty($config['admin_login_with_mobile_captcha'])} checked{/if} />{$P8LANG['N']} 
+					<span class="help">务必配置手机短信功能且手机短信功能正常使用</span> <label for="capture_image"><a href="{$core.admin_controller}/core/sms-list_interface" target="_blank">[手机短信设置]</a></label></td>
+				</tr>
+				<tr>
+					<td class="tdL">自动退出登陆时间<span class="help">登录多久后不操作自动退出，0为浏览器时间。</span></td>
+					<td class="tdR"><input type="text" class="txt" name="config[expire]" size="5"  value="{if !empty($config['expire'])}{$config['expire']}{else}0{/if}" />分钟
+					</td>
+				</tr>
+				<!--
+				<tr>
+					<td class="tdL">会员上传头像是否自动裁剪</td>
+					<td class="tdR"> <input name="config[upload_if_cut]" type="radio" value="0"  /> 手动载剪 <input name="config[upload_if_cut]" type="radio" value="1" onclick="$('#upload_is_cut').show()" /> 自动载剪 &nbsp;<span id="upload_is_cut" style="display:none"> 长：<input  type="text" class="txt" name="config[icon_long]" size="5" /> 宽：<input  type="text" class="txt" name="config[icon_width]" size="5" /></span> </td>
+				</tr>
+				-->
+				<tr>
+					<td class="tdL">{$P8LANG['cookie_prefix']}</td>
+					<td class="tdR"><input type="text" class="txt" name="config[cookie][prefix]" size="30"  value="{if !empty($config['cookie']['prefix'])}{$config['cookie']['prefix']}{/if}" /><span class="point">(让所有用户快速去除浏览器cook记录影响)</span></td>
+				</tr>
+				<tr>
+					<td class="tdL">搜索引擎日志 <span class="help">记录搜索引擎爬过的记录</span></td>
+					<td class="tdR">
+						<input type="radio" name="config[robot_log]" value="1"{if !empty($config['robot_log'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[robot_log]" value="0"{if empty($config['robot_log'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">开启后台执行SQL</td>
+					<td class="tdR">
+						<input type="radio" name="config[executesql]" value="1"{if !empty($config['executesql'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[executesql]" value="0"{if empty($config['executesql'])} checked{/if} />{$P8LANG['N']} <span class="point">(建议关闭，慎重开启)</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">hash名称</td>
+					<td class="tdR"><input type="text" class="txt" name="config[hash_name]" size="12"  value="{if !empty($config['hash_name'])}{$config['hash_name']}{/if}" /></td>
+				</tr>
+				<tbody id="more_option" style="display:none"> 
+				
+				<tr>
+					<td class="tdL">{$P8LANG['cookie_path']}</td>
+					<td class="tdR"><input type="text" class="txt" name="config[cookie][path]" size="30"  value="{if !empty($config['cookie']['path'])}{$config['cookie']['path']}{/if}" /><span class="point">(一般不用修改)</span></td>
+				</tr>
+					
+				<tr>
+					<td class="tdL">是否开启rewrite隐藏index.php</td>
+					<td class="tdR"> <input type="radio" name="config[url_rewrite_enabled]" value="1"{if !empty($config['url_rewrite_enabled'])} checked{/if} />{$P8LANG['Y']} <input type="radio" name="config[url_rewrite_enabled]" value="0"{if empty($config['url_rewrite_enabled'])} checked{/if} />{$P8LANG['N']}
+					<span class="help">http://www.***.com/index.php/cms/item-view,隐藏后http://www.***.com/cms/item-view,需要服务器编写规则。</span>
+					<a href="###" style="color:blue" onclick="rwrule_dialog.show()">查看规则</a>
+					<div id="rewrite" style="display: none;">
+					<textarea cols="80" rows="20">
+					APACHE
+					--------------------------------------
+					RewriteEngine off
+					
+					<Location />
+						RewriteEngine On
+						RewriteCond %{REQUEST_FILENAME} -s [OR]
+						RewriteCond %{REQUEST_FILENAME} -l [OR]
+						RewriteCond %{REQUEST_FILENAME} -d
+						RewriteRule ^.*$ - [NC,L]
+						RewriteRule ^.*$ /index.php [NC,L]
+					</Location>
+					
+					NGINX
+					---------------------------------------
+					location /里面,自己结合一下配置修改
+					location / {
+						if (!-e \$request_filename) {
+							rewrite ^(.*)$ /index.php$1 last;
+							break;
+						}
+					}
+					</textarea>
+					</div>
+					<script type="text/javascript">
+					var rwrule_dialog = new P8_Dialog({
+						width: 600,
+						height: 400,
+						show: function(){
+							this.content.html($('#rewrite').html());
+						}
+					});
+					</script>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">是否开启gzip压缩页面</td>
+					<td class="tdR">
+						<input type="radio" name="config[gzip]" value="1"{if !empty($config['gzip'])} checked{/if}{if !function_exists('ob_gzhandler')} disabled{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[gzip]" value="0"{if empty($config['gzip'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">可节省带宽。使用程序压缩,如果服务器(apache, IIS等)开启有压缩功能请关闭此选项。</span>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['template_dir']}</td>
+					<td class="tdR"><input type="text" class="txt" name="config[template_dir]" size="60"  value="{if !empty($config['template_dir'])}{$config['template_dir']}{/if}" /><span class="point">(一般默认)</span></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['language']}</td>
+					<td class="tdR">
+						<select name="config[lang]">
+							<!--{foreach $core->CONFIG['language'] $k $v}-->
+							<option value="$k"{if !empty($core->CONFIG['lang']) && $k == $core->CONFIG['lang']} selected{/if}>$v</option>
+							<!--{/foreach}-->
+						</select><span class="point">(一般默认中文)</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['page_charset']} <span class="help">如转为UTF8或其他语言，请安装的时候选择相关操作。</span></td>
+					<td class="tdR"> <input type="text" class="txt" name="config[page_charset]" size="5"  value="{if !empty($config['page_charset'])}{$config['page_charset']}{/if}" /> </td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['mysql_connect_type']} <span class="help">一般默认为P8_mysql,如果服务器支持mysqli，可以选择P8_mysqli</span></td>
+					<td class="tdR">
+						<select name="config[mysql_connect_type]">
+							<!--{foreach $info['mysql_connect_types'] $k $v}-->
+							<option value="$k"{if !empty($config['mysql_connect_type']) && $config['mysql_connect_type'] == $k} selected{/if}>$v</option>
+							<!--{/foreach}-->
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['mysql_charset']}</td>
+					<td class="tdR"> <input type="text" class="txt" name="config[mysql_charset]" size="38"  value="{if !empty($config['mysql_charset'])}{$config['mysql_charset']}{/if}" /> </td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['encode']} {$P8LANG['function']}</td>
+					<td class="tdR">
+						<select name="config[encode_conv_func]">
+							<!--{foreach $info['encode_conv_functions'] $k $v}-->
+							<option value="$v"{if !empty($config['encode_conv_func']) && $config['encode_conv_func'] == $v} selected{/if}>$k</option>
+							<!--{/foreach}-->
+						</select>
+					</td>
+				</tr>
+				
+				
+				<tr style="display:none">
+					<td class="tdL">关闭模板缓存 <span class="help">可让模板修改马上呈现。</span></td>
+					<td class="tdR">
+						<input type="radio" name="config[templatecache]" value="1"{if !empty($config['templatecache'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[templatecache]" value="0"{if empty($config['templatecache'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+
+				<tr>
+					<td class="tdL">SESSION跨域域名列表 <span class="help">启用多个一级域名时候才启用，一般不用设置。</span></td>
+					<td class="tdR">
+						<div id="scd_clone" style="display: none;">
+							域名<input type="text" size="20" /> 同步文件<input type="text" size="60" /> <input type="button" value="删除" />
+						</div>
+						<div id="scds">
+						</div>
+						<input type="button" value="添加" onclick="add_scd()" />
+						<script type="text/javascript">
+						function add_scd(domain, url){
+							var copy = $('#scd_clone').clone().show().attr('id', '');
+							
+							domain = domain === undefined ? '' : domain;
+							copy.find('input:eq(0)').val(domain).
+							change(function(){
+								copy.find('input:eq(1)').
+								attr('name', 'config[session_cross_domains]['+ this.value +']');							
+							});
+							
+							copy.find('input:eq(1)').
+							attr('name', 'config[session_cross_domains]['+ domain +']').
+							val(url === undefined ? '' : url);
+							
+							copy.find('input:eq(2)').click(function(){
+								$(this).parent().remove();
+							});
+							
+							$('#scds').append(copy);
+						}
+						
+						<!--{foreach $config['session_cross_domains'] $k $v}-->
+						add_scd('$k', '$v');
+						<!--{/foreach}-->
+						</script>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">sphinx前缀</td>
+					<td class="tdR"><input type="text" class="txt" name="config[sphinx_prefix]" size="16"  value="{if !empty($config['sphinx_prefix'])}{$config['sphinx_prefix']}{/if}" /><span class="point"> (用于高端应用，一般不设置)</span></td>
+				</tr>
+				<tr>
+					 <td colspan="2" style="text-align:center;"><a href="javascript:;" onclick="javascript:$('#more_option').css('display','none');$('#more_but').show()">收起更多</a></td>
+				</tr>
+				</tbody>
+				<tbody>
+					<tr id="more_but">
+						<td colspan="2" style="text-align:center;"><a href="javascript:;" onclick="javascript:$('#more_option').css('display','');$(this).parent().parent().hide()">更多选项....</a></td>
+					</tr>
+					</tbody>
+				<tr>
+					<td colspan="2">&nbsp;</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div style="text-align:center;"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+	function showoutlink(f){
+		if(f=='1'){
+			$('#site_enable').show();
+		}
+		if(f=='2'){
+			$('#site_enable').hide();
+		}
+		if(f=='3'){
+			$('#csrf_enable').show();
+		}
+		if(f=='4'){
+			$('#csrf_enable').hide();
+		}
+	}
+	// 获取长度为len的随机字符串
+	function _getRandomString(len) {
+		len = len || 32;
+		var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+		var maxPos = chars.length;
+		var pwd = '';
+		for (i = 0; i < len; i++) {
+			pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+		}
+		$('#p8_api_token').val(pwd);
+	}
+	var dialog = new P8_Dialog({
+		width: 600,
+		height: 268
+	});
+	function show_invoke(){
+		dialog.show();
+		var s = '提示：在开启时务必确保JS文件和代码被正确使用，否则图片将显示异常。<br>(1).当前公共头部模板template/{$core->CONFIG['template']}/core/header.html中引入以下JS：<br/>'+
+		'<xmp><script type="text\/javascript" src="{\$RESOURCE}\/js\/jquery.lazyload.js"><\/script></xmp><br/>'+
+		'(2).在当前公共尾部模板template/{$core->CONFIG['template']}/core/footer.html加入以下JS代码：<br/>'+
+		'<xmp><script type="text\/javascript">\$(\'img\').lazyload();<\/script></xmp><br/>(3).如启用移动版本，则移动模板同样需要同步修订！';
+		dialog.content.html(s);
+	}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

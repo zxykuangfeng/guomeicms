@@ -1,0 +1,20 @@
+<!--{php168}-->
+<div class="label_theme_pic_com_ul11">
+	<!--{foreach $list $value}-->
+	<div class="row">
+		<div class="item clearfix">
+			<div class="col-md-5 col-sm-5 col-xs-12 col-pd">
+				<div class="pic"><a href="$value[url]" target="_blank" title="$value[full_title]"><img width="300" height="190" alt="$value[full_title]" onError="this.src='$RESOURCE/images/nopic.jpg'" src="{if empty($value['frame'])}{$RESOURCE}/images/nopic.jpg{else}$value[frame]{/if}" /></a></div>
+			</div>
+			<div class="col-md-7 col-sm-7 col-xs-12 col-pd">
+				<div class="text">
+					<h3><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></h3>
+					<p class="summary">$value[summary]...</p>
+					<p class="readmore text-right"><a href="$value[url]" target="_blank" title="$value[full_title]">查看更多>></a></p>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--{/foreach}-->
+</div>
+<!--{/php168}-->

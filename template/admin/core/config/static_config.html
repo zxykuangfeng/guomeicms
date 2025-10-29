@@ -1,0 +1,192 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $core config/menu_bar admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<form action="$this_url" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core-static_config"><i class="icon icon-ico10"></i>{$P8LANG['static_config']}</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/cms/item-config"><i class="icon icon-ico26"></i>{$P8LANG['item_content_config']}</a></li>
+							<li class="btn-color3"><a href="{$core.admin_controller}/sites-index?frame=/sites/item-config" target="sites_main"><i class="icon icon-ico30"></i>{$P8LANG['sites_content_config']}</a></li>
+							<li class="btn-color1"><a href="{$core.admin_controller}/core/uploader-config"><i class="icon icon-ico23"></i>{$P8LANG['uploader_config']}</a></li>							
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">$P8LANG[static_config]</td>
+				</tr>
+				<tr>
+					<td class="tdL">$P8LANG[static_url]</td>
+					<td class="tdR">
+						<input name="config[resource_url]" size="38" class="txt"  value="{if !empty($config['resource_url'])}{$config['resource_url']}{else}{$config['url']}{/if}"/>
+                        <span class="help">$P8LANG[static_url_note]</span>
+                    </td>
+				</tr>
+				<tr>
+					<td class="tdL">$P8LANG[static_url_vice]</td>
+					<td class="tdR">
+						<input name="config[resource_url_vice]" size="38" class="txt"  value="{if !empty($config['resource_url_vice'])}{$config['resource_url_vice']}{else}{$config['url']}{/if}"/>
+                        <span class="help">$P8LANG[static_url_vice_note]</span>
+                    </td>
+				</tr>
+				<tr>
+					<td class="tdL">$P8LANG[static_js_path]</td>
+					<td class="tdR">
+						<input name="config[js_path]" size="38" class="txt"  value="{if !empty($config['js_path'])}{$config['js_path']}{else}js{/if}"/>
+                        <span class="help">$P8LANG[static_js_path_note]</span>
+                    </td>
+				</tr>
+				<tr>
+					<td class="tdL">$P8LANG[static_css_path]</td>
+					<td class="tdR">
+						<input name="config[css_path]" size="38" class="txt"  value="{if !empty($config['css_path'])}{$config['css_path']}{else}skin{/if}"/>
+					</td>
+				</tr>
+                <tr>
+					<td class="tdL">$P8LANG[static_img_path]</td>
+					<td class="tdR">
+						<input name="config[img_path]" size="38" class="txt"  value="{if !empty($config['img_path'])}{$config['img_path']}{else}images{/if}"/>
+					</td>
+				</tr>
+                <tr>
+					<td class="tdL">$P8LANG[static_nopic_img]</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[nopic_img]" id="logo_img" size="60"  value="{if !empty($config['nopic_img'])}{$config['nopic_img']}{else}$RESOURCE/images/nopic.jpg{/if}" />
+						<input type="button" onclick="imgupload.choseup()" value="{$P8LANG['upload']}" /> 
+						<a href="###" onclick="if($('#logo_img').val()) window.open($('#logo_img').val());">[$P8LANG[preview]]</a>
+					</td>
+				</tr>
+                <tr>
+				<tr>
+					<td class="tdL">附件出入库是否处理</td>
+					<td class="tdR"> <input type="radio" name="config[attachment][confuse]" value="1"{if !empty($config['attachment']['confuse'])} checked{/if} />{$P8LANG['Y']} <input type="radio" name="config[attachment][confuse]" value="0"{if empty($config['attachment']['confuse'])} checked{/if} />{$P8LANG['N']} </td>
+				</tr>
+                <td class="tdL">附件存放地域名</td>
+					<td class="tdR">
+						<div><input onchange="show_attach_box(this)"  type="radio" name="config[attachment_storate_type]" value="resource_url" {if $config['attachment_storate_type']=='resource_url' or !$config['attachment_storate_type']}checked{/if}> 静态资源域名 <span class="help">使用上面的静态资源域名： {if !empty($config['resource_url'])}{$config['resource_url']}{else}{$config['url']}{/if}</span></div>
+						<div><input onchange="show_attach_box(this)"  type="radio" name="config[attachment_storate_type]" value="resource_url_vice" {if $config['attachment_storate_type']=='resource_url_vice'}checked{/if}> 辅助静态资源域名 <span class="help">使用上面的辅助静态资源域名： {if !empty($config['resource_url_vice'])}{$config['resource_url_vice']}{else}{$config['url']}{/if}</span></div>                       
+                        <div><input onchange="show_attach_box(this)"  type="radio" name="config[attachment_storate_type]" value="url" {if $config['attachment_storate_type']=='url' }checked{/if}> 网站域名   <span class="help">直接使用网站域名：{$config['url']} </span></div>
+                        <div><input onchange="show_attach_box(this)"  type="radio" name="config[attachment_storate_type]" value="static_attachment_storage" {if $config['attachment_storate_type']=='static_attachment_storage' }checked{/if}> 独立附件地址 <span class="help">使用另外设置的附件域名地址</span></div> 
+						<div><input onchange="show_attach_box(this)"  type="radio" name="config[attachment_storate_type]" value="relative_url" {if $config['attachment_storate_type']=='relative_url' }checked{/if}> 相对附件域名地址（绝对分离部署模式） <span class="help">使用相对附件域名地址</span></div>                        
+                       <!-- <div><input onchange="show_attach_box(this)"  type="radio" name="config[attachment_storate_type]" value="static_attachment_url" {if $config['attachment_storate_type']=='static_attachment_url' }checked{/if}> $P8LANG[static_attachment_url]</div> -->
+                        <div><input onchange="show_attach_box(this)"  type="radio" name="config[attachment_storate_type]" value="ftp_remote" {if $config['attachment_storate_type']=='ftp_remote' }checked{/if}> 远程附件地址(ftp) <span class="help">使用FTP远程附件地址</span></div> 
+						 
+					</td>
+                </tr>
+				<!--<tr>
+					<td class="tdL">$P8LANG[static_attachment_url]</td>
+					<td class="tdR">
+						<input name="config[static_attachment_url]" size="38" class="txt"  value="{if !empty($config['static_attachment_url'])}{$config['static_attachment_url']}{/if}"/>
+						<span class="help">{$P8LANG[static_attachment_url_note]}</span>
+					</td>
+				</tr>-->				
+				<tr>
+					<td class="tdL">附件存放地址</td>
+					<td class="tdR"><input type="text" class="txt" name="config[attachment][path]" size="40"  value="{if !empty($config['attachment']['path'])}{$config['attachment']['path']}{/if}" /></td>
+				</tr>
+				<tr>
+					<td class="tdL">远程附件地址</td>
+					<td class="tdR">
+						<div id="ratt_clone" style="display: none;">
+							序号<input type="text" size="3" />
+							地址<input type="text" size="60" />
+							使用<input type="checkbox" name="config[attachment][remote][current]" value="" />
+							<input type="button" value="删除" onclick="$(this).parent().remove()" />
+						</div>
+						
+						<div id="remotes"></div>
+						
+						<input type="button" value="添加附件地址" onclick="add_remote_attachment()" />
+						<span class="help">多服务器才做设置，一般用默认，序号一旦确定，千万不要修改</span>
+						
+					</td>
+				</tr>				
+                <tr id="static_attachment_storage" class="attach_box" {if $config['attachment_storate_type']!='static_attachment_storage' }style="display:none"{/if}>
+					<td class="tdL">$P8LANG[static_attachment_storage]</td>
+					<td class="tdR">
+						<input name="config[static_attachment_storage]" size="38" class="txt"  value="{if !empty($config['static_attachment_storage'])}{$config['static_attachment_storage']}{/if}"/>
+						<span class="help">填写域名，相对域名直接填 /</span>
+					</td>
+				</tr>
+               
+				<tr class="attach_box" id="ftp_remote" {if $config['attachment_storate_type']!='ftp_remote' }style="display:none"{/if}>
+					<td class="tdL">$P8LANG[static_attachment_remote]</td>
+					<td class="tdR">
+						<div id="ratt_clone" style="display: none;">
+							序号<input type="text" size="3" />
+							地址<input type="text" size="60" />
+							使用<input type="checkbox" name="config[attachment][remote][current]" value="" />
+							<input type="button" value="删除" onclick="$(this).parent().remove()" />
+						</div>
+						
+						<div id="remotes"></div>
+						
+						<input type="button" value="添加附件地址" onclick="add_remote_attachment()" />
+						<span class="help">$P8LANG[static_attachment_remote_note]</span>
+						
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div style="text-align:center;">
+							<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+var imgupload = new P8_Upload({
+	element: {
+		src: $('#logo_img'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+function add_remote_attachment(id, url){
+	var copy = $('#ratt_clone').clone().attr('id', '').show().appendTo($('#remotes'));
+	
+	copy.find('input:eq(0)').val(id === undefined ? '' : id).
+		change(function(){
+			$(this).parent().find('input[type=checkbox]').val(this.value);
+			
+			copy.find('input:eq(1)').attr('name', 'config[attachment][remote][server]['+ this.value +']');
+		});
+	
+	copy.find('input:eq(1)').val(url === undefined ? '' : url).
+		attr('name', 'config[attachment][remote][server]['+ id +']');
+	
+	copy.find('input:eq(2)').prop('checked', '{if !empty($config['attachment']['remote']['current'])}{$config['attachment']['remote']['current']}{/if}' == id ? true : false).val(id == undefined ? '' : id);
+}
+
+function show_attach_box(obj){
+    cj = $(obj).val();
+    console.log(cj);
+    $('.attach_box').hide();
+    $('#'+cj).show();
+}
+
+$(function(){
+	<!--{foreach $config['attachment']['remote']['server'] $id $url}-->
+	add_remote_attachment('$id', '$url');
+	<!--{/foreach}-->
+
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,28 @@
+<!--{php168}-->
+<!--!! modified by admin at 2010-10-10 13_42_06 !!-->
+<div id="footer" class="footer">
+	<div class="container">
+		<div class="copyright">
+			<ul>
+				<li>{$core.CONFIG['copyright']}</li>
+				<!--{if !empty($core->CONFIG['statistics'])}-->
+				<li>{$core.CONFIG['statistics']}</li>
+				<!--{/if}-->
+			</ul>
+		</div>
+	</div>
+<script language="JavaScript" type="text/JavaScript">
+$(function(){
+	$.ajaxSetup({
+		headers: {
+			'X-Csrf-Token': $('meta[name="X-Csrf-Token"]').attr('content')
+		}
+	});
+});
+</script>
+</div>
+</div>
+<script type="text/javascript" src="{$core.url}/api/crontab.php"></script>
+</body>
+</html>
+<!--{/php168}-->

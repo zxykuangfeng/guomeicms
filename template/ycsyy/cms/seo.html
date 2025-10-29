@@ -1,0 +1,22 @@
+<!--{php168}-->
+<!--{php
+$TITLE = (empty($data['title']) ? '' : $data['title'] .' - ').
+	(empty($CAT['name']) ? '' : $CAT['name'] .' - '). $core->CONFIG['site_name'];
+
+if(!empty($data['seo_keywords'])){
+	$SEO_KEYWORDS = $data['seo_keywords'];
+}else if(!empty($CAT['seo_keywords'])){
+	$SEO_KEYWORDS = $CAT['seo_keywords'];
+}else{
+	$SEO_KEYWORDS = $core->CONFIG['site_key_word'];
+}
+
+if(!empty($data['seo_description'])){
+	$SEO_DESCRIPTION = $data['seo_description'];
+}else if(!empty($CAT['seo_description'])){
+	$SEO_DESCRIPTION = $CAT['seo_description'];
+}else{
+	$SEO_DESCRIPTION = $core->CONFIG['site_description'];
+}
+}-->
+<!--{/php168}-->

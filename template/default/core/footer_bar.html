@@ -1,0 +1,38 @@
+<!--{php168}-->
+<style type="text/css">
+#showbar{position:fixed;top:15%;right:0;width:99px;z-index:1000;}
+#showbar .showbox {width:99px;background:#fff;overflow: hidden;box-shadow: 0 0 10px rgba(0,0,0,0.1);}
+#showbar .showbox li{text-align:center;border-bottom:1px solid #eee;}
+#showbar .showbox li a{display:block;padding-top:55px;padding-bottom:15px;color:#606060;}
+#showbar .showbox li.s1 a{background: url(images/bar/fi1.png) center 15px no-repeat;}
+#showbar .showbox li.s2 a{background: url(images/bar/fi2.png) center 15px no-repeat;}
+#showbar .showbox li.s3 a{background: url(images/bar/fi3.png) center 15px no-repeat;}
+#showbar .showbox li.s4 a{background: url(images/bar/fi4.png) center 15px no-repeat;}
+#showbar .showbox li.s5 a{background: url(images/bar/fi5.png) center 15px no-repeat;}
+#showbar .showbox li.s6 a{background: url(images/bar/fi6.png) center 15px no-repeat;}
+#showbar .showbox li.s7 a{background: url(images/bar/fi7.png) center 15px no-repeat;}
+#showbar .showbox li.s8 a{background: url(images/bar/fi8.png) center center no-repeat;}
+#showbar .showbox li.s8{height:84px;border:0;background-color:#115a41;font-size:0;text-indent:-9999px;}
+#showbar .close{position:absolute;top:-15px;right:0;width:43px;height:11px;background: url(images/bar/close.png') no-repeat;opacity:1;}
+</style>
+<div id="showbar" class="hidden-xs">
+<div class="showbox">
+$label[showbox_right_bar]
+</div>
+<div class="barclose"></div>
+</div>
+<script type="text/javascript">
+jQuery(function($) {
+	$(document).ready(function(){
+		$("#gototop").click(function(){
+		$("html, body").animate({
+			scrollTop: 0
+			}, 1000);
+		});
+		$(".barclose").click(function () {
+			$("#showbar").hide();
+		})
+	});
+});
+</script>
+<!--{/php168}-->

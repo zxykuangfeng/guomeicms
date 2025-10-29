@@ -1,0 +1,151 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+
+<form action="$this_url" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core/member-huiyuanpeizhi"><i class="icon icon-ico10"></i>会员配置</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core-reg_config" target="_blank"><i class="icon icon-ico10"></i>注册与登录设置</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">登录与注册配置</td>
+				</tr>
+				<tr>
+					<td class="tdL">后台最大登录失败次数</td>
+					<td class="tdR"><input type="text" class="txt" name="config[admin_login_false]" size="5"  value="{if !empty($config['admin_login_false'])}{$config['admin_login_false']}{else}0{/if}" /> 0即不限</td>
+				</tr>
+				<tr>
+					<td class="tdL">登录失败锁定时间</td>
+					<td class="tdR"><input type="text" class="txt" name="config[admin_login_false_lock]" size="5"  value="{if !empty($config['admin_login_false_lock'])}{$config['admin_login_false_lock']}{else}0{/if}" />分钟</td>
+				</tr>
+				<tr>
+					<td class="tdL">登录检测密码强度</td>
+					<td class="tdR">
+						<input name="config[checkpwlevel]" type="radio" value="1" {if !empty($config['checkpwlevel'])} checked{/if}/> 开启   <input name="config[checkpwlevel]" type="radio" value="0" {if empty($config['checkpwlevel'])} checked{/if}/> 关闭
+						 <span class="point">强度不足时强制转向密码修改页面</span>
+					</td>
+				</tr>				
+				<tr>
+					<td class="tdL">是否允许用户注册</td>
+					<td class="tdR">
+						<input name="config[register][enabled]" type="radio" value="1" {if !empty($config['register']['enabled'])} checked{/if}/> 开启   <input name="config[register][enabled]" type="radio" value="0" {if empty($config['register']['enabled'])} checked{/if}/> 禁止
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">注册是否开启验证码</td>
+					<td class="tdR">
+						<input name="config[register][captcha]" type="radio" value="1" {if !empty($config['register']['captcha'])} checked{/if}/> 开启   <input name="config[register][captcha]" type="radio" value="0" {if empty($config['register']['captcha'])} checked{/if}/> 关闭
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">注册时手机号码是否必填和显示</td>
+					<td class="tdR">
+						<input name="config[register][cell_phone_not_null]" type="checkbox" value="1" {if !empty($config['register']['cell_phone_not_null'])} checked{/if}/> 必填						
+						<input name="config[register][cell_phone_show]" type="checkbox" value="1" {if !empty($config['register']['cell_phone_show'])} checked{/if}/> 显示	
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">注册时所在组织是否必填和显示</td>
+					<td class="tdR">
+						<input name="config[register][dept2_not_null]" type="checkbox" value="1" {if !empty($config['register']['dept2_not_null'])} checked{/if}/> 必填						
+						<input name="config[register][dept2_show]" type="checkbox" value="1" {if !empty($config['register']['dept2_show'])} checked{/if}/> 显示	
+					</td>
+				</tr>	
+				<tr>
+					<td class="tdL">新用户注册验证</td>
+					<td class="tdR">
+						<input type="radio" name="config[register][verify]" value="0" {if empty($config['register']['verify']) || !isset($config['register']['verify'])}checked{/if}/> 无
+						<input type="radio" name="config[register][verify]" value="1" {if !empty($config['register']['verify']) && $config['register']['verify']==1}checked{/if}/> 邮件
+						<input type="radio" name="config[register][verify]" value="2" {if !empty($config['register']['verify']) && $config['register']['verify']==2}checked{/if}/> 人工审核
+					</td>
+				</tr>
+				<!--
+				<tr>
+					<td >注册是否开启答题验证</td>
+					<td class="tdR">
+					   <input name="config[register][question_enabled]" type="radio" value="1" onclick="$('#register_ask_tr').show()" {if !empty($config['register']['question_enabled'])} checked{/if}/> 开启	<input name="config[register][question_enabled]" type="radio" onclick="$('#register_ask_tr').hide()" value="0" {if empty($config['register']['question_enabled'])} checked{/if}/> 不开启
+					</td>
+				</tr>
+				<tr id="register_ask_tr">
+					<td >验证问题</td>
+					<td class="tdR">
+						<div id="data_copy" style="display: none;">
+								问题：<input  type="text" class="txt" name="" size="38" />  答案：<input  type="text" class="txt" name="" size="38" /><br />
+						</div>
+						<input type="button" value="添加验证问题" onclick="_copy_data()" />
+						<script type="text/javascript">
+						function _copy_data(question, answer){
+							var copy = $('#data_copy').clone().show().attr('id', '');
+							
+							$('input:eq(0)', copy).attr('name', 'safe[questions][]').val(question);
+							$('input:eq(1)', copy).attr('name', 'safe[answers][]').val(answer);
+							$('#register_ask_tr div:last').after(copy);
+						}
+						
+						$(document).ready(function(){
+							<!--{if !empty($config['register_question_enabled'])}-->
+							$('#register_ask_tr').show();
+							<!--{else}-->
+							$('#register_ask_tr').hide();
+							<!--{/if}-->
+							<!--{if !empty($safe)}-->
+							<!--{foreach $safe $question $answer}-->
+							_copy_data('$question', '$answer');
+							<!--{/foreach}-->
+							<!--{/if}-->
+						});
+						</script>
+							</td>
+					</tr>
+				-->
+				
+				<tr>
+					<td class="tdL">禁止注册的用户名</td>
+					<td class="tdR">
+						<textarea name="config[reg_disallow_username]" rows="5" cols="80">{if !empty($config['reg_disallow_username'])}{$config['reg_disallow_username']}{/if}</textarea>
+						<br><span class="point">以半角"|"分隔,可以禁止以***开头的用户名 ，如 奥巴马|金正日|郭台铭</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">注册通知</td>
+					<td class="tdR">
+						<input name="config[register][message]" type="checkbox" value="1" {if !empty($config['register']['message'])} checked{/if}/> 站内短信息   
+						<input name="config[register][email]" type="checkbox" value="1" {if !empty($config['register']['email'])} checked{/if}/> 邮件
+						<input name="config[register][sms]" type="checkbox" value="1" {if !empty($config['register']['sms'])} checked{/if}/> 手机短信
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">
+						通知内容格式
+					</td>
+					<td class="tdR" valign="top">
+						标题：<input type="text" class="txt2" name="config[register][title]" value="{if !empty($config['register']['title'])}{$config['register']['title']}{/if}" size="50"/><br/>
+						内容：<textarea name="config[register][notice]" rows="5" cols="80"><!--{if !empty($config['register']['notice'])}-->{$config['register']['notice']}<!--{/if}--></textarea>
+						<br/>系统发送的欢迎信息的内容。标题内容均支持变量替换，可以使用如下变量:<br />
+						{username} : 用户名/帐号<br />
+						{time} : 发送时间<br />
+						{sitename} : 站点名称<br />
+						{password} : 密码
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div style="text-align:center;"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

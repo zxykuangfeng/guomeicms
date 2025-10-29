@@ -1,0 +1,67 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999	/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}uploader/css.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+<style type="text/css">
+#menu{border: 1px solid #8CB8EA; position: absolute; background-color: #ffffff; padding: 5px; display: none; z-Index: 1000; }
+#menu li{cursor: pointer;}
+a:link, a:visited { color:#000; text-decoration:none; }
+a:hover { color:#ff0000; text-decoration:underline; }
+#show {display: none;z-index: 999;width: 270px;height: 286px;max-width: 540px;max-heigh:286px;overflow: hidden;position: absolute;border:1px solid #008000;}
+</style>
+</head>
+
+<body>
+<form action="" method="get">
+	<div class="search_box">
+		<input type="text" class="txt" name="keyword" size="8" value="{$keyword}" placeholder="关键字" onFocus="if(this.value=='关键字') this.value='';" autocomplete="off" x-webkit-speech="" speech="" />
+		<input type="hidden" name="type" value="{$type}"/>
+		<input type="submit" value="{$P8LANG['search']}" class="submit"/>
+		<input type="button" value="{$P8LANG['refresh']}" class="refreshbtn" onclick="window.location.reload();" />
+		<input type="button" value="{$P8LANG['local_upload']}" class="uploadbtn" onclick="window.location.href='{$this_router}-upload?system=core&module=label&count=-2&content_thumb_width=0&content_thumb_height=0&store=1&store_type={$type}';" />
+		<span class="help" title="{$this_dir}">查看资料库路径</span>
+	</div>
+</form>	
+<ul id="menu">
+	<li><a href="###" target="_blank">$P8LANG[view]</a></li>
+	<li><a href="###" target="_blank">$P8LANG[rename]</a></li>
+	<li><a href="###">$P8LANG[delete]</a></li>
+</ul>
+
+<div id="items">
+	<!--{foreach $list $key $value}-->
+	<a href="###" class="item" id="list_{$value['id']}" title="尺寸:$value[imagewidth] x $value[imageheight]&#13;双击查看原图" data-width="$value[imagewidth]" data-height="$value[imageheight]" alt="$value[remote]" size="$value[size]">
+		<div class="icon">
+			<div class="time">{date('Y-m-d H:i', $value['timestamp'])}</div>
+		</div>
+		<div class="name">$value[filename]</div>
+		<div class="size">$value[size]</div>
+		<em>$value[path]</em>
+		<b>$value[thumb]</b>
+	</a>
+	<!--{/foreach}-->
+</div>
+<div style="clear: both;" align="center" class="pages">$pages</div>
+<div id="show" style=""></div>
+<script type="text/javascript">
+var attachment_url = '{$core.attachment_url}';
+var remote_attachment_urls = $remote_attachment_urls;
+var system = '$system';
+var module = '$module';
+</script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/uploader/browse.js"></script>
+</body>
+</html>
+<!--{/php168}-->

@@ -1,0 +1,88 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<form action="$this_url" method="POST" onsubmit="check_privileges()">
+	<div class="mainbox mainborder">
+		<div class="section" style="margin:0;">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="columntable formtable">
+							<tr>
+								<td class="title">设置前台权限</td>
+							</tr>
+							<tr>
+								<td class="headerbtn_list">
+									<ul style="background: #D5E9FF;">
+											<li class="{if $SYSTEM == 'core'}active{/if}">
+												<a href="{$core.admin_controller}/core-set_acl?role_id=$role_id"><i class="fa fa-cogs"></i> {$P8LANG['core']}</a>
+											</li>
+											<!--{foreach $core->systems $k $v}-->
+											<li class="{if $SYSTEM == $k}active{/if}">
+												<a href="{$core.admin_controller}/$k-set_acl?role_id=$role_id"><i class="fa fa-cogs"></i> {$v['alias']}</a>
+											</li>
+											<!--{/foreach}-->
+									</ul>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table class="columntable formtable">
+							<tbody class="privileges">
+								<!--{template $role acl_action admin}-->
+								<!--{foreach $acls $module $_acl}-->
+								<!--{template $role acl_module_action admin}-->
+								<!--{/foreach}-->								
+							
+							<!--{if $SYSTEM == 'core'}-->
+							<tr>
+								<td class="tdL role_name">
+									<strong><label for="acl_$module">编辑器发布的HTML标签</label></strong>									
+								</td>
+							</tr>
+							<tr>
+								<td class="tdR">
+									<table border="0" cellpadding="0" cellspacing="0" class="role_actions">
+										<tr>
+											<td class="actions_list clear_border_bottom" style="padding-left: 40px;">							
+												$P8LANG[allow_html]
+												<input type="text" name="acl[allow_tags]" value="{if !empty($acl['allow_tags'])}{implode('|', $acl['allow_tags'])}{/if}" size="60" />
+												$P8LANG[editor_tags_note]<br>
+												$P8LANG[deny_html]
+												<input type="text" name="acl[disallow_tags]" value="{if !empty($acl['disallow_tags'])}{implode('|', $acl['disallow_tags'])}{/if}" size="60" />
+												$P8LANG[editor_tags_note]
+											</td>
+										</tr>
+									</table>
+								</td>
+							</tr>
+							<!--{/if}-->							
+							</tbody>
+						</table>
+					</td>
+				</tr>
+			</table>
+			<table align="center" border="0" cellpadding="0" cellspacing="0" class="columntable formtable">
+				<tr><td class="tdR" align="center">
+					<input type="hidden" name="role_id" value="{if !empty($role_id)}$role_id{/if}" />
+					<input type="submit" name="submit" value="确定" class="edit_btn" />
+					<input type="reset" name="rest" value="重置" class="edit_btn"/>
+				</td></tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+function check_privileges(){
+	$('.privileges input[type=checkbox]').each(function(i){
+		if(!this.checked){
+			this.checked = true;
+			this.value = 0;
+		}
+	});
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

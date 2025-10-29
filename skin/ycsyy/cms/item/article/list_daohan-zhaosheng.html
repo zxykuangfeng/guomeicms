@@ -1,0 +1,49 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<!--中间内容部分-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<div class="breadbanner">
+	<div class="container">
+		<div class="fluid">
+			<div class="bigbanner">
+				$label[bigbanner_daohan_zhaosheng]
+			</div>
+			<div class="banner_title">
+				<h2>$CAT[name]</h2> 
+			</div>
+		</div>
+	</div>
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="education clearfix">
+			<div class="edubox">
+				<div class="page-header">
+					<div class="edtit fl">$CAT[name]</div>
+					<div class="position fr">
+						<a href="{$core.controller}">首页</a>
+						<!--{foreach $parent_cats $v}-->
+						&gt; <a href="$v[url]">$v[name]</a>
+						<!--{/foreach}-->
+						&gt; <a href="$CAT[url]">$CAT[name]</a> 
+					</div>
+					<div class="clearfix"></div>
+				</div>
+				<div class="educon">
+					<div class="row">
+						<div class="edu-left fl">	
+							$label[list_edu_con2_zhaosheng]
+						</div>
+						<div class="edu-right2 fr">
+							<div class="edupic2">
+								$label[bigbanner_daohan2]
+							</div>
+						</div>
+					</div>	
+				</div>	
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

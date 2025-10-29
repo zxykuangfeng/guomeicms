@@ -1,0 +1,27 @@
+<!--{php168}-->
+<script type="text/javascript" src="{$RESOURCE}/js/login.js?rid=<!--{php echo P8_TIME;}-->"></script>
+<span id="login_info" {if !$UID}style="display:none"{/if} >
+	<span style="margin-left:10px;"><a href="{$core.U_controller}"><font color="#FF7F04"><b class="username">{if $UID}<!--{php if(!empty($this_module->role_name))echo $this_module->role_name;else echo $this_module->username;}--> {/if}</b></font></a>&nbsp;<a class="rolename"></a> 欢迎您回来！&nbsp;&nbsp;<a href="{$core.U_controller}">会员中心</a> 
+	<a href="{$core.U_controller}?main_page={urlencode('/message-inbox?message_type=new')}" {if empty($this_module->new_messages)}style="display:none"{/if} target="_blank"><font color="red" >你有新信息(<u class="new_messages">{$this_module.new_messages}</u>)</font></a> 
+	<a href="{$core.U_controller}/member-logout">安全退出</a></span>
+</span>
+<span id="login_link" {if $UID}style="display:none"{/if}>
+<form method="post" id="form" action="{$core.U_controller}/member-login">
+	<span>用户名：</span><input type="text" name="username" id="username" value="" class="input common_input_border"/>
+	<span>密码：</span>
+	<input type="password" name="tmppd" autocomplete="off" value="" id="tmppd" class="input common_input_border" 
+	onfocus="javascript:$('#forward').attr('value',window.location.href)" />
+	<!--{if !empty($this_module->CONFIG['login_with_captcha'])}-->
+	<span>验证码:</span><input name="captcha" type="text" id="captcha" class="input common_input_border" size="10" /> <span id="captcham"></span>
+		<script type="text/javascript">
+		captcha($('#captcham'), $('#captcha'));
+		</script>
+	<!--{/if}-->	
+	<input type="button" value="登录" class="submit pointer" onclick="validpwd();"/>
+	<input type="hidden" name="password" autocomplete="off" id="password" value="" />
+	<input type='hidden' name='forward' id='forward' value="javascript:window.location.href"><span>
+	<a href="{$core.controller}/member-register">注册</a> | <a href="{$core.controller}/member-getpassword">忘记密码</a> </span>
+	<span>$plugin[qqconnect]</span>
+</form>
+</span>
+<!--{/php168}-->

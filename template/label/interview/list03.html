@@ -1,0 +1,16 @@
+<!--{php168}-->
+<ul class="label_pic_com_ul">
+	<!--{foreach $list $value}-->
+	<li style="$wf;">
+		<a href="$value[url]" target="_blank" title="$value[full_title]"><img width="120" height="90" alt="$value[full_title]" onError="this.src='$RESOURCE/images/nopic.jpg'" src="{if empty($value['frame'])}{$RESOURCE}/images/nopic.jpg{else}$value[frame]{/if}" /></a>
+		<p>访谈主题：<a href="$value[url]" target="_blank" title="$value[full_title]"><b>$value[title]</b></a></p>
+		<p>邀请嘉宾：$value[gname]</p>
+		<p>访谈时间：<!--{php echo date('Y-m-d', $value[begintime]);}--></p>
+		<p class="label_summary">访谈概要：$value[summary]<span class="cDRed"><a href="$value[url]" target="_blank">[详细]</a></span></p>
+		<p class="clear"></p>
+	</li>
+	<!--{/foreach}-->
+	<li class="clear"></li>
+</ul>
+<!--{/php168}-->
+

@@ -1,0 +1,12 @@
+-- <?php exit;?>
+
+ALTER TABLE  `p8_46_` ADD  `manager` VARCHAR( 255 ) NOT NULL;
+REPLACE INTO `p8_46_` VALUES ('1','首页对联广告','scroll','none','0','0','1','0','0','110','300','couplet_flash','1292218528','1','1','1','');
+REPLACE INTO `p8_46_` VALUES ('3','右下角滚动图片','scroll','none','0','0','1','0','0','196','132','scroll_image','1292225236','1','1','1','');
+REPLACE INTO `p8_46_` VALUES ('2','首页顶部拉下式广告','effect','none','0','0','2','0','0','957','335','slide_down_image','1292222255','1','1','1','');
+REPLACE INTO `p8_46_` VALUES ('7','漂浮广告','fly','none','1','0','1','0','0','304','130','','1371742877','1','1','1','');
+REPLACE INTO `p8_46_buy` VALUES ('7','1','1','admin','1','1','0','0','1366793945','0','','','255','a:6:{s:3:\"url\";s:30:\"http://www.php168.net/html/16/\";s:4:\"left\";s:61:\"<!--#p8_attach#-->/core/46/2010_12/13_15/d22a4e61531cd26d.swf\";s:5:\"right\";s:61:\"<!--#p8_attach#-->/core/46/2010_12/13_15/d22a4e61531cd26d.swf\";s:3:\"top\";s:3:\"100\";s:6:\"bottom\";s:0:\"\";s:6:\"margin\";s:0:\"\";}','0');
+REPLACE INTO `p8_46_buy` VALUES ('2','2','1','admin','0','0','0','0','1292222325','0','','','255','a:4:{s:5:\"media\";s:61:\"<!--#p8_attach#-->/core/46/2010_12/13_15/1577ef0cc093e399.jpg\";s:5:\"thumb\";s:0:\"\";s:4:\"name\";s:6:\"PHP168\";s:3:\"url\";s:22:\"http://www.php168.net/\";}','1323758647');
+REPLACE INTO `p8_46_buy` VALUES ('3','3','1','admin','0','0','0','0','1292225285','0','','','255','a:6:{s:3:\"url\";s:22:\"http://www.php168.net/\";s:4:\"left\";s:61:\"<!--#p8_attach#-->/core/46/2015_08/18_22/9b1567174f8d174b.png\";s:5:\"right\";s:50:\"http://img.alimama.cn/cms/images/1291620869457.jpg\";s:3:\"top\";s:0:\"\";s:6:\"bottom\";s:1:\"0\";s:6:\"margin\";s:1:\"5\";}','0');
+REPLACE INTO `p8_46_buy` VALUES ('9','7','1','admin','1','1','0','0','1371742971','0','','','255','a:3:{s:4:\"name\";s:12:\"漂浮广告\";s:5:\"media\";s:61:\"<!--#p8_attach#-->/core/46/2020_03/03_15/b17f76894fd9a0e5.png\";s:3:\"url\";s:22:\"http://www.php168.net/\";}','0');
+REPLACE INTO `p8_46_buy` VALUES ('5','2','1','admin','0','0','0','0','1346260005','0','','','255','a:4:{s:5:\"media\";s:61:\"<!--#p8_attach#-->/core/46/2012_08/30_01/cd561aa4351d190c.jpg\";s:5:\"thumb\";s:0:\"\";s:4:\"name\";s:0:\"\";s:3:\"url\";s:3:\"345\";}','0');

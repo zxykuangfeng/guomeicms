@@ -1,0 +1,39 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="list_box">
+			<div class="head">
+				<span $class[1]><a href="$this_router-add?v=1">发布内容</a></span>
+                <span $class[0]><a href="$this_router-list?v=0">栏目预览</a></span>
+				<div class="course">
+					<ul class="operation-nav">
+						<li>
+							<a style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 发布教程>></a>
+							<ul class="dropdown-menu">
+								<li class="btn-color1"><a href="{$RESOURCE}/attachment/jiaocheng/zhuzhanfabu.pdf" target="_blank" ><i class="icon icon-ico55"></i>常用稿件教程</a></li>
+								<li class="btn-color2"><a href="{$RESOURCE}/attachment/jiaocheng/dangwangye.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>单网页教程</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+        </div>
+
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table" >
+			<tr class="head">
+				<td>模型</td>
+				<td>发布</td>
+			</tr>
+			<!--{foreach $models $k $v}-->	
+			<tr>
+				<td>{$v['alias']}</td>
+				<td><a href="$this_router-add?model=$k" target="_blank" class="fabu">发布</a></td>
+			</tr>
+			<!--{/foreach}-->
+		</table>
+	</div>
+</div>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

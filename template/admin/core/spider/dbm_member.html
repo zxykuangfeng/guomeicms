@@ -1,0 +1,168 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<!--{template $this_module dbm_menu admin}-->
+<form action="$this_url" method="post" id="request">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">
+			<tr class="title fix_head">
+				<td colspan="2" class="title">字段映射关系配置</td>
+			</tr>
+			<tr>
+				<td class="tdL">数据源</td>
+				<td class="tdR">
+					{if $dbm_config['_db_name']}数据库：{$dbm_config['_db_name']}{/if}
+					{if $dbm_table_config['db_member']} 数据表：{$dbm_table_config['db_member']}{else}暂无{/if}
+					<a style="color:blue"  href="{$this_router}-dbm_table" target="_blank">修改配置</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">用户名 <font color="red">*</font></td>
+				<td class="tdR">
+					<select name="username">
+						<option value="">请选择映射字段</option>
+						<!--{foreach $struct $s}-->
+						<option value="{$s['Field']}" {if $config['username'] == $s['Field']}selected{/if}>{$s['Field']} {$s['Comment']}</option>
+						<!--{/foreach}-->
+					</select>
+					用户名唯一
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">初始新密码</td>
+				<td class="tdR"><input name="password" value="Admin!@#123" /> 默认为：Admin!@#123，需大写、小写、数字、特殊符号( 特殊符号只能设一个)组成，位数不少于10位。</td>
+			</tr>
+			<tr>
+				<td class="tdL">真实姓名</td>
+				<td class="tdR">
+					<select name="name">
+						<option value="">请选择映射字段</option>						
+						<!--{foreach $struct $s}-->
+						<option value="{$s['Field']}" {if $config['name'] == $s['Field']}selected{/if}>{$s['Field']} {$s['Comment']}</option>
+						<!--{/foreach}-->
+					</select>
+					用户真实中文姓名
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">邮箱E-mail</td>
+				<td class="tdR">
+					<select name="email">
+						<option value="">请选择映射字段</option>
+						<!--{foreach $struct $s}-->						
+						<option value="{$s['Field']}" {if $config['email'] == $s['Field']}selected{/if}>{$s['Field']} {$s['Comment']}</option>
+						<!--{/foreach}-->
+					</select>
+					邮箱唯一，无邮箱则系统自动生成随机邮箱
+				</td>
+			</tr>			
+			<tr>
+				<td class="tdL">{$P8LANG['role_group']}</td>
+				<td class="tdR">
+					<select name="role_gid" onchange="change_group(this.value)" id="role_group">
+					</select>
+					<span class="point">选择此用户属于哪个角色组</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['role']}</td>
+				<td class="tdR">
+					<select name="role_id" id="role">
+					</select>
+					<span class="point">选择此用户属于哪个角色</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">管理员</td>
+				<td class="tdR">
+					<input type="checkbox" name="is_admin" value="1"{if !empty($config['is_admin'])} checked{/if} />
+					此身份之人可登录后台。
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">筛选条件</td>
+				<td class="tdR">
+					<input name="where" value="{if $config['where']}{$config['where']}{/if}" /> 如`id`>=5 适用于数据太多时可分批次导入或其它筛选 {if $dbm_table_config['db_member']}<a style="color:blue" href="{$this_router}-dbm_struct?name={$dbm_table_config['db_member']}" target="_blank">查看数据结构</a>{/if}
+				</td>
+			</tr>
+			<tr>
+			  <td class="tdL">调试/预览<br/>(只取代表性的一个数据)</td>
+			  <td class="tdR"><div id="preview" style="display:none;width:640px;max-width:640px;overflow-x:scroll;"></div></td>
+			</tr>
+			<tr>
+			  <td class="tdL">操作步骤</td>
+			  <td class="tdR">
+				<input type="hidden" id="action" name="action" value="config"/>
+				请按步骤操作：
+				<input type="button" onclick="dbm_action_config('config')" value="3.1{$P8LANG['config']}" class="submit_btn"/><span style="font-weight:700;font-size:14px;"> --> </span>
+				<input type="button" onclick="dbm_action_config('test')" value="3.2导入数据预览" class="submit_btn"/><span style="font-weight:700;font-size:14px;"> --> </span>
+				<input type="button" onclick="dbm_action_config('import')" value="3.3正式导入会员" class="submit_btn"/></td>
+		  </tr>		  
+		</table>		
+	</div>
+</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">			
+			<tr>
+				<td class="title">应用场景说明</td>
+			</tr>
+			<tr>
+				<td>
+					1、当需要将某个使用MySQL数据库的系统数据采集入库到本系统中时使用。<br>
+					2、如遇到提示“严正警告！！！您的攻击行为已经被记录在案，我们已保留证据！”，请在全局设置中暂时关闭“开启攻击防护模式”再操作。
+					<a style="color:blue;" href="{$core.admin_controller}/core-global_config" target="_blank">后台全局设置</a>
+				</td>
+			</tr>							
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+$('.mysqlboxmenu li').removeClass('active');
+$(".mysqlboxmenu li:nth-child(5)").addClass("active");
+
+var ROLE_GROUP_JSON = $role_group_json;
+var ROLE_JSON = $role_json;
+<!--{if empty($config['role_gid'])}-->
+init_group(2);
+change_group($('#role_group').val());
+<!--{else}-->
+init_group($config[role_gid]);
+change_group($('#role_group').val(), $config[role_id]);
+<!--{/if}-->
+
+function init_group(selected){
+	for(var i in ROLE_GROUP_JSON){
+		$('<option value="'+ ROLE_GROUP_JSON[i].id +'">'+ ROLE_GROUP_JSON[i].name +'</option>').appendTo($('#role_group')).attr('selected', selected == ROLE_GROUP_JSON[i].id ? true : false);
+	}
+}
+function change_group(gid, selected){
+	$('#role').empty();
+	for(var i in ROLE_JSON){
+		if(ROLE_JSON[i].gid == gid)
+			$('#role').append($('<option value="'+ ROLE_JSON[i].id +'">'+ ROLE_JSON[i].name +'</option>').attr('selected', selected == ROLE_JSON[i].id ? true : false));
+	}
+}
+function dbm_action_config(action){
+	$('#request input[name=action]').val(action);
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize(),
+		type:'POST',
+		dataType: 'text',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({'text':'操作中...'});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			$('#preview').show();
+			$('#preview').html(json);
+			p8_window.alert('{$P8LANG['done_preview']}');
+		}
+	});
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

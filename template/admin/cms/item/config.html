@@ -1,0 +1,674 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<!--{template $core config/menu_bar admin}-->
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<form action="$this_url" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core-static_config"><i class="icon icon-ico10"></i>{$P8LANG['static_config']}</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/cms/item-config"><i class="icon icon-ico26"></i>{$P8LANG['item_content_config']}</a></li>
+							<li class="btn-color3"><a href="{$core.admin_controller}/sites-index?frame=/sites/item-config" target="sites_main"><i class="icon icon-ico30"></i>{$P8LANG['sites_content_config']}</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">{$P8LANG['module_config']}</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['template']}</td>
+					<td class="tdR">
+						<select name="config[template]" id="template">
+						<!--{foreach $core->CONFIG['templates'] $k $v}-->
+							<option value="$k"{if !empty($config['template']) && $config['template'] == $k} selected{/if}>$v</option>
+						<!--{/foreach}-->
+						</select>
+					</td>
+				</tr>
+				<script type="text/javascript">
+				$('#template').change(function(){
+					detect_template({
+						system: SYSTEM,
+						module: MODULE,
+						template: this.value,
+						callback: function(status){
+							if(status == 0){
+								p8_window.alert('模板不存在哦');
+							}
+							ajaxing({action: 'hide'});
+						}
+					});
+				});
+				</script>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['htmlize_alias']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[htmlize]" value="1"{if !empty($config['htmlize'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[htmlize]" value="0"{if empty($config['htmlize'])} checked{/if} />{$P8LANG['N']}
+						<input type="checkbox" name="htmlize_apply_category" value="1" />应用到所有分类
+					</td>
+				</tr>				
+				<tr>
+					<td class="tdL">{$P8LANG['sync_del_html']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[sync_del_html]" value="0"{if empty($config['sync_del_html'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[sync_del_html]" value="1"{if !empty($config['sync_del_html'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">{$P8LANG['sync_del_note']}</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['sync_index_to_html']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[sync_index_to_html]" value="1"{if !empty($config['sync_index_to_html'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[sync_index_to_html]" value="0"{if empty($config['sync_index_to_html'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">{$P8LANG['sync_index_to_html_note']}</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['sync_list_to_html']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[sync_list_to_html]" value="1"{if !empty($config['sync_list_to_html'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[sync_list_to_html]" value="0"{if empty($config['sync_list_to_html'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['set_first_frame']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[first_img_to_frame]" value="1"{if !empty($config['first_img_to_frame'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[first_img_to_frame]" value="0"{if empty($config['first_img_to_frame'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr id="authority">
+					<td class="tdL">{$P8LANG['authority_enable']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[authority]" value="1"{if !empty($config['authority'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[authority]" value="0"{if empty($config['authority'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">{$P8LANG['authority_note']}</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_to_sites_connect']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[cms_to_sites_connect]" value="1"{if !empty($config['cms_to_sites_connect'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[cms_to_sites_connect]" value="0"{if empty($config['cms_to_sites_connect'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">{$P8LANG['cms_to_sites_connect_note']}</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['sites_to_cms_connect']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[sites_to_cms_connect]" value="1"{if !empty($config['sites_to_cms_connect'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[sites_to_cms_connect]" value="0"{if empty($config['sites_to_cms_connect'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">{$P8LANG['sites_to_cms_connect_note']}</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_allow_verify']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[allow_verify]" value="0"{if empty($config['allow_verify'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[allow_verify]" value="1"{if !empty($config['allow_verify'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">{$P8LANG['cms_item_allow_verify_note']}</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_allow_member']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[allow_member]" value="1"{if !empty($config['allow_member'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[allow_member]" value="0"{if empty($config['allow_member'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">{$P8LANG['cms_item_allow_member_note']}</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_allow_digg']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[allow_digg]" value="1"{if !empty($config['allow_digg'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[allow_digg]" value="0"{if empty($config['allow_digg'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_allow_mood']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[allow_mood]" value="1"{if !empty($config['allow_mood'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[allow_mood]" value="0"{if empty($config['allow_mood'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_allow_comment']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[comment][enabled]" value="1"{if !empty($config['comment']['enabled'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[comment][enabled]" value="0"{if empty($config['comment']['enabled'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_allow_order']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[order][enabled]" onclick="open_order(1)" value="1"{if !empty($config['order']['enabled'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[order][enabled]" onclick="open_order(0)" value="0"{if empty($config['order']['enabled'])} checked{/if} />{$P8LANG['N']}
+						<span class="help">{$P8LANG['comment_order_note']}</span>
+					</td>
+				</tr>
+				
+				<tbody id="order_field" style="display:{if !empty($config['order']['enabled'])}{else}none{/if}">
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_order_field_1']}</td>
+					<td class="tdR">
+						<input type="text" name="config[order][field_1]" class="txt" value="{if !empty($config['order']['field_1'])}{$config['order']['field_1']}{else}数量{/if}" size="10" />
+						<input type="checkbox" name="config[order][field_1_enabled]" value="1"{if !empty($config['order']['field_1_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_order_field_2']}</td>
+					<td class="tdR">
+						<input type="text" name="config[order][field_2]" class="txt" value="{if !empty($config['order']['field_2'])}{$config['order']['field_2']}{else}姓名{/if}" size="10" />
+						<input type="checkbox" name="config[order][field_2_enabled]" value="1"{if !empty($config['order']['field_2_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_order_field_3']}</td>
+					<td class="tdR">
+						<input type="text" name="config[order][field_3]" class="txt" value="{if !empty($config['order']['field_3'])}{$config['order']['field_3']}{else}电话{/if}" size="10" />
+						<input type="checkbox" name="config[order][field_3_enabled]" value="1"{if !empty($config['order']['field_3_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_order_field_4']}</td>
+					<td class="tdR">
+						<input type="text" name="config[order][field_4]" class="txt" value="{if !empty($config['order']['field_4'])}{$config['order']['field_4']}{else}手机号{/if}" size="10" />
+						<input type="checkbox" name="config[order][field_4_enabled]" value="1"{if !empty($config['order']['field_4_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_order_field_5']}</td>
+					<td class="tdR">
+						<input type="text" name="config[order][field_5]" class="txt" value="{if !empty($config['order']['field_5'])}{$config['order']['field_5']}{else}电子邮件{/if}" size="10" />
+						<input type="checkbox" name="config[order][field_5_enabled]" value="1"{if !empty($config['order']['field_5_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_order_field_6']}</td>
+					<td class="tdR">
+						<input type="text" name="config[order][field_6]" class="txt" value="{if !empty($config['order']['field_6'])}{$config['order']['field_6']}{else}快递地址{/if}" size="10" />
+						<input type="checkbox" name="config[order][field_6_enabled]" value="1"{if !empty($config['order']['field_6_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_order_field_7']}</td>
+					<td class="tdR">
+						<input type="text" name="config[order][field_7]" class="txt" value="{if !empty($config['order']['field_7'])}{$config['order']['field_7']}{else}公司名称{/if}" size="10" />
+						<input type="checkbox" name="config[order][field_7_enabled]" value="1"{if !empty($config['order']['field_7_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_comment_code']}</td>
+					<td class="tdR">
+						<input type="text" name="config[order][code]" class="txt" value="{if !empty($config['order']['code'])}{$config['order']['code']}{else}dx_{/if}" size="10" /> 
+						<span class="help">{$P8LANG['comment_code_note']}</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_order_exp']}</td>
+					<td class="tdR" id="exp_type">
+					<!--{foreach $config['exp_type'] $k $v}-->					
+					<!--{if $v['name']}-->
+					<p>物流公司编码：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;
+						<input type="text" name="config[exp_type][code][]" value="{$v[code]}" size="10"/></b>
+					物流公司简称：<input name="config[exp_type][name][]" type="text" value="{$v[name]}"/>					
+					<input name="delete_exp_type[]" value="{$k}" type="checkbox"/>删除
+					</p>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					<span id="more_exp_type"></span>
+					<input type="button" value="添加物流公司" onclick="addtype('exp_type')" />
+					<input type="checkbox" name="" value="" style="margin-left:120px" onclick="javascript:$('#exp_type input[type=checkbox]').prop('checked',$(this).prop('checked'))"/>全选
+					<br/><span style="color:#9f9f9f">说明：物流公司编码必须参考填写：<a href="https://market.aliyun.com/products/57124001/cmapi022273.html?spm=5176.2020520132.101.2.2be87218NgZIqW#sku=yuncode1627300000" target="_blank">查看物流公司及编码</a></span>
+					</td>
+				</tr>
+				</tbody>				
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_comment_verify']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[comment][require_verify]" value="1"{if !empty($config['comment']['require_verify'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[comment][require_verify]" value="0"{if empty($config['comment']['require_verify'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>
+								
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_comment_per_page']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[comment][page_size]"  value="{if !empty($config['comment']['page_size'])}{$config['comment']['page_size']}{else}20{/if}" size="3" />
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_comment_view_per_page']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[comment][view_page_size]"  value="{if !empty($config['comment']['view_page_size'])}{$config['comment']['view_page_size']}{else}5{/if}" size="3" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item_html_list_size']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[html_list_size]"  value="{if !empty($config['html_list_size'])}{$config['html_list_size']}{else}5{/if}" size="3" />
+						<span class="help">{$P8LANG['cms_item_html_list_size_note']}</span>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['dynamic_list_url_rule']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[dynamic_list_url_rule]"  value="{if !empty($config['dynamic_list_url_rule'])}{$config['dynamic_list_url_rule']}{else}{\$module_controller}-list-category-{\$id}#-page-{\$page}#.html{/if}" size="60" />
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['dynamic_view_url_rule']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[dynamic_view_url_rule]"  value="{if !empty($config['dynamic_view_url_rule'])}{$config['dynamic_view_url_rule']}{else}{\$module_controller}-view-id-{\$id}#-page-{\$page}#.html{/if}" size="60" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['navigation']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[list_navigagion]" id="nav" value="{if !empty($config['list_navigagion'])}$config[list_navigagion]{/if}" /><input type="button" value="选择" class="submit_btn" onclick="template_dialog.show()" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['list_page_cache_ttl']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[list_page_cache_ttl]"  value="{if !empty($config['list_page_cache_ttl'])}{$config['list_page_cache_ttl']}{else}0{/if}" size="4" />
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['view_page_cache_ttl']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[view_page_cache_ttl]"  value="{if !empty($config['view_page_cache_ttl'])}{$config['view_page_cache_ttl']}{else}0{/if}" size="4" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['menu_show']} <span class="help">说明：如果不想在后台显示这些按钮，就选择”否”</span></td>
+					<td class="tdR">
+						<p>温馨提示：设置为显示后必须同时有管理权限才能显示相应按钮/操作组合！</p>
+						<ul class="button_set">
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['move']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_move]" value="1"{if !empty($config['menu_move'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_move]" value="0"{if empty($config['menu_move'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['verify']['']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_verify]" value="1"{if !empty($config['menu_verify'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_verify]" value="0"{if empty($config['menu_verify'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['verify_first']['']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_verify_first]" value="1"{if !empty($config['menu_verify_first'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_verify_first]" value="0"{if empty($config['menu_verify_first'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['set_score']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_set_score]" value="1"{if !empty($config['menu_set_score'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_set_score]" value="0"{if empty($config['menu_set_score'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['htmlize']['view']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_htmlize_view]" value="1"{if !empty($config['menu_htmlize_view'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_htmlize_view]" value="0"{if empty($config['menu_htmlize_view'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['htmlize']['mobile']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_htmlize_mobile]" value="1"{if !empty($config['menu_htmlize_mobile'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_htmlize_mobile]" value="0"{if empty($config['menu_htmlize_mobile'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>							
+							<!--{if $clustered && $sites_enable}-->
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['cluster_push']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_cluster_push]" value="1"{if !empty($config['menu_cluster_push'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_cluster_push]" value="0"{if empty($config['menu_cluster_push'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<!--{/if}-->
+							<!--{if $sites_enable}-->
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['sites_push']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_sites_push]" value="1"{if !empty($config['menu_sites_push'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_sites_push]" value="0"{if empty($config['menu_sites_push'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['cms_sites_push']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_cms_sites_push]" value="1"{if !empty($config['menu_cms_sites_push'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_cms_sites_push]" value="0"{if empty($config['menu_cms_sites_push'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<!--{/if}-->
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['clone']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_clone]" value="1"{if !empty($config['menu_clone'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_clone]" value="0"{if empty($config['menu_clone'])} checked{/if} />{$P8LANG['Y']}
+								</span>							
+							</li>
+							<li>						
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['list_order']['up']}/{$P8LANG['cms_item']['list_order']['down']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_list_order]" value="1"{if !empty($config['menu_list_order'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_list_order]" value="0"{if empty($config['menu_list_order'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['delete']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_delete]" value="1"{if !empty($config['menu_delete'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_delete]" value="0"{if empty($config['menu_delete'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>					
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['download']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_download]" value="1"{if !empty($config['menu_download'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_download]" value="0"{if empty($config['menu_download'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_item']['verify_frame_alias']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_verify_frame]" value="1"{if !empty($config['menu_verify_frame'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_verify_frame]" value="0"{if empty($config['menu_verify_frame'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r">[{$P8LANG['cms_item']['level']}]操作组合</span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_level]" value="1"{if !empty($config['menu_level'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_level]" value="0"{if empty($config['menu_level'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r">[{$P8LANG['cms_item']['attribute']['']}]操作组合</span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_attribute]" value="1"{if !empty($config['menu_attribute'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_attribute]" value="0"{if empty($config['menu_attribute'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['menu_category_show']} <span class="help">说明：如果不想在后台显示这些按钮，就选择”否”</span></td>
+					<td class="tdR">
+						<ul class="button_set">
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_set_htmlize']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_cms_set_htmlize]" value="1"{if !empty($config['menu_cms_set_htmlize'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_cms_set_htmlize]" value="0"{if empty($config['menu_cms_set_htmlize'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_set_unhtmlize']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_cms_set_unhtmlize]" value="1"{if !empty($config['menu_cms_set_unhtmlize'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_cms_set_unhtmlize]" value="0"{if empty($config['menu_cms_set_unhtmlize'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_conten_htmlize']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_cms_conten_htmlize]" value="1"{if !empty($config['menu_cms_conten_htmlize'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_cms_conten_htmlize]" value="0"{if empty($config['menu_cms_conten_htmlize'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_conten_unhtmlize']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_cms_conten_unhtmlize]" value="1"{if !empty($config['menu_cms_conten_unhtmlize'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_cms_conten_unhtmlize]" value="0"{if empty($config['menu_cms_conten_unhtmlize'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+							<li>
+								<span class="text_r"><input type="button" class="edit_btn" value="{$P8LANG['cms_html_all']}" /></span>
+								<span class="opion_radio">
+									<input type="radio" name="config[menu_cms_html_all]" value="1"{if !empty($config['menu_cms_html_all'])} checked{/if} />{$P8LANG['N']}
+									<input type="radio" name="config[menu_cms_html_all]" value="0"{if empty($config['menu_cms_html_all'])} checked{/if} />{$P8LANG['Y']}
+								</span>
+							</li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['verify_frame_setting']}</td>
+					<td class="tdR">
+					<input type="checkbox" name="config[verify_frame_editable]" id="verify_frame_editable" value="1" {if !empty($config['verify_frame_editable'])} checked{/if}/> <label for="verify_frame_editable"> {$P8LANG['cms_item']['field_show']}</label><br>
+					<input type="checkbox" name="config[verify_frame_required]" id="verify_frame_required" value="1" {if !empty($config['verify_frame_required'])} checked{/if}/> <label for="verify_frame_required"> {$P8LANG['cms_item']['field_required']}</label><br>
+					<input type="checkbox" name="config[verify_frame_show]" id="verify_frame_show" value="1" {if !empty($config['verify_frame_show'])} checked{/if}/> <label for="verify_frame_show"> {$P8LANG['cms_item']['menu_ucenter_show']}</label></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['author_setting']}</td>
+					<td class="tdR"><input type="checkbox" name="config[author_required]" id="author_required" value="1" {if !empty($config['author_required'])} checked{/if}/> <label for="author_required"> {$P8LANG['cms_item']['field_required']}</label></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['source_init']}</td>
+					<td class="tdR" id="source_box">
+					<input type="checkbox" name="config[source_required]" id="source_required" value="1" {if !empty($config['source_required'])} checked{/if}/> <label for="source_required"> {$P8LANG['cms_item']['field_required']}</label><br/>
+					<!--{foreach $config['source'] $k $v}-->
+					<p>{$P8LANG['cms_item']['source_name']}：<input type="text" class="txt" name="source[name][]" value="{$v[name]}" size="10"/></b>
+					{$P8LANG['cms_item']['source_url']}：<input type="text" name="source[url][]" class="txt" value="{$v[url]}" size="30"/>					
+					<input name="source_delete[]" value="{$k}" type="checkbox"/>{$P8LANG['delete']}
+					</p>
+					<!--{/foreach}-->
+					<span id="more_source"></span>
+					<input type="button" value="添加内容出处" onclick="addsource('source')" />
+					<input type="checkbox" name="" value="" style="margin-left:120px" onclick="javascript:$('#source_box input[type=checkbox]').prop('checked',$(this).prop('checked'))"/>全选
+					<br><span class="help">{$P8LANG['cms_item']['source_note']}</span>					
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['score_init']}</td>
+					<td class="tdR" id="score_level_box">
+					<!--{foreach $config['score_level'] $k $v}-->
+					<!--{if $v['name']}-->
+					<p>{$P8LANG['cms_item']['score_num']}：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;
+						<input type="text" name="score_level[code][]" value="{$v[code]}" size="5"/></b>
+					{$P8LANG['cms_item']['score_level']}：<input name="score_level[name][]" type="text" value="{$v[name]}"/>					
+					<input name="delete[]" value="{$k}" type="checkbox"/>{$P8LANG['delete']}
+					</p>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					<span id="more_score_level">{$P8LANG['cms_item']['score_config']}</span>
+					<input type="button" value="添加评分级别" onclick="addmore('score_level')" />
+					<input type="checkbox" name="" value="" style="margin-left:120px" onclick="javascript:$('#score_level_box input[type=checkbox]').prop('checked',$(this).prop('checked'))"/>全选
+					<br><span class="help">{$P8LANG['cms_item']['score_note']}</span>					
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['sphinx_enabled']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[sphinx][enabled]" value="1"{if !empty($config['sphinx']['enabled'])} checked{/if} onclick="$('#sphinx').show()" />{$P8LANG['Y']}
+						<input type="radio" name="config[sphinx][enabled]" value="0"{if empty($config['sphinx']['enabled'])} checked{/if} onclick="$('#sphinx').hide()" />{$P8LANG['N']}
+						<span class="help">{$P8LANG['sphinx_note']}</span>
+					</td>
+				</tr>
+				
+				<tbody id="sphinx">
+				<tr>
+					<td class="tdL">{$P8LANG['sphinx_host']}</td>
+					<td class="tdR"><input type="text" class="txt" name="config[sphinx][host]"  value="{if !empty($config['sphinx']['host'])}{$config['sphinx']['host']}{else}localhost{/if}" /></td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['sphinx_port']}</td>
+					<td class="tdR"><input type="text" class="txt" name="config[sphinx][port]"  value="{if !empty($config['sphinx']['port'])}{$config['sphinx']['port']}{else}3312{/if}" size="5" /></td>
+				</tr>
+				</tbody>				
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['do_not_rearch_category']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" id="option_category" name="config[deny_cids]" value="{if !empty($config['deny_cids'])}<!--{php if(is_array($config['deny_cids']))$config['deny_cids'] = implode(',', $config['deny_cids']);echo $config['deny_cids'];}-->{/if}" onchange="category_path(this.value.split(','))" />
+						<input type="button" value="选择栏目" onclick="dialog.show()" />
+						<div id="category_path"></div>
+						<input type="hidden" id="categories" />
+					</td>
+				</tr>
+
+				<tr>
+					<td class="tdL">{$P8LANG['cms_item']['attribute']['config']}</td>
+					<td class="tdR">
+						<!--{foreach $this_module->attributes $aid $v}-->
+						<!--{if in_array($aid,array('9','10','11','12','13'))}-->
+							<input type="hidden" name="config[attributes][$aid]" value="{$P8LANG['cms_item']['attribute'][$aid]}" readonly />
+							<input type="hidden" name="config[attributes_show][$aid]" value="1" checked />
+						<!--{else}-->
+							<div><label>{$P8LANG['cms_item']['attribute']['']}{$aid}：</label><input type="text" name="config[attributes][$aid]" class="txt" value="{if $config[attributes][$aid]}{$config[attributes][$aid]}{else}{$P8LANG['cms_item']['attribute'][$aid]}{/if}" />
+							 <input type="checkbox" name="config[attributes_show][$aid]" value="1"{if !empty($config['attributes_show'][$aid])} checked{/if} /> {$P8LANG['hide']}
+							</br></div>
+						<!--{/if}-->
+						<!--{/foreach}-->
+					</td>
+				</tr>
+				
+				<tr>
+					<td colspan="2">
+						<div style="text-align:center;"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+$('#sphinx')[$('input[name="config[sphinx][enabled]"][value=1]').prop('checked') ? 'show' : 'hide']();
+var template_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 600,
+	height: 300,
+	ok: function(){
+		$('#nav').val(template_selector.value);
+	},
+	show: function(){
+		template_selector.init();
+	}
+});
+
+var template_selector = new Template_Selector({
+	base_dir: '/label/cms/navigation/',
+	selected: $('#nav').val(),
+	template_dir: '{$core.CONFIG['template_dir']}',
+	dialog: template_dialog
+});
+function addmore(kind){
+	$('#more_'+kind).append('<p>{$P8LANG[cms_item][score_num]}：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;<input type="text" name="'+kind+'[code][]" value="" size="5"/></b>&nbsp;{$P8LANG[cms_item][score_level]}：<input name=\"'+kind+'[name][]\" type=\"text\" /><input type="button" value="移除" onclick="removeItem(this)"/></p>');
+}
+function addtype(kind){
+	$('#more_'+kind).append('<p>物流公司编码：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;<input type="text" name="config[exp_type][code][]" value="" size="10"/></b>&nbsp;物流公司简称：<input name=\"config[exp_type][name][]\" type=\"text\" /><input type="button" value="移除" onclick="removeItem(this)"/></p>');
+}
+function addsource(kind){
+	$('#more_'+kind).append('<p>{$P8LANG[cms_item][source_name]}：<input type="text" class="txt" name="'+kind+'[name][]" value="" size="10"/></b>&nbsp;{$P8LANG[cms_item][source_url]}：<input class="txt" name=\"'+kind+'[url][]\" type="text" size="30" /><input type="button" value="移除" onclick="removeItem(this)"/></p>');
+}
+function removeItem(obj){
+	$(obj).parent().remove();
+}
+function open_order(status){
+	if(status)
+		$('#order_field').show();
+	else
+		$('#order_field').hide();
+}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 300,
+	ok: function(){
+		var values = cs.get_value();
+		$('#form input[name="config[deny_cids]"]').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$this_system.controller}/category-json',
+	values: $('#form input[name="config[deny_cids]"]').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			//item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

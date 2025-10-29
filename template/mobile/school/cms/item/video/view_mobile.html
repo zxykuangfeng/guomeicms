@@ -1,0 +1,59 @@
+<!--{php168}-->
+<!--{template $this_system seo}-->
+<!--{template $core header}-->
+<div class="actnav">
+	<a class="gobk fl" href="javascript:history.go(-1);">&lt; &lt; 返回</a>
+    <span>$CAT[name]</span>
+	<div class="load fr">
+		<!--{if !empty($next_item[subject])}-->
+		<a href="$next_item[url]" title="$next_item[title]">下一篇</a>
+		<!--{else}-->
+		没有了
+		<!--{/if}-->
+	</div>
+</div>
+<div class="actcon">
+    
+    <div class="Con fontsizebox"> 
+       <script type="text/javascript" src="{$RESOURCE}/js/media.js"></script>
+		<!--{if !empty($data['video_url'])}-->
+		<script type="text/javascript">
+		showMedia({
+			url: "{$data['video_url']}",
+			width: $data[video_width],
+			height: $data[video_height],
+			image: '$data[frame]'.replace(/\.thumb\.jpg/, ''),
+		});
+		</script>
+		<!--{/if}-->
+    </div>
+	<div >
+        <h1>$data[title]</h1>
+		<div>$data[content]</div>
+    </div>
+	<div class="pager">
+		<p>上一篇：> >
+		<!--{if !empty($prev_item[subject])}-->
+		<a href="$prev_item[url]" title="$prev_item[title]">$prev_item[subject]</a>
+		<!--{else}-->
+		没有了
+		<!--{/if}-->
+		</p> 
+		<p>下一篇：> >
+		<!--{if !empty($next_item[subject])}-->
+		<a href="$next_item[url]" title="$next_item[title]">$next_item[subject]</a>
+		<!--{else}-->
+		没有了
+		<!--{/if}-->
+		</p>
+	</div>
+</div>
+<div id="end_cd">
+	<ul>
+		<li class="lione"><a href="{$core.mobile_controller}">&lt; &lt; 返回首页</a></li>
+		<li class="litwo"></li>
+		<li class="lithree"></li>
+	</ul>
+</div>
+<!--{template $core footer}-->
+<!--{/php168}-->

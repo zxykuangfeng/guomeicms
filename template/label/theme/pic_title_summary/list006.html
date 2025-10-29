@@ -1,0 +1,13 @@
+<!--{php168}-->
+<ul class="label_theme_pic_com_ul6">
+	<!--{foreach $list $value}-->
+	<li>
+		<div class="item clearfix">
+			<div class="pic"><a href="$value[url]" target="_blank" title="$value[full_title]"><img width="190" height="115" class="coverImg" alt="$value[full_title]" onError="this.src='$RESOURCE/images/nopic.jpg'" src="{if empty($value['frame'])}{$RESOURCE}/images/nopic.jpg{else}$value[frame]{/if}" /></a></div>
+			<h3><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></h3>
+			<p class="summary">$value[summary]...</p>
+		</div>
+	</li>
+	<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

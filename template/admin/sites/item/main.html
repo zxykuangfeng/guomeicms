@@ -1,0 +1,727 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/sites/item/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0"  id="x_nav">
+  <tr>
+    <td><img src="{$_SKIN}/nav_z.gif" width="20" height="22" align="absmiddle" /> 
+	<span style="color:#0000ff;font-weight:bold;">当前站点位置：$sitename_alias</span> &gt;
+    <a href="{$this_system.admin_controller}/item-list">所有站群内容</a></td>
+  </tr>
+</table>
+<div class="mainbox mainborder">
+	<table class="zq_list" width="100%" style="text-align:left">
+		<tr>
+			<td class="headerbtn_list">
+				<form action="$this_url" method="get" id="request" onsubmit="request_item(1);return false;">
+					<div>
+						关键字 <input type="text" class="txt" id="cond" size="15" {if strlen($keyword)} name="word" value="$keyword"{elseif !empty($username)}name="username" value="{$username}"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{else} name="word"{/if} />
+						<select name="order">
+							<option value="0" selected="selected">降序</option>
+							<option value="1">升序</option>
+						</select>
+						<select onchange="$('#cond').attr('name', this.value);">
+							<option value="keyword">{$P8LANG['sites_item']['search_by_keyword']}</option>
+							<option value="id"{if !empty($id)} selected{/if}>按内容ID</option>
+							<option value="username"{if !empty($username)} selected{/if}>按作者</option>
+						</select>
+						<input type="submit" value="{$P8LANG['search']}" class="submit" />
+						<input type="button" value="{$P8LANG['refresh']}" class="refresh" onclick="request_item(PAGE)" />
+					</div>
+				</form>
+			</td>
+		</tr>
+	</table>
+</div>
+<form action="$this_url" method="post" id="form">
+<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table" align="center">
+	<tr class="title fix_head">
+		<td width="3%" align="center" class="list_top title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+		<td width="5%" class="list_top title">ID</td>
+		<td width="30%" class="list_top title">{$P8LANG['title']}
+			<a href="#"><img src="{$_SKIN}/up.png" /></a>
+			<a href="#op"><img src="{$_SKIN}/down.png" /></a>
+		</td>
+		<td width="8%" class="list_top title">站点名称</td>
+		<td width="8%" align="center" class="list_top title">{$P8LANG['sites_category_name']}</td>
+		<td width="7%" align="center" class="list_top title">{$P8LANG['sites_model']}</td>
+		<td width="5%" class="list_top title">{$P8LANG['author']}</td>
+		<td width="5%" class="list_top title">{$P8LANG['view']}</td>
+		<td width="10%" class="list_top title" align="center">{$P8LANG['addtime']}</td>
+		<td width="5%" class="list_top title" align="center">{$P8LANG['level']}</td>		
+		<td width="*" class="list_top title" align="center">{$P8LANG['operation']}</td>
+	</tr>
+	
+	<tbody id="list">
+		
+	</tbody>
+</table>
+<table width="100%" class="columntable formtable">
+	<tr>
+		<td align="center" id="pages" class="pages">$pages</td>
+	</tr>
+</table>
+
+<script type="text/javascript">
+var move_item_id = [],
+	clone_item_id = [],
+	verify_item_id = [],
+	up_down_id = [],
+	verified = 1,
+	MODEL = '$MODEL',
+	
+	MODEL_JSON = $model_json,
+	ATTR_JSON = $attr_json,
+	PAGE;
+
+function requestitem(verified,mine,obj){
+	$(obj).parent().siblings().removeClass().addClass('bm_out').end().addClass('bm_over');
+	if(mine)$('#mine').prop('checked', true);
+	verified = verified;
+	$('#verified').val(verified);
+	request_item(verified);
+}
+function request_item(page){
+	
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			PAGE = page;
+			verified = $('#verified').val();
+			
+			$('#list').empty();
+			for(var i in json.list){
+				_list_item(json.list[i]);
+			}
+			
+			$('#pages').html(json.pages);
+			
+			ajaxing({action: 'hide'});
+			
+			window.scrollTo(0, 0);
+			
+			$('input[name=cl]').prop('checked', false);
+			
+			if($('#request input[name=id]').val()){
+				check_all(true, 'id[]');
+			}
+			
+			init_tr($('#form'));
+			
+			var keywords = $.trim($('#request input[name=keyword]').val());
+			if(!keywords.length) return;
+			
+			var keywords = keywords.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+			
+			$('.list_item').each(function(){
+				for(var i = 0; i < keywords.length; i++){
+					var html = $(this).find('.item_title').get(0).innerHTML;
+					$(this).find('.item_title').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+				}
+			});
+			
+		}
+	});
+}
+
+function _list_item(json){
+	
+	var props = ['id', 'cid', 'attributes', 'title', 'push_back_reason', 'model', 'timestamp', 'views', 'level', 'comments', 'username', 'verified', 'pages'];
+	
+	for(var i = 0; i < props.length; i++){
+		if(json[props[i]] === undefined) json[props[i]] = '';
+	}
+	
+	json.otitle = json.title;
+	json.title = '<span class="item_title">'+ json.title +'</span>';
+	json.title_bold == 1 && (json.title = '<b>'+ json.title +'</b>');
+	json.title_color && (json.title = '<font color="'+ json.title_color +'">'+ json.title +'</font>');
+	json.title = '<span style="width: 240px; overflow: hidden; display: inline-block; height: 18px;">'+ json.title +'</span>';
+	var cmp = json.list_order - json.timestamp;
+	if(verified == 1 && cmp != 0){
+		if(cmp > 0){
+			json.title += '<img src="{$_SKIN}/up.png" />';
+			json.otitle += lang_array('{$P8LANG['sites_item']['list_order']['up_to']}', [date('Y-m-d H:i:s', json.list_order)]);
+		}else{
+			json.title += '<img src="{$_SKIN}/down.png" />';
+			json.otitle += lang_array('{$P8LANG['sites_item']['list_order']['down_to']}', [date('Y-m-d H:i:s', json.list_order)]);
+		}
+		
+	}
+	
+	json.model = MODEL_JSON[json.model] || {id: 0, name: MODEL, alias: ''};
+	
+	var attr = json.attributes.split(',');
+	var attrs = '';
+	for(var i in attr){
+		if(!attr[i]) continue;
+		
+		attrs += '<font color="red">'+ ATTR_JSON[attr[i]] +'</font> ';
+	}
+	var this_domain = "{$this_system.domain}";
+	var view_url = json.url;
+	if(this_domain.indexOf('/s.php/')==-1 && json.url.indexOf('http://')==-1 && json.url.indexOf('/s.php/')==-1){
+		view_url = this_domain+json.url;			
+	}else if(json.url.indexOf('http://')==-1 && json.url.indexOf('/s.php/')==-1){
+		view_url = '/sites/html/{$this_system.SITE}'+ json.url;	
+	}
+	var update_link = '{if $allow_update}<a href="$this_router/item-update?model='+ json.model.name +'&id='+ json.id +'&verified='+ json.verified +'" target="_blank" title="{$P8LANG['edit']}" class="ys8">{$P8LANG['edit']}</a>{/if} ';
+	var delete_link = '{if $allow_delete}<a id="delete_'+ json.id +'" href="###" onclick="return delete_item([this.id]);" title="{$P8LANG['delete']}" class="ys6">{$P8LANG['delete']}</a>{/if} ';
+	//var sitename = {$siteses['+ json.site +']['sitename']};
+	var tr = 
+	'<tr class="list_item">'+
+		'<td align="center"><input type="checkbox" name="id[]" value="'+ json.id +'" /></td>'+
+		'<td align="center"><a href="{$this_system.siteurl}/item-view-id-'+ json.id +'?verified='+ json.verified +'" target="_blank">'+ json.id +'</a></td>'+		
+		'<td class="item_td">'+
+			'<a href="{$this_system.siteurl}/item-view-id-'+ json.id +'?verified='+ json.verified +'" target="_blank" title="{if !empty($value['push_back_reason'])}$value[push_back_reason]{else}'+ json.otitle +'{/if}" alt="'+ json.otitle +'" alert="left">'+ json.title +'</a>&nbsp;'+ 
+		'</td>'+
+		'<td align="center"><a href="{$this_router}/item-list?site='+ json.site +'">'+ json.site +'</a></td>'+
+		'<td align="center" id="item_cat_'+ json.id +'" title="'+ json.cid +'">'+
+			'<a href="{$this_system.admin_controller}/item-list?model=&cid='+ json.cid +'" >'+ json.category_name +'</a>'+
+		'</td>'+
+		'<td align="center"><a href="{$this_system.admin_controller}/item-list?model='+ json.model.name +'" >'+ json.model.alias +'</a></td>'+
+		'<td align="center"><a href="{$this_system.admin_controller}/item-list?username='+ json.username +'" >'+ json.username +'</a></td>'+
+		'<td align="center">'+ json.views +'</td>'+
+		'<td align="center">'+ date('Y-m-d H:i', json.timestamp) +'</td>'+
+		'<td align="center"><span class="level" id="item_level_'+ json.id +'">'+ json.level +'</span></td>'+
+		'<td class="optlist">'+
+			'<a href="{$this_system.siteurl}/item-view-id-'+ json.id +'?verified='+ json.verified +'" target="_blank" class="ys2">查看</a>&nbsp;'+ update_link +
+		'</td>'+
+	'</tr>';
+	
+	$('#list').append($(tr));
+}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['move']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		cs.init();
+	},
+	ok: function(){
+		
+		var cid = $('#move_cid').val();
+		if(!cid) return false;
+		
+		var cat = cs.get_by_id(cid);
+		
+		$.ajax({
+			url: '$this_router-move',
+			type: 'post',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: move_item_id, cid: cid, verified: verified === undefined ? 1 : verified}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				
+				for(var i = 0; i < json.length; i++){
+					$('#item_cat_'+ json[i]).html('<a href="'+ cat['url'] +'" target="_blank">'+ cat['name'] +'</a>');
+				}
+				
+				request_item(PAGE);
+			}
+		});
+	}
+});
+
+var cs = new Recursive_Selector({
+	input: $('#move_cid'),
+	dialog: dialog,
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json',
+	item_callback: function(cat, item){
+		if(MODEL && cat.model != '$MODEL')
+			item.css({opacity: '0.3', alpha: '(opacity=30)'});
+		
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	change: function(select){
+		var cat = cs.get_by_id(select.data('value'));
+		
+		if(MODEL && cat.model != MODEL && !cat.categories) p8_window.alert('你选了一个非本模型的分类');
+	}
+});
+
+var category_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		category_filter.init();
+	},
+	ok: function(){
+		var cid = $('#select_cid').val();
+		$('#cid').val(cid);
+		
+		category_selected(cid);
+		
+		if(cid != 0){
+			
+			var cat = category_filter.get_by_id(cid);
+			
+			var check = new _check_model(cat.model);
+			check.check(cat);
+			
+			MODEL = check.checked ? cat.model : '';
+			$('#model').val(MODEL);
+			
+		}else{
+			$('#model').val('');
+		}
+	}
+});
+
+var category_filter = new Recursive_Selector({
+	input: $('#select_cid'),
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json',
+	value: $cid,
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	init_callback: function(){
+		category_selected(this.get_value());
+	},
+	dialog: category_dialog
+});
+
+function category_selected(cid){
+	if(cid == 0){
+		$('#cids').html('');
+		return;
+	}
+	
+	var tmp = category_filter.get_by_id(cid);
+	var html = '';
+	
+	while(true){
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+		
+		tmp = category_filter.get_by_id(tmp.parent);
+	}
+	
+	$('#cids').html(html);
+}
+
+function _check_model(model){
+	this.checked = true;
+	this.last_model = model;
+	
+	this.check = function(cat){
+		if(this.last_model != cat.model){
+			this.checked = false;
+		}
+		
+		this.last_model = cat.model;
+		
+		if(cat.categories){
+			for(var i in cat.categories)
+				this.check(cat.categories[i]);
+		}
+	};
+}
+
+var verify_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['verify']['']}',
+	width: 500,
+	height: 200,
+	button: true,
+	ok: function(){
+		var value = this.content.find('input[name=value]:checked').val();
+		var reason = this.content.find('textarea').val();
+		
+		$.ajax({
+			url: '$this_router-verify',
+			type: 'POST',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: verify_item_id, value: value, verified: verified, push_back_reason: reason}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				
+				for(var i in json){
+					if(value == 1){
+						$('#verify_'+ json[i]).html('<img src="$SKIN/check_yes.gif" alt="1" />');
+					}else{
+						$('#verify_'+ json[i]).html('<img src="$SKIN/check_no.gif" alt="0" />');
+					}
+				}
+				
+				p8_window.alert(lang_array(P8LANG.sites.item.you_verified, [json.length]));
+			}
+		});
+	},
+	show: function(){
+		this.content.html(verify_html);
+		
+		this.content.find('input[type=radio]').click(function(){
+			this.value == '-99' && this.checked ? $(this).parent().parent().find('div').show() : $(this).parent().parent().find('div').hide();
+		});
+	}
+});
+
+var verify_html = '';
+<!--{foreach $this_module->CONFIG['verify_acl'] $status $v}-->
+	verify_html += '<span><input type="radio" id="verify$status" name="value" value="$status" /><label for="verify$status">$v[name]</label> </span>';
+<!--{/foreach}-->
+verify_html += '<fieldset><legend>{$P8LANG['sites_item']['verify']['reason']}</legend><textarea rows="5" cols="60"></textarea></fieldset>';
+
+var up_down_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['list_order']['']}',
+	button: true,
+	width: 550,
+	height: 200,
+	ok: function(){
+		$.ajax({
+			url: '$this_router-list_order',
+			type: 'post',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: up_down_id, time: this.content.find('input').val()}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				
+				request_item(PAGE);
+			}
+		});
+	},
+	show: function(){
+		this.content.html(up_down_html);
+	}
+});
+
+var _obj = new Date({$timestamp}000);
+var _Y = _obj.getFullYear(),
+	_m = _obj.getMonth() +1,
+	_d = _obj.getDate(),
+	_H = _obj.getHours(),
+	_j = _obj.getDay();
+
+function list_order_date(timestamp){
+	$('#list_order_input').val(date('Y-m-d H:i:s', timestamp));
+}
+
+function view_to_html(){
+	$('#view_to_html').empty();
+	
+	var ids = checked_values('id[]', $('#form'));
+	if(!ids.length) return;
+	
+	$('#view_to_html').append($('<input type="hidden" name="id_range" value="'+ ids.join(',') +'" />')).submit();
+}
+
+var up_down_html = '<div><input type="text" id="list_order_input" autocomplete="off" onclick="rcalendar(this, \'full\');">'+
+	'<input type="button" value="{$P8LANG['sites_item']['list_order']['up_to_1d']}" onclick="list_order_date(mktime(0, 0, 0, _m, _d +1, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['sites_item']['list_order']['up_to_1w']}" onclick="list_order_date(mktime(0, 0, 0, _m, _d +7, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['sites_item']['list_order']['up_to_1m']}" onclick="list_order_date(mktime(0, 0, 0, _m +1, _d, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['sites_item']['list_order']['down_to_1d']}" onclick="list_order_date(mktime(0, 0, 0, _m, _d -1, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['sites_item']['list_order']['down_to_1w']}" onclick="list_order_date(mktime(0, 0, 0, _m, _d -7, _Y))" /> '+
+	'<input type="button" value="{$P8LANG['sites_item']['list_order']['down_to_1m']}" onclick="list_order_date(mktime(0, 0, 0, _m -1, _d, _Y))" /> '+
+	'</div><div>{$P8LANG['sites_item']['list_order']['note']}</div>';
+
+
+
+<!--{if $clustered}-->
+var push_items = [];
+var c_CATEGORY_JSON = {};
+var c_CATEGORY_PATH = {};
+var c_CATEGORY_requested = false;
+
+var push_dialog = new P8_Dialog({
+	title_text: '推送',
+	button: true,
+	width: 400,
+	height: 300,
+	ok: function(){
+		var cid = push_cs.get_value();
+		
+		push_item(push_items, cid);
+	}
+});
+
+var rrr=false
+var matrix_dialog = new P8_Dialog({
+	title_text: '选择母站对接栏目',
+	button: true,
+	width: 600,
+	height: 320,
+	ok: function(){
+		var cid = matrix_cs.get_value();
+        var send_time_type = $('input[name=send_time_type]:checked',this.content).val();
+        var send_time = $('input[name=send_time]',this.content).val();
+		push_item(push_items, cid, send_time_type, send_time);
+	},
+	show: function(){
+		matrix_cs.init();
+        if(!rrr)
+        this.content.append('<p>发布时间：<label><input type="radio" name="send_time_type" value="0" checked>原始发布时间</label> <label><input type="radio" name="send_time_type" value="1">当前时间</label> <label><input type="radio" name="send_time_type" value="2">设置时间</label>:<input type="text" name="send_time" value="'+date('Y-m-d H:i:s')+'" autocomplete="off" onclick="rcalendar(this, \'full\')"/></p><br/>');
+        rrr=true;
+	}
+});
+
+var matrix_cs = new Recursive_Selector({
+	input: $('#parent'),
+	dialog: matrix_dialog,
+	sub_property: 'categories',
+	url: '{$cms_system.controller}/category-json',
+	value: $('#form input[name=matrix]').val(),
+	init_callback: function(){
+		matrix_parent_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+var push_cs;
+
+function _push_item(){
+	var array = checked_values('id[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	
+	push_items = id;
+	
+	matrix_dialog.show();
+}
+
+
+function matrix_parent_path(cid){
+	if(cid == 0){
+		$('#matrix_cid').html('');
+		return;
+	}
+	
+	var tmp = matrix_cs.get_by_id(cid);
+	var html = '';
+	
+	while(true){
+        if(typeof tmp == 'undefined')break;;
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+		
+		tmp = matrix_cs.get_by_id(tmp.parent);
+	}
+	
+	$('#matrix_cid').html(html);
+}
+
+var site_name = '$this_site_name';
+var s_push_items = [];
+var s_CATEGORY_JSON = {};
+var s_CATEGORY_PATH = {};
+var s_CATEGORY_requested = false;
+var push_cs_site;
+var push_sites_dialog = new P8_Dialog({
+	title_text: '选择子站',
+	button: true,
+	width: 700,
+	height: 300,
+	ok: function(){
+		var cid = push_cs_site.get_value();
+		var push_site = this.content.find('select').val();
+		var send_time_type = $('input[name=send_time_type]:checked',this.content).val();
+        var send_time = $('input[name=send_time]',this.content).val();
+		push_item_sites(s_push_items, cid, push_site, send_time_type, send_time);
+	}
+});
+
+
+
+function _push_item_site(){
+	var array = checked_values('id[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	
+	s_push_items = id;
+	
+	push_sites_dialog.show();
+	
+	if(s_CATEGORY_requested) return;
+	
+	$.ajax({
+		url: '$this_router-sites_push',
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			
+			s_CATEGORY_JSON = json.json;
+			s_CATEGORY_PATH = json.path;
+			
+			s_CATEGORY_requested = true;
+			
+			push_cs_site = new Recursive_Selector({
+				json: s_CATEGORY_JSON,
+				path: s_CATEGORY_PATH,
+				input: null,
+				sub_property: 'categories',
+				item_callback: function(cat, item){
+					if(cat.categories)
+						item.addClass('sub_category');
+				},
+				dialog: push_sites_dialog
+			});
+			
+			push_cs_site.init();
+			
+			sites = json.sites;
+			siteshtml = '';
+			<!--{if $IS_FOUNDER}-->
+			siteshtml += '<option value="" selected>所有站点</option>';
+			<!--{/if}-->
+			for(var i  in sites){
+				if(sites[i].alias != site_name)	siteshtml+='<option value="'+sites[i].alias+'">'+sites[i].sitename+'</option>';
+			}
+			push_sites_dialog.content.append('<p style="height:250px;width:110px;padding-left:5px; float:right">发布时间设置<br/><br/><label><input type="radio" name="send_time_type" value="0" checked>原发布时间</label><br/><br/> <label><input type="radio" name="send_time_type" value="1">当前时间</label> <br/><br/><label><input type="radio" name="send_time_type" value="2">设置时间</label>:<br/><input type="text" name="send_time" style="width:100px" value="'+date('Y-m-d H:i:s')+'" autocomplete="off" onclick="rcalendar(this, \'full\')"/></p>');
+			push_sites_dialog.content.append('<select name="sites" style="height:250px; float:right" multiple>'+siteshtml+'</select>');
+
+		},
+	});
+}
+<!--{/if}-->
+
+<!--{if $allow_clone}-->
+
+var clone_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['clone']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		clone_cs.init();
+	},
+	ok: function(){
+		
+		var cid = clone_cs.get_value();
+		if(!cid) return false;
+		$('#clone_cid').val(cid.join(','));
+	}
+});
+var clone_dialog_main = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['clone']}',
+	button: true,
+	width: 300,
+	height: 150,
+	show: function(){
+		this.content.html('选择栏目：<input id="clone_cid" type="text" value="" readonly/> <input type="button" value="选择" class="submit_btn" onclick="clone_dialog.show()"/><br/><br/>签发时间：<input type="text" id="clone_time" value="'+date('Y-m-d H:i:s')+'" autocomplete="off" onclick="rcalendar(this, \'full\')"/>');
+	},
+	ok: function(){
+		
+		var cid = clone_cs.get_value();
+		if(!cid) return false;
+		
+		var cat = clone_cs.get_by_id(cid);
+		
+		$.ajax({
+			url: '$this_router-clone',
+			type: 'post',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: clone_item_id, cid: cid.join(','),clone_time:$('#clone_time').val(), verified: verified === undefined ? 1 : verified}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				p8_window.alert('{$P8LANG['done']}');
+				request_item(PAGE);
+			}
+		});
+	}
+	
+});
+var clone_cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#clone_cid'),
+	dialog: clone_dialog,
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json',
+	item_callback: function(cat, item){
+		if(MODEL && cat.model != '$MODEL')
+			item.css({opacity: '0.3', alpha: '(opacity=30)'});
+		
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	change: function(select){
+		var cat = cs.get_by_id(select.data('value'));
+		
+		if(MODEL && cat.model != MODEL && !cat.categories) p8_window.alert('你选了一个非本模型的分类');
+	}
+});
+
+function clone_item(array){
+	clone_item_id = [];
+	$.each(array, function(k, v){
+		clone_item_id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!clone_item_id.length) return false;
+	
+	clone_dialog_main.show();
+}
+<!--{/if}-->
+
+$(function(){
+	request_item(1);
+	
+	<!--{if $cid}-->
+	category_filter.init();
+	<!--{/if}-->
+});
+</script>
+
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

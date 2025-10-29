@@ -1,0 +1,432 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $core config/menu_bar admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<form action="$this_url" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">	
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core-base_config"><i class="icon icon-ico10"></i>{$P8LANG['base_config']}</a></li>
+							<li class="btn-color14"><a href="{$core.admin_controller}/core-global_config"><i class="icon icon-ico11"></i>{$P8LANG['total_config']}</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core-reg_config"><i class="icon icon-ico12"></i>{$P8LANG['reg_config']}</a></li>
+							<li class="btn-color9"><a href="{$core.admin_controller}/core/member-set"><i class="icon icon-ico12"></i>{$P8LANG['member_config']}</a></li>
+							<li class="btn-color15"><a href="{$core.admin_controller}/core-mobile_config"><i class="icon icon-ico13"></i>{$P8LANG['mobile_config']}</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">{$P8LANG['base_config']}</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['site_name']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[site_name]" size="38"  value="{if !empty($config['site_name'])}{$config['site_name']}{/if}" />
+					</td>
+				</tr>
+				<!--<tr>
+					<td class="tdL">{$P8LANG['which_system_to_index']}</td>
+					<td class="tdR">
+						<select name="config[index_system]">
+							<option value="">{$P8LANG['default']}</option>-->
+							<!--{foreach $core->systems $system $v}-->
+							<!--<option value="$system"{if !empty($config['index_system']) && $config['index_system'] == $system} selected{/if}>
+							$v[alias]
+							</option>-->
+							<!--{/foreach}-->
+						<!--</select>
+					</td>
+				<tr>-->
+				<tr>
+					<td class="tdL">{$P8LANG['site_key_word']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[site_key_word]" size="50"  value="{if !empty($config['site_key_word'])}{$config['site_key_word']}{/if}"/> {$P8LANG['explode_width_dot']}
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['site_description']}</td>
+					<td class="tdR">
+						<textarea  name="config[site_description]" cols="80" rows="10" class="textarea" >{if !empty($config['site_description'])}{$config['site_description']}{/if}</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo]" id="logo_img" size="38"  value="{if !empty($config['logo'])}{$config['logo']}{/if}" />
+							<input type="button" onclick="imgupload.choseup()" value="{$P8LANG['upload']}" class="u" />
+					  </span><a href="javascript:void(0)" onclick="showmorebox()"><span id="more_logo">&#8744; 更多LOGO设置 &#8744;</span></a>
+					</td>
+				</tr>
+				<tbody id="morechose" style="display:none">	
+				<tr>
+					<td class="tdL">{$P8LANG['logo_1']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_1]" id="logo_1" size="38"  value="{if !empty($config['logo_1'])}{$config['logo_1']}{/if}" />
+							<input type="button" onclick="imgupload_1.choseup()" value="{$P8LANG['upload']}" class="u" /> 模板调用：{\$core.CONFIG[logo_1]}
+					  </span>				
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo_2']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_2]" id="logo_2" size="38"  value="{if !empty($config['logo_2'])}{$config['logo_2']}{/if}" />
+							<input type="button" onclick="imgupload_2.choseup()" value="{$P8LANG['upload']}" class="u" /> 模板调用：{\$core.CONFIG[logo_2]}
+					  </span>				
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo_3']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_3]" id="logo_3" size="38"  value="{if !empty($config['logo_3'])}{$config['logo_3']}{/if}" />
+							<input type="button" onclick="imgupload_3.choseup()" value="{$P8LANG['upload']}" class="u" /> 模板调用：{\$core.CONFIG[logo_3]}
+					  </span>				
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo_slogan']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_slogan]" id="logo_slogan" size="38"  value="{if !empty($config['logo_slogan'])}{$config['logo_slogan']}{/if}" />
+							<input type="button" onclick="imgupload_slogan.choseup()" value="{$P8LANG['upload']}" class="u" /> 模板调用：{\$core.CONFIG[logo_slogan]}
+					  </span>				
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo_background']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_background]" id="logo_background" size="38"  value="{if !empty($config['logo_background'])}{$config['logo_background']}{/if}" />
+							<input type="button" onclick="imgupload_background.choseup()" value="{$P8LANG['upload']}" class="u" /> 模板调用：{\$core.CONFIG[logo_background]}
+					  </span>				
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo_core']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_core]" id="logo_core" size="38"  value="{if !empty($config['logo_core'])}{$config['logo_core']}{/if}" />
+							<input type="button" onclick="imgupload_core.choseup()" value="{$P8LANG['upload']}" class="u" /> 建议大小：214*62 模板调用：{\$core.CONFIG[logo_core]}
+					  </span>				
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo_sites']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_sites]" id="logo_sites" size="38"  value="{if !empty($config['logo_sites'])}{$config['logo_sites']}{/if}" />
+							<input type="button" onclick="imgupload_sites.choseup()" value="{$P8LANG['upload']}" class="u" /> 建议大小：200*80 模板调用：{\$core.CONFIG[logo_sites]}
+					  </span>				
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo_sso']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_sso]" id="logo_sso" size="38"  value="{if !empty($config['logo_sso'])}{$config['logo_sso']}{/if}" />
+							<input type="button" onclick="imgupload_sso.choseup()" value="{$P8LANG['upload']}" class="u" /> 建议大小：400*100 模板调用：{\$core.CONFIG[logo_sso]}
+					  </span>				
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['logo_sso_banner']}</td>
+					<td class="tdR" id="up">
+					  <span id="u">
+							<input type="text" class="txt" name="config[logo_sso_banner]" id="logo_sso_banner" size="38"  value="{if !empty($config['logo_sso_banner'])}{$config['logo_sso_banner']}{/if}" />
+							<input type="button" onclick="imgupload_sso_banner.choseup()" value="{$P8LANG['upload']}" class="u" /> 建议大小：1920*590 模板调用：{\$core.CONFIG[logo_sso_banner]}
+					  </span>				
+					</td>
+				</tr>
+				</tbody>
+				<tr>
+					<td class="tdL">{$P8LANG['admin_email']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[admin_email]" size="38"  value="{if !empty($config['admin_email'])}{$config['admin_email']}{/if}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['site_url']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[url]" size="38"  value="{if !empty($config['url'])}{$config['url']}{/if}" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['base_domain']} <span class="help">网络安装时，自动获取基域名到框中.当启用多个域名或二级域名时候，对cookie产生作用。
+	与网站地址一样，不加http://。格式：php168.net</span></td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[base_domain]" size="38"  value="{if !empty($config['base_domain'])}{$config['base_domain']}{/if}" /><span class="point">(如php168.net)</span>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['site_open']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[site_open]" value="1"{if !empty($config['site_open'])} checked{/if} />
+						{$P8LANG['Y']}
+						<input type="radio" name="config[site_open]" value="0"{if empty($config['site_open'])} checked{/if} />
+						{$P8LANG['N']}<br />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['site_bar']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[site_bar]" value="1"{if !empty($config['site_bar'])} checked{/if} />
+						{$P8LANG['Y']}
+						<input type="radio" name="config[site_bar]" value="0"{if empty($config['site_bar'])} checked{/if} />
+						{$P8LANG['N']} <span class="point"><label class="error" style="color:inherit;">预检测{if !$site_bar}不{/if}支持！</label> 需要与模板配合使用，否则不生效，<a href="javascript:;" onclick="show_site_bar()" style="color:blue">查看代码</a></span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['site_msg_win']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[msg_win]" value="1"{if !empty($config['msg_win'])} checked{/if} />
+						{$P8LANG['Y']}
+						<input type="radio" name="config[msg_win]" value="0"{if empty($config['msg_win'])} checked{/if} />
+						{$P8LANG['N']} <span class="point"><label class="error" style="color:inherit;">预检测{if !$win_pos}不{/if}支持！</label> 需要与模板配合使用，否则不生效，<a href="javascript:;" onclick="show_msg_win()" style="color:blue">查看代码</a></span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['site_gray']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[site_gray]" value="1"{if !empty($config['site_gray'])} checked{/if} />
+						{$P8LANG['Y']}
+						<input type="radio" name="config[site_gray]" value="0"{if empty($config['site_gray'])} checked{/if} />
+						{$P8LANG['N']} <span class="point"><label class="error" style="color:inherit;">预检测{if !$gray_pos}不{/if}支持！</label> 需要与模板配合使用，否则不生效，<a href="javascript:;" onclick="show_invoke()" style="color:blue">查看代码</a></span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['site_close_reason']}</td>
+					<td class="tdR">
+						<input name="config[site_close_reason]" size="38" class="txt"  value="{if !empty($config['site_close_reason'])}{$config['site_close_reason']}{else}网站正在维护中...{/if}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['copyright']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" size="38"  name="config[copyright_domain]" value="{if !empty($config['copyright_domain'])}{$config['copyright_domain']}{/if}"/>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['statistics']}</td>
+					<td class="tdR">
+						<textarea name="config[copyright]" cols="80" rows="5">{if !empty($config['copyright'])}{$config['copyright']}{/if}</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">统计代码</td>
+					<td class="tdR">
+						<textarea name="config[statistics]" cols="80" rows="5">{if !empty($config['statistics'])}{$config['statistics']}{/if}</textarea><span class="point">你可以向<a href="https://tongji.baidu.com/web/welcome/login" style="color:red" target="_blank">百度统计官方</a>申请统计代码，然后将申请到的统计代码复制到此框内</span>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div style="text-align:center;">
+							<input type="hidden" name="config[index_system]" value="cms" />
+							<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+var imgupload = new P8_Upload({
+	element: {
+		src: $('#logo_img'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var imgupload_1 = new P8_Upload({
+	element: {
+		src: $('#logo_1'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var imgupload_2 = new P8_Upload({
+	element: {
+		src: $('#logo_2'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var imgupload_3 = new P8_Upload({
+	element: {
+		src: $('#logo_3'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var imgupload_slogan = new P8_Upload({
+	element: {
+		src: $('#logo_slogan'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var imgupload_background = new P8_Upload({
+	element: {
+		src: $('#logo_background'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var imgupload_core = new P8_Upload({
+	element: {
+		src: $('#logo_core'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+function showmorebox(){
+	var stype = $("#morechose").css('display');
+	if(stype == 'none' ){
+		$("#morechose:hidden").show();
+		$("#more_logo").html('&#8743; 更多LOGO设置 &#8743;');
+	}else{
+		$("#morechose").hide();
+		$("#more_logo").html('&#8744; 更多LOGO设置 &#8744;');
+	}
+}
+var imgupload_sites = new P8_Upload({
+	element: {
+		src: $('#logo_sites'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var imgupload_sso = new P8_Upload({
+	element: {
+		src: $('#logo_sso'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var imgupload_sso_banner = new P8_Upload({
+	element: {
+		src: $('#logo_sso_banner'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			gif: 1024000,
+			jpg: 1024000,
+			png: 1024000
+		}
+	}
+});
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['manage']}',
+	width: 600,
+	height: 500
+});
+function show_site_bar(){
+	dialog.show();
+	var site_bar = "在当前主站模板template/{$config['template']}/cms/index.html的尾部中加入以下代码：<br/><xmp><\!--{\if \$core->CONFIG['site_bar']}--></xmp>"+
+"<xmp><\!--{temp"+"late \$core footer_bar default}--></xmp>"+
+"<xmp><\!--{\/if}--></xmp>"+
+"<xmp>组件中标签中放的HTML示例代码：</xmp>"+
+"<xmp><ul></xmp>"+
+"<xmp><li class=\"s1\"><a href=\"#\" target=\"_blank\">某某</a></li></xmp>"+
+"<xmp><li class=\"s2\"><a href=\"#\" target=\"_blank\">某某</a></li></xmp>"+
+"<xmp><li class=\"s3\"><a href=\"#\" target=\"_blank\">下载</a></li></xmp>"+
+"<xmp><li class=\"s4\"><a href=\"#\" target=\"_blank\">某某</a></li></xmp>"+
+"<xmp><li class=\"s5\"><a href=\"#\" target=\"_blank\">读书</a></li></xmp>"+
+"<xmp><li class=\"s6\"><a href=\"#\" target=\"_blank\">读报</a></li></xmp>"+
+"<xmp><li class=\"s7\"><a href=\"#\" target=\"_blank\">观影</a></li></xmp>"+
+"<xmp><li class=\"s8\"><a class=\"goto\" href=\"javascript:;\" id=\"gototop\">返回顶部</a><\/li></xmp>"+
+"<xmp></ul></xmp>";
+	dialog.content.html(site_bar);
+}
+function show_msg_win(){
+	dialog.show();
+	var msg_win = "在当前主站模板template/{$config['template']}/cms/index.html的尾部中加入以下代码：<br/><xmp><\!--{\if \$core->CONFIG['msg_win']}--></xmp>"+
+"<xmp><\!--{temp"+"late \$core footer_win default}--></xmp>"+
+"<xmp><\!--{\/if}--></xmp>";
+	dialog.content.html(msg_win);
+}
+function show_invoke(){
+	dialog.show();
+	var s = "在当前公共头部模板template/{$config['template']}/core/header.html的head标签中加入以下代码：<br/><xmp><\!--{\if \$core->CONFIG['site_gray']}--></xmp>"+
+	"<xmp><!--[if IE]></xmp>"+
+"<xmp><style>html{filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);}</style></xmp>"+
+"<xmp><!--<![endif]--></xmp>"+
+"<xmp><!--[if !IE]><--></xmp>"+
+"<xmp><style>html{</xmp>"+
+"<xmp>filter:progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);filter: grayscale(100%);</xmp>"+
+"<xmp>-webkit-filter: grayscale(100%);-moz-filter: grayscale(100%);</xmp>"+
+"<xmp>-ms-filter: grayscale(100%);-o-filter: grayscale(100%);</xmp>"+
+"<xmp>filter: progid:DXImageTransform.Microsoft.BasicImage(grayscale=1);filter: gray;</xmp>"+
+"<xmp>-webkit-filter: grayscale(1);</xmp>"+
+"<xmp>}</style></xmp>"+
+"<xmp><!--<![endif]--></xmp>"+
+"<xmp><\!--{\/if}--></xmp>";
+	dialog.content.html(s);
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

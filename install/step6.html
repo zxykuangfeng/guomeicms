@@ -1,0 +1,31 @@
+<div class="content">
+	<strong>请选择是否填充测试数据</strong>
+	<form id="form" name="form" method="post" action="?">
+		<div class="h">
+			<table width="100%" border="0" cellpadding="5" cellspacing="5">
+				<tr>
+					<td >					
+					<input type="radio" name="input" value="1" checked />填充（大约30秒左右）
+					</td>
+				</tr>
+			</table>
+			<div class="h">
+				<div id="installing" class="installing" style="display:none;"></div>
+			</div>
+		</div>	
+		<p style="text-align:center;color:blue;">
+			点击下一步后，加载数据估计需要10--50秒，请等待！
+		</p>		
+		<div class="form">
+			<input type="button" name="upstep" value="上一步" onclick="javascript:history.go(-1)" class="submit_btn">
+			<input type="submit" name="Submit" value="下一步" class="submit_btn"  onclick="javascript:installing();">
+			<input type="hidden" name="step" value="step7" />
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+
+function installing(){
+	$('#installing').show();
+}
+</script>

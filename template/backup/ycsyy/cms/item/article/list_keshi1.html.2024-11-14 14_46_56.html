@@ -1,0 +1,87 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_gg]
+		</div>
+	</div>
+</div>
+<div class="maincon clearfix">
+	<div class="container">
+		<div class="column-location mb20 clearfix">
+			您现在的位置： <a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			>> <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			>> <a href="$CAT[url]">$CAT[name]</a>
+		</div>
+		<div class="column-title clearfix">
+			<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+			$parent[name]
+		</div>
+		<div class="column-depart">
+			<div class="depart-title">$CAT[name]</div>
+			<div class="depart-item">
+				$label[list_keshi1_con1]
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+<div class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-9 col-sm-9 col-xs-12">
+				<div class="copyright">
+					$label[ycsyy_footer_copyright]
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-3 col-xs-12">
+				<div class="row">
+				    <div class="col-md-4 col-sm-6 col-xs-6">
+						<div class="footpic">
+						    <div class="pic">$label[ycsyy_footer_pic3]</div>
+						    <h3 style="color:black;" >$label[ycsyy_footer_t3]</h3>
+						</div>
+					</div>
+					<div class="col-md-4 col-sm-6 col-xs-6">
+						<div class="footpic">
+						    <div class="pic">$label[ycsyy_footer_pic2]</div>
+						    <h3 style="color:black;" >$label[ycsyy_footer_t2]</h3>
+						</div>
+					</div>
+					<div class="col-md-4 col-sm-6 col-xs-6">
+						<div class="footpic">
+						    <div class="pic">$label[ycsyy_footer_pic1]</div>
+						    <h3 style="color:black;" >$label[ycsyy_footer_t1]</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="right-nav">
+	$label[ycsyy_footer_fixed]
+</div>
+<script type="text/javascript">
+    $(".top").click(function() {
+        $("html,body").animate({scrollTop:0}, 500);
+    }); 
+    $('.weixin').hover(
+      function(){
+       $(".hideBox").addClass('show')
+      },
+      function(){
+       $(".hideBox").removeClass('show')
+      }
+    )
+</script>
+</body>
+</html>
+<!--{/php168}-->
+
+

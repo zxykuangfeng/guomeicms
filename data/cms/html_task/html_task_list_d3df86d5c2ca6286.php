@@ -1,0 +1,1 @@
+<?php die();?>a:11:{s:15:"category_offset";i:0;s:14:"category_count";i:7;s:10:"categories";a:7:{i:0;i:847;i:1;i:873;i:2;i:874;i:3;i:875;i:4;i:876;i:5;i:877;i:6;i:878;}s:7:"threads";i:1;s:10:"start_time";d:1659317175.844356;s:4:"time";i:1659317175;s:7:"perpage";i:50;s:5:"pages";i:0;s:6:"mobile";i:0;s:4:"type";i:0;s:6:"thread";a:0:{}}

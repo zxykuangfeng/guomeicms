@@ -1,0 +1,102 @@
+<!--{php168}-->
+<div class="layout_box layout_comment layout_txtcontent_border layout_mtop layout_padding" style="font-size:12px;">
+	<h3>用户留言&nbsp; <b> <a href="$this_router-comment?iid=$data[id]" target="_blank">已有<span class="item_comments">$data[comments]</span>条留言<span class="clear_strong">(点击查看)</span></a> </b> </h3>
+	<div id="layout_comment_box">
+		<div id="clone" style="display: none;">
+			<div style="margin-bottom: 20px;"> <span class="date">#date# 发表</span> <span class="author">#author#</span> </div>
+			<div class="content"></div>
+			<div class="button_bar"> <a href="###" onclick="digg_comment(#id#, this)">顶[#digg#]</a> <a href="###" onclick="reply_comment(#id#)">回复</a> </div>
+		</div>
+		<link href="{$SKIN}comment.css" rel="stylesheet" type="text/css" />
+		<a name="top"></a>
+		<div id="comments"></div>
+		<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/comment.js"></script>
+		<script type="text/javascript">
+		function comment_request(page){
+			page = page === undefined ? 1 : intval(page);
+			page = Math.max(page, 1);
+			
+			$.getJSON(\$this_router +'-comment?iid=$data[id]&page='+ page +'&_ajax_request=1&view_page=1&callback=?', comment_jsonp);
+		}
+
+		function comment_jsonp(json){
+			$('#comments').html('<div></div>');
+			
+			var items = json.items;
+			for(var i = 0; i < items.length; i++){
+				$('#comments').append(comment_item(items[i], $('#clone').clone().show()));
+			}
+		}
+		
+		$(function(){
+			comment_request(1);
+		});
+		</script>
+		
+<div id="login_com_box">
+			<form method="post" action="{$core.RESOURCE}/u.php/core/member-login" >
+				<span>
+					网站通行证：</span><input type="text" name="username" value="" class="input common_input_border"/>
+				<span>密码：</span><input type="password" name="password" autocomplete="new-password" value="" class="input common_input_border"/>
+				<input type="submit" name="submit" value="登录" class="submit pointer"/>
+				<input type="hidden" name="forward" value="$this_url?iid=$iid" />
+				<span>
+				<a href="{this_system->controller}/core/member-register">注册</a> |
+				<a href="{this_system->controller}/core/member-getpassword">忘记密码</a>
+				</span>
+			</form>
+</div>
+<div id="login_box">
+	网站通行证：<a href="{$RESOURCE}/u.php"><font color="#FF7F04">{$USERNAME}</font></a>
+</div>
+		<form action="$this_router-comment" method="post" id="comment_form" target="submit_comment" >
+			<li>
+				<textarea name="content" id="content" class="comment_body" onfocus="this.value=''">文明上网，登录留言</textarea>
+			</li>
+			<li>
+				<label>网友评论仅供其表达个人看法，并不表明本站同意其观点或证实其描述。</label>
+				<span>
+				<input type="button" id="comment_submit" name="button" onclick="post_comment()" value="马上发表"/>
+				</span></li>
+			<input type="hidden" name="action" value="add" />
+			<input type="hidden" name="iid" value="$data[id]" />
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+function post_comment(){
+	var content=$('#content').val();
+	if(content.length<5 || content==''){alert('评论字数太少或为空'); return false; }
+	$("#comment_form").submit();
+	$('#content').val('');
+	limitComment();
+	
+}
+var limitTime=5;
+function limitComment(){
+	limitTime=limitTime-1;
+	if(limitTime>0){
+		$('#content').val('还剩'+limitTime+'秒,你才可以再发表评论');
+		$('#content').attr('disabled','disabled');
+		$('#comment_submit').attr('disabled','disabled');
+		setTimeout("limitComment()",1000);
+	}else if(limitTime==0){
+		$('#content').val('文明上网，登录留言');
+		$('#content').removeAttr('disabled');
+		$('#comment_submit').removeAttr('disabled');
+	}
+}
+
+
+var UID=get_cookie('UID');
+$(document).ready(function(){
+	if(UID!==undefined){
+		$('#login_box').show();$('#login_com_box').hide();
+	}else{
+		$('#login_com_box').show();$('#login_box').hide();
+	}  
+   })
+
+</script>
+<iframe name="submit_comment" style="display:none;"></iframe>
+<!--{/php168}-->

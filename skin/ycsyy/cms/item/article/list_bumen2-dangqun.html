@@ -1,0 +1,41 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner">
+	<div class="container">
+		<div class="fluid">
+			<div class="bigbanner">
+				$label[bigbanner_daohan_quanbu]
+			</div>
+			<div class="banner_title">
+				<h2>$CAT[name]</h2> 
+			</div>
+		</div>
+	</div>
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="row">
+			<div class="contain-left fl">	
+				<div class="border1">
+					<div class="head1">
+						<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+						<span class="title1">$parent_name</span>
+					</div>	
+					<div class="main1">
+						<!--{template $this_module step_category_jx3}-->
+					</div>
+				</div>
+			</div>
+			<div class="contain-right fr">
+				<div class="departbox">
+					<h2 class="title">$label[list_depart_title3]</h2>
+					<div class="decon clearfix">$label[list_depart_dangqun]</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

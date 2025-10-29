@@ -1,0 +1,30 @@
+<!--{php168}-->
+<form name="form" action="$this_url" method="post">
+<table width="700" height="300">
+	<tr>
+		<td>
+			<textarea name="content" id="content">{if !empty($data['content'])}{$data['content']}{/if}</textarea>
+			<script name="content" id="content" type="text/plain">{if !empty($data['content'])}{$data['content']}{/if}</script>
+			<script type="text/javascript">
+			$(function(){
+				P8_UEDITOR({
+					id: 'content',
+					type:'all',
+					xiumi:true,
+				});
+			});
+			</script>
+		</td>
+	</tr>
+	<tr>
+		<td align="center">
+			<input name="" type="submit" value="{$P8LANG['submit']}" /> <input name="" type="button" value="{$P8LANG['cancel']}" onclick="dialog.close()" /><input type="hidden" name="id" value="$id" />
+		</td>
+	</tr>
+	<tr>
+		<td></td>
+	</tr>
+</table>
+</form>
+
+<!--{/php168}-->

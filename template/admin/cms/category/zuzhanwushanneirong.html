@@ -1,0 +1,451 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_system menu_bar admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/autocomplete.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+<style type="text/css">
+.field{
+	border: 1px solid #CCCCCC;
+	padding: 10px;
+	margin: 1em;
+}
+
+.field legend{
+	border: 1px solid #CCCCCC;
+	padding: 2px 4px;
+}
+</style>
+
+<div style="display: none;">
+	<input type="text" id="srh" size="30" />
+</div>
+
+<form action="$this_url" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/$SYSTEM/category-recycle_list"><i class="icon icon-ico21"></i>主站误删栏目恢复</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/$SYSTEM/category-zuzhanwushanneirong"><i class="icon icon-ico21"></i>主站误删内容恢复</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<table class="columntable formtable hover_table click_changeable">
+			<tr class="title fix_head">
+				<td width="1%" class="title"><input type="checkbox" onclick="check_all(this, 'id[]', $('#form'));" /></td>
+				<td width="2%" class="title">ID</td>
+				<td width="5%" class="title" title="0" onclick="if(this.title == 1){this.title=0;hide_all();$(this).find('span img').attr('src', '{$SKIN}/show.gif');}else{this.title=1;show_all();$(this).find('span img').attr('src', '{$SKIN}/hide.gif');}" style="cursor: pointer;"><span><img src="{$SKIN}/show.gif" /></span>{$P8LANG['cms_category_name']}</td>
+				<td width="3%" class="title">{$P8LANG['cms_category_model']}</td>
+				<td width="3%" class="title">{$P8LANG['cms_category_type']}</td>
+				<td width="3%" class="title">{$P8LANG['htmlize']}</td>
+				<td width="3%" class="title">{$P8LANG['cms_category_item_count']}</td>
+				<td width="3%" class="title">{$P8LANG['menu_display']}</td>
+				<td width="1%" class="title">{$P8LANG['cms_category_order']}</td>
+				<td width="13%" class="title">{$P8LANG['operation']}</td>
+			</tr>
+			
+			<tbody id="__">
+			
+			</tbody>
+	    </table>
+		
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+		<tr>
+			<td>
+				<input type="button" value="{$P8LANG['update_cache']}" onclick="_submit('cache')" class="edit_btn" />
+				<input type="button" value="{$P8LANG['delete']}" onclick="delete_category(checked_values('id[]', $('#form')))" class="edit_btn" />
+			</td>
+		</tr>
+		</table>
+		</div>
+	</div>	
+	<input type="hidden" name="action" value="" />
+</form>
+<script type="text/javascript">
+$(".headerbtn_list li").removeClass();
+$(".headerbtn_list li:nth-child(4)").addClass("active");
+
+var CATEGORY_JSON = $json[json];
+var CATEGORY_PATH = $json[path];
+var MODEL_JSON = $json[models];
+var my_category_to_verify = $my_category_to_verify;
+function _submit(action){
+	//if(!confirm('$P8LANG[confirm_to_do]')) return;
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			ajaxing({text:'处理中...'});
+			$('#form input[name=action]').val(action);
+			$('#form').submit();
+		}else{
+			return;
+		}
+	});
+}
+
+function show_all(){
+	$('#__ tr').each(function(){
+		var tr = $(this).show();
+		
+		if(tr.attr('sub')){
+			tr.attr('title', 1).find('td:eq(2) span').html('<img src="{$SKIN}/hide.gif" />');
+		}
+	});
+}
+
+function hide_all(){
+	$('#__ tr').each(function(){
+		var tr = $(this);
+		
+		if(tr.attr('sub')){
+			tr.attr('title', 0).find('td:eq(2) span').html('<img src="{$SKIN}/show.gif" />');
+		}
+		
+		if(tr.attr('level') != 1) tr.hide().attr('title', 1);
+	});
+}
+
+function ___(json, l, p){
+	l = l === undefined ? 0 : l;
+	p = p === undefined ? 0 : p;
+	
+	var j = 0, k = count(json);
+	
+	for(var i in json){
+        if(!my_category_to_verify || my_category_to_verify[0] || my_category_to_verify[json[i].id]){
+		var html = '';
+		j++;
+		var c = '';
+		if(l != 0){
+			c += str_repeat('│&nbsp;&nbsp;', l - p) + str_repeat('&nbsp;&nbsp;&nbsp;', p);
+			if(j == k){
+				p++;
+				c += '└';
+			}else{
+				c += '├';
+			}
+		}
+		if(json.id>370){p8_window.alert(json.id);}
+		var sub = json[i].categories ? true : false;
+		var path = CATEGORY_PATH[json[i].id].join('_');
+		c += (json[i].categories ? '<span style="cursor: pointer;"><img src="{$SKIN}/hide.gif" /></span> ' : '') +
+			'<a href="{$core.admin_controller}/$SYSTEM/item-list?model='+ (json[i].categories ? json[i].model : '') +'&cid='+ json[i].id +'" target="_blank">'+ json[i].name +'</a>';
+
+		html +=
+		'<tr id="category_'+ json[i].id +'" path="path_'+ path +'" title="1"'+ (sub ? ' sub="1"' : '') +' level="'+ (l +1) +'">'+
+			'<td><input type="checkbox" name="id[]" value="'+ json[i].id +'" onclick="_check(\''+ path +'\', this.checked)" /></td>'+
+			'<td>'+ json[i].id +'</td>'+
+			'<td class="c_name" model="'+ json[i].model +'">'+ c +'</td>'+
+			'<td><a href="###" onclick="filter_model(\''+ json[i].model +'\')">'+ (json[i].type==3?'none':MODEL_JSON[json[i].model].alias) +'</a></td>'+
+			'<td>'+ (json[i].type == 1 ? '{$P8LANG['cms_category_type_1_s']}' : json[i].type == 2? '{$P8LANG['cms_category_type_2_s']}':'{$P8LANG['cms_category_type_3_s']}') +'</td>'+
+
+			'<td><img src="{$SKIN}/'+ (json[i].htmlize == 1 ? 'check_yes.gif' : (json[i].htmlize == 2?'check_2.gif':'check_no.gif')) +'"></td>'+
+			'<td>'+ json[i].item_count +'</td>'+
+			'<td><img src="{$SKIN}/'+ (json[i].enable_show == 1 ? 'display_no.gif' : 'display_yes.gif') +'"></td>'+
+			'<td><input type="text" class="txt" name="display_order['+ json[i].id +']" value="'+ json[i].display_order +'" size="4" /></td>'+
+			'<td>'+
+				'<a id="restore_'+ json[i].id +'" href="$this_router-restore?model=$MODEL&id='+ json[i].id +'" onclick="return restore_category([this.id]);" title="{$P8LANG['restore']}"><img src="{$SKIN}/icon_recycle.gif" /></a> '+
+				'<a id="delete_'+ json[i].id +'" href="$this_router-delete?model=$MODEL&id='+ json[i].id +'" onclick="return delete_category([this.id]);" title="彻底删除"><img src="{$SKIN}/del_icon3.gif" /></a> '+
+			'</td>'+
+		'</tr>';
+
+		var tr = $(html);
+		$('#__').append(tr);
+		if(sub){
+			___(json[i].categories, l +1, p);
+			_toggle(
+				$(tr).find('td:eq(2) span').
+				bind('click', function(){_toggle($(this)); return false;})
+			);
+		}
+	}
+	}
+}
+
+___(CATEGORY_JSON);
+
+
+function _toggle(span){
+	var id = $(span).parent().parent().attr('id').replace(/[^0-9]/g, '');
+	var path = CATEGORY_PATH[id].join('_');
+	
+	var on = $('#category_'+ id).attr('title') == 0;
+	
+	var keep_close = [];
+	$('tr[path^=path_'+ path +'_]').each(function(){
+		if(on){
+			
+			if($(this).show().attr('title') == 1 && $(this).attr('sub')){
+				keep_close.push(this.id.replace(/[^0-9]/g, ''));
+				$(this).attr('title', 0);
+			}else{
+				$(this).attr('title', 1);
+			}
+			
+		}else{
+			
+			if($(this).hide().attr('title') == 0 && $(this).attr('sub')){
+				//keep close
+				$(this).attr('title', 1);
+			}else{
+				$(this).attr('title', 0);
+			}
+			
+		}
+	});
+	
+	if(on){
+		$(span).parent().parent().attr('title', 1);
+		$(span).html('<img src="{$SKIN}/hide.gif" />');
+	}else{
+		$(span).parent().parent().attr('title', 0);
+		$(span).html('<img src="{$SKIN}/show.gif" />');
+	}
+	
+	for(var i = 0; i < keep_close.length; i++){
+		$('tr[path^=path_'+ CATEGORY_PATH[keep_close[i]].join('_') +'_]').hide().find('span');
+	}
+	return false;
+}
+
+function delete_category(array){
+	//if(confirm('{$P8LANG['cms_category_confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['cms_category_confirm_to_delete']}', function (r) {
+		if(r){	
+			var id = [];
+			$.each(array, function(k, v){
+				id.push(v.replace(/[^0-9]/g, ''));
+			});
+			
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({model: '$MODEL', id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#delete_'+ json[i]).parent().parent().remove();
+					}
+				}
+			});
+		}
+	});
+	
+	return false;
+}
+
+function restore_category(array){
+		var id = [];
+		$.each(array, function(k, v){
+			id.push(v.replace(/[^0-9]/g, ''));
+		});
+		
+		$.ajax({
+			url: '$this_router-restore',
+			type: 'POST',
+			dataType: 'json',
+			data: ajax_parameters({model: '$MODEL', id: id}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				
+				ajaxing({action: 'hide'});
+				
+				for(var i in json){
+					$('#restore_'+ json[i]).parent().parent().remove();
+				}
+			}
+		});
+	
+	return false;
+}
+
+function filter_model(m){
+	$('#__ td.c_name[model='+ m +']').attr('style', '');
+	$('#__ td.c_name[model!='+ m +']').attr('style', 'filter: alpha(opacity=40); opacity: 0.4;');
+}
+
+$('form input[name^=display_order]').change(function(){
+	this.value = this.value.replace(/[^0-9]/g, '') || 0;
+	if(this.value > 9999) this.value = 9999;
+	if(this.value < 0) this.value = 0;
+	
+	$('#form').append('<input type="hidden" name="_display_order['+ this.name.replace(/[^0-9]/g, '') +']" value="'+ this.value +'" />');
+	$(this).css({border: '1px solid #ff0000'});
+});
+
+function get_category_by_id(id){
+	var path = clone(CATEGORY_PATH[id]);
+	var root = path.shift();
+	var search = CATEGORY_JSON[root];
+	
+	if(path.length == 0){
+		return search;
+	}
+	for(var i in path){
+		search = search.categories[path[i]];
+	}
+	return search;
+}
+
+function _check(path, checked){
+	$('#form tr[path^=path_'+ path +'_] input[name="id[]"]').attr('checked', checked);
+}
+
+var merge_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['cms_category_merge']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		cs.init();
+	}
+});
+
+var cs = new Recursive_Selector({
+	json: CATEGORY_JSON,
+	path: CATEGORY_PATH,
+	input: $('#move_cid'),
+	dialog: merge_dialog,
+	sub_property: 'categories',
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	change: function(select){
+		var cat = this.get_by_id(select.data('value'));
+	}
+});
+
+function merge(id){
+	merge_dialog.show();
+	
+	merge_dialog.ok(function(){
+		$.ajax({
+			url: '$this_router-merge',
+			type: 'post',
+			cache: false,
+			data: {id: id, to_id: cs.get_value()},
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(s){
+				ajaxing({action: 'hide'});
+				
+				merge_dialog.close();
+			}
+		});
+		return false;
+	});
+}
+var clone_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['cms_category_clone']} - {$P8LANG['cms_category_clone_to']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		cs2.init();
+	}
+});
+var cs2 = new Recursive_Selector({
+	json: CATEGORY_JSON,
+	path: CATEGORY_PATH,
+	input: $('#move_cid'),
+	dialog: clone_dialog,
+	sub_property: 'categories',
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	change: function(select){
+		var cat = this.get_by_id(select.data('value'));
+	}
+});
+function clone_cate(id){
+	clone_dialog.show();
+	
+	clone_dialog.ok(function(){
+		$.ajax({
+			url: '$this_router-clone',
+			type: 'post',
+			cache: false,
+			data: {id: id, to_id: cs2.get_value()},
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(s){
+				ajaxing({action: 'hide'});
+				clone_dialog.close();
+				p8_window.alert('{$P8LANG['done']}');
+				location.reload();
+			}
+		});
+		return false;
+	});
+}
+
+function _find(n, json){
+	var ret = [];
+	for(var i in json){
+		if(json[i].name.indexOf(n) != -1)
+			ret.push(json[i].id);
+		
+		if(json[i].categories){
+			ret = ret.concat(_find(n, json[i].categories));
+		}
+	}
+	
+	return ret;
+}
+
+var auto = new P8_Autocomplete({
+	input: $('#srh'),
+	className: 'autocomplete',
+	trigger: function(){
+		var find = _find(this.keyword, CATEGORY_JSON);
+		
+		if(!find.length) return;
+		//p8_window.alert(find);
+		var json = [];
+		var parents = '';
+		for(var i = 0; i < find.length; i++){
+			var parents = '';
+			for(var j in CATEGORY_PATH[find[i]]){
+				parents += get_category_by_id(CATEGORY_PATH[find[i]][j]).name +' &gt; ';
+			}
+			
+			var cat = get_category_by_id(find[i]);
+			json.push({text: parents, value: cat.id});
+		}
+		
+		this.deploy(json);
+	},
+	callback: function(li){
+		p8_window.alert(li.data('value'));
+		
+		return false;
+	}
+});
+
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

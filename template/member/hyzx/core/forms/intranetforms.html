@@ -1,0 +1,474 @@
+<!--{php168}-->
+<!--{template $core intranet_header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<div class="forms-container">
+	<div class="forms-left">
+		<div class="forms-left-box">
+			<div class="forms-left-logo"><img src="{$MEMBERSKIN}/intranet/logo2.png" alt=""></div>
+			<div class="user-menu">
+				<ul class="menu-1st" id="groups">
+					<li>
+						<a href="#"><span class="gwicon gwicon-home"></span>主页</a>
+					</li>
+					<li class="">
+						<a title="myforms" href="http://sharp.php168.net/u.php?main_page=/forms-manage?mid=203"><span class="gwicon gwicon-notice"></span>我的基本信息</a>
+					</li>
+					<li class="">
+						<a title="myforms" href="{$this_router}-myforms"><span class="gwicon gwicon-notice"></span>选择填报专业</a>
+					</li>
+					<li class="">
+						<a title="myforms" href="{$this_router}-manage?mid=203"><span class="gwicon gwicon-notice"></span>缴费确认</a>
+					</li>
+					<li class="">
+						<a title="myforms" href="{$this_router}-myforms"><span class="gwicon gwicon-notice"></span>打印报名表</a>
+					</li>
+					<li class="">
+						<a title="myforms" href="{$this_router}-myforms"><span class="gwicon gwicon-notice"></span>打印准考证</a>
+					</li>
+					<!--{if $manage}-->
+					<li title="manage">
+						<a title="manage" href="{$this_router}-manage"><span class="gwicon gwicon-manage"></span>我管理的表单</a>
+					</li>
+					<!--{/if}-->
+					<li>
+						<a href="javascript:;"><span class="gwicon gwicon-post"></span></span>我发布的项目<i class="forms-arrow bottom"></i></a>
+						<ul class="menu-2nd" style="">
+							<li><a href="#">我的报名</a></li>
+							<li><a href="#">教材订单</a></li>
+							<li><a href="#">合作申请</a></li>
+							<li><a href="#">我的评论</a></li>
+						</ul>
+					</li>
+					<li>
+						<a href="javascript:;"><span class="gwicon gwicon-manage"></span></span>我管理的项目<i class="forms-arrow bottom"></i></a>
+						<ul class="menu-2nd" style="">
+							<li><a href="#">合作申请</a></li>
+							<li><a href="#">合作查询</a></li>
+						</ul>
+					</li>
+					<li class="">
+						<a href="{$this_router}-list_model"><span class="gwicon gwicon-pwd"></span>修改密码</a>
+					</li>
+
+					<li class="">
+						<a href="{$this_router}-list_model"><span class="gwicon gwicon-xiaoxi"></span>系统消息</a>
+					</li>
+				</ul>
+			</div>
+			<div class="brand">
+				<h1>十年知名品牌</h1>
+				<ul class="version">
+					<li>今天日期：<!--{php echo date('Y-m-d', $timestamp);}--></li>
+					<li>开发商：<a href="http://www.php168.net/" target="_blank">广州国微软件 >></a></li>
+					<li>电话：400-601-5217</li>
+				</ul>
+			</div>
+		</div>
+		<script>
+			$(".user-menu .menu-1st > li > a").on('click',function(){
+				var this_li = $(this).parent();
+				var this_menu2nd = $(this).next();
+				var this_menu2ndStat = this_menu2nd.css('display');
+				if(this_menu2ndStat === 'none'){
+					this_menu2nd.slideDown(200);
+					this_li.addClass('on');
+				}else{
+					this_menu2nd.slideUp(200);
+					this_li.removeClass('on');
+				}
+				//收起其他所有二级
+				this_li.siblings('li').removeClass('on').find('.menu-2nd').slideUp(200);
+			})
+			//判断若有子栏目，其父级栏目a标签禁止跳转
+			$(".user-menu .menu-2nd").each(function(){
+				if($(this).children('li').length != 0){
+					$(this).prev('a').attr('href','javascript:;');
+				}
+			})
+		</script>
+		
+	</div>
+	<div class="forms-right">
+		<div class="main-title"><span>我的表单</span></div>
+		<div class="search-myforms search-manage">
+			<form name="request" id="request" class="search-form" action="$this_url" onsubmit="IntraForms.search();return false;" method="get">
+				<div class="form-item4">
+					<label class="form-label">状态:</label>
+					<div class="input-block">
+						<select name="selectstatus" class="select">
+							<option value="">所有</option>
+							<!--{foreach $status $k $v}-->
+							<option value="$k" {if isset($selectstatus) && $selectstatus===$k}selected="selected"{/if}>$v</option>
+							<!--{/foreach}-->
+						</select>
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">表单:</label>
+					<div class="input-block">
+						<select name="mid" id="fmid" class="select">
+							<option value="">所有</option>
+							<!--{foreach $post_forms $k $v}-->
+							<option value="$v[id]" {if isset($mid) && $mid==$v['id']}selected="selected"{/if}>$v[alias]</option>
+							<!--{/foreach}-->
+						</select>
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">提交时间:</label>
+					<div class="input-block">
+						<input type="text" name="mindate" size="10" onclick="rcalendar(this);" value="" class="input2"/>
+						-
+						<input type="text" name="maxdate" size="10" onclick="rcalendar(this);"  value="" class="input2"/>
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">用户名:</label>
+					<div class="input-block">
+						<input type="text" name="username" size="10" value="" class="input"/>
+					</div>
+				</div>
+				<div class="form-item4">
+					<div class="input-block">
+						<input type="hidden" value="" name="ids"/>
+						<input type="reset" name="" class="btn btn-reset" value="重置">
+						<input type="submit" class="btn" value="查询" />
+					</div>
+				</div>
+			</form>
+		</div>
+		<div id="show_myforms" style="">
+			<div class="content">
+				<form id ="form1" name="form1" action="$this_router-down" method="post">
+					<table width="100%" border="0" cellpadding="1" cellspacing="1" class="show_table" id="showtable">
+						<tbody>
+							<tr class="tablehead">
+								<td width="6%">ID </td>
+								<td width="25%">表单名称</td>
+								<td width="14%">填写时间</td>
+								<td width="10%">状态</td>
+								<td width="14%">处理时间</td>
+								<td width="13%">操作</td>
+							</tr>
+						</tbody>
+						<tbody id="list_myforms">
+						</tbody>
+						<tbody>
+							<tr>
+								<td colspan="6" style="text-align:center;padding:40px 0;"><span id="pages_myforms" class="pages-forms" ></span><input type="button" class="submit_btn" value="导出" onclick="IntraForms.download()"/>  </td>
+							</tr>
+						</tbody>
+					</table>
+				</form>
+			</div>
+		</div>
+		<div id="show_post"  class="content" style="display:none">
+			<h3 class="main_right_head"><strong id="boxtitle">申请表单</strong></h3>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table" >
+				<tr class="head" style="background:#eeeeee">
+					<td>MID</td>
+					<td style="text-align:left">表单</td>
+					<td>填写</td>
+				</tr>
+				<!--{foreach $models $k $v}-->
+				<tr>
+					<td>{$v['id']}</td>
+					<td style="text-align:left;padding-left:20px"><strong>{$v['alias']}</strong></td>
+					<td><a href="{$this_module.controller}-post?mid=$v[id]" target="_blank">填写</a></td>
+				</tr>
+				<!--{/foreach}-->
+			</table>
+		</div>
+		<div  id="show_manage" class="content" style="display:none">
+			<h3 class="main_right_head"><strong id="boxtitle">管理列表</strong></h3>
+			<form id ="form2" name="form1" action="$this_router-down" method="post">
+				<table width="100%" border="0" cellpadding="1" cellspacing="1" class="show_table" style="margin-top:50px" id="showtable">
+					<tbody>
+						<tr class="tablehead">
+							<td width="6%">ID </td>
+							<td width="25%">表单名称</td>
+							<td width="10%">提交者</td>
+							<td width="14%">填写时间</td>
+							<td width="10%">状态</td>
+							<td width="14%">处理时间</td>
+							<td width="13%">操作</td>
+						</tr>
+					</tbody>
+					<tbody id="list_manage">
+					</tbody>
+					<tbody>
+						<tr>
+							<td colspan="7" style="text-align:center"><span id="pages_manage" class="pages" ></span>
+							<input type="button" class="submit_btn" value="导出" onclick="IntraForms.download()"/> 
+							<input type="button" class="submit_btn" value="导入" onclick="IntraForms.import_list()"/> 
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+		
+	</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".forms-left").niceScroll({  
+		cursorcolor:"#CAD3D5",  
+		cursoropacitymax:1,  
+		touchbehavior:false,  
+		cursorwidth:"2px",  
+		cursorborder:"0",  
+		cursorborderradius:"5px"  
+	}); 
+});
+</script>
+<script type="text/javascript">	
+var check_uids = {};
+var dialog = new P8_Dialog({
+	width: 400,
+	height: 200,
+	button: true,
+	ok: function(){IntraForms.setstatus()}
+});
+var M_FORM = $manage_forms_json;
+var P_FORM = $post_forms_json;
+var skdir = "{$MEMBERSKIN}/intranet/";
+dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+var IntraForms = 
+{
+page : 1, MID : {$mid}, action : '{$action}', type : 'myforms', _this : null, STATUS : $status_json,
+get_item : function(t){
+	_this = this;
+	this.type = t;
+	 if(t == 'myforms' ){
+		this.action = t;
+		this.request_item(1);
+		this.change_select('p');
+	}else if(t=='manage'){
+		this.action = t;
+		this.request_item(1);
+		this.change_select('m');
+	}
+	else{
+		$('#gettype').hide();
+	}
+},
+show_box : function(i,id){
+	$('#main_right >div').hide();
+	$('#show_'+i).show();
+	$('.search_'+i).show();
+},
+delete_item : function(id,mid){
+	if(id==undefined){	
+		if(!check_ids())return;
+	}
+	//if(!confirm('确定要删除？'))return;
+	p8_window.confirm('确定要删除？', function (r) {
+		if(r){
+			$.ajax({
+					url: '{$this_router}-manage',
+					type: 'POST',
+					dataType: 'json',
+					data: $('#form').serialize()+'&action=delete&oid='+id+"&mid="+(mid==undefined? _this.MID : mid),
+					beforeSend: function(){
+						ajaxing({});
+					},
+					success: function(json){
+						ajaxing({action: 'hide'});
+						for(var i in json){
+							$('#item_'+json[i]).remove();
+						}
+					}
+				});
+		}else{
+			return false;
+		}
+	});
+},
+request_item : function(page,mid,type){
+	if(type!==undefined){
+		this.type = type;
+	}
+	if(mid!==undefined){
+		this.MID = mid;
+	}
+	$.ajax({
+		url: '{$this_router}-'+this.action,
+		type: 'GET',
+		cache :false,
+		data: 'type='+this.type+'&page='+page+'&mid='+_this.MID,
+		dataType: 'json',
+			beforeSend: function(){
+			ajaxing({});
+		},
+		success:function(json){
+			_this.list_item(json,_this.MID,type);
+		}
+	});
+	
+	
+},
+list_item : function(json,mid,type){
+	var list = json.list;
+	var list_html = '';
+	$('#list_'+_this.action).html('');
+			
+	ajaxing({action: 'hide'});
+	for(var i in list){
+		tr = '<tr id="item_'+list[i].id+'">'+
+			'<td><input type="checkbox" name="id[]" value="'+list[i].id+'"/> '+list[i].id+'</td>'+
+			'<td class="ico_2"><a href="'+P8CONFIG.URI.core.forms.controller+'-view-id-'+list[i].id+'" target="_blank">'+list[i].title+'</a></td>'+
+			(_this.action=='manage'? '<td>'+list[i].username+'</td>': '')+
+			'<td>'+date("Y-m-d H:i",list[i].timestamp)+'</td>'+
+			'<td>'+(list[i].status==0? '<font color="#993300">':'')+(_this.STATUS[list[i].status])+(list[i].status==0? '</font>':'')+'</td>'+
+			'<td>'+(list[i].reply_time>0? date("Y-m-d H:i",list[i].reply_time):'')+'</td>'+
+			'<td><a href="'+list[i].url+'" target="_blank"><img src="'+skdir+'icon_view.gif" title="查看"/></a> '+
+			(list[i].status<1 || _this.action=='manage'? '<a href="{$this_module.controller}-update?id='+list[i].id+'&mid='+list[i].mid+'" target="_blank"><img src="'+skdir+'icon_edit.gif" title="修改"/></a> ':'')+
+			(_this.action=='manage'? '<a href="void(0)" target="_blank" onclick="IntraForms.manage('+list[i].id+','+list[i].mid+');return false;"><img src="'+skdir+'icon_verify.gif" title="处理"/></a> <a href="void(0)" target="_blank" onclick="IntraForms.delete_item('+list[i].id+','+list[i].mid+');return false;"><img src="'+skdir+'icon_del.gif" title="删除"/></a>':'')+
+			'</td>'+
+			
+		'</tr>';
+	$('#list_'+_this.action).append(tr);
+	}
+	this.show_box(this.action);
+	$('#pages_'+_this.action).html(json.pages);
+},
+get_count : function(){
+	$.getJSON(P8CONFIG.URI['core']['member'].controller +'-info_jsonp?callback=?', function(json){
+		if(json.new_messages>0){
+			$('#count').html(json.new_messages);
+			$('#noreadcount').show();
+		}else{
+			$('#noreadcount').hide();
+		}
+	}); 
+},
+manage : function (id,mid){
+	if(id==undefined){	
+		if(check_ids())
+		show_dialog();
+	}else{
+		this.MID = mid;
+		$.ajax({
+			url: '{$this_router}-manage',
+			type: 'POST',
+			dataType: 'json',
+			data: 'action=check_status&id='+id,
+			success:function(json){
+				_this.show_dialog(json);
+			}   
+		});
+	}
+	return false;
+},
+show_dialog : function (json){
+	var innerhtml = '<p>处理方式：';
+	var oSTATUS = this.STATUS;
+	for(var i in oSTATUS){
+		innerhtml +=' <input type="radio" name="status" value="'+i+'" '+(json ==undefined ? '' : (json.status==i? 'checked':''))+'>'+oSTATUS[i];
+	}
+	innerhtml +='</p>处理意见：<textarea style="width:380px;height:90px"> '+(json ==undefined ? '' : json.reply)+'</textarea>';
+	innerhtml +='<input type="hidden" name="id" value="'+(json ==undefined ? '' : json.id)+'"/>';
+	dialog.content.html(innerhtml);			
+	dialog.show();
+},
+setstatus : function(){
+		var status = dialog.content.find('input[name=status]:checked').val();
+		var reply = dialog.content.find('textarea').val();
+		var id = dialog.content.find('input[name=id]').val();
+		if(status==undefined){
+			p8_window.alert("{$P8LANG['forms_confirm_no_manage']}");
+			return;
+		}
+		$.ajax({
+			url: '{$this_router}-manage',
+			type: 'POST',
+			dataType: 'json',
+			data: $('#form').serialize()+'&action=set_status&oid='+id+'&status='+status+'&reply='+reply,
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				var oSTATUS = _this.STATUS[_this.MID];
+				for(var i in json){
+					$('#item_'+json[i].id).find('td').eq(4).html(oSTATUS[json[i].status]);
+					$('#item_'+json[i].id).find('td').eq(5).html(date('Y-m-d H:i',json[i].reply_time));
+				}
+			}
+		});
+	},
+search : function(){
+_this = this;
+	$.ajax({
+			url: '{$this_router}-'+this.action,
+			type: 'GET',
+			dataType: 'json',
+			data: $('#request').serialize(),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				_this.list_item(json);
+			}
+		});
+
+},	
+download : function(){
+	var mid = $('#request select[name=mid]').val();
+	if(!mid){p8_window.alert('只能导出具体表单的内容');return false;}
+	var obj=checked_values('id[]',$('#list_manage'));
+	var ids = [];
+	$.each(obj, function(k, v){
+		ids.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(ids.length<1){
+		//if(!confirm('你没选中任何项，是否操作全部'))return;
+		p8_window.confirm('你没选中任何项，是否操作全部？', function (r) {
+			if(r){
+				$('#request').attr('action',"{$this_router}-download");
+				$('#request').attr('method',"post");
+				$('#request').find('input[name=ids]').attr('value',ids);
+				$('#request').submit();
+			}else{
+				return;
+			}
+		});
+	}
+},
+change_select:function(f){
+	sj = f=='p'? P_FORM : M_FORM;
+	option = '<option value="">所有</option>';
+	for(i in sj){
+		option += '<option value='+sj[i].id+'>'+sj[i].alias+'</option>';
+	}
+	$('#fmid').html(option);
+}
+,	
+import_list : function(){
+	var mid = $('#request select[name=mid]').val();
+	if(!mid){p8_window.alert('导入只能针对具体的表单模型');return false;}
+	window.open("{$this_module.controller}-import_list?mid="+mid);
+}
+};
+
+$(document).ready(function(){
+		var a = 1;
+		$('#groups >li[title={$action}]').addClass('over');
+		$('#groups >li').find('a').click(function(){ $(this).parent().click(); return false;});
+		$('#groups >li').bind('click',function(){
+			$(this).siblings("li").removeClass('over').end().addClass('over');
+			var index = $('#groups >li').index( $(this) );
+			var type = $(this).attr('title');
+			IntraForms.get_item(type);
+			IntraForms.show_box(type);
+		});
+		//$('#groups >li[title={$action}]').click();
+		IntraForms.search();
+});
+</script>
+</div>
+<div class="clear mtop">
+</div>
+<!--{template $core footer}-->
+<!--{/php168}-->

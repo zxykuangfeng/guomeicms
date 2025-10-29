@@ -1,0 +1,60 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanne-down]
+		</div>
+	</div>
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-12 col-sm-12">
+				<div class="position2 delbor delmag">
+					<a href="{$core.controller}">首页</a>
+					<!--{foreach $parent_cats $v}-->
+					&gt; <a href="$v[url]">$v[name]</a>
+					<!--{/foreach}-->
+					&gt; <a href="$CAT[url]">$CAT[name]</a> 
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="contentbox col-lg-10 col-md-10 col-sm-10 col-xs-12">
+				<div class="border1 mbottom">
+					<div class="gov-head2 mb15">
+						<span class="bigtitle"><a href="$v[url]">$v[name]</a></span> 
+						<span class="more pull-right"> 
+							<!--{if $add_enable}-->
+								<a href="{$core.U_controller}/cms/item-add?cid=$v[id]&model=$CAT[model]" target="_blank">发表</a>
+							<!--{/if}-->
+						</span>
+					</div>
+					<div class="gov_main2">
+						<div class="gov-list clearfix"><!--{php include template($TEMP_OBJ, $CAT['item_template'], 'label');}--></div>
+						<div id="page" class="pages">
+							{$pages}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="sharebox col-lg-2 col-md-2 col-sm-2 col-xs-12">
+				<span>$label[list_box_title1]</span>
+				<div class="bdsharebuttonbox bdshare-button-style1-24" data-bd-bind="1486363175892"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a></div>
+				<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+				<span>$label[list_box_title2]</span>
+				<div class="relink">
+					<ul>
+						$label[lianjie20]
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+

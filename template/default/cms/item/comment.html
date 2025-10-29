@@ -1,0 +1,229 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$item_title - {$P8LANG['comment']}</title>
+<link href="{$SKIN}../core/header/common.css" rel="stylesheet" type="text/css" />
+<link href="{$SKIN}comment.css" rel="stylesheet" type="text/css" />
+<link href="{$RESOURCE}/images/dialog.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/$MODULE/$MODULE.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<div class="comment_whole">
+	<div class="comment_view">
+		<div class="comment_view_title">全部评论</div>
+		<div class="comment_view_main">
+			<div class="comment_view_nav">
+				<a href="{$core.controller}">首页</a>&gt;评论区
+			</div>
+			<a name="top"></a>
+			<div class="comment_view_box" id="comment_box">
+				<div id="login_com_box">
+					<div class="login_box"><div style="float:left;">网站通行证：</div><span id="header_login"><script type="text/javascript" src="{$core.U_controller}/member-user"></script></span></div>
+				</div>
+				<div id="logined_box">
+					网站通行证：<a href="{$core.url}/u.php"><font color="#FF7F04">{$USERNAME}</font></a>
+				</div>
+				<div class="form_div">
+					<div class="comment_avatar"></div>
+					<div class="comment_full">
+						<form action="$this_router-comment" method="post" id="commenter" target="submit_comment">
+							<textarea name="content" id="content" class="comment_body" class="comment_body" cols="70" rows="5" onfocus="this.value=''">文明上网，登录留言</textarea><br />
+							<p><input type="button" id="comment_submit" class="commentBtn2" name="bbt" onclick="post_comment()"  value="我要评论"/> </p>
+							<input type="hidden" name="action" value="add" />
+							<input type="hidden" name="iid" value="$data[id]" />
+						</form>
+					</div>
+				</div>
+				<div id="layout_comment_box" class="comment_list">
+					<div class="commont_title">
+						<div class="title">全部评论 (<span class="item_comments">$data[comments]</span>)</div>
+					</div>
+					<div id="comment_clone" style="display: none;">
+						<div class="comment_avatar" style="left:0;top:0;"><img src="{$SKIN}/images/avatar.png" width="100%" height="100%"></div>
+						<div class="comment_item_hd">
+							<span class="date">__date__ </span> <span class="localip">__localip__ </span>
+							<span class="author">__author__</span>
+						</div>
+						<div class="content"></div>
+						<div class="button_bar">
+							<a href="###" onclick="comment.digg(__id__, this)">顶[__digg__]</a>
+						</div>
+						<div class="clear"></div>
+					</div>
+					
+					<div id="comments"></div>
+					<div class="comment_pages_list"><span id="comment_pages"></span></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+
+var allow_comment = false, comment_loaded = false;
+
+function comment_check(form){
+	
+	var flag = true,
+		msg = '';
+	
+	if(!allow_comment){
+		alert(P8LANG[SYSTEM].comment.not_allow);
+		flag = false;
+	}
+	
+	if($.trim(form.find('textarea').val()).length < 5){
+		alert(P8LANG[SYSTEM].comment.write_something);
+		flag = false;
+	}
+	
+	return flag;
+}
+
+
+function comment_reply(id){
+	
+	reply_id = id;
+	$('#comment_'+ id).addClass('pre_reply');
+	
+	comment_dialog.show();
+}
+
+var reply_id;
+var comment_dialog = new P8_Dialog({
+	title_text: P8LANG[SYSTEM].comment.reply,
+	width: 400,
+	height: 250,
+	button: true,
+	overlay: false,
+	show: function(){
+		this.content.find('input[name=reply_id]').val(reply_id);
+		this.content.find('textarea').val('').get(0).focus();
+	},
+	ok: function(){
+		$('#comment_'+ reply_id).removeClass('pre_reply');
+		var form = this.content.find('form');
+		if(comment_check(form)){
+			form.get(0).submit();
+			return true;
+		}
+		
+		return false;
+	},
+	cancel: function(){
+		$('#comment_'+ reply_id).removeClass('pre_reply');
+	}
+});
+
+function comment_jsonp(json){
+	$('#comments').html('<div></div>');
+	$('#comment_pages').html(json.pages);
+	
+	var items = json.items;
+	var keys = [];
+    for (var j in items)
+		keys.unshift(j);
+	  
+	for(var i in keys){
+		$('#comments').append(
+			comment.item(items[keys[i]], $('#comment_clone').clone().show())
+		);
+	}
+	
+	allow_comment = json.allow_comment;
+	
+	if(comment_loaded){
+		window.scrollTo(0, $('#comment_box').offset().top);
+		return;
+	}
+	
+	comment_loaded = true;
+}
+
+
+var comment = new Comment({
+	iid: $data[id],
+	url: \$this_router +'-comment',
+	callback: comment_jsonp<!--{if $ACTION == 'view'}-->,
+	view_page: true
+	<!--{/if}-->
+});
+
+
+$(function(){
+	if(get_cookie('UID')){
+		$('#comment_login').html(get_username());
+	}else{
+		$('#comment_login form').show().append(
+			$('<input type="hidden" name="forward" value="'+ window.location +'" />')
+		);
+	}
+	
+	var form = $('#commenter').clone().attr('id', '').
+		append($('<textarea name="content" class="comment_textarea"></textarea><input type="hidden" name="reply_id" />')).
+		appendTo(comment_dialog.content);
+	form.find('div').remove();
+	
+	scroll_to_load($('#comment_box'), function(){
+		comment.request(1);
+	});
+});
+
+var limitTime;
+function post_comment(){
+	var content=$('#content').val();
+	if(content.length<5 || content==''){alert('评论字数太少或为空'); return false; }
+	$('#commenter').submit();
+	$('#content').val('');
+	limitTime=5;
+	limitComment();
+	
+}
+
+function limitComment(){
+	limitTime=limitTime-1;
+	if(limitTime>0){
+		$('#content').val('还剩'+limitTime+'秒,你才可以再发表评论');
+		$('#content').attr('disabled','disabled');
+		$('#comment_submit').attr('disabled','disabled');
+		setTimeout("limitComment()",1000);
+	}else if(limitTime==0){
+		$('#content').val('文明上网，登录留言');
+		$('#content').removeAttr('disabled');
+		$('#comment_submit').removeAttr('disabled');
+	}
+}
+function reply_comment(id){
+	reply_id = id;
+	reply_dialog.show();
+	$('#comment_'+ id).addClass('pre_reply');
+	$('#reply_id').val(id);
+}
+
+var UID = get_cookie('UID');
+$(document).ready(function(){
+	if(UID === undefined){
+		$('#login_com_box').show();$('#logined_box').hide();
+	}else{
+		$('#logined_box').show();$('#login_com_box').hide();
+	}  
+});
+
+</script>
+<iframe name="submit_comment" style="display:none;"></iframe>
+</body>
+</html>
+<!--{/php168}-->

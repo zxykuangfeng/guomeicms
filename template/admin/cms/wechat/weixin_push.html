@@ -1,0 +1,113 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<form action="$this_router-pushdata" method="post" id="form">
+<div class="mainbox mainborder">
+	<div class="section">
+	<table class="formtable">
+		<tr>
+			<td class="title">推送信息</td>
+		</tr>
+		<tr>
+			<td>				
+				<fieldset>
+					<table class="formtable columntable" id="tabs-1">
+					  <tr>
+						<td class="tdL">推送的文章</td>
+						<td class="tdR" style="width: 50%;">
+						  <table class="formtable columntable">
+						   <tr>
+							 <td class="tdL" align="center" style="width: 60px;">排序</td>
+							 <td class="tdR" align="center">标题</td>
+						   </tr>
+							<!--{foreach $ids $key=>$id}-->
+								  <tr>
+									<td class="tdL" align="center" style="width: 60px;">
+									<input type="text" class="form-control" name="ids[{$id}]" value="<!--{php echo $key+1;}-->"></td>
+									<td class="tdR">{$arcRows[$key]}</td>
+								  </tr>
+							 <!--{/foreach}-->
+
+						  </table>
+						</td>
+						<td class="tdR" style="width: 30%;">最多一次只能推送8篇文章</td>
+					  </tr>
+					  <tr>
+						<td class="tdL">推送类别</td>
+						<td class="tdR">
+						  <label class="radio-inline">
+						  <input type="radio" name="push_type" class="push_type" value="4" onclick="showoutlink(1)" checked /> 预览
+						</label>
+						  <label class="radio-inline">
+						  <input type="radio" name="push_type" class="push_type" value="1" onclick="showoutlink(2)" /> 群发至所有人
+						</label>
+						  <label class="radio-inline">
+							<input type="radio" name="push_type" class="push_type" value="2" onclick="showoutlink(3)" /> 根据标签进行群发
+						  </label>
+						  </td>
+						<td class="tdR">建议群发前先预览，确定格式效果没问题后，再群发。</td>
+					  </tr>
+					  <tr id="preview">
+						<td class="tdL">预览者的openid</td>
+						<td class="tdR"><input type="text" size="60" class="txt" name="preview_openid" id="preview_openid" value="{$config['preview_openid']}" />
+						</td>
+						<td class="tdR">发送关键词：<code>openid</code>至微信公众号即可获取你的openid</td>
+					  </tr>
+					  <tr id="tag" style="display: none">
+						<td class="tdL">标签</td>
+						<td class="tdR">
+							<select name="tag_id" id="tag_id" style="width: 180px;float: left;margin-right: 30px;">
+							  <!--{foreach $tagIds['tags'] $tagId}-->
+							  <option value="{$tagId['id']}">{$tagId['name']}({$tagId['count']})</option>
+							 <!--{/foreach}-->
+							</select>
+						</td>
+						<td class="tdR">可以将关注者按标签进行分类。标签管理可以登录https://mp.weixin.qq.com，在管理->用户管理中进行设置</td>
+					  </tr>
+					  <tr>
+					  <td class="tdL"></td>
+						<td colspan="2" class="">						  
+							<input type="submit" id="push" class="submit_btn" value="开始推送" />
+						</td>
+					  </tr>
+					</table>
+				</fieldset>
+			</td>
+		</tr>
+	</table>
+	</div>
+</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="title">推送说明</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					<p>1、对于认证订阅号，群发接口每天可成功调用1次，此次群发可选择发送给全部用户或某个标签；</p>
+						<p>2、对于认证服务号，用户每月只能接收4条，多于4条的群发将对该用户发送失败；</p>
+						<p>3、可以使用预览接口校对消息样式和排版，通过预览接口可发送编辑好的消息给指定用户校验效果；</p>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+$(".headerbtn_list li:nth-child(2)").addClass("active");
+function showoutlink(f){
+	if(f=='1'){
+		$('#preview').show();
+		$('#tag').hide();
+	}else if(f=='2'){
+		$('#preview').hide();
+		$('#tag').hide();
+	}else{
+		$('#preview').hide();
+		$('#tag').show();
+	}
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

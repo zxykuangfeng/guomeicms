@@ -1,0 +1,77 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_gg]
+		</div>
+	</div>
+</div>
+<div class="maincon clearfix">
+	<div class="container">
+		<div class="column-location mb20 clearfix">
+			您现在的位置： <a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			>> <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			>> <a href="$CAT[url]">$CAT[name]</a>
+		</div>
+		<div class="column-title clearfix">
+			<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+			$parent[name]
+		</div>
+		<div class="column-depart mb40">
+			<div class="depart-box">
+				<div class="depart-title">$label[list_keshi1_tt1]</div>
+				<div class="depart-item">
+					$label[list_keshi1_con1]
+				</div>
+			</div>
+			<div class="depart-box">
+				<div class="depart-title">$label[list_keshi1_tt2]</div>
+				<div class="depart-item">
+					$label[list_keshi1_con2]
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8 col-sm-8 col-xs-12">
+				<div class="row">
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<div class="img-box2 img1 mb20">
+							$label[list_keshi1_pic1]
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<div class="img-box2 img2 mb20">
+							$label[list_keshi1_pic2]
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<div class="img-box2 img3 mb20">
+							$label[list_keshi1_pic3]
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-6 col-xs-12">
+						<div class="img-box2 img4 mb20">
+							$label[list_keshi1_pic4]
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<div class="img-box3 mb20">
+					$label[list_keshi1_pic5]
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+
+

@@ -1,0 +1,200 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<link rel="stylesheet" href="{$RESOURCE}/skin/admin/style.css" type="text/css">
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<style>
+.list_table td{text-align:left;}
+.list_table td.tdL{text-align:right;padding-right:10px;}
+.help{display:inline;}
+</style>
+<form action="$this_url" method="post" id="form"{if P8_AJAX_REQUEST} target="poster"{/if}>
+<div class="mainfluid">
+    <div class="mtab">
+	<div class="list_box">
+			<div class="head">
+					<span><a href="$core->U_controller/cms/item-add?v=1">发布内容</a></span>
+					<span class="over"><a href="$core->U_controller/cms/item-list?v=0">栏目预览</a></span>
+			</div>
+	</div>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">						
+			<tr>
+				<td class="tdL" align="right">{$P8LANG['cms_category_frame']}</td>
+				<td class="tdR" align="left">
+					<input type="text" class="txt" name="frame" id="frame"  value="{if !empty($data['frame'])}{$data['frame']}{/if}" size="50" />
+					<input type="button" onclick="uploader.choseup();" value="上传缩略图" />
+					<input type="button" onclick="uploader_init.choseup();" value="上传原始图" />
+					<input type="button" id="frame_toggle" onclick="" value="" style="display: none;" />
+					<a href="###" onclick="uploader.image_cut()">[$P8LANG[image_cut]]</a><br />
+					
+					<script type="text/javascript">
+					var uploader;
+					var uploader_init;
+					var uploader_logo;
+					var uploader_banner;
+					$(function(){
+						uploader = new P8_Upload({
+							element: {
+								src: $('#frame'),
+								attribute: 'value'
+							},
+							param: {
+								return_thumb: true
+							}
+						});
+						uploader_init = new P8_Upload({
+							element: {
+								src: $('#frame'),
+								attribute: 'value'
+							},
+							param: {}
+						});
+						uploader_logo = new P8_Upload({
+							element: {
+								src: $('#category_logo'),
+								attribute: 'value'
+							},
+							param: {}
+						});	
+						uploader_banner = new P8_Upload({
+							element: {
+								src: $('#banner'),
+								attribute: 'value'
+							},
+							param: {}
+						});
+					});
+					</script>
+				</td>
+			</tr>			
+			<tr>
+				<td class="tdL">栏目LOGO</td>
+				<td class="tdR" align="left">
+					<input type="text" class="txt" name="config[category_logo]" id="category_logo"  value="{$config['category_logo']}" size="73" />
+					<input type="button" onclick="uploader_logo.choseup();" value="上传栏目LOGO" /> <span class="help">调用示例：{\$CAT['CONFIG']['category_logo']}</span>					
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">横幅图片</td>
+				<td class="tdR" align="left">
+					<input type="text" class="txt" name="config[category_banner]" id="banner"  value="{$config['category_banner']}" size="73" />
+					<input type="button" onclick="uploader_banner.uploader();" value="上传横幅图片" /> <span class="help">调用示例：{\$CAT['CONFIG']['category_banner']}</span>
+				</td>
+			</tr>				
+			<tr>
+				<td class="tdL">栏目导航<br>(支持HTML)</td>
+				<td class="tdR" align="left">
+					<textarea name="config[navigation]" cols="90" rows="5">
+						{if isset($config[navigation])}{$config['navigation']}{/if}
+					</textarea> 
+					<span class="help">调用示例：{\$CAT['CONFIG']['navigation']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">栏目简介<br>(支持HTML)</td>
+				<td class="tdR" align="left">
+					<textarea name="config[summary]" cols="90" rows="5">
+						{if isset($config[summary])}{$config['summary']}{/if}
+					</textarea> 
+					<span class="help">调用示例：{\$CAT['CONFIG']['summary']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">友情链接<br>(支持HTML)</td>
+				<td class="tdR" align="left">
+					<textarea name="config[friendlink]" cols="90" rows="5">
+						{if isset($config[friendlink])}{$config['friendlink']}{/if}
+					</textarea> 
+					<span class="help">调用示例：{\$CAT['CONFIG']['friendlink']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">栏目底部版权<br>(支持HTML)</td>
+				<td class="tdR" align="left">
+					<textarea name="config[copyright]" cols="90" rows="5">
+						{if isset($config[copyright])}{$config['copyright']}{/if}
+					</textarea> 
+					<span class="help">调用示例：{\$CAT['CONFIG']['copyright']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">新闻列表1<br>(支持HTML)</td>
+				<td class="tdR" align="left">
+					<textarea name="config[newslist_1]" cols="90" rows="5">
+						{if isset($config[newslist_1])}{$config['newslist_1']}{/if}
+					</textarea> 
+					<span class="help">调用示例：{\$CAT['CONFIG']['newslist_1']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">新闻列表2<br>(支持HTML)</td>
+				<td class="tdR" align="left">
+					<textarea name="config[newslist_2]" cols="90" rows="5">
+						{if isset($config[newslist_2])}{$config['newslist_2']}{/if}
+					</textarea> 
+					<span class="help">调用示例：{\$CAT['CONFIG']['newslist_2']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">新闻列表4<br>(支持HTML)</td>
+				<td class="tdR" align="left">
+					<textarea name="config[newslist_3]" cols="90" rows="5">
+						{if isset($config[newslist_3])}{$config['newslist_3']}{/if}
+					</textarea> 
+					<span class="help">调用示例：{\$CAT['CONFIG']['newslist_3']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">新闻列表4<br>(支持HTML)</td>
+				<td class="tdR" align="left">
+					<textarea name="config[newslist_4]" cols="90" rows="5">
+						{if isset($config[newslist_4])}{$config['newslist_4']}{/if}
+					</textarea> 
+					<span class="help">调用示例：{\$CAT['CONFIG']['newslist_4']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">栏目简介链接</td>
+				<td class="tdR" align="left"><input type="text" class="txt" name="config[linkurl]"  value="{$config['linkurl']}" size="88" /> <span class="help">调用示例：{\$CAT['CONFIG']['linkurl']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">备用字段1</td>
+				<td class="tdR" align="left"><input name="config[attribute_01]" class="txt" size="88" value="{$config['attribute_01']}" /> <span class="help">调用示例：{\$CAT['CONFIG']['attribute_01']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">备用字段2</td>
+				<td class="tdR" align="left"><input name="config[attribute_02]" class="txt" size="88" value="{$config['attribute_02']}" /> <span class="help">调用示例：{\$CAT['CONFIG']['attribute_02']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">备用字段3</td>
+				<td class="tdR" align="left"><input name="config[attribute_03]" class="txt" size="88" value="{$config['attribute_03']}" /> <span class="help">调用示例：{\$CAT['CONFIG']['attribute_03']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">备用字段4</td>
+				<td class="tdR" align="left"><input name="config[attribute_04]" class="txt" size="88" value="{$config['attribute_04']}" /> <span class="help">调用示例：{\$CAT['CONFIG']['attribute_04']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">备用字段5</td>
+				<td class="tdR" align="left"><input name="config[attribute_05]" class="txt" size="88" value="{$config['attribute_05']}" /> <span class="help">调用示例：{\$CAT['CONFIG']['attribute_05']}</span>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdR" align="center" colspan="2">
+					<div style="text-align:center;"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<input type="hidden" name="id" value="{if !empty($data['id'])}{$data['id']}{/if}" />
+<!--{if P8_AJAX_REQUEST}-->
+<input type="hidden" name="_ajax_request" value="1" />
+<!--{/if}-->
+</form>
+</html>
+</body>
+<!--{/php168}-->

@@ -1,0 +1,138 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<div class="panelbody">
+<div class="main">
+	
+	<div class="content msg_send">
+		
+		<div class="msg_main">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
+				<tr>
+					<td class="msg_send_left">
+						<form action="$this_url" method="post" id="form">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0" >
+							<tr>
+								<td width="10%"><strong>{$P8LANG['smessage']['sendee']}:</strong></td>
+								<td width="75%"><input name="sendee" id="sendee" type="text" size="60" class="msg_sendto_input" value="{if !empty($data)}$data[username]{/if}" />
+								</td>
+								<td width="15%"></td>
+							</tr>
+							<tr>
+								<td width="10%"><strong>{$P8LANG['title']}:</strong></td>
+								<td><input name="title" type="text" size="60" class="msg_sendto_input" value="{if isset($data['title'])}$data[title]{/if}" /></td>
+								<td></td>
+							</tr>
+							<tr>
+								<td valign="top" width="10%"><strong>{$P8LANG['content']}:</strong></td>
+								<td>
+									<div id="content_div">
+									<script name="content" id="content" type="text/plain">{if isset($data[content])}{$data[content]}{/if}</script>
+									<script type="text/javascript">
+									$(function(){
+										P8_UEDITOR({
+											id: 'content',
+											type:'all',
+											config: {
+												initialFrameHeight:200,
+												toolbars : [['fullscreen', 'source',
+												'|', 'undo', 'redo',
+												'|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', 
+												'|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc','|','link','attachment','simpleupload', 'insertimage','pdftoimage','pdfupload']],			
+											}
+										});
+									});
+									</script>								
+								</td>
+								<td><strong>选择收件人：</strong><br>
+								<ul id="friends" style="border:1px solid #CECECE;min-height:300px;padding:8px;"></ul></td>
+							</tr>
+							
+							<tr>
+								<td valign="top" width="10%"><strong>保存到发件箱:</strong></td>
+								<td align="left">
+									<span class="msg_type_box">
+									<input name="outbox" type="checkbox" id="outbox" value="1" checked="checked" /><label for="outbox">是</label>
+									</span>
+								</td>
+								<td></td>								
+							</tr>
+							<tr>
+								<td align="center" colspan="3">
+									<input type="submit" value="发送信息" class="submit_btn" />
+									<input type="submit" value="保存草稿" class="submit_btn" name="draft" />
+								</td>
+							</tr>
+						</table>
+						
+						<input type="hidden" name="attachment_hash" value="<!--{php echo $attachment_hash = unique_id(16);}-->" />
+						</form>
+					</td>
+					
+				</tr>
+				
+			</table>
+		</div>
+	</div>
+</div>
+</div>
+
+<script type="text/javascript">
+var attachment_hash = '$attachment_hash';
+
+$('#form').validate({
+	rules: {
+		sendee: {
+			required: true
+		},
+		title: {
+			required: true
+		},
+		content: {
+			required: true
+		}
+	},
+	
+	messages: {
+		sendee: {
+			required: '&nbsp;'
+		},
+		title: {
+			required: '&nbsp;'
+		},
+		content: {
+			required: '&nbsp;'
+		}
+	}
+});
+
+$.getJSON(
+	P8CONFIG.U_controller +'/core/member-message_user?callback=?',
+	function(json){
+		var friends = json;
+		
+		for(var i = 0; i < friends.length; i++){
+			$('#friends').append(
+				$('<li style="line-height:200%;">'+ friends[i].username+''+(friends[i].name ? ' | '+friends[i].name : '')+'</li>').
+				data('username', friends[i].username).
+				click(function(){
+					
+					var val = $('#sendee').val(),
+						username = $(this).data('username');
+					
+					if((new RegExp(username +'(?:,)?')).test(val)) return;
+					
+					if(val.length && val.substr(val.length -1, 1) != ',') val += ',';
+					$('#sendee').val(val + username +',');
+				})
+			);
+		}
+	}
+);
+</script>
+
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

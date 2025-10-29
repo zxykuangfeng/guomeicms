@@ -1,0 +1,310 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<form name="form" id="form" method="post" action="$this_url">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$this_router}-edit_model" target="_blank"><i class="icon icon-ico44"></i>添加表单</a></li>
+							<li class="btn-color2"><a href="javascript:;" onclick="update_item(checked_values('id[]', $('#form')))"><i class="icon icon-ico45"></i>修改表单</a></li>
+							<li class="btn-color3"><a href="javascript:;" onclick="delete_item(checked_values('id[]', $('#form')))"><i class="icon icon-ico46"></i>删除表单</a></li>
+							<li class="btn-color6"><a href="javascript:;" onclick="label_category(checked_values('id[]', $('#form')))"><i class="icon icon-ico26"></i>列表可视化</a></li>
+							<li class="btn-color7"><a href="javascript:;" onclick="label_post(checked_values('id[]', $('#form')))"><i class="icon icon-ico26"></i>发布页可视化</a></li>
+							<li class="btn-color5"><a href="{$this_router}-config"><i class="icon icon-ico10"></i>表单设置</a></li>
+							<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/biaodanmoxing.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon" style="margin-right:5px;">表单模型教程>></a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			
+			<table border="0" width="100%" cellpadding="0" cellspacing="0" >
+			  <tr> 
+				  <td> 
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="columntable formtable hover_table">
+						<tr align="center" height="18" class="title"> 
+							<td width="3%" class="title"><input type="checkbox" onclick="check_all(this, 'id[]')" /></td>
+							<td width="5%" class="title">ID</td>
+							<td width="8%" class="title">模型名称</td>
+							<td width="12%" class="title">表单名称</td>
+							<td width="10%" class="title">表单填写</td>
+							<td width="10%" class="title">表单列表</td>
+							<td width="13%" class="title">内容管理</td>
+							<td width="6%" class="title">数据</td>
+							<td width="6%" class="title">排序</td>
+							<td width="*" class="title">操作</td>
+						</tr>
+						
+						<!--{foreach $list $key $value}-->
+						<tr id="model_{$value['id']}"> 
+							<td align="center"><input type="checkbox" name="id[]" value="{$value['id']}" /></td>
+							<td align="center">{$value['id']}</td>
+							<td align="center"><a href="{$this_router}-list?mid={$value['id']}" target="_blank">{$value['name']}</a></td>
+							<td align="center"><a href="{$core.controller}/forms-list-mid-{$value['id']}" target="_blank" style="color:#053f81;">$value[alias]</a></td>
+							<td align="center">
+								<ul class="operation-nav operation-nav-model">
+									<li class="dropdown">
+										<a>表单填写>></a>
+										<ul class="dropdown-menu">
+											<li class="btn-color1"><a href="{$this_module->controller}-post?mid=$value[id]" target="_blank"><i class="icon icon-ico55"></i>内网动态地址</a></li>
+											<li class="btn-color2"><a href="{$RESOURCE}/index.php/forms-post?mid=$value[id]" target="_blank"><i class="icon icon-ico55"></i>公网动态地址</a></li>
+											<li class="btn-color3"><a href="{$RESOURCE}/html/$value[name]/post.html" target="_blank"><i class="icon icon-ico55"></i>公网静态地址</a></li>
+											<li class="btn-color5"><a href="{$this_module->controller}-post?mid=$value[id]&edit_label=1" target="_blank"><i class="icon icon-ico55"></i>可视化操作</a></li>
+										</ul>
+									</li>
+								</ul>
+							</td>
+							<td align="center">
+								<ul class="operation-nav operation-nav-model">
+									<li class="dropdown">
+										<a>表单列表>></a>
+										<ul class="dropdown-menu">
+											<li class="btn-color1"><a href="{$core.controller}/forms-list-mid-$value[id]" target="_blank"><i class="icon icon-ico55"></i>内网动态地址</a></li>
+											<li class="btn-color2"><a href="{$RESOURCE}/index.php/forms-list-mid-$value[id]" target="_blank"><i class="icon icon-ico55"></i>公网动态地址</a></li>
+											<li class="btn-color3"><a href="{$RESOURCE}/html/$value[name]/list_$value[id].html" target="_blank"><i class="icon icon-ico55"></i>公网静态地址</a></li>											
+											<li class="btn-color5"><a href="{$core.controller}/forms-list-mid-$value[id]?edit_label=1" target="_blank"><i class="icon icon-ico55"></i>可视化操作</a></li>
+										</ul>
+									</li>
+								</ul>
+							</td>
+							<td align="center">
+								<ul class="operation-nav operation-nav-model">
+									<li class="dropdown">
+										<a>表单内容>></a>
+										<ul class="dropdown-menu">
+											<li class="btn-color1"><a href="{$this_router}-list?mid={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>内容管理</a></li>
+											<li class="btn-color2"><a href="javascript:void(0);" onclick="edit_view_label('$value[id]')"><i class="icon icon-ico55"></i>可视化操作</a></li>
+										</ul>
+									</li>
+									<li><a href="{$this_router}-charts?mid={$value['id']}" target="_blank">图表分析>></a></li>
+								</ul>						
+							</td>
+							<td align="center">$value[count] 条</td>
+							<td  align="center"><input type="text" class="txt" name="display_order[{$value['id']}]" title="0-999之间" value="{$value['display_order']}" size="3"  /></td>
+							<td  align="center">
+								<a href="$this_router-edit_model?action=update&id={$value['id']}" target="_blank">编辑</a> / 
+								<a href="$this_router-field?mid={$value['id']}" target="_blank">字段列表</a> / 
+								<!--<a href="$this_router-edit_field?mid={$value['id']}">添加字段</a> / -->
+								<a href="{$core.admin_controller}/core/member-set_member_acl" target="_blank">权限设置</a> / 
+								<!--{if $value['id'] != '199'}-->
+								<a href="$this_router-export?mid={$value['id']}" onclick="javascript:return confirm('要导出表单模型吗？')">导出模型</a> / 
+								<a href="$this_router-clone?mid={$value['id']}" onclick="javascript:return confirm('要克隆表单模型吗？')">克隆模型</a> / 
+								<a href="javascript:void(0)" onclick="delete_item({$value['id']})">删除模型</a> / 
+								<!--{/if}-->
+								<a href="javascript:void(0)" onclick="clear_item({$value['id']})">清空内容</a></td>
+						</tr>
+						<!--{/foreach}-->
+					  
+					  </table>
+					  <table width="100%" class="columntable formtable">
+						<tr>
+							<td align="center" id="pages" class="pages">$pages</td>
+						</tr>
+						</table>
+					  <table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">			
+							<tr>
+								<td>				
+								<input type="submit" class="submit_btn" value="修改排序" /> 
+								<input type="submit" onclick="$('#action').val('cache')" class="submit_btn" value="更新缓存" />
+								<input type="button" onclick="htmlize_type('htmlize_view')" class="submit_btn" value="静态化内容" />
+								<input type="button" onclick="htmlize_type('htmlize_list')" class="submit_btn" value="静态化列表" />
+								<input type="button" onclick="htmlize_type('htmlize_post')" class="submit_btn" value="静态化发布页" />								
+								<input type="button" onclick="htmlize_type('htmlall')" class="submit_btn" value="静态化所有" />
+								<input type="button" onclick="window.location.href='$this_router-import'" class="submit_btn" value="导入模型"/>
+								<input type="button" onclick="clear_select_model_data()" class="submit_btn" value="清空内容"/>							
+								<input type="hidden" id="action" name="action" value="" />
+								</td>
+							</tr>
+						</table>							
+					  </div>
+				  </td>
+			  </tr>
+			</table>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+function edit_view_label(mid){
+	$.ajax({
+		url: '$this_router-edit_view_label',
+		type: 'POST',
+		dataType: 'html',
+		data: 'mid='+mid,
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			if(json=='-1'){p8_window.alert('{$P8LANG['forms_model_no_item_yet']}');return;}
+			openUrl("{$core.controller}/forms-view-id-"+json+".html?edit_label=1");
+		}
+	});
+}
+function label_category(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[forms_model_need_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		window.open("{$core.controller}/forms-list-mid-"+ids[i]+'?edit_label=1','_blank');
+	}
+}
+function label_post(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[forms_model_need_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		window.open("{$core.controller}/forms-post?mid="+ids[i]+'&edit_label=1','_blank');
+	}
+}
+function update_item(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[forms_model_need_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		window.open("$this_router-edit_model?action=update&id="+ids[i],'_blank');
+	}
+}
+function clear_select_model_data(){
+	//if(!confirm('确定要清空所选表单的内容？'))return false;
+	p8_window.confirm('确定要清空所选表单的内容？', function (r) {
+		if(r){
+			ajaxing({text:'处理中...'});
+			$('#action').val('clean');
+			$('#form').submit();
+		}else{
+			return;
+		}
+	});
+}
+function htmlize_type(html_type){
+	var array = checked_values('id[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});	
+	if(!id.length) return false;
+	$.ajax({
+		url: '$this_url',
+		type: 'post',
+		dataType: 'json',
+		cache: false,
+		data: ajax_parameters({id: id, action: html_type}),
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			if(json.status == 200)
+				p8_window.alert('操作成功！');
+			else
+				p8_window.alert('请开启静态化功能后操作！');
+		}
+	});
+	return false;
+	
+}
+function delete_item(id){
+	var confirm_info = '{$P8LANG[confirm_to_drop_form]}';
+	var row = $('#model_'+id);    
+	var fullText = row.find('td:eq(3) a').first().text();
+	var alias = row.find('td:eq(2) a').first().text();	
+	confirm_info += '<br><span style="color:blue;text-align:centet;">'+fullText+'（'+alias+'）</span>';	
+	p8_window.confirm(confirm_info, function (r) {
+		if(r){
+			if(Array.isArray(id)){
+				if(id.length<1) {
+					p8_window.alert('{$P8LANG[forms_model_need_select]}');
+					return;
+				}		
+				for(var i in id){
+					$.ajax({
+						url: '$this_router-delete_model',
+						type: 'post',
+						dataType: 'text',
+						data: 'id='+ id[i],
+						beforeSend: function(){
+							ajaxing({});
+						},
+						success: function(status){
+							ajaxing({action: 'hide'});
+							if(status == id){
+								$('#model_'+id).remove();
+							}
+						}
+					});			
+				}
+			}else{
+				if(!id) return false;	
+				$.ajax({
+					url: '$this_router-delete_model',
+					type: 'post',
+					dataType: 'text',
+					data: 'id='+ id,
+					beforeSend: function(){
+						ajaxing({});
+					},
+					success: function(status){
+						ajaxing({action: 'hide'});
+						if(status == id){
+							$('#model_'+id).remove();
+						}
+					}
+				});	
+			}
+		}else{
+			return;
+		}
+	});
+	return false;	
+}
+function clear_item(id){	
+	var confirm_info = '{$P8LANG[confirm_to_truncate_form]}';
+	var row = $('#model_'+id);    
+	var fullText = row.find('td:eq(3) a').first().text();
+	var alias = row.find('td:eq(2) a').first().text();	
+	confirm_info += '<br><span style="color:blue;text-align:centet;">'+fullText+'（'+alias+'）</span>';	
+	p8_window.confirm(confirm_info, function (r) {
+		if(r){
+			if(!id) return false;	
+			$.ajax({
+				url: '$this_url',
+				type: 'post',
+				dataType: 'text',
+				data: 'id='+ id +'&action=clean',
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(status){
+					ajaxing({action: 'hide'});
+					$('#model_'+id).find('td').eq(7).html('<font color="red"><b>0</b></font> 条');
+					p8_window.alert('清除成功');
+				}
+			});
+			return false;
+		}else{
+			return;
+		}
+	});	
+}
+$('#form input[name^=display_order]').change(function(){
+	this.value = this.value.replace(/[^0-9]/g, '') || 0;
+	if(this.value > 999) this.value = 999;
+	if(this.value < 0) this.value = 0;
+	$('#form').append('<input type="hidden" title="0-999之间" name="_display_order['+ this.name.replace(/[^0-9]/g, '') +']" value="'+ this.value +'" />');
+	$(this).css({border: '1px solid #ff0000'});
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

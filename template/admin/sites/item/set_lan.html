@@ -1,0 +1,136 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<div class="section">
+	<table class="formtable">
+		<tr>
+			<td class="headerbtn_list">
+				<ul class="sites-top-menu">
+					<li><a href="{$this_system.admin_controller}/farm-list"><i class="fa fa-cog"></i>站点列表</a></li>
+					<li><a href="{$this_system.admin_controller}-index?frame=/sites/farm-add"><i class="fa fa-cog"></i>本站点设置</a></li>
+					<li><a href="{$this_system.admin_controller}/category-list"><i class="fa fa-cog"></i>栏目管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_list"><i class="fa fa-cog"></i>菜单管理</a></li>
+					<li><a href="javascript:;" onclick="show_edit_label();"><i class="fa fa-refresh"></i>页面可视化</a></li>
+					<li><a href="#"><i class="fa fa-refresh"></i>站点发布</a></li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="zq_list hover_table columntable formtable" align="center">
+			<tr class="title fix_head">
+				<tr class="title fix_head">
+					<td width="20%"  class="list_top">{$P8LANG['config']}(对所有站点生效)</td > <td width="45%" class="list_top">参数</td><td width="35%" class="list_top">备注</td>
+				</tr>		
+			</tr>	
+			<form action="$this_url" method="post" id="cache">
+			<tbody>
+				<tr>
+					<td class="tdL">应用场景说明</td>
+					<td class="tdR">1、当需要设置某个时间节点（如3年）前的内容为局域网访问。<br>
+								2、时间节点前的信息在列表页面将不显示。<br>
+								3、时间节点前的信息不再生成静态页面。<br>
+								4、确需启用的，请务必备份数据后按流程1-7操作。
+					</td>
+					<td class="tdR"></td>
+				</tr>
+				<tr>
+					<td class="tdL">站群是否开启</td>
+					<td class="tdR">
+						<input name="config[lan_date_enable]" type="checkbox" value="1" id="lan_date_enable" {if isset($config['lan_date_enable']) && $config['lan_date_enable']=='1'}checked{/if} /><label for="lan_date_enable">{$P8LANG['enabled']}</label> 默认不启用
+						<input type="hidden" id="cache_type" name="type"  value="config" />
+					</td>
+					<td class="tdR">默认不启用，需要设置时间节点前的内容为局域网才开启</td>
+				</tr>
+				<tr>
+					<td class="tdL">时间节点</td>
+					<td class="tdR">
+						<input type="text" name="config[lan_date]" class="txt" value="{if isset($config['lan_date'])}$config[lan_date]{/if}" autocomplete="off" onclick="rcalendar(this, 'full')" />				
+					</td>
+					<td class="tdR">对所有站点生效，时间节点前的信息在列表页面将不显示，不再生成静态页面</td>
+				</tr>		
+				<tr>
+					<td class="tdL">操作配置</td>
+					<td class="tdR">
+						<input type="submit" value="{$P8LANG['config']}" class="edit_btn" onclick="do_cache('config')"/> &nbsp;&nbsp;&nbsp;&nbsp;
+						<input type="submit" value="{$P8LANG['html_unset']}" class="edit_btn" onclick="do_cache('unlan')"/> {$P8LANG['html_unset_note']}
+					</td>
+					<td class="tdR"></td>	
+				</tr>
+				<tr>
+					<td class="tdL">步骤1：例外栏目设置</td>
+					<td class="tdR"><a style="color:blue" href="{$this_system.admin_controller}/farm-lan_category" target="_blank">查看和设置全部站点列外栏目设置>></a></td>
+					<td class="tdR">例外栏目将不受限局域网访问规则设置的影响，如有必要，请进入各个站点的配置后再操作</td>
+				</tr>
+				<tr>
+					<td class="tdL">步骤2：批量设置限局域网访问</td>
+					<td class="tdR">
+						<input type="submit" value="{$P8LANG['html_init']}" class="cache_btn2" onclick="do_cache('html_init')" size="30"/>{$P8LANG['html_init_note']}
+					</td>
+					<td class="tdR">对所有站点生效</td>
+				</tr>		
+			</tbody>
+			</form>
+			
+			<form action="{$this_system.admin_controller}/category-list" method="post">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤3：更新栏目内容统计</td>
+				<td class="tdR">		
+					<input type="hidden" name="action" value="fixall" />
+					<input type="submit" class="cache_btn2" value="更新栏目统计" />
+					更新设置局域网化后栏目的内容数统计（真实数据以查看后台栏目为准）
+				</td>
+				<td class="tdR">对所有站点生效</td>
+			</tr>
+			</tbody>
+			</form>
+			
+			<form action="{$this_system.admin_controller}/category-list" method="post">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤4：更新栏目缓存</td>
+				<td class="tdR">		
+					<input type="hidden" name="action" value="cache_all" />
+					<input type="hidden" name="from" value="set_lan" />
+					<input type="submit" class="cache_btn2" value="更新栏目缓存" />
+				</td>
+				<td class="tdR">对所有站点生效</td>
+			</tr>
+			</tbody>
+			</form>
+			<form action="{$this_system.admin_controller}/item-delete_html" method="post">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤5：删除限定内容静态页面</td>
+				<td class="tdR"><input type="submit" class="cache_btn2" value="删除时间节点前页面" /> 建议备份/html文件夹，仅删除限定内容静态页面</td>
+				<td class="tdR">对所有站点生效</td>
+			</tr>
+			</tbody>
+			</form>
+			<tr>
+				<td class="tdL">其它步骤</td>
+				<td class="tdR">
+					步骤5：进入各个分站，重新静态化所有栏目<br/>
+					步骤6：进入各个分站，重新静态化所有内容<br/>
+					步骤7：进入各个分站，重新静态化首页
+				</td>
+				<td class="tdR">进入各个分站后分别操作</td>
+			</tr>	
+		</table>		
+	</div>
+</div>
+<script type="text/javascript">
+	function do_cache(cache_type){		
+		$('#cache_type').val(cache_type);
+		ajaxing({'text':'处理中…'});
+		$('#cache').submit();	
+	}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

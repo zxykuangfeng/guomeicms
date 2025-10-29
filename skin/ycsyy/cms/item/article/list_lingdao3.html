@@ -1,0 +1,56 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner">
+	<div class="container">
+		<div class="fluid">
+			<div class="bigbanner">
+
+$label[bigbanner_gaiyao]
+
+</div>
+		</div>
+	</div>
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="row">
+			<div class="contain-left fl">	
+				<div class="border1">
+					<div class="head1">
+						<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+						<span class="title1">$parent_name</span>
+					</div>	
+					<div class="main1">
+						<!--{template $this_module step_category_jx3}-->
+					</div>
+				</div>
+			</div>
+			<div class="contain-right fr">
+				<div class="border1">
+					<div class="gov-head3">
+						<div class="bigtitle fl">$CAT[name]</div>
+						<div class="position3 fr">
+							当前位置：
+							<a href="{$core.controller}">首页</a>
+							<!--{foreach $parent_cats $v}-->
+							&gt; <a href="$v[url]">$v[name]</a>
+							<!--{/foreach}-->
+							&gt; <a href="$CAT[url]">$CAT[name]</a> 
+						</div>
+					</div>
+					<div class="gov-table">
+						<div class="leader-table">
+							$label[list_leader_con]
+						</div>
+						<div class="closepage"><span><a href="{$this_system.controller}">返回首页</a></span><span><a href="javascript:self.close()" >关闭页面</a></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+

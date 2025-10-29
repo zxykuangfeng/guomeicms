@@ -1,0 +1,67 @@
+.category_container{
+	width: 200px;
+	max-height: 380px;
+	float: left;
+	overflow-y: auto;
+	overflow-x: hidden;
+	margin:10px;
+	border:1px solid #dcdcdc;
+}
+
+.category_container li{
+	height:32px;
+	line-height:32px;
+	padding:0 15px;
+	width: 100%;
+	position: relative;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
+}
+
+.category_container li.selected{
+	background-color: #e2d5d5;
+}
+.category_container li input{margin:0 5px 0 0;position: absolute;top: 10px;left: 10px;}
+.category_container li span{width:130px;padding-left:15px;font-size:14px;display: inline-block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+
+
+.category_container li span.frame_category{
+	/*
+	padding-left: 16px;
+	background-image: url(../dir.gif);
+	background-repeat: no-repeat;
+	background-position: 0px 0px;
+	*/
+	color:blue;
+}
+
+.category_container li.normal_category{
+	background-color: #cccccc;
+}
+
+.category_container li.multi_selected{
+	background-color: #F1F7FD;
+}
+
+.category_container li.sub_category{
+	background-image: url(arrow.gif);
+	background-repeat: no-repeat;
+	background-position: 160px center;
+	color:blue;
+}
+/**模板管理**/
+.template_box { background-color:#EEF5FB }
+.template_box .max_title { border-bottom:1px solid #BBB; height:30px; padding-top:5px; padding-left:20px; }
+.template_box .min_title { float:left; color:#067098; font-weight:bold; }
+.template_box .more { float:right; margin-right:20px }
+.template_box .list_template .each_template { width:150px; float:left; text-align:center; margin:10px 20px; }
+.template_box .list_template { border-bottom:1px dashed #bbb; }
+.template_box .list_template .each_template .temp_edit_link { color:#0A0; padding-left:10px; }
+.template_selector {width:180px;height:340px;float: left;overflow-y: auto;overflow-x: hidden;margin:10px;border:1px solid #dcdcdc;}
+.template_selector li {height:24px;line-height:24px;padding:0 5px 0 20px;cursor: pointer; }
+.template_selector li.dir { background: url(../dir.gif) no-repeat 5px center; }
+.template_selector li.html { background: url(../html.gif) no-repeat 0 center; }
+.template_selector li.selected { background-color: #cccccc; }
+

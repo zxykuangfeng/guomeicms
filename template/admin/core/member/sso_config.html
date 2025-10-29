@@ -1,0 +1,33 @@
+<!--{php168}-->
+<!--sso config-->
+<tbody id="sso" style="display: none;">
+<input type="hidden" name="config[sso][client]" value="1"/>
+<tr>
+	<td class="tdL">服务端地址</td>
+	<td class="tdR">
+		<input type="text" class="txt" name="config[sso][api]" value="{if !empty($config['sso']['api'])}{$config['sso']['api']}{else}http://sso.**.com{/if}" size="60" />
+	</td>
+</tr>
+<tr>
+	<td class="tdL">相关参数</td>
+	<td class="tdR">
+		<input type="text" class="txt" name="config[sso][param]" value="{if !empty($config['sso']['param'])}{$config['sso']['param']}{/if}" size="60" />
+	</td>
+</tr>
+
+<tr>
+	<td class="tdL">通信密码</td>
+	<td class="tdR">
+		<input type="text" class="txt" name="config[sso][code]" value="{if !empty($config['sso']['code'])}{$config['sso']['code']}{else}php168{/if}" size="32" />
+	</td>
+</tr>
+<tr>
+	<td class="tdL">处理脚本</td>
+	<td class="tdR">
+		<input type="text" class="txt" name="config[sso][script]" value="{if !empty($config['sso']['script'])}{$config['sso']['script']}{else}sso.php{/if}" size="32" />
+        不同的服务端加密方式不同，对于特殊认证方式另外加载脚本处理
+	</td>
+</tr>
+
+</tbody>
+<!--{/php168}-->

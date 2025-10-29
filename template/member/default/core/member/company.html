@@ -1,0 +1,292 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$core.CONFIG['page_charset']}" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<title>就业平台</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/newlabel/label.css" rel="stylesheet" type="text/css" />
+<link type="text/css" rel="stylesheet" href="{$RESOURCE}/images/dialog.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<script type="text/javascript">var site_tmp = '<!--{php echo $menu_flag ? $siteflag : 'mainstation';}-->';</script>
+<script type="text/javascript" src="{$RESOURCE}/js/member_common.js?rid=<!--{php echo P8_TIME;}-->"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+</head>
+<style>
+body {margin: 0;font-size: 14px;font-family: "Helvetica Neue",Helvetica,STHeiTi,Arial,sans-serif;line-height: 1.5;color: #333;background-color: #fafafa;min-height: 100%;height: 100%;width: 100%;}
+html, body, div, ul, li, dl, dt, dd, form, input, select, h1, h2, h3, h4, h5, p { margin:0px; padding:0px; }
+ul, li { list-style:none; }
+img { border:0px; margin:0px; padding:0px; }
+a {color: #333;text-decoration: none;}
+a:hover{color: #1955ae;text-decoration: none;}
+.pt-top{height: 42px;line-height: 42px;background-color: #1955ae;width: 100%;z-index: 100;position: fixed;top: 0;left: 0;right: 0;}
+.pt-login,.pt-login a{color:#fff;}
+.pt-login a{margin:0 20px}
+.pt-login a.home{padding-left:25px;background: url({$SKIN}pingtai/home.png) left center no-repeat;}
+.pt-header{padding: 40px 0 0;background-color:#fff;box-sizing: border-box;height: auto;border: 1px solid transparent;}
+.pt-header .navbar-brand{height:auto;padding:24px 15px;}
+.pt-header .navbar-brand>img{max-width:100%;height:auto;}
+.navbar-toggle .icon-bar{background-color:#1955ae;}
+.navbar-nav>li{margin-top:40px;}
+.navbar-nav>li>a{color:#2362e9;font-size:16px;padding:10px 26px;border:1px solid #2362e9;border-radius:20px;}
+.pt-content .breadcrumb{height: 39px;line-height: 39px;margin-bottom: 20px;padding: 0 10px;background-color: #fff;font-size: 14px;}
+.breadcrumb-list li{float:left;margin:0 5px;}
+.breadcrumb-list li a{color:#484747;display:block;}
+.breadcrumb-list li a.home{padding-left:25px;background: url({$SKIN}pingtai/home2.png) left center no-repeat;}
+.side-head{height:55px;line-height:55px;margin-bottom:12px;background: url({$SKIN}pingtai/bg.png) center center no-repeat;background-size:cover;}
+.side-head a{color:#fff;font-size:18px;display:block;text-align:center;}
+.side-head span{width:9px;height:14px;display:inline-block;margin-left:10px;background: url({$SKIN}pingtai/arr.png) center center no-repeat;}
+.side-nav-box{position:relative;}
+.side-nav-box .side-head2{height:40px;line-height:40px;font-size: 18px;color: #fff;padding:0 15px;box-sizing: border-box;background-color:#1955ae;position: relative;}
+.navbar-head{position: absolute;top: 12px;right: 20px;}
+.navbar-head .navbar-toggle{padding:0;margin:0;}
+.navbar-head .navbar-toggle .icon-bar{background-color:#ddd;}
+.side-nav{padding:0;}
+.side-nav .panel {border: 0;margin: 0;}
+.side-nav .panel .panel-heading {color:#fff;font-size:14px;text-align:center;background-color: #1955ae;border-radius:0;}
+.side-nav .panel ul li:first-child {border-top: 0;}
+.side-nav .panel ul li {position: relative;display: block;padding: 10px 15px;margin-bottom: -1px;background-color: #f8faff;border: 1px solid #d8e5f7;font-size: 14px;}
+.side-nav .panel ul li a {display: block;text-align:center;position:relative;}
+.side-nav .panel ul li img {position: absolute;top: 5px;right:0;vertical-align: top;}
+.pt-module{padding:30px 25px;background-color:#ffffff;}
+.pt-user{margin-bottom:30px;}
+.pt-user-pic img{max-width:100%;height:auto;}
+.pt-user-title{color:#1955ae;font-size:22px;margin-bottom:20px;}
+.pt-user-info li{color:#4f586b;font-size:16px;margin-bottom:15px;}
+.pt-box{border:1px solid #d2d2d2;margin-bottom:20px;}
+.pt-box .head{height:38px;line-height:38px;border-bottom:1px solid #d2d2d2;background-color:#f8faff;}
+.pt-box .head .title{color:#1955ae;font-size:16px;padding:0 15px;position:relative;}
+.pt-box .head .title:after{width:100%;height:4px;position:absolute;left:0;bottom:-2px;content:"";background-color:#1955ae;}
+.pt-box .head .more{margin-right:15px;}
+.pt-box .head .more a{color:#1955ae;}
+.pt-box .main{padding:20px 30px 25px 30px;}
+.side-list li{height:40px;line-height:40px;font-size:16px;padding-left:25px;background:url({$SKIN}pingtai/arr3.png) left center no-repeat;text-overflow: ellipsis;white-space: nowrap;position:relative;overflow: hidden;}
+.side-list .datatime{float: right;}
+.pt-footer{background-color:#1955ae;color: #fff;}
+.pt-copyright{padding:20px 0;}
+@media (min-width: 1440px){
+	.container {
+		width: 1420px;
+	}
+}
+@media (max-width: 767px){
+	.pt-header .navbar-brand{padding:10px;}
+	.pt-header .navbar-brand>img{max-width:100%;height:30px;}
+	.navbar-nav>li{margin-top:0;}
+}
+</style>
+<body>
+<div class="pt-top">
+	<div class="container">
+		<div class="pt-login text-right"><span>您好，某某某某某公司</span><a href="#">退出</a><a href="#" class="home">学校首页</a></div>
+	</div>
+</div>
+<div class="navbar pt-header">
+	<div class="container">
+		<div class="header">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="#" class="navbar-brand navbar-logo"><img src="{$SKIN}pingtai/logo.png"/></a>
+			</div>
+			<div class="navbar-collapse navbar-collapse-toolbar collapse navbar-main" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						<a class="dropdown-toggle link" data-toggle="dropdown" data-hover="dropdown" href="$v[url]"  aria-expanded="false" role="button">发布职位</a>	
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="pt-content">
+	<div class="container">
+		<div class="breadcrumb">
+			<ul class="breadcrumb-list clearfix">
+				<li><a href="#" class="home">首页</a></li>
+				<li>></li>
+				<li><a href="#">单位中心</a></li>
+			</ul>
+		</div>
+		<div class="row">
+			<div class="col-md-2 col-sm-3 col-xs-12 col-wd-20">
+				<div class="side-nav-box">
+					<div class="side-head2 visible-sm-block visible-xs-block">
+						菜单导航
+					</div>
+					<div class="navbar-head">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2" aria-expanded="false">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>	
+					<div class="side-nav navbar-collapse collapse" id="bs-example-navbar-collapse-2" aria-expanded="false" style="height: 1px;">
+						<div class="panel">
+							<div class="panel-heading">招聘管理</div>
+							<ul>
+								<li class="">
+									<a href="#" target="_blank">应聘指南<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">招聘公告<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">职位发布<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">招聘公告<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">岗位信息<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">宣讲会申请<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+							</ul>
+						</div>
+						<div class="panel">
+							<div class="panel-heading">学校概况</div>
+							<ul>
+								<li class="">
+									<a href="#" target="_blank">学校介绍<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">学校专业<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">学校相册<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">联系方式<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+							</ul>
+						</div>
+						<div class="panel">
+							<div class="panel-heading">账号信息</div>
+							<ul>
+								<li class="">
+									<a href="#" target="_blank">基本信息<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+								<li class="">
+									<a href="#" target="_blank">修改密码<img src="{$SKIN}pingtai/arr2.png"></a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-10 col-sm-9 col-xs-12 col-wd-80">
+				<div class="pt-module">
+					<div class="pt-user">
+						<div class="row">
+							<div class="col-md-2 col-sm-3 col-xs-3">
+								<div class="pt-user-pic"><img src="{$SKIN}pingtai/user.jpg"/></div>
+							</div>
+							<div class="col-md-10 col-sm-9 col-xs-9">
+								<div class="pt-user-title">{$memberinfo[username]} {$memberinfo[name]}，欢迎您</div>
+								<ul class="pt-user-info row">
+									<li class="col-md-4 col-sm-6 col-xs-12">地址：广东省</li>
+									<li class="col-md-4 col-sm-6 col-xs-12">行业：科学科研和技术服务业</li>
+									<li class="col-md-4 col-sm-6 col-xs-12">规模：少于50人</li>
+								</ul>
+								<ul class="pt-user-info row">
+									<li class="col-md-4 col-sm-6 col-xs-12">企业性质：民营企业 </li>
+									<li class="col-md-4 col-sm-6 col-xs-12">上次登陆时间：<!--{php echo date('Y-m-d H:i:s',$memberinfo['last_login']);}--></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+					<div class="pt-box">
+						<div class="head clearfix">
+							<div class="title pull-left">本站通知</div>
+							<div class="more pull-right"><a href="#">查看更多>></a></div>
+						</div>
+						<div class="main">
+							<ul class="side-list">
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="pt-box">
+						<div class="head clearfix">
+							<div class="title pull-left">本站通知</div>
+							<div class="more pull-right"><a href="#">查看更多>></a></div>
+						</div>
+						<div class="main">
+							<ul class="side-list">
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+								<li>
+									<span class="datatime">2018-08-01</span>
+									<a href="#" target="_blank" title="本成果在我国“大众创业、万众创 ">本成果在我国“大众创业、万众创 </a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="pt-footer">
+	<div class="container">
+		<div class="pt-copyright text-center">
+			{$core.CONFIG['copyright']}
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<!--{/php168}-->

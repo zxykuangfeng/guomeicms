@@ -1,0 +1,80 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<style>
+body{background:#ffffff;}
+</style>
+<div class="panelbody">
+	<div class="content msg_list">
+		<div class="msg_main">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table">
+				<tr>
+					<td width="15%">发件人</td>
+					<td><span id="con_senduser" style="color:#1F8919;font-weight:bold">$data[username]</span></td>
+				</tr>
+				<tr>
+					<td width="15%">标题</td>
+					<td><span id="con_title" style="color:#1F8919;font-weight:bold">$data[title]</span></td>
+				</tr>
+				<tr>
+					<td width="15%">发送时间</td>
+					<td>{date('Y-m-d H:i:s', $data['timestamp'])}</td>
+				</tr>
+				<tr>
+					<td width="15%">内容</td>
+					<td><div id="p8_content_show" style="font-size:16px;font-family:黑体,Verdana, Geneva, sans-serif;padding-top: 10px;min-height:60px;line-height:24px;">{htmlspecialchars_decode($data[content])}</div></td>
+				</tr>
+			</table>
+		</div>
+		<div class="mt30 text-center">
+			<!--{if !$nomenu}-->
+			<!--{if $type == 'in' || $type == 'important'}-->
+			<a class="link_btn btn1" href="$this_router-send?id=$data[id]"><i class="icon icon-ico46"></i>回复</a> 
+			<!--{/if}-->
+			<a class="link_btn btn2"  href="$this_router-send?type=$type&id=$data[id]"><i class="icon icon-ico47"></i>转发</a>
+			<a class="link_btn btn3" href="###" id="message_$data[id]" onclick="delete_message([this.id])"><i class="icon icon-ico48"></i>删除</a>
+			<!--{else}-->
+			<!--{if $type == 'in' || $type == 'important'}-->
+			<a class="link_btn btn1" href="{$core.U_controller}?main_page=/message-send?id=$data[id]" target="_blank"><i class="icon icon-ico46"></i>回复</a>
+			<a class="link_btn btn2"  href="{$core.U_controller}?main_page=/message-send?id=$data[id]" target="_blank"><i class="icon icon-ico47"></i>转发</a>
+			<!--{/if}-->			
+			<!--{/if}-->
+		</div>
+	</div>
+</div>
+
+
+<script type="text/javascript">
+function delete_message(array){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	
+	//if(confirm('{$P8LANG['confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({type: '$type', id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					p8_window.alert(P8LANG.core.message.deleted);
+				}
+			});
+		}
+	});
+}
+</script>
+
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

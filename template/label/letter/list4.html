@@ -1,0 +1,8 @@
+<!--{php168}-->
+<ul>
+<!--{foreach $list $key $row}-->
+<li>·<a href="$row[url]" title="$row[full_title]" target="_blank">$row[title]{if $row[undisplay]}<span style="color:red;"> (加密)</span>{/if}</a> (<!--{php echo date('m-d',$row['create_time']);}-->)</li>
+<!--{/foreach}-->
+<div class="clear"></div>
+</ul>
+<!--{/php168}-->

@@ -1,0 +1,99 @@
+<!--{php168}-->
+
+<!--{template $this_module header admin}-->
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/core/uploader-config"><i class="icon icon-ico23"></i>上传配置</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/core/uploader-dfjshangchuan"><i class="icon icon-ico31"></i>大附件上传设置</a></li>
+						<li class="btn-color3"><a href="{$core.admin_controller}/core/uploader-role_filter"><i class="icon icon-ico12"></i>角色细分上传权限</a></li>
+						<li class="btn-color5"><a href="{$core.admin_controller}/core/uploader-list"><i class="icon icon-ico34"></i>附件管理</a></li>
+						<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/shangchuanshezhi.pdf.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon" style="margin-right:5px;">附件上传设置教程>></a></li>						
+					</ul>
+				</td>
+			</tr>
+		</table>
+		
+		<!--{if empty($core->CONFIG['use_core_roles_only'])}-->
+		<table class="formtable">
+			<tr class="title">
+				<td class="title">{$P8LANG['role_system_filter']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="$this_url?system=core">{$P8LANG['core']}</a></li>
+					<!--{foreach $system_list $k $v}-->	
+						<li><a href="$this_url?system=$k">{$v['alias']}</a></li>
+					<!--{/foreach}-->
+					</ul>
+				</td>
+			</tr>
+			
+		</table>
+		<!--{/if}-->
+		
+		<table class="columntable formtable hover_table">
+		<tr class="title">
+			<td class="title">ID</td>
+			<td class="title">过滤器/{$P8LANG['role']}</td>
+			<td class="title">{$P8LANG['operation']}</td>
+		</tr>
+		<!--{if $system == 'core'}-->
+		<tr>
+			<td align="center">0</td>
+			<td align="center">系统默认过滤器</td>
+			<td align="center">
+				<a href="$this_url?role_id=999">设置上传权限</a>
+			</td>
+		</tr>
+		<!--{/if}-->
+		<!--{foreach $list['system'] $value}-->
+		<tr>
+			<td align="center">{$value['id']}</td>
+			<td align="center">{$value['name']}</td>
+			<td align="center">
+				<a href="$this_url?role_id={$value['id']}">设置上传权限</a> / 
+				<a href="{$core.admin_controller}/core-set_acl?role_id={$value['id']}#acls_uploader">设置资料库上传权限</a>
+			</td>
+		</tr>
+		<!--{/foreach}-->
+		
+		<!--{foreach $list['normal'] $value}-->
+		<tr>
+			<td align="center">{$value['id']}</td>
+			<td align="center">{$value['name']}</td>
+			<td align="center">
+				<a href="$this_url?role_id={$value['id']}">设置上传权限</a> / 
+				<a href="{$core.admin_controller}/core-set_acl?role_id={$value['id']}#acls_uploader">设置资料库上传权限</a>
+			</td>
+		</tr>
+		<!--{/foreach}-->
+		
+		</table>
+	</div>
+</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					1、主要设定系统中的用户角色分别有哪些上传附件类型的权限。<br />
+	2、可以针对附件类型、大小、是否开启等做出设置。
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<!--{template $core footer admin}-->
+
+<!--{/php168}-->

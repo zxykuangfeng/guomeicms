@@ -1,0 +1,140 @@
+<!--{php168}-->
+<!--{php
+$acl_url = '';
+if(!empty($acl_system)){
+	$acl_url = $core->admin_controller .'/'. $acl_system;
+	
+	if(!empty($acl_module)){
+		$acl_url = $acl_url .'/'. $acl_module .'-'. $ACTION;
+	}else{
+		$acl_url = $acl_url .'-'. $ACTION;
+	}
+}
+
+if(!empty($acl_url)){
+	$role->get_group_cache();
+}
+}-->
+<!--{template $role header admin}-->
+
+<form action="" name="form" id="form" method="POST">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/core/role-add"><i class="icon icon-ico44"></i>添加角色</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/core/role-list_group"><i class="icon icon-ico12"></i>角色列表</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	
+		<table class="columntable formtable hover_table">
+			<tr class="title">
+				<td width="10%" align="center" class="title">ID</td>
+				<td width="17%" align="center" class="title">{$P8LANG['role']}</td>
+				<td width="29%" align="center" class="title">{$P8LANG['role_group']}</td>
+				<td width="12%" align="center" class="title">{$P8LANG['list_order']}</td>
+				<td width="27%" align="center" class="title">{$P8LANG['operation']}</td>
+			</tr>
+			<tr><td colspan="5" align="center"><i class="fa fa-street-view"></i> <strong>{$P8LANG['system_role']}</strong> <i class="fa fa-street-view"></i></td></tr>
+			<!--{foreach $list['system'] $value}-->
+			<tr>
+				<td align="center">{$value['id']}</td>
+				<td align="center"><a href="{$core.admin_controller}/core/member-list?role_gid={$value['gid']}&role_id={$value['id']}">{$value['name']}</a></td>
+				<td align="center">
+					<!--{if !empty($role->groups[$value['gid']])}-->
+					{$role.groups[$value['gid']]['name']}
+					<!--{/if}-->
+				</td>
+				<td align="center"><input type="text" name="display_order[$value[id]]" value="{$value['display_order']}" size="5" /></td>
+				<td align="center">
+					<a href="{$core.admin_controller}/sites-set_acl?role_id={$value['id']}" target="_blank"><font style="font-weight:600;color:blue;">{$P8LANG['set_acl']}</font></a> 
+					<a href="{$core.admin_controller}/sites-set_admin_acl?role_id={$value['id']}" target="_blank">{$P8LANG['set_admin_acl']}</a>					
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			<tr><td colspan="5" align="center"><i class="fa fa-street-view"></i> <strong>{$P8LANG['normal_role']}</strong> <i class="fa fa-street-view"></i></td></tr>
+			<!--{foreach $list['normal'] $value}-->
+			<tr>
+				<td align="center">{$value['id']}</td>
+				<td align="center"><a href="{$core.admin_controller}/core/member-list?role_gid={$value['gid']}&role_id={$value['id']}">{$value['name']}</a></td>
+				<td align="center">{$role.groups[$value['gid']]['name']}</td>
+				<td align="center"><input type="text" name="display_order[$value[id]]" value="{$value['display_order']}" size="5" /></td>
+				<td align="center">
+					<a href="{$core.admin_controller}/sites-set_acl?role_id={$value['id']}" target="_blank"><font style="font-weight:600;color:blue;">{$P8LANG['set_acl']}</font></a> 
+					<a href="{$core.admin_controller}/sites-set_admin_acl?role_id={$value['id']}" target="_blank">{$P8LANG['set_admin_acl']}</a> 					
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			<tr>
+				<td colspan="5">
+					<div style="text-align:center;"><input type="submit" value="{$P8LANG['submit_cache']}"  class="edit_btn" /></div>
+				</td>
+			</tr>
+		</table>		
+	</div>
+</div>
+</form>
+
+<!--{if empty($acl_url)}-->
+<script type="text/javascript">
+function _delete_role(obj){
+	//if(!confirm('$P8LANG[confirm_to_delete]')) return false;
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			var id = parseInt(obj.id.replace(/[^0-9]/g, ''));			
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'post',
+				data: {id: id},
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(status){
+					ajaxing({action: 'hide'});
+					if(status == 1){
+						$(obj).parent().parent().remove();
+					}
+				}
+			});
+			
+			return false;
+		}else{
+			return false;
+		}
+	});
+}
+$('form input[name^=display_order]').change(function(){
+		this.value = this.value.replace(/[^0-9]/g, '') || 0;
+		if(this.value > 255) this.value = 255;
+		if(this.value < 0) this.value = 0;
+		
+		$('#form').append('<input type="hidden" name="_display_order['+ this.name.replace(/[^0-9]/g, '') +']" value="'+ this.value +'" />');
+		$(this).css({border: '1px solid #ff0000'});
+	});
+function open_dialog(url){	
+	var p8_map_dialog = new P8_Dialog({
+		title_text: '权限设置管理',
+		button: false,
+		width: 900,
+		height: 600,
+		iframe: true,
+		zIndex:10000,
+		show: function(){			
+			showhtml = '<iframe src="'+url+'" frameborder="0" scrolling="auto" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;overflow-x: hidden;"></iframe>';
+			this.content.html(showhtml);
+		}
+	});
+	ajaxing({});
+	p8_map_dialog.show();
+	ajaxing({action: 'hide'});
+}
+</script>
+<!--{/if}-->
+
+<!--{template $core footer admin}-->
+
+<!--{/php168}-->

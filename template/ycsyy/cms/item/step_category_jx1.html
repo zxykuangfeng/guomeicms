@@ -1,0 +1,38 @@
+<!--{php168}-->
+<!--{php 
+$i = sizeof($CAT['parents']);
+$j = $i>1? $i-2 : 0;
+if($CAT['parents'])
+$stepcat = $category->categories[$CAT['parents'][$j]]['categories'];
+else
+$stepcat = $category->categories[$cid]['categories'];
+}-->
+<ul class="accordion" id="accordion">
+	<!--{foreach $stepcat $v}-->
+	<!--{if !$v['enable_show']}-->
+	<!--{if !empty($v['categories'])}-->
+	<li class="cid_{$v['id']}">
+		<div class="linke">
+            <a href="javascript:void(0)" class="jia">$v[name]</a> <i></i>
+		</div>
+		<ul class="submenu" style="{if array_key_exists($cid,$v['categories']) || $cid==$v['id']}display:;{else}display:none{/if}">
+            <!--{foreach $v['categories'] $sv}-->
+			<li>
+                <!--{if !$sv['enable_show']}--><a href="$sv[url]"><b></b>$sv[name]</a><!--{/if}-->
+            </li>
+			<!--{/foreach}-->
+        </ul>
+	</li>
+	<!--{else}-->
+	<li class="cid_{$v['id']} <!--{if $cid == $v['id']}-->open<!--{/if}-->">
+		<div class="linke">
+           <a href="$v[url]">$v[name]</a> <i></i>
+		</div>
+	</li>
+	<!--{/if}-->
+	<!--{/if}-->
+	<!--{/foreach}-->
+</ul>
+<script type="text/javascript" src="{$RESOURCE}/js/leftnav.js"></script>
+<!--{/php168}-->
+

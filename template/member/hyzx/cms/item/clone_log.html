@@ -1,0 +1,226 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="list_box">
+			<div class="head" id="boxhead">
+				<span id="verified" class="over"><a href="$this_url">{$P8LANG['cms_item']['clone_log']}</a></span>
+				<a class="sendmsg_link_bg" href="$this_router-add">发布文章</a>
+				<div class="search" style="width:auto;">
+					<form action="$this_url" method="get" id="request" onsubmit="request_item(1);return false;">
+						<select name="model" id="model">
+							<option value="">{$P8LANG['cms_model']}</option>
+							<!--{foreach $models $name $v}-->
+							<option value="$name"{if $MODEL == $name} selected{/if}>$v[alias]</option>
+							<!--{/foreach}-->
+						</select>
+						<select name="order">
+							<option value="0" selected="selected">降序</option>
+							<option value="1">升序</option>							
+						</select>								
+						<input type="text" class="txt" id="cond" size="15" name="key_word" value="$key_word"/>
+						<input type="submit" value="{$P8LANG['search']}" class="submit"/>
+						<input type="button" value="{$P8LANG['refresh']}" class="refreshbtn" onclick="request_item(PAGE)" />
+					</form>
+				</div>				
+			</div>
+		</div>
+		<form action="" method="post" id="form">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+			<tr class="head">
+				<td><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+				<td>ID</td>
+				<td>{$P8LANG['title']}</td>
+				<td>{$P8LANG['source']}</td>
+				<td>{$P8LANG['cms_category_name']}</td>
+				<td>{$P8LANG['cms_model']}</td>
+				<td>{$P8LANG['department']}</td>
+				<td>{$P8LANG['author']}</td>
+				<td>{$P8LANG['verifier']}</td>
+				<td>{$P8LANG['cms_item']['clone_timestamp']}</td>						
+				<td>{$P8LANG['operation']}</td>
+			</tr>
+			
+			<tbody id="list">
+					
+			</tbody>
+			
+			<tr>
+				<td align="center" colspan="11" class="pages" id="pages"></td>
+			</tr>
+		</table>
+		</form>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">			
+			<tr>
+				<td>
+					<a name="op"></a>
+					<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+					<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a> 
+					<input type="button" value="{$P8LANG['cms_item']['clone_delete_log']}" onclick="delete_item(checked_values('id[]', $('#form')))" class="edit_btn" />
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function init_tr(context){
+	
+	$('.hover_table tr', context === undefined ? null : $(context)).
+	off('mouseover', init_tr.over).on('mouseover', init_tr.over).
+	off('mouseout', init_tr.out).on('mouseout', init_tr.out).
+	off('mousedown', init_tr.down).on('mousedown', init_tr.down).
+	find('td:first:not(.title) input[type=checkbox]').each(function(){
+		
+		if(this.checked){
+			$(this).parent().parent().addClass('clicked');
+		}else{
+			$(this).parent().parent().removeClass('clicked');
+		}
+		
+		$(this).off('click', init_tr.check).on('click', init_tr.check);
+	}).
+	find('td input[type=text]').each(function(){ addClass('txt'); });
+}
+function delete_item(array){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(Number(v));
+	});
+	
+	if(!id.length) return false;
+	p8_window.confirm('{$P8LANG['cms_item']['clone_delete_confirm']}', function (r) {
+		if(r){
+			$.ajax({
+				type:'POST',
+				url	: '{$this_url}',
+				dataType: 'json',
+				data :ajax_parameters({id: id}),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success:function(json){
+					ajaxing({action: 'hide'});					
+					if(json){						
+						for(var i in json){
+							$('#v_'+ json[i]).remove();
+						}
+						p8_window.alert('{$P8LANG['done']}');
+					}else{
+						p8_window.alert('{$P8LANG['fail']}');
+					}
+				}
+			});
+		}else{
+			return false;
+		}
+	});
+}
+var verified = 1,	
+	MODEL_JSON = $model_json,
+	ATTR_JSON = $attr_json,
+	MODEL = '$MODEL',
+	PAGE;
+
+
+function request_item(page){
+	
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			PAGE = page;
+			$('#list').empty();
+			for(var i in json.list){
+				_list_item(json.list[i]);
+			}
+			
+			$('#pages').html(json.pages);
+			
+			ajaxing({action: 'hide'});
+			
+			window.scrollTo(0, 0);
+			
+			$('input[name=cl]').prop('checked', false);
+			
+			if($('#cond').val() && $('#selected_type').val() == 'id'){
+				check_all(true, 'id[]');
+			}
+			
+			init_tr($('#form'));
+			
+			var keywords = $.trim($('#request input[name=keyword]').val());
+			if(!keywords.length) return;
+			
+			var keywords = keywords.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+			
+			$('.list_item').each(function(){
+				for(var i = 0; i < keywords.length; i++){
+					var html = $(this).find('.item_title').get(0).innerHTML;
+					$(this).find('.item_title').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+				}
+			});
+			
+		}
+	});
+}
+
+function _list_item(json){
+	
+	var props = ['id', 'cid', 'title', 'push_back_reason','attributes', 'model', 'timestamp', 'username', 'pages','department'];
+	
+	for(var i = 0; i < props.length; i++){
+		if(json[props[i]] === undefined) json[props[i]] = '';
+	}
+	
+	json.otitle = json.title;
+	json.title_bold == 1 && (json.title = '<b>'+ json.title +'</b>');
+	json.title_color && (json.title = '<font color="'+ json.title_color +'">'+ json.title +'</font>');
+		
+	json.model = MODEL_JSON[json.model] || {id: 0, name: MODEL, alias: ''};
+	var attr = json.attributes.split(',');
+	var attrs = '';
+	for(var i in attr){
+		if(!attr[i]) continue;
+		
+		attrs += '<font color="red">'+ ATTR_JSON[attr[i]] +'</font> ';
+	}
+	var update_link = '{if $allow_update}<a href="$this_router-update?model='+ json.model.name +'&id='+ json.id +'&verified='+ json.verified +'" title="{$P8LANG['edit']}">{$P8LANG['update']}</a> / {/if} ';
+	var delete_link = '<a id="delete_'+ json.clone_id +'" href="###" onclick="return delete_item(['+ json.clone_id +']);" title="{$P8LANG['delete']}">{$P8LANG['delete']}</a>';
+	
+	var tr = 
+	'<tr id="v_'+ json.clone_id +'">'+
+		'<td><input type="checkbox" name="id[]" value="'+ json.clone_id +'" /></td>'+
+		'<td>'+ json.id +'</td>'+
+		'<td class="al">'+
+			'<a href="{$this_module.controller}-view-id-'+ json.id +'?verified='+ json.verified +'" target="_blank" title="{if !empty($value['push_back_reason'])}$value[push_back_reason]{else}'+ json.otitle +'{/if}" alt="'+ json.otitle +'">'+ json.title +'</a>&nbsp;'+ attrs +
+		'</td>'+
+		'<td>'+ json.source +'</td>'+
+		'<td id="item_cat_'+ json.id +'" title="'+ json.cid +'">'+
+			'<a href="{$core.admin_controller}/cms/item-list?model=&cid='+ json.cid +'" >'+ json.category_name +'</a>'+
+		'</td>'+
+		'<td>'+ json.model.alias +'</td>'+
+		'<td>'+ json.department +'</td>'+
+		'<td>'+ json.username +'</td>'+
+		'<td>'+ json.verifier +'</td>'+
+		'<td>'+ date('Y-m-d H:i', json.action_timestamp) +'</td>'+
+		'<td>'+
+			'<a href="{$this_module.controller}-view-id-'+ json.id +'?verified='+ json.verified +'" target="_blank" title="{if !empty($value['push_back_reason'])}$value[push_back_reason]{else}'+ json.otitle +'{/if}" alt="'+ json.otitle +'">{$P8LANG['view']}</a> / '+
+			'<a href="{$this_module.controller}-view-id-'+ json.from_id +'?verified=1" target="_blank">{$P8LANG['cms_item']['clone_src']}</a> / '+ update_link + delete_link +
+		'</td>'+
+	'</tr>';
+	
+	$('#list').append($(tr));
+}
+
+$(function(){
+	request_item(1);
+});
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

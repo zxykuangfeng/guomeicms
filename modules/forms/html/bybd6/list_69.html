@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>成绩查询平台</title>
+<link rel="stylesheet" type="text/css" href="https://www.ycsyy.com/skin/label/label.css" />
+<link rel="stylesheet" type="text/css" href="https://www.ycsyy.com/skin/default/core/css/bootstrap.min.css" />
+<link rel="stylesheet" type="text/css" href="https://www.ycsyy.com/skin/default/core/css/baoming.css" />
+<script type="text/javascript" src="https://www.ycsyy.com/skin/default/core/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://www.ycsyy.com/js/config.js"></script>
+<script type="text/javascript" src="https://www.ycsyy.com/js/util.js"></script>
+
+<script type="text/javascript" src="https://www.ycsyy.com/js/lang/core/zh-cn.js"></script>
+
+<script type="text/javascript">
+P8CONFIG.RESOURCE = 'https://www.ycsyy.com';
+var SYSTEM = 'core',
+MODULE = 'forms',
+ACTION = 'list',
+LABEL_URL = '/index.php/forms-list-mid-69-page-1?',
+$this_router = P8CONFIG.URI[SYSTEM][MODULE].controller,
+$this_url = $this_router +'-'+ ACTION,
+SKIN = 'https://www.ycsyy.com/skin/ycsyy/core/',
+TEMPLATE = 'ycsyy';
+mobile_status= '0',
+mobile_auto_jump='0',
+mobile_url = '';
+if(mobile_status=='1' && SYSTEM!='sites'){
+if(browser.versions.android || browser.versions.iPhone || browser.versions.iPad){
+if(mobile_auto_jump=='1' && mobile_url!=P8CONFIG.RESOURCE){
+var this_url = location.href,_pul=P8CONFIG.RESOURCE;
+if(this_url.indexOf(mobile_url)==-1 && this_url.indexOf('s.php')==-1 && this_url.indexOf('u.php')==-1 && this_url.indexOf('admin.php')==-1 && SYSTEM!='sites'){
+if(this_url.indexOf(P8CONFIG.RESOURCE+'/html')!=-1)_pul+='/html';
+if(P8CONFIG.RESOURCE=='')
+this_url = this_url.mobile_url;
+else
+this_url = this_url.replace(_pul, mobile_url);
+location.href = this_url;
+}
+}
+}
+};document.base_domain = '';
+</script>
+
+</head>
+<script type="text/javascript" src="https://www.ycsyy.com/js/jq_validator.js"></script>
+<script type="text/javascript" src="https://www.ycsyy.com/js/upload.js"></script>
+<script type="text/javascript" src="https://www.ycsyy.com/js/core/label/label.js"></script>
+
+<body id="chaxun">
+<div class="header container">
+<div class="logo"><img width="80%" height="auto" border="none" alt="" src="https://www.ycsyy.com/attachment/core/label/2022_11/08_10/bb67e815003bf83f.png" /></div>
+<div id="header_t" style="position: absolute;right:0;top:0"></div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-12">
+<div class="wrap_out">
+<div class="cx_table">
+<div class="cx_header">
+<div class="head">
+<div class="title">成绩查询</div>
+<div class="more"></div>
+</div>
+</div>
+<div class="bm_middle">
+<div class="tb luqu">
+<form name="request" id="request" action="" method="get">
+<table class="formtable">
+<tr><td class="headerbtn_list">
+<div class="channel_item">
+<div class="channel_item_title luqu">姓名:</div>
+<div class="channel_item_input luqu"><input type="hidden" name="#field_cpmc_posted" />
+<input type="text"  class="txt" id="field#[cpmc]" name="field#[cpmc]" value="" style="border:1px solid #e1eaf4" /> </div>
+</div>
+<div class="clearfix"></div>
+<div class="channel_item">
+<div class="channel_item_title luqu">准考证号:</div>
+<div class="channel_item_input luqu"><input type="hidden" name="#field_tibaoren_posted" />
+<input type="text"  class="txt" id="field#[tibaoren]" name="field#[tibaoren]" value="" style="border:1px solid #e1eaf4" /> </div>
+</div>
+<div class="clearfix"></div>
+
+</td>
+</tr>
+</table>
+<div class="clearfix"></div>	
+<div class="form_submit">
+<input type="submit"  class="forms_btn1" value="提交" onclick="this.form.action='';this.form.method='get'"/>
+<input type="reset" name="" class="forms_btn1" value="重填" />
+<input type="hidden" name="mid" value="69" />
+<input type="hidden" name="accurate" value="1" />
+<input type="hidden" name="ids" value="" />
+<div class="forms_btn2"></div>
+</div>
+</form>
+</div>						
+<div class="zhushi" style="width: 475px;margin: 10px auto;line-height: 28px;">注意：1.姓名中间不要加空格，查询结果若与纸质文本不符以纸质文本为准。
+<br>
+<span style="padding: 0 21px;"></span>2.成绩为”0“表示缺考、违纪、不得分等情况。</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="container">
+<div class="row">
+<div class="col-md-12">
+<div class="footer_info">
+
+
+</div>
+</div>
+</div>
+</div>
+</body>
+<script type="text/javascript">
+init_labelshows('header_t');
+</script>
+<script type="text/javascript">
+
+$(function(){	   
+$('.pop_table tr:even').addClass('pop_tr');	
+})
+
+</script>

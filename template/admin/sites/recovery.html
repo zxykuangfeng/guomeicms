@@ -1,0 +1,256 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$this_system.admin_controller}-recovery"><i class="fa fa-cog"></i>系统巡检</a></li>
+						<li><a href="{$this_system.admin_controller}/category-html_manager"><i class="fa fa-cog"></i>栏目静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}/farm-list_manager"><i class="fa fa-cog"></i>菜单静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-visualization"><i class="fa fa-cog"></i>页面可视化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-publishing"><i class="fa fa-cog"></i>站点发布管理</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="formtable zq_list hover_table" align="center">	
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">操作流程 <div class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/zhandianfabu.pdf" target="_blank" style="color:#c00;font-weight:normal;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 站点发布流程教程>></a></div></td>
+			</tr>
+			<tr>
+				<td class="tdL">应用场景说明</td>
+				<td class="tdR">
+					1、当网站发布看不到效果的时候，此处可以手工更新处理。<br>
+					2、当网站横幅图片尺寸有异常的处理方式。<br>
+					3、当需要新增一个菜单或栏目的情况。<br>
+					4、当一篇内容设置仅限局域网访问的时候。<br>
+					5、当需要上传视频的时候。<br>
+				</td>
+			</tr>					
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">完整操作流程（初次设置操作或需完整的操作）：</td>
+			</tr>
+			<tbody>
+			
+			<tr>
+				<td class="tdL">操作1：所有异常情况，优先点击缓存</td>
+				<td class="tdR">
+					<input type="submit" value="点击更新本站缓存" class="cache_btn2" onclick="cache_site('{$this_system->SITE}')" size="30"/>有异常情况，先更新全站缓存										
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">操作2：首页看不到效果的情况</td>
+				<td class="tdR">
+					<input type="submit" value="点击更新首页" class="cache_btn2" onclick="html_index()" size="30"/> 点击后，再快速刷新几次首页看效果
+
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">操作3：栏目和内容看不到效果的情况</td>
+				<td class="tdR">		
+					<input type="submit" class="cache_btn2" onclick="list_to_html()" value="点击静态栏目和内容" />点击后，再快速刷新几次当前页面看效果
+				</td>
+			</tr>
+			</tbody>
+		
+			<tbody>
+			<tr>
+				<td class="tdL">操作4：横幅替换和尺寸的处理 </td>
+				<td class="tdR"><input type="submit" class="cache_btn2" value="横幅图片上传和尺寸处理 " />图片一般用jpg格式，1920*530尺寸，jpg格式</td>
+			</tr>
+
+			<tr>
+				<td class="tdL">操作5：需要新增一个菜单和栏目</td>
+				<td class="tdR"><input class="cache_btn2" type="submit" value="新增一个菜单和栏目" />菜单和栏目是相互独立的，通过选择来关联；一般菜单和栏目都是静态</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作6：添加和管理菜单教程 </td>
+				<td class="tdR">
+					<input type="submit" class="cache_btn2" value="视频上传和转码处理" onclick="this.form.type.value = 'index_to_html'" />视频需要转码，格式MP4，编码H264；大小不超过200M;
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作7：重新静态本站点</td>
+				<td class="tdR"><input class="cache_btn2" type="submit" value=" 内容一键排版和编辑器操作" />系统支持一键排版，PDF上传，在线图片直接处理。</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">操作8：清理浏览器缓存查看效果</td>
+				<td class="tdR"><input class="cache_btn2" type="submit" value=" 查看效果教程" />浏览器有缓存，有时候看不到效果</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend style="font-size:14px;">列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+
+<fieldset class="field" id="shower2">
+	<legend style="font-size:14px;">内容页</legend>
+	<iframe name="shower2" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+
+<form id="list_to_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<form id="view_to_html" action="{$this_system.admin_controller}/item-view_to_html" method="post" target="shower2"></form>
+<form id="list_only_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<script type="text/javascript">
+function list_to_html(){
+	$('#list_to_html').empty();
+	$('#view_to_html').empty();	
+	var pages = 0;
+	var items = -1;
+	
+	$('#list_to_html').append($('<input type="hidden" name="pages" value="'+ pages +'" />'));
+	$('#list_to_html').submit();	
+	html_dialog.show();	
+	$('#view_to_html').append($('<input type="hidden" name="items" value="'+ items +'" />'));
+	$('#view_to_html').submit();
+}
+var html_dialog = new P8_Dialog({
+	width: 700,
+	height: 500,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+function cache_site(site){
+	var cache_data = ['farm','template','label','manu','model','category','menu_custom'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});
+}
+function html_index(){
+	thisSite = '{$this_system->SITE}';
+	if(!thisSite)return false;
+	$.ajax({
+		url:'{$this_system.admin_controller}-index_to_html',
+		type: 'post',
+		dataType: 'json',
+		data: ajax_parameters({site:thisSite}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(msg){
+			ajaxing({action: 'hide'});
+			if(msg==-1){
+				p8_window.alert('此站没有绑定域名，不可静态');
+			}else{
+				p8_window.alert('静态成功！');
+				window.open(msg);
+			}
+	   }
+	})
+}
+function do_cache(cache_type){		
+	$('#cache_type').val(cache_type);
+	ajaxing({'text':'处理中…'});
+	$('#cache').submit();	
+}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var values = cs.get_value();
+		$('#option_category').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$this_system.controller}/category-json',
+	values: $('#option_category').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

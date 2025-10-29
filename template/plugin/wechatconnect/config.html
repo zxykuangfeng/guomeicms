@@ -1,0 +1,105 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li class="active"><a href="{$this_url}?plugin=wechatconnect"><i class="fa fa-cogs"></i>插件配置</a></li>
+						<li><a href="{$this_url}?plugin=wechatconnect&job=list"><i class="fa fa-cogs"></i>账号管理</a></li>
+						
+					</ul>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+
+<form name="form1" action=""  onsubmit="return check();" method="post">
+	
+	<div class="mainbox mainborder">
+		<div class="section">
+
+	<table class="columntable formtable hover_table">
+			<tr>
+					<td colspan="2" class="title">{$P8LANG['wechat_config']}</td>
+			</tr>
+		
+		   <tr style="display:none">
+            <td class="tdR" align="right" width="20%" >实现方式：</td>
+            <td class="tdR">
+				<input type="radio" name="config[wechat_type]" value="open"{if empty($config['wechat_type']) or $config['wechat_type']=='open'} checked{/if} />微信开放平台
+				<input type="radio" name="config[wechat_type]" value="mp"{if $config['wechat_type']=='mp'} checked{/if} />微信公众平台<br />
+            </td>
+          </tr>
+          <tr>
+			<td class="tdR" align="right">会员绑定模式：</td>
+			<td class="headerbtn_list">
+			<input type="radio" name="config[check_status]" value="0" {if empty($config['check_status'])}checked{/if}/>自动生成 <span class="point">当第一次登录时，系统会自动生成随机帐号、密码与邮箱，其中密码与邮箱可以在会员中心修改。(未审核通过时建议用此模式)</span><br/>
+			<input type="radio" name="config[check_status]" value="1"  {if !empty($config['check_status'])}checked{/if}/>手动绑定 <span class="point">第一次登录时，需手动绑定本站的帐号。 (审核通过后建议使用此模式)</span>
+			
+			<span style="color:red"></span>
+			</td>
+		</tr>
+          <tr>
+            <td class="tdR" align="right" width="20%">开发者ID(AppID)：</td>
+            <td class="tdR"><input class="txt" name="config[appid]" id="appid" type="text" size="50" value="{if !empty($config['appid'])}{$config['appid']}{/if}" /> 
+			在 <span class="point"><a href="https://open.weixin.qq.com/" target="_blank">微信开放平台</span> ->管理中心->网站应用中查看</a></td>
+          </tr>
+          <tr>
+            <td class="tdR" align="right">开发者密码(AppSecret)：</td>
+            <td class="tdR"><input class="txt" name="config[appsecret]" id="appsecret" size="50" type="text" value="{if !empty($config['appsecret'])}{$config['appsecret']}{/if}"/>
+            在 <span class="point"><a href="https://open.weixin.qq.com/" target="_blank">微信开放平台</span> ->管理中心->网站应用中查看</a></td>
+          </tr>
+		  <tbody style="display:none">
+		   <tr>
+            <td class="tdR" align="right">令牌(Token)：</td>
+            <td class="tdR"><input class="txt" name="config[token]" id="token" size="50" type="text" value="{if !empty($config['token'])}{$config['token']}{/if}"/>
+            在 <span class="point"><a href="https://mp.weixin.qq.com/" target="_blank">微信公众平台</span> ->开发->基本设置中查看</a></td>
+          </tr>
+          <tr>
+            <td class="tdR" align="right">消息加解密密钥(EncodingAESKey)：</td>
+            <td class="tdR"><input class="txt" name="config[aeskey]" id="aeskey" size="50" type="text" value="{if !empty($config['aeskey'])}{$config['aeskey']}{/if}"/>
+            在 <span class="point"><a href="https://mp.weixin.qq.com/" target="_blank">微信公众平台</span> ->开发->基本设置中查看</a></td>
+          </tr>
+		  <tr>
+            <td class="tdR" align="right">预览者的openid(openid)：</td>
+            <td class="tdR"><input class="txt" name="config[preview_openid]" id="preview_openid" size="50" type="text" value="{if !empty($config['preview_openid'])}{$config['preview_openid']}{/if}"/>
+			发送关键词 openid 至微信公众号返回的ID值</td>
+          </tr>
+		  </tbody>
+		  
+        <tr>
+            <td class="tdR" align="right">登录后跳转地址：</td>
+            <td class="tdR"><input class="txt" name="config[tourl]" id="tourl" size="50" type="text" value="{if !empty($config['tourl'])}{$config['tourl']}{/if}"/>
+            <span class="point">不填则跳转到首页</span>
+           </td>
+          </tr>
+          <tr>
+			<td class="tdR" align="right">新加入的会员角色：</td>
+			<td class="headerbtn_list">
+			<select id="role_id" name="config[role_gid]">
+				<option value="">请选择</option>
+			<!--{foreach $role_module->groups $ro}-->
+			<!--{if $ro['registrable']}-->
+				<option value="{$ro['id']}" {if !empty($config['role_gid']) && $config['role_gid']==$ro['id']}selected{/if}>{$ro['name']}</option>
+			<!--{/if}-->
+			<!--{/foreach}-->
+			</select>
+			</td>
+		</tr>
+		  <tr>
+            <td class="tdL"></td>
+            <td class="tdR"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+			<input type="hidden" name="do" value="config" />
+			</td>
+          </tr>
+        </table>
+		</div>
+	</div>	
+</form>
+
+
+<!--{/php168}-->

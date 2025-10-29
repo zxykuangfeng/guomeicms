@@ -1,0 +1,47 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="container">
+	<div class="maincon">
+		<div class="position2 delbor delmag">
+			<a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			&gt; <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			&gt; <a href="$CAT[url]">$CAT[name]</a> 
+		</div>
+		<div class="row">
+			<div class="contentbox fl">
+				<div class="border1 mbottom">
+					<div class="gov-head2">
+						<span class="bigtitle fl"><a href="$this_url-category-$v[id]">$v[name]</a></span> 
+						<div class="more fr" style="padding:10px 0;">
+							<!--{if $add_enable}--><span class="more"> <a href="{$core.U_controller}/cms/item-add?cid=$cid&model=$CAT[model]" target="_blank">发表</a></span><!--{/if}-->
+						</div>
+					</div>
+					<div class="gov_main2">
+						<!--{php include template($TEMP_OBJ, $CAT['item_template'], 'label');}-->
+						<div id="page">
+							{$pages}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="sidebox fr">
+				<div class="sharebox">
+					<span>$label[list_box_title1]</span>
+					<div class="bdsharebuttonbox bdshare-button-style1-24" data-bd-bind="1486363175892"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a></div>
+					<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"1","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+					<span>$label[list_box_title2]</span>
+					<div class="relink">
+						$label[lianjie20]
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+

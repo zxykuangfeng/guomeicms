@@ -1,0 +1,221 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/autocomplete.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<link rel="stylesheet" href="{$SKIN}../../../admin/cms/category_selector.css" type="text/css" />
+<style type="text/css">
+.field{
+	border: 1px solid #CCCCCC;
+	padding: 10px;
+	margin: 1em;
+}
+
+.field legend{
+	border: 1px solid #CCCCCC;
+	padding: 2px 4px;
+}
+</style>
+<form action="$this_url" method="post" id="form">
+<div class="mainfluid">
+        <div class="mtab">
+                <div class="list_box">
+                        <div class="head">
+                                <span $class[1]><a href="$core->U_controller/cms/item-add?v=1">发布内容</a></span>
+                                <span $class[0]><a href="$core->U_controller/cms/item-list?v=0">栏目预览</a></span>
+                        </div>
+                </div>
+
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table" >
+			<tr class="head">
+				<td><input type="checkbox" onclick="check_all(this, 'id[]', $('#form'));" /></td>
+				<td width="10%" class="title">ID</td>
+				<td width="15%" class="title" title="0" onclick="if(this.title == 1){this.title=0;hide_all();$(this).find('span img').attr('src', '{$SKIN}../../../admin/show.gif');}else{this.title=1;show_all();$(this).find('span img').attr('src', '{$SKIN}../../../admin/hide.gif');}" style="cursor: pointer;"><span><img src="{$SKIN}../../../admin/show.gif" /></span>（可展开）{$P8LANG['cms_category_name']}</td>
+				<td width="15%" class="title">{$P8LANG['cms_category_model']}</td>
+				<td width="15%" class="title">{$P8LANG['cms_category_type']}</td>
+				<td width="15%" class="title">{$P8LANG['htmlize']}</td>
+				<td width="10%" class="title">{$P8LANG['cms_category_item_count']}</td>
+				<td width="*%" class="title">{$P8LANG['operation']}</td>
+			</tr>
+			
+			<tbody id="__">
+			
+			</tbody>
+	    </table>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+		<tr>
+			<td>
+				<input type="button" value="{$P8LANG['cms_html_category']}" onclick="list_only_html()" class="edit_btn" />
+			</td>
+			</tr>
+		</table>
+
+	</div>
+</div>
+</form>
+
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend>列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+
+<form id="list_only_html" action="{$this_router}-list_to_html" method="post" target="shower">
+</form>
+<iframe name="poster" src="about:blank" style="display: none;"></iframe>
+<script type="text/javascript">
+var CATEGORY_JSON = $json[json];
+var CATEGORY_PATH = $json[path];
+var MODEL_JSON = $json[models];
+var my_addible_category = $my_addible_category;
+function show_all(){
+	$('#__ tr').each(function(){
+		var tr = $(this).show();
+		
+		if(tr.attr('sub')){
+			tr.attr('title', 1).find('td:eq(2) span').html('<img src="{$SKIN}../../../admin/hide.gif" />');
+		}
+	});
+}
+
+function hide_all(){
+	$('#__ tr').each(function(){
+		var tr = $(this);
+		
+		if(tr.attr('sub')){
+			tr.attr('title', 0).find('td:eq(2) span').html('<img src="{$SKIN}../../../admin/show.gif" />');
+		}
+		
+		if(tr.attr('level') != 1) tr.hide().attr('title', 1);
+	});
+}
+
+function _check(path, checked){
+	$('#form tr[path^=path_'+ path +'_] input[name="id[]"]').attr('checked', checked);
+}
+
+function ___(json, l, p){
+	l = l === undefined ? 0 : l;
+	p = p === undefined ? 0 : p;
+	
+	var j = 0, k = count(json);
+	
+	for(var i in json){
+		if(!my_addible_category || my_addible_category[0] || my_addible_category[json[i].id]){
+			var html = '';
+			j++;
+			var c = '';
+			if(l != 0){
+				c += str_repeat('│&nbsp;&nbsp;', l - p) + str_repeat('&nbsp;&nbsp;&nbsp;', p);
+				if(j == k){
+					p++;
+					c += '└';
+				}else{
+					c += '├';
+				}
+			}
+			var sub = json[i].categories ? true : false;
+			var path = CATEGORY_PATH[json[i].id].join('_');
+			c += (json[i].categories ? '<span style="cursor: pointer;"><img src="{$SKIN}../../../admin/hide.gif" /></span> ' : '') + json[i].name;
+			html += 
+			'<tr id="category_'+ json[i].id +'" path="path_'+ path +'" title="1"'+ (sub ? ' sub="1"' : '') +' level="'+ (l +1) +'">'+
+				'<td><input type="checkbox" name="id[]" value="'+ json[i].id +'" onclick="_check(\''+ path +'\', this.checked)" /></td>'+
+				'<td>'+ json[i].id +'</td>'+
+				'<td class="c_name" style="text-align:left;" model="'+ json[i].model +'">'+ c +'</td>'+
+				'<td>'+ (json[i].type==3?'none':MODEL_JSON[json[i].model].alias) +'</td>'+
+				'<td>'+ (json[i].type == 1 ? '{$P8LANG['cms_category_type_1_s']}' : json[i].type == 2? '{$P8LANG['cms_category_type_2_s']}':json[i].type == 3? '{$P8LANG['cms_category_type_3_s']}':'{$P8LANG['cms_category_type_4_s']}') +'</td>'+
+				'<td align="center" class="enables"><img id="cate_'+json[i].id+'" title="'+json[i].htmlize+'" src="{$SKIN}../../../admin/'+ (json[i].htmlize == 1 ? 'check_yes.gif' : (json[i].htmlize == 2?'check_2.gif':'check_no.gif')) +'"></td>'+
+				'<td align="center">'+ json[i].item_count +'</td>'+
+				'<td>'+
+					'<a href="'+ json[i].url +'" target="_blank" title="{$P8LANG['preview']}"><img src="{$SKIN}../../../admin/icon_view.gif" /></a> '+
+					'<a href="'+(json[i].type==3?json[i].url:'{$this_system.modules['item']['controller']}-list-category-'+ json[i].id )+'" target="_blank" title="{$P8LANG['preview']}"><img src="{$SKIN}../../../admin/icon_view2.gif" /></a> '+
+					'<a href="{$core.U_controller}/$SYSTEM/category-update?model=&id='+ json[i].id +'" title="编辑修改栏目"><img src="{$SKIN}../../../admin/button_edit2.gif" /></a> '+				
+					'<a href="{$core.U_controller}/$SYSTEM/item-add?model='+ json[i].model +'&cid='+ json[i].id +'&type='+json[i].type+'" target="_blank" title="{$P8LANG['add_cms_item']}"><img src="{$SKIN}../../../admin/post_icon.gif" /></a> '+
+				'</td>'+
+			'</tr>';		
+			var tr = $(html);
+			$('#__').append(tr);
+			if(sub){
+				___(json[i].categories, l +1, p);
+				_toggle(
+					$(tr).find('td:eq(2) span').
+					bind('click', function(){_toggle($(this)); return false;})
+				);
+			}
+		}
+	}
+}
+
+___(CATEGORY_JSON);
+
+
+function _toggle(span){
+	var id = $(span).parent().parent().attr('id').replace(/[^0-9]/g, '');
+	var path = CATEGORY_PATH[id].join('_');
+	
+	var on = $('#category_'+ id).attr('title') == 0;
+	
+	var keep_close = [];
+	$('tr[path^=path_'+ path +'_]').each(function(){
+		if(on){
+			
+			if($(this).show().attr('title') == 1 && $(this).attr('sub')){
+				keep_close.push(this.id.replace(/[^0-9]/g, ''));
+				$(this).attr('title', 0);
+			}else{
+				$(this).attr('title', 1);
+			}
+			
+		}else{
+			
+			if($(this).hide().attr('title') == 0 && $(this).attr('sub')){
+				//keep close
+				$(this).attr('title', 1);
+			}else{
+				$(this).attr('title', 0);
+			}
+			
+		}
+	});
+	
+	if(on){
+		$(span).parent().parent().attr('title', 1);
+		$(span).html('<img src="{$SKIN}../../../admin/hide.gif" />');
+	}else{
+		$(span).parent().parent().attr('title', 0);
+		$(span).html('<img src="{$SKIN}../../../admin/show.gif" />');
+	}
+	
+	for(var i = 0; i < keep_close.length; i++){
+		$('tr[path^=path_'+ CATEGORY_PATH[keep_close[i]].join('_') +'_]').hide().find('span');
+	}
+	return false;
+}
+
+
+function list_only_html(){
+	$('#list_only_html').empty();
+	var ids = checked_values('id[]', $('#form'));
+	if(!ids.length) return;
+	var pages = 0;
+	$('#list_only_html').append($('<input type="hidden" name="pages" value="'+ pages +'" />'));
+	for(var i = 0; i < ids.length; i++){
+		$('#list_only_html').append($('<input type="hidden" name="cids[]" value="'+ ids[i] +'" />'));
+	}	
+	$('#list_only_html').submit();	
+	html_dialog.show();
+}
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 250,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

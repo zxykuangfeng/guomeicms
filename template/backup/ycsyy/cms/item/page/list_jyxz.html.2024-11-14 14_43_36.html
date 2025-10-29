@@ -1,0 +1,303 @@
+<!--{php168}-->
+<!--{template $this_system seo}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$core.CONFIG['page_charset']}" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=2.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<title>$TITLE</title>
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap2.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/sites/common/css/global.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/ycsyy/core/header/common.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/ycsyy/core/header/header.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/theme/theme.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/slick.css">
+<!--[if lt IE 9]>
+    <script src="{$RESOURCE}/html5shiv.min.js"></script>
+    <script src="{$RESOURCE}/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/guowei.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/breakpoints.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap-hover-dropdown.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.SuperSlide.2.1.1.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.iosslider.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.easing-1.3.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/slick.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<div class="headbar">
+	<div class="navbar navbar-default main-nav">
+		<div class="header">
+			<div class="container">
+				<div class="header-main clearfix">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+						<a href="{if $this_system->domain}{$this_system.domain}{else}{str_replace('index.php/cms','',$this_system->controller)}{/if}" class="navbar-brand navbar-logo"><img src="{if empty($core->CONFIG['logo'])}{$SKIN}../core/header/images/logo.png{else}{$core->CONFIG['logo']}{/if}"/></a>
+					</div>
+					<div class="topinfo hidden-sm hidden-xs">
+						<div class="search">
+			                <form action="{$RESOURCE}/search" target="_blank" method="get" name="form1" id="form1" class="search-form">
+						        <input type="text" class="form-control" id="keyword" name="word" placeholder="输入关键字">
+						        <input type="submit" class="btn btn-default" value="搜索" id="button" name="">
+						    </form>
+			            </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="navbar-collapse navbar-collapse-toolbar collapse navbar-main" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
+			<div class="container">
+				<ul class="nav navbar-nav navlist">
+					<!--{php $loadsystem = ($SYSTEM == $core->CONFIG['index_system'] || $core->CONFIG['CoreMenu'])? 'core' : $this_system->name;}-->
+					<!--{php $navigation_menu = $CACHE->read('', $loadsystem, 'navigation');}-->
+					<!--{php $i=0;}-->
+					<!--{foreach $navigation_menu['menus'] $k $v}-->
+					<!--{php $i++;}-->
+					<li class="dropdown">
+						<!--{if empty($v['menus']) && $core->CONFIG['ShowMenu']}-->
+						<a class="dropdown-toggle on$i" data-hover="dropdown" href="$v[url]"  aria-expanded="false" role="button" target="$v[target]">$v[name]</a>
+						<!--{/if}-->
+						<!--{if !empty($v['menus']) && $core->CONFIG['ShowMenu']}-->
+						<a class="dropdown-toggle link on$i" data-toggle="dropdown" data-hover="dropdown" href="$v[url]"  aria-expanded="false" role="button" target="$v[target]">$v[name]</a>
+						<ul class="dropdown-menu" role="menu">
+							<!--{php $j=0;}-->
+							<!--{foreach $v['menus'] $k2 $v2}-->
+							<!--{php $j++;}-->
+							<li class="menu$j"><a href="$v2[url]" target="$v2[target]">$v2[name]</a></li>
+							<!--{/foreach}-->
+						</ul>
+						<!--{/if}-->		
+					</li>
+					<!--{/foreach}-->
+				</ul>
+				<div class="topinfo2 visible-xs-block">
+					<div class="search">
+						<form action="{$core.STATIC_URL}/search" target="_blank" method="get" name="form1" id="form1" class="search-form">
+							<input type="text" class="form-control" id="keyword" name="keyword" placeholder="输入关键字">
+							<input type="submit" class="btn btn-default" value="搜索" id="button" name="button">
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="fixednav hidden-xs">
+	<div class="container">
+		<div class="navbox clearfix">
+			<ul id="menu_nav">
+				<!--{php $loadsystem = ($SYSTEM == $core->CONFIG['index_system'] || $core->CONFIG['CoreMenu'])? 'core' : $this_system->name;}-->
+				<!--{php $navigation_menu = $CACHE->read('', $loadsystem, 'navigation');}-->
+				<!--{php $i=0;}-->
+				<!--{foreach $navigation_menu['menus'] $k $v}-->
+				<!--{php $i++;}-->
+				<li class="" _t_nav="tabs$i">
+					<a href="$v[url]" class="on$i">$v[name]</a>
+				</li>
+				<!--{/foreach}-->
+			</ul>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var USERNAME = get_username();
+$(document).ready(function(){
+	//**show_edit**//
+	init_labelshows('header_t');
+})
+$(window).scroll(function(){
+	var scrollTop = $(window).scrollTop();
+	if(scrollTop > 140){
+		$('.fixednav').css({display:'block'}).stop().animate({'opacity':'1',top:0},100);
+	}else{
+		$('.fixednav').css({display:'none'}).stop().animate({'opacity':'0',top:"-50px"},100);
+	}
+});
+</script>
+<script type="text/javascript">
+    var date = new Date();
+    var year = date.getFullYear(),
+        month = date.getMonth() + 1,
+        day = date.getDate(),
+        week = date.getDay();
+    switch (week) {
+        case 1:
+            week = "星期一"
+            break;
+        case 2:
+            week = "星期二"
+            break;
+        case 3:
+            week = "星期三"
+            break;
+        case 4:
+            week = "星期四"
+            break;
+        case 5:
+            week = "星期五"
+            break;
+        case 6:
+            week = "星期六"
+            break;
+        case 7:
+            week = "星期日"
+            break;
+    }
+    $(".today").append("今天是："+week+","+year+"-"+month+"-"+day)
+</script>
+<div id="content-full">
+
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}jquery.mCustomScrollbar.min.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.mCustomScrollbar.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] !== undefined ? (\$_GET['verified'] == 1 ? 1 : 0) : 1;
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_gg]
+		</div>
+	</div>
+</div>
+<div class="maincon clearfix">
+	<div class="container">
+		<div class="column-location mb20 clearfix">
+			您现在的位置： <a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			>> <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			>> <a href="$CAT[url]">$CAT[name]</a>
+		</div>
+		<div class="column-title2 clearfix">
+			<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+			$parent[name]
+		</div>
+		<div class="column-nav mb20 clearfix">
+			<!--{template $this_module step_category_jx9}-->
+		</div>
+		<div class="row">
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<div class="apppage-tbleft">
+					<div class="part1">
+						<div class="inner">
+							<div class="scroll mCustomScrollbar _mCS_1">
+								<!--{template $this_module step_category_jx12}-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8 col-sm-8 col-xs-12">
+				<div class="apppage-tbright">
+					<div class="inner" id="right_detail">
+						<div class="scroll mCustomScrollbar _mCS_2 mCS_no_scrollbar">
+							<div class="caption">
+								$CAT[name]<span id="operation" style="display: none; cursor: pointer;color:#0040ff;font-size:16px;float:right;">{$P8LANG['operation']}>></span>
+							</div>
+							<div class="text" deep="8">
+								$data[content]
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+(function($){
+	$(window).load(function(){
+		$("body").mCustomScrollbar({
+			
+		});
+	});
+})(jQuery);
+</script>
+<script type="text/javascript" src="{$RESOUCE}/search/count.php?id=$data[id]"></script>
+</div>
+<div class="footer">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-9 col-sm-9 col-xs-12">
+				<div class="copyright">
+					$label[ycsyy_footer_copyright]
+				</div>
+			</div>
+			<div class="col-md-3 col-sm-3 col-xs-12">
+				<div class="row">
+				    <div class="col-md-4 col-sm-6 col-xs-6">
+						<div class="footpic">
+						    <div class="pic">$label[ycsyy_footer_pic3]</div>
+						    <h3 style="color:black;" >$label[ycsyy_footer_t3]</h3>
+						</div>
+					</div>
+					<div class="col-md-4 col-sm-6 col-xs-6">
+						<div class="footpic">
+						    <div class="pic">$label[ycsyy_footer_pic2]</div>
+						    <h3 style="color:black;" >$label[ycsyy_footer_t2]</h3>
+						</div>
+					</div>
+					<div class="col-md-4 col-sm-6 col-xs-6">
+						<div class="footpic">
+						    <div class="pic">$label[ycsyy_footer_pic1]</div>
+						    <h3 style="color:black;" >$label[ycsyy_footer_t1]</h3>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="right-nav">
+	$label[ycsyy_footer_fixed]
+</div>
+<script type="text/javascript">
+    $(".top").click(function() {
+        $("html,body").animate({scrollTop:0}, 500);
+    }); 
+    $('.weixin').hover(
+      function(){
+       $(".hideBox").addClass('show')
+      },
+      function(){
+       $(".hideBox").removeClass('show')
+      }
+    )
+</script>
+</body>
+</html>
+<!--{/php168}-->
+
+

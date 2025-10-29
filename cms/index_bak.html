@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=2.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content=" 盐城市第一人民医院,医院,盐城市" />
+<meta name="description" content=" 盐城市第一人民医院" />
+<title> 盐城市第一人民医院</title>
+<link href="/skin/sites/common/css/bootstrap2.min.css" type="text/css"  rel="stylesheet" >
+<link href="/skin/sites/common/css/global.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="/skin/ycsyy/core/header/common.css" />
+<link rel="stylesheet" type="text/css" href="/skin/ycsyy/core/header/header.css" />
+<link rel="stylesheet" type="text/css" href="/skin/label/label.css" />
+<link rel="stylesheet" type="text/css" href="/skin/label/theme/theme.css" />
+<link rel="stylesheet" type="text/css" href="/skin/label/slick.css">
+<!--[if lt IE 9]>
+<script src="/html5shiv.min.js"></script>
+<script src="/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="/js/config.js"></script>
+<script type="text/javascript" src="/js/util.js"></script>
+<script type="text/javascript" src="/skin/sites/common/js/guowei.js"></script>
+<script type="text/javascript" src="/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/skin/sites/common/js/breakpoints.min.js"></script>
+<script type="text/javascript" src="/skin/sites/common/js/bootstrap-hover-dropdown.min.js"></script>
+<script type="text/javascript" src="/js/jquery.SuperSlide.2.1.1.js"></script>
+<script type="text/javascript" src="/js/jquery.iosslider.js"></script>
+<script type="text/javascript" src="/js/jquery.easing-1.3.js"></script>
+<script type="text/javascript" src="/js/slick.min.js"></script>
+<script type="text/javascript" src="/js/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="/js/lang/core/zh-cn.js"></script>
+<script type="text/javascript" src="/js/lang/cms/zh-cn.js"></script>
+<script type="text/javascript">
+P8CONFIG.RESOURCE = '';
+var SYSTEM = 'cms',
+MODULE = '',
+ACTION = 'main',
+LABEL_URL = '/index.php/cms-main?',
+STATIC_URL = 'http://192.168.162.72',
+$this_router = P8CONFIG.URI[SYSTEM][MODULE].U_controller,
+$this_url = $this_router +'-'+ ACTION,
+SKIN = '/skin/ycsyy/cms/',
+TEMPLATE = 'ycsyy';
+mobile_status= '0',
+mobile_auto_jump='0',
+mobile_url = '';
+if(mobile_status=='1' && SYSTEM!='sites'){
+if(browser.versions.android || browser.versions.iPhone || browser.versions.iPad){
+if(mobile_auto_jump=='1' && mobile_url!=P8CONFIG.RESOURCE){
+var this_url = location.href,_pul=P8CONFIG.RESOURCE;
+if(this_url.indexOf(mobile_url)==-1 && this_url.indexOf('s.php')==-1 && this_url.indexOf('u.php')==-1 && this_url.indexOf('admin.php')==-1 && SYSTEM!='sites'){
+if(this_url.indexOf(P8CONFIG.RESOURCE+'/html')!=-1)_pul+='/html';
+if(P8CONFIG.RESOURCE==''){
+this_url = mobile_url.indexOf('http')==-1 ? this_url.mobile_url : mobile_url;
+}else{
+this_url = this_url.replace(_pul, mobile_url);
+}
+location.href = this_url;
+}
+}
+}
+}
+
+</script>
+
+</head>
+<body>
+<div class="headbar">
+<div class="navbar navbar-default main-nav">
+<div class="header">
+<div class="container">
+<div class="header-main clearfix">
+<div class="navbar-header">
+<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+<span class="icon-bar"></span>
+</button>
+<a href="/" class="navbar-brand navbar-logo"><img src="/attachment/core/2024_05/23_16/0fd44f053986aa4e.png"/></a>
+</div>
+<div class="topinfo hidden-sm hidden-xs">
+<div class="search">
+<form action="/search" target="_blank" method="get" name="form1" id="form1" class="search-form">
+<input type="text" class="form-control" id="keyword" name="word" placeholder="输入关键字">
+<input type="submit" class="btn btn-default" value="搜索" id="button" name="">
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="navbar-collapse navbar-collapse-toolbar collapse navbar-main" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">
+<div class="container">
+<ul class="nav navbar-nav navlist">
+<li class="dropdown">
+<a class="dropdown-toggle on1" data-hover="dropdown" href="http://www.ycsyy.com/"  aria-expanded="false" role="button" target="">首页</a>		
+</li>
+<li class="dropdown">
+<a class="dropdown-toggle link on2" data-toggle="dropdown" data-hover="dropdown" href="/html/840/"  aria-expanded="false" role="button" target="">新闻中心</a>
+<ul class="dropdown-menu" role="menu">
+<li class="menu1"><a href="/html/840/" target="">重大新闻</a></li>
+<li class="menu2"><a href="/html/841/" target="">医院动态</a></li>
+<li class="menu3"><a href="/html/842/" target="">媒体聚焦</a></li>
+<li class="menu4"><a href="/html/843/" target="">附医人文</a></li>
+<li class="menu5"><a href="/html/844/" target="">视频新闻</a></li>
+<li class="menu6"><a href="/html/861/" target="">活动通知</a></li>
+</ul>		
+</li>
+<li class="dropdown">
+<a class="dropdown-toggle link on3" data-toggle="dropdown" data-hover="dropdown" href="/html/834/"  aria-expanded="false" role="button" target="">就医指南</a>
+<ul class="dropdown-menu" role="menu">
+<li class="menu1"><a href="https://ihealth.ycsyy.com/iot-mh/#/packageAppoint/yygh/choose" target="_blank">患者服务</a></li>
+<li class="menu2"><a href="https://ihealth.ycsyy.com/base-service-wechat-mini/#/about/doctors?tempid=2" target="_blank">专家介绍</a></li>
+<li class="menu3"><a href="/html/873/" target="">门诊排班</a></li>
+<li class="menu4"><a href="/html/899/" target="">就医须知</a></li>
+<li class="menu5"><a href="/html/920/" target="">健康体检</a></li>
+<li class="menu6"><a href="/html/923/" target="">交通指南</a></li>
+<li class="menu7"><a href="/html/922/" target="">患者心声</a></li>
+</ul>		
+</li>
+<li class="dropdown">
+<a class="dropdown-toggle on4" data-hover="dropdown" href="https://ihealth.ycsyy.com/base-service-wechat-mini/#/about/depts?tempid=1"  aria-expanded="false" role="button" target="_blank">科室导航</a>		
+</li>
+<li class="dropdown">
+<a class="dropdown-toggle link on5" data-toggle="dropdown" data-hover="dropdown" href="/html/856/"  aria-expanded="false" role="button" target="">健康科普</a>
+<ul class="dropdown-menu" role="menu">
+<li class="menu1"><a href="/html/856/" target="">医学科普</a></li>
+<li class="menu2"><a href="/html/857/" target="">健康讲堂</a></li>
+</ul>		
+</li>
+<li class="dropdown">
+<a class="dropdown-toggle link on6" data-toggle="dropdown" data-hover="dropdown" href="/html/1020/"  aria-expanded="false" role="button" target="">院务公开</a>
+<ul class="dropdown-menu" role="menu">
+<li class="menu1"><a href="/html/858/" target="">人才招聘</a></li>
+<li class="menu2"><a href="/html/859/" target="">招标公告</a></li>
+<li class="menu3"><a href="/html/860/" target="">公示公告</a></li>
+<li class="menu4"><a href="/html/1035/" target="">医院资质</a></li>
+<li class="menu5"><a href="https://ihealth.ycsyy.com/wechat/#/about/price?wxinfor=wx" target="_blank">价格公示</a></li>
+<li class="menu6"><a href="/html/1036/" target="_blank">投诉监督</a></li>
+<li class="menu7"><a href="/index.php/letter-post?department=1" target="_blank">书记信箱</a></li>
+<li class="menu8"><a href="/index.php/letter-post?department=6" target="_blank">院长信箱</a></li>
+</ul>		
+</li>
+<li class="dropdown">
+<a class="dropdown-toggle link on7" data-toggle="dropdown" data-hover="dropdown" href="/html/1018/"  aria-expanded="false" role="button" target="">科研教育</a>
+<ul class="dropdown-menu" role="menu">
+<li class="menu1"><a href="/html/862/" target="">科研工作</a></li>
+<li class="menu2"><a href="/html/863/" target="">医学教育</a></li>
+<li class="menu3"><a href="/html/864/" target="">人才培养</a></li>
+<li class="menu4"><a href="/html/865/" target="">学术活动</a></li>
+<li class="menu5"><a href="/html/1027/" target="">住培工作</a></li>
+</ul>		
+</li>
+<li class="dropdown">
+<a class="dropdown-toggle link on8" data-toggle="dropdown" data-hover="dropdown" href="/html/839/"  aria-expanded="false" role="button" target="">党群工作</a>
+<ul class="dropdown-menu" role="menu">
+<li class="menu1"><a href="/html/866/" target="">党建工作</a></li>
+<li class="menu2"><a href="/html/867/" target="">党风廉政</a></li>
+<li class="menu3"><a href="/html/868/" target="">医院文化</a></li>
+<li class="menu4"><a href="/html/869/" target="">统战工作</a></li>
+<li class="menu5"><a href="/html/870/" target="">职工之家</a></li>
+<li class="menu6"><a href="/html/871/" target="">青年园地</a></li>
+<li class="menu7"><a href="/html/872/" target="">金色夕阳</a></li>
+</ul>		
+</li>
+</ul>
+<div class="topinfo2 visible-xs-block">
+<div class="search">
+<form action="http://192.168.162.72/search" target="_blank" method="get" name="form1" id="form1" class="search-form">
+<input type="text" class="form-control" id="keyword" name="keyword" placeholder="输入关键字">
+<input type="submit" class="btn btn-default" value="搜索" id="button" name="button">
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="fixednav hidden-xs">
+<div class="container">
+<div class="navbox clearfix">
+<ul id="menu_nav">
+<li class="" _t_nav="tabs1">
+<a href="http://www.ycsyy.com/" class="on1">首页</a>
+</li>
+<li class="" _t_nav="tabs2">
+<a href="/html/840/" class="on2">新闻中心</a>
+</li>
+<li class="" _t_nav="tabs3">
+<a href="/html/834/" class="on3">就医指南</a>
+</li>
+<li class="" _t_nav="tabs4">
+<a href="https://ihealth.ycsyy.com/base-service-wechat-mini/#/about/depts?tempid=1" class="on4">科室导航</a>
+</li>
+<li class="" _t_nav="tabs5">
+<a href="/html/856/" class="on5">健康科普</a>
+</li>
+<li class="" _t_nav="tabs6">
+<a href="/html/1020/" class="on6">院务公开</a>
+</li>
+<li class="" _t_nav="tabs7">
+<a href="/html/1018/" class="on7">科研教育</a>
+</li>
+<li class="" _t_nav="tabs8">
+<a href="/html/839/" class="on8">党群工作</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<script type="text/javascript">
+var USERNAME = get_username();
+$(document).ready(function(){
+//**show_edit**//
+init_labelshows('header_t');
+})
+$(window).scroll(function(){
+var scrollTop = $(window).scrollTop();
+if(scrollTop > 140){
+$('.fixednav').css({display:'block'}).stop().animate({'opacity':'1',top:0},100);
+}else{
+$('.fixednav').css({display:'none'}).stop().animate({'opacity':'0',top:"-50px"},100);
+}
+});
+</script>
+<script type="text/javascript">
+var date = new Date();
+var year = date.getFullYear(),
+month = date.getMonth() + 1,
+day = date.getDate(),
+week = date.getDay();
+switch (week) {
+case 1:
+week = "星期一"
+break;
+case 2:
+week = "星期二"
+break;
+case 3:
+week = "星期三"
+break;
+case 4:
+week = "星期四"
+break;
+case 5:
+week = "星期五"
+break;
+case 6:
+week = "星期六"
+break;
+case 7:
+week = "星期日"
+break;
+}
+$(".today").append("今天是："+week+","+year+"-"+month+"-"+day)
+</script>
+<div id="content-full"><link rel="stylesheet" type="text/css" href="/skin/ycsyy/cms/index/index.css" />
+<link rel="stylesheet" type="text/css" href="/skin/ycsyy/cms/index/animate.css" />
+<script type="text/javascript" src="/js/wow.min.js"></script>
+<div class="section-banner">
+<div class="slidebanner">
+<style type="text/css">
+.sliderbox20906{position: relative;height: 100%;overflow: hidden;}
+.sliderbox20906 .slick-slide .image img{width: 100%;display:inline-block;}
+.sliderbox20906 .number{position: absolute;bottom:5%;left:50%;display: table;padding: 0 20px;width: auto;text-align: center;transform: translateX(-50%);-webkit-transform: translateX(-50%);}
+.sliderbox20906 .number li{width: 10px;height: 10px;margin: 5px 7px;font-size:0;background: #d6d6d6;display:inline-block;-webkit-backface-visibility: visible;-webkit-transition: opacity 200ms ease;-moz-transition: opacity 200ms ease;-ms-transition: opacity 200ms ease;-o-transition: opacity 200ms ease;transition: opacity 200ms ease;-webkit-border-radius: 30px;-moz-border-radius: 30px;border-radius: 30px;}
+.sliderbox20906 .number li.slick-active{background: #165aa1;}
+</style>
+<div class="sliderbox20906">
+<div class="slider slick-fade">
+<div>
+<div class="image">
+<a class="item" href="" target="_blank" title=""><img src="/attachment/core/label/2021_07/09_12/17c85fb0cc0b1aef.jpg" alt="" ></a>
+</div>
+</div>
+<div>
+<div class="image">
+<a class="item" href="" target="_blank" title=""><img src="/attachment/core/label/2021_07/09_12/17c85fb0cc0b1aef.jpg" alt="" ></a>
+</div>
+</div>
+</div>
+<div class="number"></div>
+</div>
+<script type="text/javascript">
+$(".sliderbox20906 .slick-fade").slick({
+autoplay:true,
+autoplaySpeed:6000,
+pauseOnDotsHover:true,
+pauseOnFocus:false,
+speed:600,
+arrows: false,
+dots:true,
+appendDots:".sliderbox20906 .number",
+pauseOnHover:false,
+customPaging: function(slider, i) {  
+return i + 1;
+},
+});
+</script></div>
+</div>
+<div class="section">
+<div class="container">
+<div class="quick-box">
+<div class="row"><ul class="quick-nav clearfix">
+<li class="col-md-2 col-sm-2 col-xs-12"><a href="/html/845/"><img src="/skin/ycsyy/cms/index/explain1.png" />预约挂号</a></li>
+<li class="col-md-2 col-sm-2 col-xs-12"><a href="https://ihealth.ycsyy.com/base-service-wechat-mini/#/about/doctors?tempid=2"  target="_blank"><img src="/skin/ycsyy/cms/index/explain2.png" />专家介绍</a></li>
+<li class="col-md-2 col-sm-2 col-xs-12"><a href="/html/873/"><img src="/skin/ycsyy/cms/index/explain3.png" />门诊排班</a></li>
+<li class="col-md-2 col-sm-2 col-xs-12"><a href="/html/899/"><img src="/skin/ycsyy/cms/index/explain4.png" />就医须知</a></li>
+<li class="col-md-2 col-sm-2 col-xs-12"><a href="/html/920/"><img src="/skin/ycsyy/cms/index/explain5.png" />健康体检</a></li>
+<li class="col-md-2 col-sm-2 col-xs-12">
+<a><img src="/skin/ycsyy/cms/index/explain6.png" />领导信箱</a>
+<ul class="quick-subnav">
+<li><a href="/index.php/letter-post?department=1" target="_blank">书记信箱</a></li>
+<li><a href="/index.php/letter-post?department=6" target="_blank">院长信箱</a></li>
+</ul>
+</li>
+</ul></div>
+</div>
+</div>
+</div>
+<div class="section">
+<div class="container">		
+<div class="row">
+<div class="col-md-4 col-sm-4 col-xs-12">
+<div class="new-box mb20">
+<div class="img"><img width="500" height="300" border="none" alt="" src="/attachment/core/label/2021_07/09_14/733b7693c329bf3e.jpg" /></div>
+<div class="title">
+新闻中心
+<span class="more">
+<span class="more"><a href="/html/840/" target="_blank">查看更多>></a>&nbsp;&nbsp;</span></span>
+</div>
+<div class="new-list">
+<ul class="themelist16" style="font-size:14px;">
+<li>
+<a href="/html/841/2025-06-13/content-4439.html" target="_blank" title="盐城市一院成功举办2025年度医疗质量安全核心制度与病历书写技能竞赛">盐城市一院成功举办2025年度医疗质量安全核心制度与病历书写技能竞赛</a>
+</li>
+<li>
+<a href="/html/841/2025-04-10/content-4358.html" target="_blank" title="2025年度盐城市第一人民医院单位预算公开">2025年度盐城市第一人民医院单位预算公开</a>
+</li>
+<li>
+<a href="/html/841/2025-02-12/content-4320.html" target="_blank" title="学法促稳定 助力新发展 江苏省第十九届“农民工学法活动周”">学法促稳定 助力新发展 江苏省第十九届“农民工学法活动周”</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 col-xs-12">
+<div class="new-box mb20">
+<div class="img"><img width="500" height="300" border="none" alt="" src="/attachment/core/label/2021_07/09_14/b7f7028f06223040.png" /></div>
+<div class="title">
+医院公告
+<span class="more">
+<span class="more"><a href="/html/1020/" target="_blank">查看更多>></a>  </span></span>
+</div>
+<div class="new-list">
+<ul class="themelist16" style="font-size:14px;">
+<li>
+<a href="/html/859/2025-10-14/content-4517.html" target="_blank" title="盐城市第一人民医院第二批次医疗设备采购计划 市场调研公告">盐城市第一人民医院第二批次医疗设备采购计划 市场调研公告</a>
+</li>
+<li>
+<a href="/html/859/2025-10-13/content-4516.html" target="_blank" title="盐城市第一人民医院电视信号服务项目比选公告">盐城市第一人民医院电视信号服务项目比选公告</a>
+</li>
+<li>
+<a href="https://czj.yancheng.gov.cn/art/2025/10/11/art_20147_23013.html" target="_blank" title="盐城市第一人民医院病历及病案首页质控系统采购项目废标公告">盐城市第一人民医院病历及病案首页质控系统采购项目废标公告</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-md-4 col-sm-4 col-xs-12">
+<div class="new-box mb20">
+<div class="img"><img width="500" height="300" border="none" alt="" src="/attachment/core/label/2021_07/09_14/fb52cca85161e42e.png" /></div>
+<div class="title">
+健康科普
+<span class="more">
+<span class="more"><a href="/html/836/" target="_blank">查看更多>></a>&nbsp;&nbsp;</span></span>
+</div>
+<div class="new-list">
+<ul class="themelist16" style="font-size:14px;">
+<li>
+<a href="/html/856/2025-09-29/content-4510.html" target="_blank" title="肠癌多半是拖出来的！ 医生：排便出现这4种异常，建议及时就医">肠癌多半是拖出来的！ 医生：排便出现这4种异常，建议及时就医</a>
+</li>
+<li>
+<a href="/html/856/2025-09-29/content-4509.html" target="_blank" title="不要再熬夜了！从疲劳到癌症只有4步">不要再熬夜了！从疲劳到癌症只有4步</a>
+</li>
+<li>
+<a href="/html/856/2025-07-28/content-4471.html" target="_blank" title="暑期小心视力“滑坡”！这份护眼指南请收好">暑期小心视力“滑坡”！这份护眼指南请收好</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="section">
+<div class="container">
+<div class="common-box deptbox">
+<div class="common-head">
+科室导航
+</div>
+<div class="row">
+<div class="col-md-4 col-sm-12 col-xs-12">
+<div class="deptbox-pic">
+<a href="http://192.168.162.72/index.php/cms/item-list-category-852.shtml" target="_blank" title="" style="text-decoration:none;"><img width="500" height="300" border="none" alt="" src="/attachment/core/label/2021_07/09_15/c803cf40d0e32861.png" /></a>
+</div>
+</div>
+<div class="col-md-8 col-sm-12 col-xs-12">
+<div class="tabs">
+<div class="tab-nav hd clearfix">
+<ul class="clearfix">
+<li class="transition tab bgcolor1 on">临床科室</li>
+<li class="transition tab bgcolor2">医技科室</li>
+<li class="transition tab bgcolor3">诊疗中心</li>
+<li class="transition tab bgcolor4"><a href="/html/855/">护理园地</a></li>
+</ul>
+</div>
+<div class="tab-con bd">
+<div class="tab-list" style="display:block;">
+<div class="row">
+<ul class="depbox-list clearfix">
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/897/">呼吸与危重症医学科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/966/">心血管内科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/967/">肿瘤内科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/968/">神经内科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/969/">消化内科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/970/">血液内科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/971/">风湿免疫科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/972/">感染科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/973/">皮肤科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/974/">内分泌科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/975/">肾脏内科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/976/">老年医学科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/977/">中医科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/978/">康复医学科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/979/">放疗科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/852/">更多科室>></a></li>
+</ul>
+</div>
+</div>
+<div class="tab-list">
+<div class="row">
+<ul class="depbox-list clearfix">
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/995/2021-07-15/content-2285.html">药学部</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/996/2021-07-15/content-2286.html">医学影像科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/997/2021-07-15/content-2287.html">医学检验科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/998/2021-07-15/content-2288.html">核医学科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/999/2021-07-15/content-2289.html">营养科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/1000/2021-07-15/content-2290.html">输血科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/1001/2021-07-15/content-2291.html">病理科</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/1002/2021-07-15/content-2292.html">介入科</a></li>
+</ul>
+</div>
+</div>
+<div class="tab-list">
+<div class="row">
+<ul class="depbox-list clearfix">
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/1003/2021-07-15/content-2293.html">胸痛救治中心</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/1004/2021-07-15/content-2294.html">急重症孕产妇救治中心</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/1005/2021-07-15/content-2295.html">创伤救治中心</a></li>
+<li class="col-md-3 col-sm-6 col-xs-12"><a href="/html/1006/2021-07-15/content-2296.html">卒中救治中心</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script type="text/javascript">jQuery(".tabs").slide({});</script></div>
+<div class="footer">
+<div class="container">
+<div class="row">
+<div class="col-md-9 col-sm-9 col-xs-12">
+<div class="copyright">
+<p class="pp">联系我们</p>
+
+<p>医院网址：www.ycsyy.com <a href="http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=32099502000266" style=" margin-left: 50px; color:black; " target="_blank"><img src="/images/ga.png" />苏公网安备 32099502000266号</a><a href="https://beian.miit.gov.cn/#/Integrated/index" style=" margin-left: 50px;color:black;" target="_blank">苏ICP备10209759号-1</a></p>
+
+<p>医院地址：南院区（盐城市人民南路66号）、北院区（盐城市毓龙西路166号）、儿童医院（盐城市毓龙西路6号）、五官科院区（盐城市南城河路12号）</p>
+
+<p>南院区：       服务咨询：0515-66696879；服务投诉：0515-66696575；总值班：0515-66696899 </p>
+<p>北院区：       服务咨询：0515-88508990；服务投诉：0515-66696575；总值班：0515-88508959</p>
+<p>儿童医院：    服务咨询：0515-66698899；服务投诉：0515-66698899；总值班：0515-66698199</p>
+<p>五官科院区：服务咨询：0515-88358506；服务投诉：0515-66696575；总值班：0515-88361473</p>
+<p>医院对公、对外联络：0515-66696800</p>
+</div>
+</div>
+<div class="col-md-3 col-sm-3 col-xs-12">
+<div class="row">
+<div class="col-md-4 col-sm-6 col-xs-6">
+<div class="footpic">
+<div class="pic"><img width="500" height="300" border="none" alt="" src="/attachment/core/label/2023_10/24_15/1dece49ca1b63f86.jpg" /></div>
+<h3 style="color:black;" >微信小程序</h3>
+</div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-6">
+<div class="footpic">
+<div class="pic"><img width="95" height="98" border="none" alt="" src="/attachment/core/label/2021_07/09_11/d3c000c369c18b5b.png" /></div>
+<h3 style="color:black;" >公众号</h3>
+</div>
+</div>
+<div class="col-md-4 col-sm-6 col-xs-6">
+<div class="footpic">
+<div class="pic"> </div>
+<h3 style="color:black;" ></h3>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="right-nav">
+<div class="hideBox"><img src="/skin/ycsyy/cms/../core/header/images/erweima2.png" /> <img src="/skin/ycsyy/cms/../core/header/images/erweima3.jpg" /></div>
+
+<ul>
+<li><a href="http://www.ycsyy.com/search/"><span class="s1"><img src="/skin/ycsyy/cms/../core/header/images/right-nav.png" /> </span><span class="s2">快捷搜索</span></a></li>
+<li><a><span class="s1"> <img src="/skin/ycsyy/cms/../core/header/images/right-nav2.png" /> </span><span class="s2">移动医疗</span></a></li>
+<li class="weixin"><a><span class="s1"> <img class="weixin" src="/skin/ycsyy/cms/../core/header/images/right-nav3.png" /> </span> <span class="s2 weixin">微信平台</span></a></li>
+<li><a><span class="s1"> <img src="/skin/ycsyy/cms/../core/header/images/right-nav4.png" /> </span><span class="s2">投诉建议</span></a></li>
+<li><a href="/index.php/letter-post?department=6"><span class="s1"><img src="/skin/ycsyy/cms/../core/header/images/right-nav6.png" /> </span><span class="s2">院长信箱</span></a></li>
+<li class="top"><a><span class="s1"> <img src="/skin/ycsyy/cms/../core/header/images/right-nav5.png" /> </span><span class="s2">回到顶部</span></a></li>
+</ul>
+</div>
+<div></div>
+<script type="text/javascript">
+$(".top").click(function() {
+$("html,body").animate({scrollTop:0}, 500);
+}); 
+$('.weixin').hover(
+function(){
+$(".hideBox").addClass('show')
+},
+function(){
+$(".hideBox").removeClass('show')
+}
+)
+</script>
+</body>
+</html>

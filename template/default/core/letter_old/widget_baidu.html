@@ -1,0 +1,20 @@
+<!--{php168}-->
+<script name="content" id="content" type="text/plain" style="display:block;">{if !empty($data['data'][0]['content'])}{$data['data'][0]['content']}{/if}</script>
+<script type="text/javascript">
+$(function(){
+	P8_UEDITOR({
+		id: 'content',
+		type:'all',
+		xiumi:true,
+		config: {
+			initialFrameWidth:836,
+			toolbars:
+			[
+				['fullscreen', 'source','|', 'undo', 'redo','|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', '|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc'],
+				['paragraph','fontfamily','fontsize','|','indent','justifyleft','justifyright','justifycenter','justifyjustify','|','link','unlink','|','touppercase','tolowercase','|','imagenone','imageleft','imageright','imagecenter','simpleupload','|','insertvideo','attachment']
+			]			
+		}
+	});
+});
+</script>
+<!--{/php168}-->

@@ -1,0 +1,16 @@
+<!--{php168}-->
+<link rel='stylesheet' type='text/css' href='http://192.168.162.72/ewebeditor/_example/example.css'>
+<input type="hidden" name="#field_{$field}_posted" />
+<INPUT type="hidden" name="field#[$field]" id="field_{$field}" value="{if isset($data[$field])}{html_entities($data[$field])}{/if}">
+<IFRAME ID="eWebEditor1" src="http://192.168.162.72/ewebeditor/ewebeditor.htm?id=field_{$field}&style=coolblue" frameborder="0" scrolling="no" width="98%" height="360"></IFRAME>
+<script type="text/javascript">
+$(function(){
+    $('#eWebEditor1').mouseover(function(){
+        $(this).mouseout(function(){
+            $("#field_{$field}").val(document.getElementById("eWebEditor1").contentWindow.getHTML())
+        })
+    })
+})
+</script>
+
+<!--{/php168}-->

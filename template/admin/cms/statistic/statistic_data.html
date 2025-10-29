@@ -1,0 +1,350 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<style type="text/css">
+.formtable .title{color:#2a2a2a;background: #e8ebf3;}
+.formtable td a.over{color:red};
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+	<table width="100%" border="0"  class="mainbox">
+		<tr>
+			<td>
+				<ul class="boxmenu">
+					<li class="btn-color1"><a href="$this_router-statistic_data"><i class="icon icon-ico20"></i>主站内容总数统计</a></li>
+					<li class="btn-color2"><a href="$this_router-statistic_member"><i class="icon icon-ico20"></i>主站发布人内容统计</a></li>
+					<li class="btn-color3"><a href="$this_router-statistic_author"><i class="icon icon-ico20"></i>主站作者内容统计</a></li>
+					<li class="btn-color5"><a href="{$core.admin_controller}/cms/item-list"><i class="icon icon-ico20"></i>主站导出标题excel数据</a></li>
+					<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/zhuzhantongji.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 主站统计操作教程>></a></li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+	
+	<table class="columntable formtable" width="100%" border="0" cellspacing="3">
+		<tr class="title fix_head">
+			<td class="title" colspan="3">统计</td>
+		</tr>
+		<tr>
+			<td rowspan="2" valign="top" width="16%">
+				<div style="border:1px solid #BDD9F4">
+				<table class="formtable">
+				<tr path="0" title="1" level="0">
+					<td class="title" colspan="2">栏目列表</td>
+				</tr>
+				<tr id="category_0" path="0" title="1" level="0">
+					<td width="3%">&nbsp;</td>
+					<td class="c_name" model="0"><a class="over" href="javascript:;" onclick="aover(this);get_data(0)">所有</a></td>
+				</tr>
+				<tbody id="__">
+							
+				</tbody>
+				</table>
+				</div>
+			</td>
+			<td colspan="2">
+				<form id="form1" method="post" style="float:left;">
+				<!--{if !empty($uid)}-->
+				&nbsp;相关人员：<b>{$username} </b>
+				<!--{/if}-->		
+				&nbsp;模型：<select id="model" name="model" onchange="get_data()"><option value="0" selected>全部</option>
+					<!--{foreach $models $model}-->
+					<option value="{$model['name']}">{$model['alias']}</option><
+					<!--{/foreach}-->
+					</select>
+				时间：<input type="text" name="start_date" value="{if isset($start_date)}$start_date{/if}" autocomplete="off" onclick="rcalendar(this,'full')" /> - 
+				<input type="text" name="end_date" value="{if isset($end_date)}$end_date{/if}" autocomplete="off" onclick="rcalendar(this,'full')" />		
+				汇总方式：<select id="group" name="group">
+							<option value="day" {if $order=='day'}selected{/if}>按天</option>
+							<option value="month" {if $order=='month'}selected{/if}>按月</option>
+							<option value="year" {if $order=='year'}selected{/if}>按年</option>			
+						</select>(选择时间则以时间为准)
+				每页条数：<select id="page_size" name="page_size" onchange="get_data()">
+					<option value="10">10</option>
+					<option value="20" selected>20</option>
+					<option value="30">30</option>
+					<option value="50">50</option>
+				</select>
+				<input type="hidden" name="cid" id="cid" value="0"/>
+				<input type="hidden" name="uid" id="uid" value="{if !empty($uid)}{$uid}{/if}"/>
+				<input type="hidden" name="act" id="act" value="query"/>
+				<input type="button" value="导出Excel" class="submit_btn" onclick="download()"/>
+				</form>
+				<span style="float:left;margin-left:10px;"><!--{if empty($uid)}--><a href="javascript:;" class="stabtn" style="color:#fff;" onclick="statistic()">重新统计</a><!--{/if}-->&nbsp;统计时间：<span id="statis_time"></span></span>
+			</td>
+		</tr>
+		<tr>
+			<td valign="top" colspan="2">
+			<table width="100%">
+				<tr>
+				<td width="40%" valign="top">
+					<table  class="columntable formtable hover_table click_changeable" align="center" style="text-align:center">
+					<tr><td width="100" class="title">日期</td><td width="100" class="title">发稿量</td><td width="100" class="title">浏览量</td><td width="100" class="title">评论数</td></tr>
+					<tbody id="data_list">
+								
+					</tbody>
+					</table>
+					<table width="100%" class="columntable formtable">
+						<tr>
+							<td align="center" id="pages" class="pages"></td>
+						</tr>
+					</table>
+				</td>
+				<td width="60%" valign="top">
+				<div class="section" style="margin-top:0;background:#fff;padding:30px;">
+					<div id="myChart_scatter" style="height:400px;margin-bottom:10px;"></div>
+				</div>
+				</td>
+				</tr>
+			</table>
+		</td></tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+var CATEGORY_JSON = $json[json];
+var CATEGORY_PATH = $json[path];
+
+function ___(json, l, p){
+	l = l === undefined ? 0 : l;
+	p = p === undefined ? 0 : p;
+	
+	var j = 0, k = count(json);
+	
+	for(var i in json){
+		
+		var html = '';
+		j++;
+		var c = '';
+		if(l != 0){
+			c += str_repeat('│&nbsp;&nbsp;', l - p) + str_repeat('&nbsp;&nbsp;&nbsp;', p);
+			if(j == k){
+				p++;
+				c += '└';
+			}else{
+				c += '├';
+			}
+		}
+		
+		var sub = json[i].categories ? true : false;
+		var path = CATEGORY_PATH[json[i].id].join('_');
+		c += (json[i].categories ? '<span style="cursor: pointer;"><img src="{$SKIN}/hide.gif" /></span> ' : '') +
+			'<a href="javascript:;" onclick="aover(this);get_data('+ json[i].id +');">'+ json[i].name +'</a>';
+		
+		html += 
+		'<tr id="category_'+ json[i].id +'" path="path_'+ path +'" title="1"'+ (sub ? ' sub="1"' : '') +' level="'+ (l +1) +'">'+
+			'<td width="3%">&nbsp;</td>'+
+			'<td class="c_name" model="'+ json[i].model +'">'+ c +'</td>'+
+		'</tr>';
+		
+		var tr = $(html);
+		$('#__').append(tr);
+		if(sub){
+			___(json[i].categories, l +1, p);
+			_toggle(
+				$(tr).find('td:eq(1) span').
+				bind('click', function(){_toggle($(this)); return false;})
+			);
+		}
+	}
+}
+
+___(CATEGORY_JSON);
+
+
+
+function _toggle(span){
+	var id = $(span).parent().parent().attr('id').replace(/[^0-9]/g, '');
+	var path = CATEGORY_PATH[id].join('_');
+	
+	var on = $('#category_'+ id).attr('title') == 0;
+	
+	var keep_close = [];
+	$('tr[path^=path_'+ path +'_]').each(function(){
+		if(on){
+			
+			if($(this).show().attr('title') == 1 && $(this).attr('sub')){
+				keep_close.push(this.id.replace(/[^0-9]/g, ''));
+				$(this).attr('title', 0);
+			}else{
+				$(this).attr('title', 1);
+			}
+			
+		}else{
+			
+			if($(this).hide().attr('title') == 0 && $(this).attr('sub')){
+				//keep close
+				$(this).attr('title', 1);
+			}else{
+				$(this).attr('title', 0);
+			}
+			
+		}
+	});
+	
+	if(on){
+		$(span).parent().parent().attr('title', 1);
+		$(span).html('<img src="{$SKIN}/hide.gif" />');
+	}else{
+		$(span).parent().parent().attr('title', 0);
+		$(span).html('<img src="{$SKIN}/show.gif" />');
+	}
+	
+	for(var i = 0; i < keep_close.length; i++){
+		$('tr[path^=path_'+ CATEGORY_PATH[keep_close[i]].join('_') +'_]').hide().find('span');
+	}
+	return false;
+}
+
+function get_data(cid,page){
+	$('#cid').val(cid?cid:0);
+	$('#act').val('query');
+	
+	var year=$('#year').val();
+	var month=$('#month').val();
+	var group = $('#group').val();
+	var model=$('#model').val();
+	ajaxing({});
+	$.ajax({
+		url:'{$this_url}',
+		data: $('#form1').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		type: 'POST',
+		success: function(json){
+			var msg = json.list;
+			if(msg!=''){
+				var shtml = '';
+				var statis_time;
+				var show_title = [];
+				var show_post = [];
+				var show_comment = [];
+				var show_view = [];
+				for(var i in msg){
+					if(msg[i].date == null) continue;
+					var showdate = msg[i].date;
+					show_title[i] = showdate;
+					show_post[i] = msg[i].post;
+					show_view[i] = msg[i].views;
+					show_comment[i] = msg[i].comment;
+					shtml +=  '<tr><td>'+showdate+'</td><td>'+msg[i].post+'</td><td>'+msg[i].views+'</td><td>'+msg[i].comment+'</td></tr>';
+				}
+				$('#data_list').html(shtml);
+				$('#pages').html(json.pages);
+				if(shtml == ''){
+					ajaxing({action: 'hide'});
+					$('#pages').html('');
+					p8_window.alert('暂无数据！');
+					return false;
+				}
+				//echarts
+				var myChart = echarts.init(document.getElementById('myChart_scatter'));
+				myChart.showLoading();
+				option = {					
+					title: {
+						show: true,
+						text: '主站内容统计',
+						left: 'left',
+					},
+					toolbox: {
+						feature: {
+							saveAsImage: {show: true}
+						}
+					},
+					tooltip: {
+						trigger: 'axis',					
+					},
+					legend: {				
+						right: '10%',			
+					},
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true
+					},
+					calculable: true,
+					xAxis: {
+						type: 'category',
+						data: show_title,
+					},
+					yAxis: {
+						name: '数量',
+						axisLine: {
+							lineStyle: {
+								color: '#666'
+							}
+						},
+						splitLine: {
+							lineStyle: {
+								color: '#ddd'
+							}
+						}
+					},
+					series: [{
+						name: '发稿量',
+						data: show_post,
+						type: 'bar',								
+						barWidth:'30%',	
+						label: {position:'top',show:'true'},
+					},					
+					{
+						name: '浏览量',
+						data: show_view,
+						type:'bar',
+						barWidth:'30%',
+					},
+					{
+						name: '评论数',
+						data: show_comment,
+						type:'bar',
+						barWidth:'30%',
+					}
+				]
+					
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);
+				myChart.hideLoading();
+			}else{
+				$('#data_list').html('<tr><td colspan="3" align="center">没有相关数据</td></tr>');
+			}
+			ajaxing({action: 'hide'});
+		}
+	});
+}
+function statistic(){
+	var d = new Date(); 
+	$('#statis_time').html(d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate()+' '+d.getHours()+':'+d.getMinutes());
+	$('#act').val('stat');
+	ajaxing({});
+	$.ajax({
+		url:'{$this_url}',
+		data: $('#form1').serialize(),
+		dataType: 'json',
+		type: 'POST',
+		success: function(msg){
+			if(msg)
+				p8_window.alert('统计成功!');
+			else
+				p8_window.alert('统计失败!');
+			get_data();
+			ajaxing({action: 'hide'});
+		}
+	});
+}
+function aover(obj){
+$('#__ a').removeClass('over');
+$('#category_0 a').removeClass('over');
+$(obj).addClass('over');
+}
+
+function download(style){
+	
+	$('#act').val('download');
+	$('#form1').submit();
+
+}
+get_data();
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

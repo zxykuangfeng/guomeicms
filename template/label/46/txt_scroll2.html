@@ -1,0 +1,109 @@
+<!--{php168}-->
+<style type="text/css">
+#p8_ann .layer{
+	background: #000;
+	opacity: 0.5;
+	display: flex;
+	flex-direction: column;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 998;
+}
+#p8_ann .p8_ann_body {
+	color: #555;
+	font-size: 14px;
+	line-height: 28px;
+	z-index: 999;
+	width: {$data['width']}px;
+	background-color: #fafafa;
+	min-height: {$data['height']}px;
+	position: absolute;
+	top: 18%;
+	left: 50%;
+	margin-left: -{$half_width}px;
+	padding: 15px;
+	border-radius: 6px;
+	border: 1px solid #ccc;
+}
+
+#p8_ann .p8_ann_body h1 {
+	text-align: center;
+	font-weight: 800;
+	font-size: 24px;
+	margin-top: 10px;
+	margin-bottom: 30px;
+}
+
+#p8_ann .p8_ann_body p {
+	text-indent: 28px
+}
+
+#p8_ann .p8_ann_body h1 a {
+	text-decoration:none;
+	color: #155bd5;
+}
+
+#p8_ann .p8_ann_body .sign {
+	margin-top: 20px;
+	margin-left: 400px;
+	font-size: 12px;
+	text-indent: 35px;
+}
+#p8_ann .p8_ann_body .p8_ann_content a{
+	color:#202a34;
+}
+#p8_ann .p8_ann_body .see {
+    color: #155bd5;
+}
+#p8_ann .p8_ann_body .close{
+	position: absolute;
+    top: 20px;
+    right: 20px;
+    font-size: 12px;
+    color: #666;
+    border: 1px solid #666;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+	opacity:1;
+}
+@media screen and (min-width: 279px) and (max-width: 666px){
+	#p8_ann .p8_ann_body h1 {
+		font-size: 18px;
+	}
+	#p8_ann .p8_ann_body {
+		width: 300px;
+		height: 780px;
+		font-size: 12px;
+		margin-left: -150px;
+		top: 15%;
+		line-height: 24px;
+	}
+	#p8_ann .p8_ann_body .close{
+		top:5px;
+		right:10px;
+	}
+}
+</style>
+<div id="p8_ann" style="display: block;">
+  <div class="layer" onclick="$('#p8_ann').hide()"></div>
+  <div class="p8_ann_body">
+		<!--{if $title}-->
+			<h1><a href="{$url}" target="_blank">{$title}</a></h1>
+		<!--{/if}-->
+		<div class="p8_ann_content">
+			<a href="{$url}" target="_blank">{$content}</a>
+		</div>
+		<div style="text-align: center">
+			<a href="javascript:;" class="see" onclick="$('#p8_ann').hide()">[我知道了]</a>
+		</div>
+		<span class="close" onclick="$('#p8_ann').hide()">X</span>
+  </div>
+</div>
+<!--{/php168}-->

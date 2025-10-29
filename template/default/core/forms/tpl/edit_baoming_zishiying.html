@@ -1,0 +1,1016 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>$TITLE</title>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/bootstrap.min.css" />
+<script type="text/javascript" src="{$RESOURCE}/skin/default/core/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+<style type="text/css">
+body{font-family: "微软雅黑",Microsoft YaHei,"Helvetica Neue",Helvetica,Arial,sans-serif;}
+.banner{width:100%;height:400px;position:absolute;top:0;left:0;}
+.banner img{width:100%;height:100%;}
+.header{position:relative;text-align:center;}
+.header a{color:#fff;}
+.header  .logo{padding:50px 0;}
+.header  .logo img{max-width:100%;height:auto;}
+#baoming,#chaxun{background:#e6f8ff;}
+#baoming .wrap_out {background:#fff;padding:24px 13px;}
+#chaxun  .wrap_out{background:#fff;padding:24px 13px;}
+.bm_middle{height:auto;background: url({$RESOURCE}/skin/default/core/images/bm_table_m.png);padding-bottom:10px;overflow:hidden;}
+.bm-footer{height:19px;background: url({$RESOURCE}/skin/default/core/images/bm_table_ft.png);}
+.bm_header .head,.cx_header .head{height:37px;background: url({$RESOURCE}/skin/default/core/images/bmhd.png) no-repeat;overflow:hidden;}
+.bm_header .head .title,.cx_header .head .title{height:37px;line-height:37px;margin-left:24px;padding:0 40px;float:left;font-size:18px;color:#fff;}
+.bm_header .head  .more,.cx_header .head .more{height:31px;line-height:31px;margin-top:6px;float:right;font-size:20px;color:#057fdb;font-weight:bold;font-family: "幼圆";}
+.bm_header .notice {font-size:12px;background:#eef7ff;margin:24px 0 0;border:#bed8f3 1px solid;padding:0 20px;}
+.bm_header .notice p {padding:20px;font-size:14px;}
+
+.bm_middle .pop_tr{background-color:#f6f7f8}
+.bm_middle td{border: #c4d6ea 1px solid;padding: 8px;}
+.bm_middle .tdL{width: 150px;height: 100%;text-align: right;vertical-align: middle;background: #eef9ff;}
+.bm_middle .tdR .txt,.bm_middle .tdR select{border:1px solid #e1e1e1;}
+.bm_middle .tdR .txtar{border:1px solid #e1e1e1;width:100% !important;}
+.bm_middle .tt{background:#eef9ff;height:30px;line-height:30px;margin:10px 0px;border:#8fbcd2 1px solid;}
+.bm_middle .tt h2{font-size:16px;padding-left:10px;color:#990000;font-weight:normal;margin:4px 0;}
+.pop_table{width: 100%;max-width:100%;}
+.bm_middle .tb{padding:25px 0 0 0;}
+.bm_middle .submit{height:auto;margin:10px 0;text-align:center;}
+.footer_info {height:auto;margin:0 0;padding:20px 0;text-align:center;}
+.footer_info p{font-size:12px;font-weight:normal;}
+.channel_content {border:#c4d6ea 1px solid;border-bottom:none;}
+.channel_item {width:100%;height:auto;border:#c4d6ea 1px solid;overflow:hidden;} 
+.channel_item_title{background:#eef9ff;float:left;width:150px;height:100%;text-align:right;vertical-align: middle;padding:8px;border-right:#c4d6ea 1px solid;}
+.channel_item_title  .txt,.channel_item_title  select{border:1px solid #e1e1e1;}
+.channel_item_title  .txtar{border:1px solid #e1e1e1;width:100%;}
+.channel_item_title.luqu{width:100px;}
+.channel_item_input{float:left;height:auto;text-align:left;vertical-align: middle;padding:5px;}
+.channel_item_title2{background:#eef9ff;float:left;width:25%;height:100%;text-align:right;vertical-align: middle;padding:8px;border-right:#c4d6ea 1px solid;}
+.channel_item_title2  .txt,.channel_item_title  select{border:1px solid #e1e1e1;}
+.channel_item_title2  .txtar{border:1px solid #e1e1e1;width:100%;}
+.channel_item_input2  input{width:100%;height:24px;line-height:24px;border:1px solid #c1c1c1;}
+.channel_item_input2{width:75%;float:left;height:auto;text-align:left;vertical-align: middle;padding:5px;}
+.channel_item_tip{float:left;height:auto;text-align:left;vertical-align: middle;padding:5px;color:#666666;padding-left:8px;}
+.channel_btn{background:#00a2df;height:31px;width:103px;border:none;margin:0 10px;color:#fff;}
+.submit .channel_item{height:auto;border:none;}
+.description,.jsregmsg{font-size:12px;color:#666;}
+.cx_header .notice_luqu{background:#eef7ff;margin:24px 0 0;border:#bed8f3 1px solid;height:30px;line-height:30px;}
+.cx_header .notice_luqu p {padding-left:20px;text-align:left;}
+.cx_header .notice_luqu h2{text-align:center;color:#990000;font-weight:bold}
+.bm_middle .tb.luqu table{width:458px;margin:0 auto;}
+.bm_middle .tb.luqu table td{border:#c4d6ea 1px solid}
+.bm_middle .tb.luqu table tr{border-bottom:0px;}
+.bm_middle .tb.luqu .tdL{background:#eef9ff;width:100px;padding:5px;}
+.bm_middle .tb.luqu .tdR{padding:5px;}
+.bm_middle .tb .zhushi{text-align:center;margin:30px 0;}
+.bm_middle .tb .form_submit{text-align:center;}
+.bm_middle .tb .form_submit .forms_btn1{background:#00a2df;height:31px;width:105px;border:none;margin:10px 20px;color:#fff;}
+.bm_middle .tb .form_submit  .forms_btn2{display:inline-block;margin:10px 20px;}
+.bm_middle .tb .form_submit  .forms_btn2 a{display:block;color:#9c231b;text-decoration:none;}
+.bm_middle .tb .form_submit  .forms_btn2 a:hover{color:#ff6465;}
+#request .search_option{width:100%;height:auto;border:#c4d6ea 1px solid;overflow:hidden;}
+#request  strong{background:#eef9ff;float:left;width:100px;height:14px;line-height:14px;;text-align:right;vertical-align: middle;padding:2px;}
+#request .txt{float:left;width:328px;height:auto;text-align:left;vertical-align: middle;padding:2px;}
+@media (min-width: 1030px){
+	.container {
+		width: 1000px;
+	}
+}
+@media (max-width: 580px){
+	.bm_middle .tdL{width:auto;}
+	.bm_middle .tdR .txt, .bm_middle .tdR select{width:100% !important;}
+	.bm_middle .tdR span{display:block;margin:5px 0;}
+	.channel_item_title{float:none;width:100%;height:100%;text-align:left;border-right:none;}
+	.channel_item_input{float:none;}
+	.channel_item_tip{float:none;}
+	.bm_middle .tb.luqu table{width:100%;margin:0 auto;}
+	#request .txt {float: none;width: 100%;padding: 2px;}
+}
+</style>
+</head>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+
+<script type="text/javascript">
+var MODEL = '$MODEL';
+var attachment_hash = '$attachment_hash';
+var form_submit = false;
+{if !empty($this_model['CONFIG']['content_thumb_width'])}P8CONFIG.cthumb_width = {$this_model['CONFIG']['content_thumb_width']};{/if}
+{if !empty($this_model['CONFIG']['content_thumb_height'])}P8CONFIG.cthumb_height = {$this_model['CONFIG']['content_thumb_height']};{/if}
+
+window.onbeforeunload = function(){
+	P8_Upload.del(form_submit);
+};
+$(function(){
+
+$.validator.addMethod('jsreg',function(value, element, params){
+	return this.optional(element) || params.test(value);
+});
+
+$('#form').validate({
+	rules: { },
+	messages: { },
+	
+	errorPlacement: function(error, element) {
+			element.siblings(".jsregmsg").html(error);	
+	},
+	submitHandler: function(form){
+		form_submit = true;		
+		form.submit();
+	},		
+	onkeyup: false
+});
+
+});
+</script>
+<style type="text/css">
+#baoming #rcalendar{width:200px;}
+#baoming .rdate,#baoming .rweek{height:20px;}
+</style>
+<body id="baoming" style="background-image: url({if empty($this_model['CONFIG']['head_logo'])}{$RESOURCE}/skin/default/core/forms/query/bm_bodybg2.png{else}{$this_model['CONFIG']['head_logo']}{/if});background-position:center top;background-repeat:no-repeat;background-size: contain;">
+<div class="container">
+	<div class="header">
+		<div class="logo"><img src="{if empty($this_model['CONFIG']['logo'])}{$RESOURCE}/skin/default/core/forms/logo_zs.png{else}{$this_model['CONFIG']['logo']}{/if}"/></div>
+		<div class="forms-label" id="header_t" style="position: absolute;right:0;top:15px;">
+			$label[baoming_forms_head_link]
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="wrap_out">
+				<div class="bm_table">
+					<div class="bm_header">
+						<div class="head">
+							<div class="title">{$this_model['CONFIG']['modelname']}</div>
+						</div>
+						<div class="notice">
+							{$this_model['CONFIG']['summary']}
+						</div>
+					</div>
+					<div class="bm_middle">
+						<div class="tb">
+							<!--{if empty($this_model['CONFIG']['parts'])}-->							
+							<form name="form" id="form" action="$this_url" method="post">
+								<table  cellpadding="0" cellspacing="0" class="pop_table">
+									<!--简单布局开始-->
+									<!--{foreach $this_model['fields'] $field $field_data}-->
+									<!--{php
+										
+										$__name = '';
+										
+										switch($field_data['widget']){
+										
+										case 'checkbox': case 'multi_select':
+											$__name = '[]';
+										break;
+										case 'uploader': case 'image_uploader':
+											$__name = '[url]';
+										break;
+										case 'multi_uploader':
+											$__name = '[url][]';
+										break;
+										
+										}
+									}-->
+									<tr>
+										<td class="tdL">{$field_data['alias']}:
+											<!--{if $field_data['not_null']}-->
+											<font color="red">*</font>
+											<!--{/if}-->
+										</td>
+										<td class="tdR">
+											<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+											<!--{if !empty($field_data['units'])}-->
+											$field_data[units]
+											<!--{/if}-->
+											<!--{if !empty($field_data['description'])}-->
+											<span class="description">$field_data[description]</span>
+											<!--{/if}-->
+											<span class="jsregmsg"></span>
+										</td>
+									</tr>
+										<!--{if $field_data['not_null']}-->
+										<script type="text/javascript">
+										$(document).ready(function(){
+											$('#form *[name="field#[$field]$__name"]').rules('add', {
+												required: true,
+												messages: { required: "{$P8LANG['forms_field_required']}"}
+											});
+										});
+										</script>
+										<!--{/if}-->
+										<!--{if $field_data['jsreg']}-->
+										<script type="text/javascript">
+											$(document).ready(function(){
+												$('#form *[name="field#[$field]$__name"]').rules('add', {
+													jsreg: {$field_data['jsreg']},
+													messages: {jsreg:'{$field_data['jsregmsg']}'}
+												});
+											});
+											</script>
+										<!--{/if}-->
+									<!--{/foreach}-->
+									<!--同步通知-->
+									<!--{if $this_model['CONFIG']['email_enabled']}-->
+									<tr>
+										<td class="tdL">同步通知类型</td>
+										<td class="tdR">
+											<input type="checkbox" name="config[type][]" value="email"{if isset($this_model['CONFIG']['type']) && in_array('email',$this_model['CONFIG']['type'])} checked{/if}/>电子邮件
+											<input type="checkbox" name="config[type][]" value="sms"{if isset($this_model['CONFIG']['type']) && in_array('sms',$this_model['CONFIG']['type'])} checked{/if}/>手机短信
+											<input type="checkbox" name="config[type][]" value="msg"{if isset($this_model['CONFIG']['type']) && in_array('msg',$this_model['CONFIG']['type'])} checked{/if}/>站内短消息	
+										</td>
+									</tr>
+									<tr>
+										<td class="tdL">通知接收人</td>
+										<td class="tdR">
+											<ul id="manager" class="manager_ids">
+												<!--{foreach $managers $user}-->
+												<li>{$user['username']} / {$user['name']} / {$user['email']}<input type="hidden" name="config[manager][]" value="{$user['id']}"/> <span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+												<!--{/foreach}-->
+											</ul>
+											<input type="button" class="forms_btn" value="选择接收人" onclick="show_dialog('manager')"/>																
+										</td>
+									</tr>				
+									<tr>
+										<td class="tdL">通知的电子邮件</td>
+										<td class="tdR">		
+											<textarea cols="50" rows="3" name="config[email]"  class="txtar"/>{if isset($config['email'])}{$config['email']}{/if}</textarea> 多个邮件用英文逗号隔开
+										</td>
+									</tr>
+									<script type="text/javascript">
+										var cutten_item = null;
+										function show_dialog(item){
+											var dialog = new P8_Dialog({
+												title_text:'选择接收者',
+												width: 550,
+												height: 430,
+												button: true
+											});
+											dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+											dialog.show();
+											cutten_item = item;
+											var ifr = dialog.content.find('iframe');
+											var check_uids = {};
+											$('#'+cutten_item).find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+											ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+										}								
+										function member_single_select_callback(checked, json){
+											var u_name = '';
+											$('#'+cutten_item).find("input[value="+json.id+"]").parent().remove();
+											if(checked){
+												if (json.name && json.name != 'undefined') u_name = json.name;
+												$('#'+cutten_item).append('<li>'+json.username + (u_name ? ' | '+u_name :'')+'<input type="hidden" name="'+cutten_item+'[]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+											}
+										}
+									</script>
+									<!--{/if}-->									
+									<!--验证码-->
+									<!--{if $this_model['CONFIG']['captcha']}-->
+									<tr>
+										<td class="tdL">验证码：<font color="red">*</font></td>
+										<td class="tdR"><input type="text" name="captcha" style="width:60px;border: 1px solid #eee;" /> <span id="captcha"></span><span class="jsregmsg">（鼠标点击左框显示验证码 / 点击验证码进行可变换）</span>
+										<script type="text/javascript">captcha($('#captcha'), $('#form input[name="captcha"]'));</script>										
+										</td>
+									</tr>
+									<!--{/if}-->
+								<table>
+								<div class="text-center">
+										<ul id="manager" class="manager_ids">
+										<!--{foreach $managers $user}-->
+										<li>{$user['username']}{if $user['name']} | {$user['name']}{/if}<input type="hidden" name="manager[]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+										<!--{/foreach}-->
+										</ul>
+										<input type="submit" name="" class="channel_btn" value="提 交" />
+										<input type="reset" name="" class="channel_btn" value="取 消" />
+										<input type="hidden" name="mid" value="$mid" />
+										<input type="hidden" name="id" value="{if !empty($id)}$id{/if}" />
+										<input type="hidden" name="_referer" value="{$_referer}" />
+										<input type="hidden" name="attachment_hash" value="<!--{php echo $attachment_hash = unique_id(16);}-->" />
+								</div>
+							</form>							
+							<!--{else}-->
+							<!--复杂布局开始-->
+								<!--分步填写开始-->
+								<!--{if $this_model['CONFIG']['parts_enabled']}-->									
+									<!--{php $fieldset_menu = 0;}-->
+									<div id="progressbar" style="text-align: center;margin:10px auto;">
+									<!--{foreach $this_model['CONFIG']['parts'] $pk $pd}-->
+									<!--{php $fieldset_menu++;}-->
+									<span>{$pd[name]}</span>
+									<!--{/foreach}-->
+									</div>									
+									<!--{php $fieldset_step = 0;}-->
+									<!--{foreach $this_model['CONFIG']['parts'] $pk $pd}-->				
+									<!--{php $fieldset_step++;}-->
+									<div id="step_$fieldset_step" class="p8_form_step_post" style="{if $fieldset_step!=1}display: none{/if}">
+									<form name="form" id="form_{$fieldset_step}" action="$this_url" method="post">									
+									<table  cellpadding="0" cellspacing="0" class="pop_table">
+											<!--{if empty($pd['hide'])}-->
+											<tr>
+												<td><b class="part_name">$pd[name]</b></td>
+											</tr>
+											<!--{/if}-->
+											<tr>
+												<td>
+													<table width="100%"  cellpadding="0" cellspacing="0">
+														<tr>
+															<!--{php $tdwidth = 100/$pd['row'].'%'; for($i=1;$i<=$pd['row'];$i++){ $tdid = "$pk-$i";}-->
+															<td id="$pk-$i" width="$tdwidth" valign="top">
+																<table width="100%" border="0"  cellpadding="5" cellspacing="0">
+																	<!--{foreach $this_model['parts'][$tdid] $fid $field}-->
+																	<!--{php
+																		if($field == 'study_plan') continue;
+																		$field_data = $this_model['fields'][$field];
+																		
+																		$__name = '';
+																		
+																		switch($field_data['widget']){
+																		
+																		case 'checkbox': case 'multi_select':
+																			$__name = '[]';
+																		break;
+																		case 'uploader': case 'image_uploader':
+																			$__name = '[url]';
+																		break;
+																		case 'multi_uploader':
+																			$__name = '[url][]';
+																		break;
+																		
+																		}
+																	}-->
+																	<tr>
+																		<td class="tdL">{$field_data['alias']}:
+																			<!--{if $field_data['not_null']}-->
+																			<font color="red">*</font>
+																			<!--{/if}-->
+																			</td>
+																		<td class="tdR">
+																			<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+																			<!--{if !empty($field_data['units'])}-->
+																			$field_data[units]
+																			<!--{/if}-->
+																			<!--{if !empty($field_data['description'])}-->
+																			<span class="description">$field_data[description]</span>
+																			<!--{/if}-->
+																			<span class="jsregmsg"></span>
+																		</td>
+																	</tr>
+																	
+																	<!--{if $field_data['not_null']}-->
+																	<script type="text/javascript">
+																		$(document).ready(function(){
+																			$('#form_{$fieldset_step} *[name="field#[$field]$__name"]').rules('add', {
+																				required: true,
+																				messages: { required: "{$P8LANG['forms_field_required']}"}
+																			});
+																		});
+																		</script>
+																	<!--{/if}-->
+																	<!--{if $field_data['jsreg']}-->
+																	<script type="text/javascript">
+																		$(document).ready(function(){
+																			$('#form_{$fieldset_step} *[name="field#[$field]$__name"]').rules('add', {
+																				jsreg: {$field_data['jsreg']},
+																				messages: {jsreg:'{$field_data['jsregmsg']}'}
+																			});
+																		});
+																		</script>
+																	<!--{/if}-->
+																	<!--{/foreach}-->
+																</table>
+															</td>
+															<!--{php }}-->
+														</tr>
+														<!-- 学习计划 -->
+														<!--{if $fieldset_step == 3}-->
+														<tr>
+															<td colspan="{$pd['row']}"><b class="part_name">学习计划</b> <a href="javascript:;" onclick="changer_study_plan()">选择学习计划</a></td>
+														</tr>
+														<tr>
+															<td colspan="{$pd['row']}">
+																<table width="100%"  cellpadding="0" cellspacing="0">
+																	<tbody id="__plan_item"></tbody>
+																</table>
+																<div>
+																	<input type="button" onclick="changer_study_plan()" value="选择学习计划" />
+																	<input type="hidden" name="#field_study_plan_posted">
+																	<input type="hidden" id="field_study_plan" name="field#[study_plan]" value="{$data[study_plan]}">
+																	<span class="jsregmsg"></span>
+																</div>
+															</td>
+														</tr>
+														<script type="text/javascript">
+															var study_item = '';
+															function changer_study_plan(){
+																var study_dialog = new P8_Dialog({
+																	title_text:'选择学习计划',
+																	width: 710,
+																	height: 540,
+																	button: true
+																});
+																study_dialog.content.append($('<iframe width="100%" height="460" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+																study_dialog.show();
+																var ifr = study_dialog.content.find('iframe');
+																ifr.attr('src', '{$core.controller}/forms-list-mid-209');
+															}								
+															function study_plan_select_callback(json){
+																if(json){
+																	$('#__plan_item').empty();
+																	study_item = '<tr>'+
+																		'<td class="tdL">Study Plan Name</td><td class="tdR">'+json.name+'</td>'+
+																		'<td class="tdL">Department</td><td class="tdR">'+json.department+'</td>'+
+																		'</tr><tr>'+
+																		'<td class="tdL">Major</td><td class="tdR">'+json.major+'</td>'+
+																		'<td class="tdL">Area of Research</td><td class="tdR">'+json.research+'</td>'+
+																		'</tr><tr>'+
+																		'<td class="tdL">Duration From To</td><td class="tdR">'+json.duration+'</td>'+
+																		'<td class="tdL">years</td><td class="tdR">'+json.years+'</td>'+
+																		'</tr>';																	
+																	$('#__plan_item').append($(study_item));
+																	$('#field_study_plan').val(json.id);
+																}
+															}
+															$(function(){
+																<!--{if $data['study_plan']}-->
+																	$.ajax({
+																		url: '{$core.controller}/forms-study-id-{$data[study_plan]}',
+																		dataType: 'json',
+																		cache: false,
+																		beforeSend: function(){
+																			ajaxing({});
+																		},
+																		success: function(json){																			
+																			$('#list').empty();
+																			ajaxing({action: 'hide'});
+																			study_item = '<tr>'+
+																				'<td class="tdL">Study Plan Name</td><td class="tdR">'+json.name+'</td>'+
+																				'<td class="tdL">Department</td><td class="tdR">'+json.department+'</td>'+
+																				'</tr><tr>'+
+																				'<td class="tdL">Major</td><td class="tdR">'+json.major+'</td>'+
+																				'<td class="tdL">Area of Research</td><td class="tdR">'+json.research+'</td>'+
+																				'</tr><tr>'+
+																				'<td class="tdL">Duration From To</td><td class="tdR">'+json.duration+'</td>'+
+																				'<td class="tdL">years</td><td class="tdR">'+json.years+'</td>'+
+																				'</tr>';
+																			$('#__plan_item').append($(study_item));																			
+																		}
+																	});
+																<!--{/if}-->
+															});
+														</script>
+														<!--{/if}-->
+														<!-- 学习计划 -->
+													</table>
+												</td>
+											</tr>
+											<!-- 同步通知 -->
+											<!--{if $this_model['CONFIG']['email_enabled'] && $fieldset_step == count($this_model['CONFIG']['parts'])}-->											
+											<tr>
+												<td>
+													<table width="100%" cellpadding="5" cellspacing="0" class="pop_table">
+														<tr>
+															<td class="tdL">同步通知类型</td>
+															<td class="tdR">
+																<input type="checkbox" name="config[type][]" value="email"{if isset($this_model['CONFIG']['type']) && in_array('email',$this_model['CONFIG']['type'])} checked{/if}/>电子邮件
+																<input type="checkbox" name="config[type][]" value="sms"{if isset($this_model['CONFIG']['type']) && in_array('sms',$this_model['CONFIG']['type'])} checked{/if}/>手机短信
+																<input type="checkbox" name="config[type][]" value="msg"{if isset($this_model['CONFIG']['type']) && in_array('msg',$this_model['CONFIG']['type'])} checked{/if}/>站内短消息	
+															</td>
+														</tr>
+														<tr>
+															<td class="tdL">通知接收人</td>
+															<td class="tdR">
+																<ul id="manager" class="manager_ids">
+																	<!--{foreach $managers $user}-->
+																	<li>{$user['username']} / {$user['name']} / {$user['email']}<input type="hidden" name="config[manager][]" value="{$user['id']}"/> <span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+																	<!--{/foreach}-->
+																</ul>
+																<input type="button" class="forms_btn" value="选择接收人" onclick="show_dialog('manager')"/>																
+															</td>
+														</tr>				
+														<tr>
+															<td class="tdL">通知的电子邮件</td>
+															<td class="tdR">		
+																<textarea cols="50" rows="3" name="config[email]"  />{if isset($config['email'])}{$config['email']}{/if}</textarea> 多个邮件用英文逗号隔开
+															</td>
+														</tr>
+													</table>											
+												</td>
+											</tr>
+											<script type="text/javascript">
+												var cutten_item = null;
+												function show_dialog(item){
+													var dialog = new P8_Dialog({
+														title_text:'选择接收者',
+														width: 550,
+														height: 430,
+														button: true
+													});
+													dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+													dialog.show();
+													cutten_item = item;
+													var ifr = dialog.content.find('iframe');
+													var check_uids = {};
+													$('#'+cutten_item).find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+													ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+												}								
+												function member_single_select_callback(checked, json){
+													var u_name = '';
+													$('#'+cutten_item).find("input[value="+json.id+"]").parent().remove();
+													if(checked){
+														if (json.name && json.name != 'undefined') u_name = json.name;
+														$('#'+cutten_item).append('<li>'+json.username + (u_name ? ' | '+u_name :'')+'<input type="hidden" name="'+cutten_item+'[]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+													}
+												}
+											</script>
+											<!--{/if}-->
+											<!-- 验证码 -->
+											<!--{if $this_model['CONFIG']['captcha'] && $fieldset_step == 1}-->
+											<tr>
+												<td>
+													<table width="100%" cellpadding="0" cellspacing="0">
+														<tr>
+															<td class="tdL">验证码：<font color="red">*</font></td>
+															<td class="tdR"><input type="text" name="captcha" style="width:60px;border: 1px solid #eee;" /> <span id="captcha"></span><span class="jsregmsg">（鼠标点击左框显示验证码 / 点击验证码进行可变换）</span>
+															<script type="text/javascript">captcha($('#captcha'), $('#form_{$fieldset_step} input[name="captcha"]'));</script>
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+											<!--{/if}-->
+											<tr>
+												<td align="center">
+													<!--{if $fieldset_step == 1}-->
+													<span class="field_buttons">
+														<input type="button" class="Save channel_btn" value=" 保存 " aria-invalid="true"/>
+														<input type="button" class="Next channel_btn" value=" 下一步 " aria-invalid="true"/>
+													</span>
+													<!--{elseif $fieldset_step == count($this_model['CONFIG']['parts'])}-->
+													<span class="field_buttons">
+														<input type="button" class="Previous channel_btn" value=" 上一步 " />
+														<input type="button" class="Save channel_btn" value=" 保存 " aria-invalid="true"/>														
+														<input type="button" class="Preview channel_btn" value=" 预览 " />
+													</span>
+													<span class="field_buttons" id="submit_button"></span>
+													<!--{else}-->
+													<span class="field_buttons">
+														<input type="button" class="Previous channel_btn" value=" 上一步 " />
+														<input type="button" class="Save channel_btn" value=" 保存 " aria-invalid="true"/>														
+														<input type="button" class="Next channel_btn" value=" 下一步 " aria-invalid="true"/>
+													</span>
+													<!--{/if}-->													
+												</td>		
+											</tr>
+										</table>										
+										<input type="hidden" name="p8_form_step" value="{$fieldset_step}" />
+										<input type="hidden" name="mid" value="$mid" />
+										<input type="hidden" name="id" value="{if !empty($id)}$id{/if}" />
+										<input type="hidden" name="_referer" value="{$_referer}" />
+										<input type="hidden" name="attachment_hash" value="<!--{php echo $attachment_hash = unique_id(16);}-->" />										
+									</form>									
+									</div>
+									<script>
+										$('#form_{$fieldset_step}').validate({
+											rules: { },
+											messages: { },											
+											errorPlacement: function(error, element) {
+													element.siblings(".jsregmsg").html(error);	
+											},								
+											onkeyup: true
+										});
+									</script>
+									<!--{/foreach}-->
+									<input type="hidden" id="p8_form_id" value="{if !empty($id)}$id{/if}" />
+									<script>									
+										var current_fs, next_fs, previous_fs;
+										var left, opacity, scale; 
+										var animating,step,next_step,previous_step;
+										var menu_step = 1,fieldset_menu = {$fieldset_step};
+										$(function(){
+											$("#progressbar span:first-child").addClass("active");
+											left = (50-fieldset_menu*8.33)+"%";
+											$("#progressbar").css({'margin-left': left});
+										});
+										$('#progressbar span').click(function(){
+											var progressbar_index = $('#progressbar span').index(this);
+											$(this).siblings().removeClass("active");											
+											$(this).addClass("active");
+											$(this).prevAll().addClass("active");
+											$('.field_buttons').show();
+											$('#submit_button').hide().css({'opacity': '0','display':'none'});
+											$('.p8_form_step_post').hide();
+											$('#step_'+(progressbar_index+1)).show().css({'opacity': '1','display':'block'});
+										});
+										function Gotosubmit(){
+											var info_id = $('#p8_form_id').val();											
+											if(confirm("提交后不可修改，确定要提交吗？")){
+												$.ajax({
+													url: '$this_router-p8_status',
+													data: {id:info_id,p8_status:'待审核'},
+													dataType: 'json',
+													type: 'POST',
+													cache: false,
+													beforeSend: function(){
+														ajaxing({text:'提交中..'});
+													},
+													success: function(json){													
+														var submitid = [];
+														for(var i in json){
+															submitid[i] = json[i].id;
+														}
+														if(submitid){
+															ajaxing({text:'提交成功',action: 'hide'});
+														}else{													
+															ajaxing({text:'提交失败',action: 'hide'});														
+														}											
+													},
+													error:function(){
+														ajaxing({text:'提交失败',action: 'hide'});
+													}
+												});
+											}else{
+												return;
+											}
+										};
+										function Gotoedit(){
+											$("#progressbar span:last-child").addClass("active");
+											var index = $("#progressbar span:last-child").index();
+											console.log(index);
+										}
+										$(".Gotoedit").click(function(){
+											$("#progressbar span:last-child").addClass("active");
+											var index = $("#progressbar span:last-child").index();
+											console.log(index);
+											/*
+											$(this).parent().hide();
+											$(this).parent().prev().show();
+											$(this).parent().prev().css({'opacity': '1','display':'block'});											
+											*/
+										});
+										$(".Preview").click(function(){
+											step = $(this).parents('div.p8_form_step_post').find('input[name=p8_form_step]').val();
+											var form_valid = $('#form_'+step).valid();
+											if(!form_valid) return false;
+											if(animating) return false;											
+											animating = true;
+											var info_id = $('#p8_form_id').val();										
+											$.ajax({
+												url: '$this_url',
+												data: $('#form_'+step).serialize()+'&id='+info_id,
+												dataType: 'json',
+												type: 'POST',
+												cache: false,
+												beforeSend: function(){
+													ajaxing({text:'保存中..'});
+												},
+												success: function(json){													
+													animating = false;													
+													if(json.id){
+														ajaxing({text:'保存成功',action: 'hide'});
+														$('#p8_form_id').val(json.id);
+														var submit_button = '<input type="button" class="channel_btn" onclick="$(\'#progressbar span:last-child\').click();"value=" 上一步 " > <input type="button" class="Submit channel_btn" onclick="Gotosubmit()" value=" 提交 " />';
+														$('#submit_button').html(submit_button);
+													}else{													
+														if(json.field) 
+															ajaxing({text:json.field,action: 'hide'});	
+														else
+															ajaxing({text:'保存失败',action: 'hide'});														
+													}											
+												},
+												error:function(){
+													animating = false;
+													ajaxing({text:'保存失败',action: 'hide'});
+												}
+											});											
+											$('.p8_form_step_post').show().css({'opacity': '1','display':'block'});
+											$('.field_buttons').hide();
+											$('#submit_button').show().css({'opacity': '1','display':'block'});										
+										});
+										$(".Save").click(function(){
+											step = $(this).parents('div.p8_form_step_post').find('input[name=p8_form_step]').val();
+											var form_valid = $('#form_'+step).valid();
+											if(!form_valid) return false;
+											if(animating) return false;											
+											animating = true;
+											var info_id = $('#p8_form_id').val();										
+											$.ajax({
+												url: '$this_url',
+												data: $('#form_'+step).serialize()+'&id='+info_id,
+												dataType: 'json',
+												type: 'POST',
+												cache: false,
+												beforeSend: function(){
+													ajaxing({text:'保存中..'});
+												},
+												success: function(json){													
+													animating = false;													
+													if(json.id){
+														ajaxing({text:'保存成功',action: 'hide'});
+														$('#p8_form_id').val(json.id);																												
+													}else{													
+														if(json.field) 
+															ajaxing({text:json.field,action: 'hide'});	
+														else
+															ajaxing({text:'保存失败',action: 'hide'});														
+													}											
+												},
+												error:function(){
+													animating = false;
+													ajaxing({text:'保存失败',action: 'hide'});
+												}
+											});	
+										});	
+										$(".Next").click(function(){
+											step = $(this).parents('div.p8_form_step_post').find('input[name=p8_form_step]').val();
+											next_step = Number(step) + 1;
+											var form_valid = $('#form_'+step).valid();
+											if(!form_valid) return false;
+											if(animating) return false;											
+											animating = true;
+											current_fs = $('#step_'+step);
+											next_fs = $('#step_'+next_step);
+											var info_id = $('#p8_form_id').val();										
+											$.ajax({
+												url: '$this_url',
+												data: $('#form_'+step).serialize()+'&id='+info_id,
+												dataType: 'json',
+												type: 'POST',
+												cache: false,
+												beforeSend: function(){
+													ajaxing({text:'保存中..'});
+												},
+												success: function(json){													
+													animating = false;													
+													if(json.id){
+														ajaxing({text:'保存成功',action: 'hide'});
+														menu_step = next_step;
+														$('#p8_form_id').val(json.id);
+														if(next_step<=fieldset_menu){
+															$("#progressbar span").eq($(".p8_form_step_post").index(next_fs)).addClass("active");
+															next_fs.show();
+															current_fs.animate({opacity: 0}, {
+																step: function(now, mx) {
+																	scale = 1;
+																	opacity = 1 - now;
+																	current_fs.css({'transform': 'scale('+scale+')'});
+																	next_fs.css({'opacity': opacity});
+																}, 
+																duration: 0, 
+																complete: function(){
+																	current_fs.hide();
+																	animating = false;
+																}, 
+																easing: 'easeInOutBack'
+															});
+														}														
+													}else{													
+														if(json.field) 
+															ajaxing({text:json.field,action: 'hide'});	
+														else
+															ajaxing({text:'保存失败',action: 'hide'});														
+													}											
+												},
+												error:function(){
+													animating = false;
+													ajaxing({text:'保存失败',action: 'hide'});
+												}
+											});	
+										});
+										
+										$(".Previous").click(function(){
+											step = $(this).parents('div.p8_form_step_post').find('input[name=p8_form_step]').val();
+											previous_step = Number(step) - 1 >=1 ? Number(step) - 1 : 1;
+											if(animating) return false;
+											animating = true;
+											current_fs = $('#step_'+step);
+											previous_fs = $('#step_'+previous_step);
+											menu_step = previous_step;
+											$("#progressbar span").eq($(".p8_form_step_post").index(current_fs)).removeClass("active");
+											previous_fs.show(); 
+											current_fs.animate({opacity: 0}, {
+												step: function(now, mx) {
+													scale = 1;
+													opacity = 1 - now;
+													previous_fs.css({'transform': 'scale('+scale+')', 'opacity': opacity});
+												}, 
+												duration: 0, 
+												complete: function(){
+													current_fs.hide();
+													animating = false;
+												}, 
+												easing: 'easeInOutBack'
+											});
+										});											
+									</script>
+									<!--分步填写结束-->
+								<!--{else}-->								
+									<!--没有分步填写开始-->
+									<form name="form" id="form" action="$this_url" method="post">
+										<table  cellpadding="0" cellspacing="0" class="pop_table">
+											<!--{foreach $this_model['CONFIG']['parts'] $pk $pd}-->
+											<tr>
+												<td><div class="tt"><h2>$pd[name]</h2></div></td>
+											</tr>
+											<tr>
+												<td>
+													<table  cellpadding="0" cellspacing="0" class="pop_table">
+														<tr>
+															<!--{php $tdwidth = 100/$pd['row'].'%'; for($i=1;$i<=$pd['row'];$i++){ $tdid = "$pk-$i";}-->
+															<td id="$pk-$i" width="$tdwidth" valign="top">
+																<div class="channel_content" style="border-bottom:0px;" >
+
+																	<!--{foreach $this_model['parts'][$tdid] $fid $field}-->
+																	<!--{php
+																		$field_data = $this_model['fields'][$field];
+																		
+																		$__name = '';
+																		
+																		switch($field_data['widget']){
+																		
+																		case 'checkbox': case 'multi_select':
+																			$__name = '[]';
+																		break;
+																		case 'uploader': case 'image_uploader':
+																			$__name = '[url]';
+																		break;
+																		case 'multi_uploader':
+																			$__name = '[url][]';
+																		break;
+																		
+																		}
+																	}-->
+																<div class="channel_item">
+																	<div class="channel_item_title"> {$field_data['alias']}:
+																		<!--{if $field_data['not_null']}-->
+																		<font color="red">*</font>
+																		<!--{/if}-->
+																	</div>
+																	<div class="channel_item_input">
+																		<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+																		<!--{if !empty($field_data['units'])}-->
+																		$field_data[units]
+																		<!--{/if}-->
+																	</div>
+																	<div class="channel_item_tip">
+																		<!--{if !empty($field_data['description'])}-->
+																		<span class="description">$field_data[description]</span>
+																		<!--{/if}-->
+																		<span class="jsregmsg"></span>
+																	</div>							            							
+																	<!--{if $field_data['not_null']}-->
+																	<script type="text/javascript">
+																		$(document).ready(function(){
+																			$('#form *[name="field#[$field]$__name"]').rules('add', {
+																				required: true,
+																				messages: { required: "{$P8LANG['forms_field_required']}"}
+																			});
+																		});
+																		</script>
+																	<!--{/if}-->
+																	<!--{if $field_data['jsreg']}-->
+																	<script type="text/javascript">
+																		$(document).ready(function(){
+																			$('#form *[name="field#[$field]$__name"]').rules('add', {
+																				jsreg: {$field_data['jsreg']},
+																				messages: {jsreg:'{$field_data['jsregmsg']}'}
+																			});
+																		});
+																		</script>
+																	<!--{/if}-->
+																	<div class="clearfix"></div>
+																</div>
+																	<!--{/foreach}-->
+																</div>
+															</td>
+															<!--{php }}-->
+														</tr>
+													</table>
+												</td>
+											</tr>
+											<!--{/foreach}-->
+											<!--同步通知-->
+											<!--{if $this_model['CONFIG']['email_enabled']}-->
+											<tr>
+												<td>
+													<table width="100%" cellpadding="5" cellspacing="0" class="pop_table">
+													<tr>
+														<td class="tdL">同步通知类型</td>
+														<td class="tdR">
+															<input type="checkbox" name="config[type][]" value="email"{if isset($this_model['CONFIG']['type']) && in_array('email',$this_model['CONFIG']['type'])} checked{/if}/>电子邮件
+															<input type="checkbox" name="config[type][]" value="sms"{if isset($this_model['CONFIG']['type']) && in_array('sms',$this_model['CONFIG']['type'])} checked{/if}/>手机短信
+															<input type="checkbox" name="config[type][]" value="msg"{if isset($this_model['CONFIG']['type']) && in_array('msg',$this_model['CONFIG']['type'])} checked{/if}/>站内短消息	
+														</td>
+													</tr>
+													<tr>
+														<td class="tdL">通知接收人</td>
+														<td class="tdR">
+															<ul id="manager" class="manager_ids">
+																<!--{foreach $managers $user}-->
+																<li>{$user['username']} / {$user['name']} / {$user['email']}<input type="hidden" name="config[manager][]" value="{$user['id']}"/> <span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+																<!--{/foreach}-->
+															</ul>
+															<input type="button" class="forms_btn" value="选择接收人" onclick="show_dialog('manager')"/>																
+														</td>
+													</tr>				
+													<tr>
+														<td class="tdL">通知的电子邮件</td>
+														<td class="tdR">		
+															<textarea cols="50" rows="3" name="config[email]"  />{if isset($config['email'])}{$config['email']}{/if}</textarea> 多个邮件用英文逗号隔开
+														</td>
+													</tr>
+													</table>											
+												</td>
+											</tr>
+											<script type="text/javascript">
+												var cutten_item = null;
+												function show_dialog(item){
+													var dialog = new P8_Dialog({
+														title_text:'选择接收者',
+														width: 550,
+														height: 430,
+														button: true
+													});
+													dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+													dialog.show();
+													cutten_item = item;
+													var ifr = dialog.content.find('iframe');
+													var check_uids = {};
+													$('#'+cutten_item).find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+													ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+												}								
+												function member_single_select_callback(checked, json){
+													var u_name = '';
+													$('#'+cutten_item).find("input[value="+json.id+"]").parent().remove();
+													if(checked){
+														if (json.name && json.name != 'undefined') u_name = json.name;
+														$('#'+cutten_item).append('<li>'+json.username + (u_name ? ' | '+u_name :'')+'<input type="hidden" name="'+cutten_item+'[]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+													}
+												}
+											</script>
+											<!--{/if}-->									
+											<!--验证码-->
+											<!--{if $this_model['CONFIG']['captcha']}-->
+											<tr>
+												<td>验证码：<font color="red">*</font><input type="text" name="captcha" style="width:60px;border: 1px solid #eee;" /> <span id="captcha"></span><span class="jsregmsg">（鼠标点击左框显示验证码 / 点击验证码进行可变换）</span>
+												<script type="text/javascript">captcha($('#captcha'), $('#form input[name="captcha"]'));</script>								
+												</td>
+											</tr>
+											<!--{/if}-->
+										</table>
+										<div class="text-center">
+											<input type="submit" name="" class="channel_btn" value="提 交" />
+											<input type="reset" name="" class="channel_btn" value="取 消" />
+											<input type="hidden" name="mid" value="$mid" />
+											<input type="hidden" name="id" value="{if !empty($id)}$id{/if}" />
+											<input type="hidden" name="_referer" value="{$_referer}" />
+											<input type="hidden" name="attachment_hash" value="<!--{php echo $attachment_hash = unique_id(16);}-->" />
+										</div>
+									</form>
+									<!--没有分步填写结束-->
+								<!--{/if}-->
+								<!--复杂布局结束-->
+							<!--{/if}-->
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="footer_info">
+				{$this_model['CONFIG']['copyright']}
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+init_labelshows('header_t');
+</script>
+<script type="text/javascript">
+
+$(function(){
+	<!--{if empty($this_model['CONFIG']['parts'])}-->	   
+	$('.pop_table tr:even').addClass('pop_tr');	
+	<!--{/if}-->
+})
+</script>
+<!--{/php168}-->

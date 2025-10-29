@@ -1,0 +1,477 @@
+﻿<!--{php168}-->
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>大数据运维总览图</title>
+	<meta http-equiv="refresh" content="{$reflash}">
+    <script type="text/javascript" src="{$RESOURCE}/js/plant/jquery.js"></script>
+    <link rel="stylesheet" href="{$RESOURCE}/skin/admin/plant/style.css">
+</head>
+<script type="text/javascript">
+	$(document).ready(function(){
+		var html=$(".wrap ul").html()
+		$(".wrap ul").append(html)
+		var ls=$(".wrap li").length/2+1
+		i=0
+		ref = setInterval(function(){
+			i++
+			if(i==ls){
+				i=1
+				$(".wrap ul").css({marginTop:0})
+				$(".wrap ul").animate({marginTop:-'.52'*i+'rem'},1000)
+			}
+	    	$(".wrap ul").animate({marginTop:-'.52'*i+'rem'},1000)
+
+		},2400);
+
+		var infohtml2=$(".infohtml ul").html()
+		$(".infohtml ul").append(infohtml2)
+		var ls2=$(".infohtml li").length/2+1
+		a=0
+		ref = setInterval(function(){
+			a++
+			if(a==ls2){
+				a=1
+				$(".infohtml ul").css({marginTop:0})
+				$(".infohtml ul").animate({marginTop:-'.5'*a+'rem'},800)
+			}
+	    	$(".infohtml ul").animate({marginTop:-'.5'*a+'rem'},800)
+		},4300);
+		
+		var html2=$(".adduser ul").html()
+		$(".adduser ul").append(html2)
+		var ls2=$(".adduser li").length/2+1
+		b=0
+		ref = setInterval(function(){
+			b++
+			if(b==ls2){
+				b=1
+				$(".adduser ul").css({marginTop:0})
+				$(".adduser ul").animate({marginTop:-'.5'*b+'rem'},800)
+			}
+	    	$(".adduser ul").animate({marginTop:-'.5'*b+'rem'},800)
+		},4300);
+	})
+</script>
+<body>
+<div class="loading">
+	<div class="loadbox"> <img src="{$RESOURCE}/skin/admin/plant/loading.gif"> 页面加载中... </div>
+</div>
+<div class="head">
+	<h1><img src="{$RESOURCE}/skin/admin/plant/logo.png">{if $_conf['title']}{$_conf['title']}{else}大数据运维总览图{/if}</h1>
+	<div class="weather"><span>今天是：</span><span>{$today}</span></div>
+</div>
+<div class="mainbox">
+	<div class="data-row">
+		<div class="data-box">
+			<div class="data-box-list clearfix">                    
+				<div class="data-md-50">
+					<div class="boxall" style="height: 2.4rem">
+						<div class="alltitle">站群数据概览</div>
+						<div class="sycm">
+							<ul class="clearfix">
+								<li><h2 class="counter" id="countSitesAll">{$countSitesAll}</h2><span>站群数据量</span></li>
+								<li><h2 class="counter" id="countSitesToday">{$countSitesToday}</h2><span>今天新增量</span></li>
+								<li><h2 class="counter" id="countSitesMonth">{$countSitesMonth}</h2><span>本月新增量</span></li>
+							</ul>
+							<div style="border-bottom: 1px solid rgba(255,255,255,.1)"></div>
+							<ul class="clearfix">
+								<li><h2 class="counter" id="countSitesSite">{$countSitesSite}</h2><span>分站总数量</span></li>
+								<li><h2 class="counter" id="countSitesStatusSite">{$countSitesStatusSite}</h2><span>启用分站数</span></li>
+								<li><h2 class="counter" id="countSitesUnverified">{$countSitesUnverified}</h2><span>待审内容数</span></li>                            
+							</ul>
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+				<div class="data-md-50">
+					<div class="boxall" style="height: 2.4rem">
+						<div class="alltitle">主站数据概览</div>
+						<div class="sycm">
+							<ul class="clearfix">
+								<li><h2 class="counter" id="countCmsAll">{$countCmsAll}</h2><span>主站数据量</span></li>
+								<li><h2 class="counter" id="countCmsToday">{$countCmsToday}</h2><span>今天新增量</span></li>
+								<li><h2 class="counter" id="countCmsMonth">{$countCmsMonth}</h2><span>本月新增量</span></li>
+							</ul>
+							<div style="border-bottom: 1px solid rgba(255,255,255,.1)"></div>
+							<ul class="clearfix">                            
+								<li><h2 class="counter" id="countPushToday">{$countPushToday}</h2><span>今日数据推送量</span></li>
+								<li><h2 class="counter" id="countPushMonth">{$countPushMonth}</h2><span>本月数据推送量</span></li>
+								<li><h2 class="counter" id="countCmsUnverified">{$countCmsUnverified}</h2><span>待审内容数</span></li>
+							</ul>
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{if $_conf['left_t']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall">
+						<!--{if $_conf['left_t']['title'] && $_conf['left_t']['title_type']<2}-->
+						<!--{if $_conf['left_t']['title_type']=='1'}-->
+						<div class="alltitle">{$_conf['left_t']['title']}</div>
+						<!--{else}-->
+						<div class="tit02"><span>{$_conf['left_t']['title']}</span></div>
+						<!--{/if}-->
+						<!--{/if}-->
+						<div>
+							<!--{if $_conf['left_t']['type']}-->
+							<iframe src="{$STATIC_URL}/api/plant/{$_conf['left_t']['type']}.php?direct={$_conf['left_t']['direct']}&reflash={$_conf['left_t']['reflash']}" frameborder="0" scrolling="no" height="{$_conf['left_t']['height']}" width="100%"></iframe>
+							<!--{/if}-->
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{if $_conf['left_c']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall">
+						<!--{if $_conf['left_c']['title'] && $_conf['left_c']['title_type']<2}-->
+						<!--{if $_conf['left_c']['title_type']=='1'}-->
+						<div class="alltitle">{$_conf['left_c']['title']}</div>
+						<!--{else}-->
+						<div class="tit02"><span>{$_conf['left_c']['title']}</span></div>
+						<!--{/if}-->
+						<!--{/if}-->
+						<div>
+							<!--{if $_conf['left_c']['type']}-->
+							<iframe src="{$STATIC_URL}/api/plant/{$_conf['left_c']['type']}.php?direct={$_conf['left_c']['direct']}&reflash={$_conf['left_c']['reflash']}" frameborder="0" scrolling="no" height="{$_conf['left_c']['height']}" width="100%"></iframe>
+							<!--{/if}-->
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{if $_conf['left_b']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall">
+						<!--{if $_conf['left_b']['title'] && $_conf['left_b']['title_type']<2}-->
+						<!--{if $_conf['left_b']['title_type']=='1'}-->
+						<div class="alltitle">{$_conf['left_b']['title']}</div>
+						<!--{else}-->
+						<div class="tit02"><span>{$_conf['left_b']['title']}</span></div>
+						<!--{/if}-->
+						<!--{/if}-->
+						<div>
+							<!--{if $_conf['left_b']['type']}-->
+							<iframe src="{$STATIC_URL}/api/plant/{$_conf['left_b']['type']}.php?direct={$_conf['left_b']['direct']}&reflash={$_conf['left_b']['reflash']}" frameborder="0" scrolling="no" height="{$_conf['left_b']['height']}" width="100%"></iframe>
+							<!--{/if}-->
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+		</div>
+		<div class="data-box">
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="bar">
+						<div class="barbox">
+							<ul class="clearfix">
+								<li class="pulll_left counter" id="countCmsAll2">{$countCmsAll2}</li>
+								<li class="pulll_left counter" id="sumSitesAll">{$sumSitesAll}</li>
+								<li class="pulll_left counter" id="countSitesAll2">{$countSitesAll2}</li>
+							</ul>
+						</div>
+						<div class="barbox2">
+							<ul class="clearfix">
+								<li class="pulll_left">主站数据量</li>
+								<li class="pulll_left">站群阅读量</li>
+								<li class="pulll_left">站群数据量</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--{if $_conf['map_show']}-->
+			<div class="map">
+				<div class="map1"><img src="{$RESOURCE}/skin/admin/plant/lbx.png"></div>
+				<div class="map2"><img src="{$RESOURCE}/skin/admin/plant/jt.png"></div>
+				<div class="map3"><img src="{$RESOURCE}/skin/admin/plant/map.png"></div>
+				<div class="map4" id="map_1"></div>
+			</div>
+			<!--{/if}-->
+			<!--{if $_conf['center_t']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall">
+						<!--{if $_conf['center_t']['title'] && $_conf['center_t']['title_type']<2}-->
+						<!--{if $_conf['center_t']['title_type']=='1'}-->
+						<div class="alltitle">{$_conf['center_t']['title']}</div>
+						<!--{else}-->
+						<div class="tit02"><span>{$_conf['center_t']['title']}</span></div>
+						<!--{/if}-->
+						<!--{/if}-->
+						<div>
+							<!--{if $_conf['center_t']['type']}-->
+							<iframe src="{$STATIC_URL}/api/plant/{$_conf['center_t']['type']}.php?direct={$_conf['center_t']['direct']}&reflash={$_conf['center_t']['reflash']}" frameborder="0" scrolling="no" height="{$_conf['center_t']['height']}" width="100%"></iframe>
+							<!--{/if}-->
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{if $_conf['center_c']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall">
+						<!--{if $_conf['center_c']['title'] && $_conf['center_c']['title_type']<2}-->
+						<!--{if $_conf['center_c']['title_type']=='1'}-->
+						<div class="alltitle">{$_conf['center_c']['title']}</div>
+						<!--{else}-->
+						<div class="tit02"><span>{$_conf['center_c']['title']}</span></div>
+						<!--{/if}-->
+						<!--{/if}-->
+						<div>
+							<!--{if $_conf['center_c']['type']}-->
+							<iframe src="{$STATIC_URL}/api/plant/{$_conf['center_c']['type']}.php?direct={$_conf['center_c']['direct']}&reflash={$_conf['center_c']['reflash']}" frameborder="0" scrolling="no" height="{$_conf['center_c']['height']}" width="100%"></iframe>
+							<!--{/if}-->
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{if $_conf['center_b']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall" style="height:2.6rem">
+						<div class="data-md-50">
+							<div class="infohtml" style="height:2.6rem">
+								<div class="sy" id="echarts6"></div>
+								<div class="sy" id="echarts7"></div>
+								<div class="sy" id="echarts8"></div>
+							</div>
+						</div>
+						<div class="data-md-50">
+							<div class="adduser">
+								<ul class="clearfix">
+									<!--{foreach $lastLogin $val}-->
+									<li class="clearfix"> <span class="pulll_left"><img src="{$RESOURCE}/skin/admin/plant/{if $val['gender']}b{else}g{/if}.jpg">{$val['username']}{if $val['name']} | {$val['name']}{/if}</span> <span class="pulll_right">{$val['last_login_ip']} - {date('m/d',$val['last_login'])}</span> </li>
+									<!--{/foreach}-->
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+		</div>
+		<div class="data-box">
+			<!--{if $_conf['right_t']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall">
+						<!--{if $_conf['right_t']['title'] && $_conf['right_t']['title_type']<2}-->
+						<!--{if $_conf['right_t']['title_type']=='1'}-->
+						<div class="alltitle">{$_conf['right_t']['title']}</div>
+						<!--{else}-->
+						<div class="tit02"><span>{$_conf['right_t']['title']}</span></div>
+						<!--{/if}-->
+						<!--{/if}-->
+						<div>
+							<!--{if $_conf['right_t']['type']}-->
+							<iframe src="{$STATIC_URL}/api/plant/{$_conf['right_t']['type']}.php?direct={$_conf['right_t']['direct']}&reflash={$_conf['right_t']['reflash']}" frameborder="0" scrolling="no" height="{$_conf['right_t']['height']}" width="100%"></iframe>
+							<!--{/if}-->
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{if $_conf['right_c']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall">
+						<!--{if $_conf['right_c']['title'] && $_conf['right_c']['title_type']<2}-->
+						<!--{if $_conf['right_c']['title_type']=='1'}-->
+						<div class="alltitle">{$_conf['right_c']['title']}</div>
+						<!--{else}-->
+						<div class="tit02"><span>{$_conf['right_c']['title']}</span></div>
+						<!--{/if}-->
+						<!--{/if}-->
+						<div>
+							<!--{if $_conf['right_c']['type']}-->
+							<iframe src="{$STATIC_URL}/api/plant/{$_conf['right_c']['type']}.php?direct={$_conf['right_c']['direct']}&reflash={$_conf['right_c']['reflash']}" frameborder="0" scrolling="no" height="{$_conf['right_c']['height']}" width="100%"></iframe>
+							<!--{/if}-->
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+			<!--{if $_conf['right_b']['show']}-->
+			<div class="data-box-list clearfix">
+				<div class="data-md-100">
+					<div class="boxall" style="height: 3.4rem">
+						<!--{if $_conf['right_b']['title'] && $_conf['right_b']['title_type']<2}-->
+						<!--{if $_conf['right_b']['title_type']=='1'}-->
+						<div class="alltitle">{$_conf['right_b']['title']}</div>
+						<!--{else}-->
+						<div class="tit02"><span>{$_conf['right_b']['title']}</span></div>
+						<!--{/if}-->
+						<!--{/if}-->
+						<div class="wrap">
+							<ul>
+								<!--{foreach $listdb $val}-->
+								<li>
+									<p><a href="$val[url]" target="_blank">&nbsp;{$val['title']}</a></p>
+								</li>
+								<!--{/foreach}-->
+							</ul>
+						</div>
+						<div class="boxfoot"></div>
+					</div>
+				</div>
+			</div>
+			<!--{/if}-->
+		</div>
+	</div>
+    <div class="clearfix"></div>
+</div>
+<div class="back"></div>
+<script language="JavaScript" src="{$RESOURCE}/js/plant/js.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/plant/echarts.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/plant/china.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/plant/area_echarts.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/plant/jquery.waypoints.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/plant/jquery.countup.min.js"></script>
+<script type="text/javascript">
+	//每五分钟更新一次
+	setInterval(show_counter,1000*60*5);	
+	$(function(){
+		$.ajax({
+			url: '$STATIC_URL/api/plant/base_count.php',
+			type: 'post',
+			dataType: 'json',
+			cache: false,
+			data: {},
+			beforeSend: function(){
+				
+			},
+			success: function(json){
+							
+				for(var i in json){
+					$('#'+ i).html(json[i]);
+				}
+				$('.counter').countUp();
+			}
+		});
+	});
+	var countMember = {$countMember['count']};
+	var login_time = {$sumMember['login_time']};
+	var new_messages = {$sumMember['new_messages']};
+	var myChart6 = echarts.init(document.getElementById('echarts6'));
+	option6 = {
+		series: [{
+			type: 'pie',
+			radius: ['72%', '82%'],
+			color: '#0088cc',
+			label: {
+				normal: {
+					position: 'center'
+				}
+			},
+			data: [{
+				value: countMember,
+				name: '会员总量',
+				label: {
+					normal: {
+						formatter: countMember + '',
+						textStyle: {
+							fontSize: 16,
+							color: '#fff',
+						}
+					}
+				}
+			}]
+		}]
+
+	};
+
+	var myChart7 = echarts.init(document.getElementById('echarts7'));
+	option7 = {
+		series: [{
+			type: 'pie',
+			radius: ['72%', '82%'],
+			color: '#fccb00',
+			label: {
+				normal: {
+					position: 'center'
+				}
+			},
+			data: [{
+				value: login_time,
+				name: '登录次数',
+				label: {
+					normal: {
+						formatter: login_time + '',
+						textStyle: {
+							fontSize: 16,
+							color: '#fff',
+						}
+					}
+				}
+			}]
+		}]
+	};
+
+
+	var myChart8 = echarts.init(document.getElementById('echarts8'));
+	option8 = {
+		series: [{
+			type: 'pie',
+			radius: ['72%', '82%'],
+			color: '#62b62f',
+			label: {
+				normal: {
+					position: 'center'
+				}
+			},
+			data: [{
+				value: new_messages,
+				name: '短消息数',
+				label: {
+					normal: {
+						formatter: new_messages + '',
+						textStyle: {
+							fontSize: 16,
+							color: '#fff',
+						}
+					}
+				}
+			}]
+		}]
+	};
+	setTimeout(function () {
+		myChart6.setOption(option6);
+		myChart7.setOption(option7);
+		myChart8.setOption(option8);
+	}, 500);
+	$(document).ready(function () {           
+		myChart6.resize();
+		myChart7.resize();
+		myChart8.resize();
+	})
+	window.addEventListener("resize", function () {           
+		myChart6.resize();
+		myChart7.resize();
+		myChart8.resize();
+	});
+
+	function show_counter(){
+	   $('.counter').countUp();
+	}
+</script>
+
+</body>
+</html>
+<!--{/php168}-->

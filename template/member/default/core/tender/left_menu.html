@@ -1,0 +1,75 @@
+<!--{php168}-->
+<div class="forms-left-box">
+	<div class="forms-left-logo"><img src="{$MEMBERSKIN}/intranet/logo2.png" alt=""></div>
+	<div class="user-menu">
+		<ul class="menu-1st" id="groups">
+			<li>
+				<a href="{$core->U_controller}"><span class="gwicon gwicon-home"></span>主页</a>
+			</li>	
+			<!--{if $manage}-->									
+			<li class="">
+				<a title="myforms" href="{$this_router}-post"><span class="gwicon gwicon-notice"></span>发布招标</a>
+			</li>					
+			<li class="">
+				<a title="myforms" href="{$this_router}-myforms?mid=1"><span class="gwicon gwicon-notice"></span>我发布的招标</a>
+			</li>					
+			<li class="">
+				<a title="myforms" href="{$this_router}-myforms"><span class="gwicon gwicon-notice"></span>我的投标</a>
+			</li>					
+			<li class="">
+				<a title="myforms" href="{$this_router}-manage"><span class="gwicon gwicon-notice"></span>我管理的招标</a>
+			</li>
+			<li class="manage">
+				<a title="myforms" href="{$core->U_controller}/cms/item-add?model=article" target="_blank"><span class="gwicon gwicon-manage"></span>发布文章</a>
+			</li>
+			<li title="manage">
+				<a title="manage" href="{$core->U_controller}?main_page=/cms/item-my_list"><span class="gwicon gwicon-manage"></span>我发布的文章</a>
+			</li>
+			<li title="manage">
+				<a title="manage" href="{$core->U_controller}?main_page=/cms/item-verify"><span class="gwicon gwicon-manage"></span>我管理的文章</a>
+			</li>
+			<!--{else}-->
+			<li class="">
+				<a title="myforms" href="{$this_router}-myforms"><span class="gwicon gwicon-notice"></span>我的投标</a>
+			</li>				
+			<!--{/if}-->					
+			<li class="">
+				<a href="{$core->U_controller}?main_page=/member-profile#editpw" target="_blank"><span class="gwicon gwicon-pwd"></span>修改密码</a>
+			</li>
+			<li class="">
+				<a href="{$core->U_controller}?main_page=/message-inbox" target="_blank"><span class="gwicon gwicon-xiaoxi"></span>系统消息</a>
+			</li>
+		</ul>
+	</div>
+	<div class="brand">
+		<h1>十年知名品牌</h1>
+		<ul class="version">
+			<li>今天日期：<!--{php echo date('Y-m-d', $timestamp);}--></li>
+			<li>开发商：<a href="http://www.php168.net/" target="_blank">广州国微软件 >></a></li>
+			<li>电话：400-601-5217</li>
+		</ul>
+	</div>
+</div>
+<script>
+$(".user-menu .menu-1st > li > a").on('click',function(){
+	var this_li = $(this).parent();
+	var this_menu2nd = $(this).next();
+	var this_menu2ndStat = this_menu2nd.css('display');
+	if(this_menu2ndStat === 'none'){
+		this_menu2nd.slideDown(200);
+		this_li.addClass('on');
+	}else{
+		this_menu2nd.slideUp(200);
+		this_li.removeClass('on');
+	}
+	//收起其他所有二级
+	this_li.siblings('li').removeClass('on').find('.menu-2nd').slideUp(200);
+})
+//判断若有子栏目，其父级栏目a标签禁止跳转
+$(".user-menu .menu-2nd").each(function(){
+	if($(this).children('li').length != 0){
+		$(this).prev('a').attr('href','javascript:;');
+	}
+})
+</script>
+<!--{/php168}-->

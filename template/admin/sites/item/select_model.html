@@ -1,0 +1,58 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable" width="100%">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li class="li2"><a href="{$this_system.admin_controller}/item-list" class="btn2"><i class="fa fa-list-ul"></i>内容管理</a></li>
+						<li class="li5"><a href="{$this_system.admin_controller}/category-list" class="btn5"><i class="fa fa-sitemap"></i>栏目管理</a></li>
+						<li class="li2"><a href="{$this_system.admin_controller}/item-comment" class="btn2"><i class="fa fa-list-ul"></i>评论管理</a></li>
+						<li class="li4"><a href="{$this_system.admin_controller}/category-recycle_list" class="btn4"><i class="fa fa-bitbucket"></i>信息回收站</a></li>					
+						<!--{if $ACTION == 'list_addon'}-->
+							<li><a href="$this_router-addon?model=$MODEL&iid=$data[id]{if isset($verified)}&verified=$verified{/if}"><i class="fa fa-plus-square"></i>{$P8LANG['cms_item']['addon']}</a></li>
+						<!--{/if}-->						
+						<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($site_info['ipordomain'])}{$core->CONFIG['url']}/s.php/{$site}{else}{$site_info['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$site_info['sitename']}</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$this_system.admin_controller}/item-add"><i class="icon icon-ico45"></i>子站内容发布</a></li>
+						<li class="btn-color2"><a href="{$core.U_controller}?site={$this_system->SITE}&main_page=/sites/item-add" target="_blank"><i class="icon icon-ico45"></i>子站内容会员中心发布</a></li>
+						<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/zizhanhoutaineirongfb.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 内容后台发布教程>></a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<table width="100%" align="center" class="columntable formtable hover_table">
+			<tr class="title fix_head">
+				<td class="title">名称</td>
+				<td class="title">操作</td>
+			</tr>
+			<!--{foreach $models $k $v}-->
+			<!--{php if(empty($v['enabled'])) continue;}-->
+			<tr>
+				<td><img src="{$SKIN}/icon_arrow.png" />{$v['alias']}</td>
+				<td><a class="release" href="$this_router-add?model=$k" target="_blank"/>发布+</a></td>
+			</tr>
+			<!--{/foreach}-->
+		</table>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$('.headerbtn_list li').removeClass();
+	$(".headerbtn_list li:first-child").addClass("active");
+</script>
+</body>
+</html>
+<!--{/php168}-->

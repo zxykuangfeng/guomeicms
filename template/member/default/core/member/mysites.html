@@ -1,0 +1,55 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="renderer" content="webkit"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+<title>分站导航</title>
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}bootstrap.min.css" />
+</head>
+<body>
+<div class="headbar">
+	<div class="header">
+		<div class="logo fl"><img src="{$SKIN}images/logo.png"/></div>
+		<div class="mnav fr">
+			<ul>
+				<li class="li1"><a href="javascript:;">{$USERNAME}{if $member_info['name']} | $member_info[name]{/if}</a></li>
+				<li class="li2"><a href="{$core.U_controller}/member-logout" onclick="return ajax_logout()">安全退出</a></li>
+				<li class="li4"><a target="_blank" href="{$core.controller}">返回首页</a></li>				
+			</ul>
+		</div>		
+	</div>
+</div>
+<div class="contentbox">
+	<div class="wrapper">
+		<div class="loginbox">
+			<div class="logindbox fr" style="padding: 0;">
+				<div class="brand" style="padding-top: 30px;">
+				    <h2 style="text-align: center;">管理我的站点</h2>
+				</div>
+                <div style="margin:40px auto; text-align: center;">
+				<!--{if $cms_enable}-->
+                <a class="btn btn-primary btn-lg" style="margin:10px; font-size: 16px;" href="{$core.U_controller}?site=mainstation">主站门户</a>
+				<!--{/if}-->
+				<!--{foreach $mysites $site}-->
+					<a class="btn btn-primary btn-lg" style="margin:10px; font-size: 16px;" href="{$core.U_controller}?site={$allsites[$site][alias]}">{$allsites[$site][sitename]}</a>
+				<!--{/foreach}-->
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="footbar">
+	<div class="footer">
+		<div class="copyright">
+			<ul>
+				<li>{$core.CONFIG['copyright']}</li>
+			</ul>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<!--{/php168}-->

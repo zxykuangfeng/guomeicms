@@ -1,0 +1,365 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module header admin}-->
+<!--{php $data['basetemplate'] = is_dir(TEMPLATE_PATH.$this_system->CONFIG['template'].'/'.$this_system->name.'/item/list/')? $this_system->CONFIG['template']:'default';}-->
+<script type="text/javascript" src="{$RESOURCE}/js/jq_ui.core.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_tabs.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<link rel="stylesheet" href="{$RESOURCE}/images/category_selector.css" type="text/css">
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#tabs").tabs();
+	});
+	</script>
+
+<form action="$this_router-$ACTION" method="post" id="myform" name="myform">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+				<td>
+				<table border="0" cellspacing="0" cellpadding="0" class="formtable">
+				<tr><td class="title">{$P8LANG['ask_category_update']}</td></tr>
+				<tr>
+				<td id="tabs">
+					<ul>
+						<li><a href="#tabs-1"><span>{$P8LANG['ask_config']}</span></a></li>
+						<li><a href="#tabs-2"><span>{$P8LANG['ask_config_style']}</span></a></li>
+					</ul>
+					<!--tabs-1-->
+					<div id="tabs-1">
+					<table class="columntable formtable hover_table">
+							<tr>
+								<td class="tdL">{$P8LANG['ask_category_name']}</td>
+								<td class="tdR"><input type="text" class="txt" name="name" size="60" value="<!--{if !empty($data['name'])}-->{$data['name']}<!--{/if}-->"/></td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_belong_category']}</td>
+								<td class="tdR">
+								<span id="parents"></span>
+									<input type="button" value="选择" class="submit_btn" onclick="dialog.show()" />
+									<input type="hidden" name="parent" />
+									<input type="hidden" id="parent" value="{if !empty($data['parent'])}$data[parent]{/if}" />
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_category_display']}</td>
+								<td class="tdR">
+									<input type="radio" name="display" value="1"{if !empty($data['display'])}  checked {/if} />{$P8LANG['Y']}&nbsp; 
+									<input type="radio" name="display" value="0" {if empty($data['display'])}  checked {/if} />{$P8LANG['N']}
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_config_perpage']}</td>
+								<td class="tdR"><input type="text" class="txt" size="10" name="perpage" value="{if !empty($data['perpage'])}{$data['perpage']}{else}20{/if}"/> {$P8LANG['ask_piece']} </td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_title_bytes']}</td>
+								<td class="tdR"><input type="text" class="txt" size="10" name="title_bytes" value="{if !empty($data['title_bytes'])}{$data['title_bytes']}{else}30{/if}"/> {$P8LANG['ask_number']} </td>
+							</tr>
+							
+							<tr>
+								<td class="tdL">{$P8LANG['ask_jump_url']}</td>
+								<td class="tdR"><input type="text" class="txt" name="url" size="60" value="<!--{if !empty($data['url'])}-->{$data['url']}<!--{/if}-->"/></td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_keywords']}</td>
+								<td class="tdR"><input type="text" class="txt" name="keywords" size="60" value="<!--{if !empty($data['keywords'])}-->{$data['keywords']}<!--{/if}-->"/></td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_description']}</td>
+								<td class="tdR"><input type="text" class="txt" name="description" size="60" value="<!--{if !empty($data['description'])}-->{$data['description']}<!--{/if}-->"/></td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_category_announcement']}</td>
+								<td class="tdR"><textarea cols="60" rows="8" name="announce"><!--{if isset($data['announce'])}-->{$data['announce']}<!--{/if}--></textarea></td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_category_frame']}</td>
+								<td class="tdR">
+									<input type="text" class="txt" name="frame" id="frame"  value="{if !empty($data['frame'])}{$data['frame']}{/if}" size="50" />
+								<input type="button" onclick="uploader.choseup();" value="上传缩略图" />
+								<input type="button" onclick="uploader_init.choseup();" value="上传原始图" />
+								<input type="button" id="frame_toggle" onclick="" value="" style="display: none;" />
+								<a href="###" onclick="uploader.image_cut()">[$P8LANG[image_cut]]</a> 调用示例：{\$CAT['frame']}
+								<script type="text/javascript">
+								var uploader;
+								var uploader_init;
+								var uploader_logo;
+								var uploader_banner;
+								$(function(){
+									uploader = new P8_Upload({
+										element: {
+											src: $('#frame'),
+											attribute: 'value'
+										},
+										param: {
+											return_thumb: true
+										}
+									});
+									uploader_init = new P8_Upload({
+										element: {
+											src: $('#frame'),
+											attribute: 'value'
+										},
+										param: {}
+									});
+									uploader_logo = new P8_Upload({
+										element: {
+											src: $('#category_logo'),
+											attribute: 'value'
+										},
+										param: {}
+									});
+									uploader_banner = new P8_Upload({
+										element: {
+											src: $('#banner'),
+											attribute: 'value'
+										},
+										param: {}
+									});
+								});
+								</script>
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_category_logo']}</td>
+								<td class="tdR">
+									<input type="text" class="txt" name="category_logo" id="category_logo"  value="{if !empty($data['category_logo'])}{$data['category_logo']}{/if}" size="73" />
+									<input type="button" onclick="uploader_logo.uploader();" value="上传栏目LOGO" /> 调用示例：{\$CAT['logo']}									
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_category_banner']}</td>
+								<td class="tdR">
+									<input type="text" class="txt" name="category_banner" id="banner"  value="{if !empty($data['category_banner'])}{$data['category_banner']}{/if}" size="73" />
+									<input type="button" onclick="uploader_banner.uploader();" value="上传横幅图片" /> 调用示例：{\$CAT['banner']}									
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_comstom_a']}</td>
+								<td class="tdR"><textarea cols="60" rows="8" name="comstom_a"><!--{if isset($data['comstom_a'])}-->{$data['comstom_a']}<!--{/if}--></textarea>
+								调用示例：{\$CAT['comstom_a']} 最大存储长度65525字符
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_comstom_b']}</td>
+								<td class="tdR">
+								<textarea cols="60" rows="8" name="comstom_b"><!--{if isset($data['comstom_b'])}-->{$data['comstom_b']}<!--{/if}--></textarea>
+								调用示例：{\$CAT['comstom_b']} 最大存储长度65525字符								
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_comstom_c']}<br>(支持HTML)</td>
+								<td class="tdR"><input type="text" class="txt" name="comstom_c" size="60" value="<!--{if !empty($data['comstom_c'])}-->{$data['comstom_c']}<!--{/if}-->"/>
+								调用示例：{\$CAT['comstom_c']}
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_comstom_d']}<br>(支持HTML)</td>
+								<td class="tdR"><input type="text" class="txt" name="comstom_d" size="60" value="<!--{if !empty($data['comstom_d'])}-->{$data['comstom_d']}<!--{/if}-->"/>
+								调用示例：{\$CAT['comstom_d']}
+								</td>
+							</tr>
+						</table>
+						</div>
+						<!--tabs-2-->
+						<div id="tabs-2">
+						<table class="columntable formtable hover_table">
+							<tr>
+								<td class="tdL">{$P8LANG['ask_list_template']}</td>
+								<td class="tdR">
+									<input type="text" class="txt" name="list_template" id="lt" value="{if !empty($data['list_template'])}$data[list_template]{else}list{/if}" />
+									<input type="button" value="{$P8LANG['select_template']}" onclick="list_template_dialog.show()" />
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_view_template']}</td>
+								<td class="tdR">
+									<input type="text" class="txt" name="view_template" id="vt" value="{if !empty($data['view_template'])}$data[view_template]{else}view{/if}" />
+									<input type="button" value="{$P8LANG['select_template']}" onclick="view_template_dialog.show()" />		
+								</td>
+							</tr>
+							<tr>
+								<td class="tdL">{$P8LANG['ask_category_list_style']}</td>
+								<td class="tdR">
+									<input type="text" class="txt" name="block_template" id="ct" value="{if !empty($data['block_template'])}$data[block_template]{else}default{/if}" />
+									<input type="button" value="{$P8LANG['select_template']}" onclick="category_template_dialog.show()" />		
+								</td>
+							</tr>							
+						</table>
+						</div>
+						<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+							<tr>
+								<td width="20%"></td>
+								<td width="*">
+									<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+									<input type="hidden" name="id" value="<!--{if isset($data['id'])}-->{$data['id']}<!--{/if}-->" />
+									<input type="hidden" name="ids" value="<!--{if !empty($ids)}-->{$ids}<!--{/if}-->"/>
+								</td>
+							</tr>
+						</table>
+								</td>
+							</tr>
+						</table>		
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+var attachment_hash = '$attachment_hash';
+$('#myform').validate({
+	rules: {
+		name: {
+			required: true
+		},
+		perpage:{
+			number:true
+		},
+		title_bytes:{
+			number:true
+		},
+		list_template: {
+			required: true
+		},
+		view_template:{
+			required: true
+		},
+		block_template:{
+			required: true
+		}
+	},
+	messages: {
+		name: {
+			required: '{$P8LANG['ask_category_name_not_allow_empty']}'
+		},
+		perpage: {
+			number: '{$P8LANG['ask_only_number_type']}'
+		},
+		title_bytes: {
+			number: '{$P8LANG['ask_only_number_type']}'
+		},
+		list_template: {
+			required: '{$P8LANG['ask_list_template_not_allow_empty']}'
+		},
+		view_template:{
+			required: '{$P8LANG['ask_view_template_not_allow_empty']}'
+		},
+		block_template:{
+			required: '{$P8LANG['ask_block_template_not_allow_empty']}'
+		}
+	},
+	onkeyup: false
+});
+
+var _CATEGORY_JSON = $json[json];
+var _CATEGORY_PATH = $json[path];
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_parent_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	zIndex: 20003,
+	ok: function(){
+		parent_path();
+	},
+	show: function(){
+		cs.init();
+	}
+});
+
+function parent_path(){
+	var val = $('#parent').val();
+	$('#myform input[name=parent]').val(val);
+	
+	$('#parents').empty();
+	
+	var path = _CATEGORY_PATH[val];
+	if(!path) return;
+	for(var i = 0; i < path.length; i++){
+		var cat = cs.get_by_id(path[i]);
+		$('#parents').append($('<span>'+ cat.name +' &gt; </span>'));
+	}
+}
+
+var cs = new Recursive_Selector({
+	json: _CATEGORY_JSON,
+	path: _CATEGORY_PATH,
+	input: $('#parent'),
+	dialog: dialog,
+	sub_property: 'categories',
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	parents: <!--{if !empty($data['parent'])}-->clone(_CATEGORY_PATH[$data[parent]])<!--{else}-->null<!--{/if}-->
+});
+
+
+
+
+
+var list_template_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	zIndex: 20003,
+	ok: function(){
+		$('#lt').val(list_template_selector.value);
+	}
+});
+var list_template_selector = new Template_Selector({
+	base_dir: '{$data['basetemplate']}/{$this_system.name}/{$item.name}/list/',
+	selected: $('#lt').val(),
+	dialog: list_template_dialog
+});
+
+var view_template_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	zIndex: 20003,
+	ok: function(){
+		$('#vt').val(view_template_selector.value);
+	}
+});
+var view_template_selector = new Template_Selector({
+	base_dir: '{$data['basetemplate']}/{$this_system.name}/{$item.name}/view/',
+	selected: $('#vt').val(),
+	dialog: view_template_dialog
+});
+
+var category_template_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	zIndex: 20003,
+	ok: function(){
+		$('#ct').val(category_template_selector.value);
+	}
+});
+var category_template_selector = new Template_Selector({
+	base_dir: '{$data['basetemplate']}/{$this_system.name}/{$item.name}/category_block/',
+	selected: $('#ct').val(),
+	dialog: category_template_dialog
+});
+
+$(function() {
+	list_template_selector.init();
+	view_template_selector.init();
+	category_template_selector.init();
+	parent_path();
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

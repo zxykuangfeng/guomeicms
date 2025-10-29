@@ -1,0 +1,93 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color3"><a href="{$this_router}-list?mid={$mid}" class="btn3"><i class="icon icon-ico10"></i>表单内容列表</a></li>					
+						<li class="btn-color6"><a href="{$core->U_controller}/forms-myforms?mid={$mid}" target="_blank" class="btn1"><i class="icon icon-ico44"></i>前台我发布的表单</a></li>
+						<li class="btn-color7"><a href="{$core->U_controller}/forms-manage?mid={$mid}" target="_blank" class="btn1"><i class="icon icon-ico10"></i>前台我管理的表单</a></li>
+						<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/biaodanneirong.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon" style="margin-right:5px;">表单内容管理教程>></a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<table width="100%">
+		  <tr> 
+			  <td> 
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="columntable formtable hover_table">
+				  <tr align="center" height="18" class="title"> 
+					<td width="5%">MID</td>
+					 <td width="30%" align="left" class="title">表单名称</td>
+					 <td width="15%" class="title">内容数据</td>
+					  <td width="10%" class="title">填写表单</td>
+					 <td width="20%" class="title">前台列表</td>
+					<td width="20%" class="title">后台列表</td>
+				  </tr>
+				  <!--{foreach $list $key $value}-->
+				  <tr id="model_{$value['id']}" align="center" class="trA" onmouseover="this.className='trB'" onmouseout="this.className='trA'"> 
+					<td >$value[id]</td>
+					<td align="left"><a href="{$this_router}-list?mid=$value[id]">$value[alias]</a></td>
+					<td><font color="red"><b>$value[count]</b></font> 条</td>
+					<td>{if $this_module->CONFIG['htmlize'] && $this_module->CONFIG['htmlize_post']}
+							<a href="{$this_module->controller}-post?mid=$value[id]" target="_blank">动态URL</a> / <a href="{$RESOURCE}/modules/forms/html/$value[name]/post.html" target="_blank">静态URL</a>
+						{else}
+							<a href="{$this_module->controller}-post?mid=$value[id]" target="_blank">填写表单</a>
+						{/if}
+					</td>
+					<td>{if $this_module->CONFIG['htmlize'] && $this_module->CONFIG['htmlize_list']}
+							<a href="{$core.controller}/core/forms-list-mid-$value[id]" target="_blank">动态URL</a> / 
+							<a href="{$RESOURCE}/modules/forms/html/$value[name]/list_$value[id].html" target="_blank">静态URL</a>
+						{else}
+							<a href="{$core.controller}/core/forms-list-mid-$value[id]" target="_blank">前台列表</a>
+						{/if}
+					</td>	
+					<td>
+					<a href="{$this_router}-list?mid=$value[id]">内容管理</a> / 
+					<a href="javascript:void(0)" onclick="clear_item({$value['id']})">清空内容</a>
+					</td>	
+				  </tr>
+				  <!--{/foreach}-->
+				  
+				  <tr><td colspan="6" align="center"><span class="pages">$pages</span></td></tr>
+				</table>
+						
+				  </div>
+			  </td>
+		  </tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function clear_item(id){
+	
+	//if(!confirm('将会删除所有属于该模型的表单数据，确定清除吗？？'))return;
+	p8_window.confirm('将会删除所有属于该模型的表单数据，确定清除吗？', function (r) {
+		if(r){
+			if(!id) return false;	
+			$.ajax({
+				url: '$this_router-model',
+				type: 'post',
+				dataType: 'text',
+				data: 'id='+ id +'&action=clean',
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(status){
+					ajaxing({action: 'hide'});
+					$('#model_'+id).find('td').eq(2).html('<font color="red"><b>0</b></font> 条');
+					p8_window.alert('清除成功');
+				}
+			});
+			return false;
+		}else{
+			return;
+		}
+	});	
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

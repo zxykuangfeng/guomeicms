@@ -1,0 +1,71 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_gg]
+		</div>
+	</div>
+</div>
+<div class="maincon clearfix">
+	<div class="container">
+		<div class="column-location mb20 clearfix">
+			您现在的位置： <a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			>> <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			>> <a href="$CAT[url]">$CAT[name]</a>
+		</div>
+		<div class="column-title clearfix">
+			$CAT[name]
+			<div class="column-more hidden-xs pull-right">
+				<!--{if $add_enable}--><a href="{$core.U_controller}/cms/item-add?cid=$cid&model=$CAT[model]" target="_blank">发表</a><!--{/if}-->
+			</div>
+		</div>
+		<div class="column-list2">
+			<!--{php include template($TEMP_OBJ, $CAT['item_template'], 'label');}-->
+			<div class="mtop pages" id="page">{$pages}</div>
+		</div>
+		<div class="mask50"></div>
+		<div class="win_alert">
+		    <a href="" class="close"></a>
+		    <div class="inner">
+		       <div class="title1"></div>
+		        <div class="scroll mCustomScrollbar">
+		            <div class="desc"></div>
+		        </div>
+		    </div>
+		</div>
+	</div>
+</div>
+<script>
+$(document).ready(function(){
+    var mask50 = $('.mask50'),
+    winAlert = $('.win_alert');
+   	$(".info .pubc-more").click(function(){
+       	mask50.fadeIn();
+      	winAlert.fadeIn();
+     	var showid=$(this).attr('showid');
+     	winAlert.find('.desc').html($('#show'+showid).html());
+     }) 
+  	$(".win_alert .close").click(function(){
+        mask50.fadeOut();
+       	winAlert.fadeOut();
+    })
+})
+</script>
+<script>
+(function($){
+	$(window).load(function(){
+		$("body").mCustomScrollbar({
+			
+		});
+	});
+})(jQuery);
+</script>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+
+

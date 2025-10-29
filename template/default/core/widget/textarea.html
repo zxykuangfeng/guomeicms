@@ -1,0 +1,8 @@
+<!--{php168}-->
+<input type="hidden" name="#field_{$field}_posted"  />
+<!--{if isset($field_data['editable']) && !$field_data['editable']}-->
+<textarea readonly name="field#[$field]" id="field#[$field]" class="txtar" style="background:#eee;" {$field_data['widget_addon_attr']}>{if isset($data[$field])}$data[$field]{else}{$field_data['default_value']}{/if}</textarea>
+<!--{else}-->
+<textarea name="field#[$field]" id="field#[$field]" class="txtar" {$field_data['widget_addon_attr']}>{if isset($data[$field])}$data[$field]{else}{$field_data['default_value']}{/if}</textarea>
+<!--{/if}-->
+<!--{/php168}-->

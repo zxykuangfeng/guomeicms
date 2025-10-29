@@ -1,0 +1,117 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="" method="post" id="form">
+		<table class="columntable formtable hover_table click_changeable" width="100%" style="text-align:center" >
+			<tr bgcolor="#eeeeee" class="title">
+				<td width="2%" align="center" class="title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>						
+				<td width="3%">编号</td>
+				<td width="20%">项目</td>
+				<td width="12%">答卷时间</td>
+				<td width="12%">答卷人/IP</td>
+				<td width="12%">操作</td>
+			</tr>
+			<!--{foreach $list $k $v}-->
+			<tr id="ad_$v[id]">
+				<td align="center"><input type="checkbox" name="id[]" value="$v[id]" /></td>
+				<td>$v[id]</td>
+				<td align="left">$v[item_title]</td>
+				<td>
+					<!--{php echo date("Y-m-d H:i:s",$v['timestamp']);}-->
+				</td>
+				<td>$v[name] / $v[ip]</td>
+				<td><a href="{$this_router}-view?id={$v['id']}" >查看</a> / <a href="javascript:void(0)" onclick="_delete(['$v[id]'],$v[iid])">删除</a></td>
+			</tr>
+			<!--{/foreach}-->
+		</table>
+		</form>
+		<table width="100%" class="columntable formtable">
+			<tr>
+				<td align="center" id="pages" class="pages">{$pages}</td>
+			</tr>
+		</table>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">			
+		<tr>
+			<td>
+				<a name="op"></a>
+				<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+				<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a>
+				<!--{if $iid}-->
+				<input type="button" class="edit_btn" value="{$P8LANG['delete']}" onclick="_delete(checked_values('id[]', $('#form')),$iid)">
+				<!--{else}-->
+				<input type="button" class="edit_btn" value="{$P8LANG['delete']}" onclick="_delete(checked_values('id[]', $('#form')),0)">
+				<!--{/if}-->
+				<!--{if $iid}--><input type="button" class="edit_btn" value="导出EXCEL" onclick="_download()"><!--{/if}-->
+			</td>
+		</tr>
+		</table>		
+	</div>
+</div>
+<form action="$this_router-download" id="download" method="post">
+<input type="hidden" name="iid" value="{$iid}" />
+<input type="hidden" name="page" id="download_page" value="1" />
+</form>
+<script type="text/javascript">
+function _download(page){
+	if (typeof page === 'undefined') {  
+		page = 1;  
+	}
+	var times = {$times};
+	if(page <= times){
+		ajaxing({text:'进度:'+page+'/'+times});
+		$('#download_page').val(page);
+		$('#download').submit();
+		if(page < times){
+			setTimeout(function() {
+				p8_window.confirm('{$P8LANG['confirm_to_continue']}', function (r) {
+					if(r){
+						_download(page+1);
+					}else{
+						ajaxing({action: 'hide'});
+						p8_window.alert('{$P8LANG[done]}');
+						return;
+					}
+				})
+			},2000);
+		}else{
+			ajaxing({action: 'hide'});
+			p8_window.alert('{$P8LANG[done]}');
+		}
+	}else{
+		ajaxing({action: 'hide'});
+		p8_window.alert('{$P8LANG[done]}');
+	}
+}
+function _delete(ids,iid){
+	if(ids.length<1) {
+		p8_window.alert('{$P8LANG[item_need_selected]}');
+		return;
+	}	
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'post',
+				dataType: 'json',
+				data: {id: ids,iid:iid},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#ad_'+ json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});	
+}
+</script>
+<!--{/php168}-->

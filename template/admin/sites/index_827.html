@@ -1,0 +1,251 @@
+<!--{php168}-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<title>分站系统 - Powered By www.php168.net</title>
+<link rel="stylesheet" type="text/css" href="{$_SKIN}/css.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+P8CONFIG.admin_controller = '{$core.admin_controller}';
+var P8_ROOT = '$P8_ROOT';
+
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<table width="100%" border="0" cellpadding="0" cellspacing="0" bgcolor="#DCEFFD" id="topbgtb" height="90">
+	<tr>
+		<td> <span id="zq_logo"><img src="{$_SKIN}/logo.png" width="200" height="88"/></span> 
+		<span id="zq_word"><img src="{$_SKIN}/logo_word.png" width="162" height="27"/></span> 
+		</td>
+		<td style="text-align:right;position:relative;">
+			<div class="sitetop">
+				<ul>
+					<li class="li1"><a href="javascript:void(0);">管理员: $USERNAME</a></li>
+					<li class="spe">|</li>
+					<li class="li2"><a href="javascript:void(0);">用户级别: {$core.roles[$core.ROLE]['name']}</a></li>
+					<li class="spe">|</li>
+					<li class="li3"><a href="{$core.admin_controller}"><font style="color:red;font-weight:700;">后台首页</font></a></li>
+					<li class="spe">|</li>
+					<li class="li4"><a href="{$core.controller}" target="_blank"><font style="color:red;font-weight:700;">主站首页</font></a></li>
+					<li class="spe">|</li>
+					<li class="li5"><a href="http://www.php168.net">帮助</a></li>
+					<li class="spe">|</li>
+					<li class="li6"><a href="{$core.admin_controller}/core-set_acl">我的权限</a></li>
+					<li class="spe">|</li>
+					<li class="li7"><a href="{$core.U_controller}?main_page=/member-profile" target="_blank">修改密码</a></li>
+					<li class="spe">|</li>
+					<li class="li8"><a href="{$core.admin_controller}/core-logout">退出</a></li>
+				</ul>
+			</div> 
+			<div style="margin:35px 20px 0 0">
+				<!--{if count($mysites)>1}-->
+				<span style="color:red; font-size:14px" class="current">当前站点：</span>
+				<select name="site" id="this_site" onchange="set_site(this)">
+				 <option value="">请选择</option>
+				<!--{foreach $mysites $site}-->
+				<option value="$site" {if !empty($this_system->SITE) && $site==$this_system->SITE}selected{/if}>{$allsites[$site]['sitename']}</option>
+				 <!--{/foreach}-->
+				</select>
+				<!--{else}--> 
+				<input type="hidden" id="this_site" value="{$this_system->SITE}" />
+				<!--{/if}--> 
+				<a href="javascript:;" onclick="open_site()">查看前台&gt;</a>
+            </div>
+		</td>
+	</tr>
+</table>
+<table width="100%" border="0" align="center" cellpadding="0" cellspacing="0" id="zq_navbj">
+	<tr>
+		<td id="menu_td"> 
+         
+			
+                   
+            <!--{if $site_list || $mysites}-->
+			<span > <a href="{$this_system.admin_controller}/farm-list" target="main">站点管理</a>
+				<ul class="sec_menu">
+					<li><a href="{$this_system.admin_controller}-main" target="main">最新内容</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-list" target="main">分站列表</a></li>
+					<!--{if $site_create}--><li><a href="{$this_system.admin_controller}/farm-add" target="main">添加分站</a></li><!--{/if}-->
+					<li><a href="{$this_system.admin_controller}/farm-cache" target="main" >更新缓存</a></li>
+				</ul>
+			</span>
+			 <!--{/if}-->
+			 <!--{if $model_list}-->
+			<span><a href="{$this_system.admin_controller}/model-list" target="main">模型管理</a>
+				<ul class="sec_menu">
+					<li><a href="{$this_system.admin_controller}/model-list" target="main">模型列表</a></li>
+					<!--{if $model_create}--><li><a href="{$this_system.admin_controller}/model-add" target="main">添加模型</a></li>
+                    <li><a href="{$this_system.admin_controller}/model-import" target="main">导入模型</a></li><!--{/if}-->
+					<li><a href="{$this_system.admin_controller}/model-cache" target="main">更新缓存</a></li>
+				</ul>
+			 </span> 
+             <!--{/if}-->
+             <span><a href="{$this_system.admin_controller}/farm-config" target="main">网站设置</a>
+				<ul class="sec_menu">
+					<li><a href="{$this_system.admin_controller}/farm-config" target="main">基本设置</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_list" target="main">导航设置</a></li>
+                    <li><a href="javascript:;" onclick="show_edit_label()">首页标签</a></li>
+                    <li><a href="javascript:;" onclick="html_index()">首页静态</a></li>
+				</ul>
+			 </span> 
+			 <span><a href="{$this_system.admin_controller}/category-list" target="main">栏目管理</a>
+				<ul class="sec_menu">
+					<li><a href="{$this_system.admin_controller}/category-list" target="main">栏目列表</a></li>
+					<li><a href="{$this_system.admin_controller}/category-add" target="main">添加栏目</a></li>
+					<li><a href="{$this_system.admin_controller}/category-cache?all=0" target="main">更新缓存</a></li>
+				</ul>
+			 </span> 
+			  <span><a href="{$this_system.admin_controller}/item-list" target="main">内容管理</a>
+				<ul class="sec_menu">
+					<li><a href="{$this_system.admin_controller}/item-list" target="main">内容列表</a></li>
+					<li><a href="{$this_system.admin_controller}/item-add" target="main">添加内容</a></li>
+					<li><a href="{$this_system.admin_controller}/item-list_to_html" target="main">静态内容</a></li>
+				</ul>
+			 </span> 
+			 <span><a href="{$this_system.admin_controller}/stop-list" target="main">推送管理</a>
+				<ul class="sec_menu">
+					<li><a href="{$this_system.admin_controller}/stop-list?sc=c" target="main">推送的内容</a></li>
+					<li><a href="{$this_system.admin_controller}/stop-list?sc=s" target="main">接收的内容</a></li>
+					<!--{if $category_create}-->
+					<li><a href="{$this_system.admin_controller}/stop-category" target="main">公共栏目</a></li>
+					<!--{/if}-->
+					<li><a href="{$this_system.admin_controller}/stop-map" target="main">栏目对接</a></li>
+					
+				</ul>
+			 </span>
+			 <span><a href="{$this_system.admin_controller}/letter-list" target="main">信箱管理</a>
+				<ul class="sec_menu">
+					<li><a href="{$this_system.admin_controller}/letter-list" target="main">内容管理</a></li>
+					<li><a href="{$this_system.admin_controller}/letter-cate" target="main">分类设置</a></li>
+					<li><a href="{$this_system.admin_controller}/letter-config" target="main">信箱设置</a></li>
+					
+				</ul>
+			 </span>
+            <span><a href="{$this_system.admin_controller}-log" target="main">管理日志</a></span>  			 
+		 </td>
+	</tr>
+</table>
+
+<form id="cacher" action="$this_router-cache" method="post" target="_blank"></form>
+<div class="sitesbox">
+	<div class="siteslist">
+		<ul>
+			<li class="s1"><a href="#"><span>更新首页</span></a></li>
+			<li class="s2"><a href="#"><span>静态首页</span></a></li>
+			<li class="s3"><a href="#"><span>首页可视化</span></a></li>
+			<li class="s4"><a href="#"><span>菜单设置</span></a></li>
+			<li class="s5"><a href="#"><span>本站点设置</span></a></li>
+			<li class="s6"><a href="#"><span>发布内容</span></a></li>
+			<li class="s7"><a href="#"><span>内容管理/数据推送</span></a></li>
+			<li class="s8"><a href="#"><span>添加栏目</span></a></li>
+			<li class="s9"><a href="#"><span>栏目管理</span></a></li>
+			<li class="s10"><a href="#"><span>数据推送状态</span></a></li>
+			<li class="s11"><a href="#"><span>站群列表</span></a></li>
+			<li class="s12"><a href="#"><span>本站点授权</span></a></li>
+			<li class="s13"><a href="#"><span>添加新站点</span></a></li>
+			<li class="s14"><a href="#"><span>站群栏目对接</span></a></li>
+			<li class="s15"><a href="#"><span>模型管理</span></a></li>
+			<li class="s16"><a href="#"><span>更新缓存</span></a></li>
+			<li class="s17"><a href="#"><span>会员中心</span></a></li>
+			<li class="s18"><a href="#"><span>统一入口</span></a></li>
+			<li class="s19"><a href="#"><span>本站首页</span></a></li>
+			<li class="s20"><a href="#"><span>门户首页</span></a></li>
+		</ul>
+	</div>
+</div>
+<iframe src="$src" name="main" id="main" frameborder="0" scrolling="auto" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;overflow-x: hidden;"></iframe>
+
+<script language="JavaScript">
+var url = window.location.href;
+index = url.indexOf("flag");
+if(index !=-1) html_index();
+function show_edit_label(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+
+function html_index(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_router}-index_to_html?site='+thisSite,
+		   type: 'post',
+		   success: function(msg){
+			   if(msg==-1)
+			   		alert('此站没有绑定域名，不可静态');
+				else{
+					window.open(msg);
+				}
+		   }
+	})
+	
+}
+
+function set_site(obj){
+
+	sites_main_src = sites_main.window.location.href;
+	sites_main_src=sites_main_src.replace(/[&?]site=\w*/,'');
+	$('#sites_main').attr('src',sites_main_src+((sites_main_src.indexOf('?')>-1)?'&':'?')+'site='+$(obj).val());
+}
+
+function open_site(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/s.php/'+thisSite);
+}
+
+$(document).ready(function(){
+	$('#menu_td .sec_menu').each(function(i){
+		$(this).parent().hover(
+			function(){ $(this).find('.sec_menu').show(); },
+			function(){ $(this).find('.sec_menu').hide(); }
+		)
+	 });
+})
+
+$(document).ready(function(){
+	$('#system li').mouseover(function(){
+		clearTimeout(system_menu_hide_timeout);
+		$('#system li dl').show();
+	});
+	$('#system li').mouseout(function(){
+		system_menu_hide_timeout = setTimeout(function(){ $('#system li dl').hide();}, 200);
+	});
+	$('#system_list').
+	mouseover(function(){
+		clearTimeout(system_menu_hide_timeout);
+	});
+
+	window.onresize();
+	
+	if(self != top){
+		parent.window.location.href = '{$core.admin_controller}';
+	}
+});
+
+//一级菜单变换CSS
+core_menu_change_css();
+
+//窗口调整
+window.onresize = function(){
+    var widths = document.body.scrollWidth;
+    var heights = document.documentElement.clientHeight-135;
+	$('#sites_main').height(heights);
+};
+
+</script>
+</body>
+</html>
+<!--{/php168}-->

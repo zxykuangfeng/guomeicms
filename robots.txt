@@ -1,0 +1,13 @@
+User-agent: *
+Disallow: /d*/
+Disallow: /in*/
+Disallow: /a*/
+Disallow: /j*/
+Disallow: /sk*/
+Disallow: /im*/
+Disallow: /i*/
+Disallow: /ck*/
+Disallow: /la*/
+Disallow: /u*.php
+Disallow: /sy*.php
+Disallow: /get*.php

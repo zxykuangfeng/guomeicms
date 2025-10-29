@@ -1,0 +1,13 @@
+modules\letter\module.php
+增加方法
+
+function set_pull($id,$val=1){
+	$val = intval($val);
+	$this->DB_master->update(
+			$this->table,
+			array('pulled'=>$val),
+			"id ='$id'"
+	);
+
+	return $id;
+}

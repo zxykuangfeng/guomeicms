@@ -1,0 +1,121 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-base_config"><i class="fa fa-cog"></i>系统配置</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-config"><i class="fa fa-wpforms"></i>内容与资源配置</a></li>
+						<li><a href="{$core.admin_controller}/core/sms-list_interface"><i class="fa fa-tablet"></i>短信与邮件</a></li>
+						<li><a href="{$core.admin_controller}/core-plant_config"><i class="fa fa-shield"></i>电子大屏配置</a></li>
+						<li><a href="{$core.admin_controller}/core/dbm-db_replace"><i class="fa fa-cog"></i>内容批量替换</a></li>
+						<li><a href="{$core.admin_controller}/core-cate_ip" target="_blank"><i class="fa fa-shield"></i>安全配置</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/core/dbm-db_replace"><i class="icon icon-ico49"></i>字符内容批量替换</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/core/dbm-db_execute"><i class="icon icon-ico40"></i>执行SQL语句</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">数据内容替换</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					<form action="$this_url" method="post" id="form" onsubmit="return check();">
+						<input type="hidden" name="type" value="sql"/>
+						<input type="hidden" name="act" value="replace" />
+						<table cellspacing="0" class="tb">
+						<tr>
+						<td class="tl"><span class="f_red">*</span> 替换选项</td>
+						<td>
+						<select name="model">
+						<option value="">选择内容
+						</option>
+						<option value="frame_url|frame_url">封面图片URL</option>
+						<option value="navigation_menu|navigation_menu">主站前台导航</option>
+						<optgroup label="$P8LANG[label]">
+							<option value="label|html">HTML标签</option>
+							<option value="label|image">图片标签</option>
+							<option value="label|slide">幻灯片标签</option>
+						</optgroup>
+						<!--{foreach $model $sys=>$v}-->
+							<optgroup label="$v[group]">
+							<option value="$sys|category">├栏目分类</option>
+							<option value="$sys|arturl">├文章模型转向链接</option>
+							<!--{if $sys=='sites'}--><option value="$sys|menu">├子站导航菜单</option><!--{/if}-->
+							<!--{foreach $v['item'] $vv}-->
+							<option value="$sys|$vv[name]">├$vv[alias]模型</option>
+							<!--{/foreach}-->
+							</optgroup>
+						<!--{/foreach}-->
+						</select>
+						</td>
+						</tr>
+						<tr>
+						<td class="tl"><span class="f_red">*</span> 查找关键字</td>
+						<td><textarea name="search" id="from" style="width:500px;height:50px;overflow:visible;"></textarea><br/><span id="dfrom" class="f_red"></span></td>
+						</tr>
+						<tr>
+						<td class="tl"><span class="f_hid">*</span> 替换为 </td>
+						<td><textarea name="replace" id="to" style="width:500px;height:50px;overflow:visible;"></textarea><br/><span id="dto" class="f_red"></span></td>
+						</tr>
+						<tr>
+						<td class="tl"><span class="f_hid">*</span> 替换条件</td>
+						<td><input name="conditon" type="text" size="50"/> <span class="f_gray">示例 id>5</span><br/><span class="f_gray">请输入MySQL条件语句（默认不填则全部替换）</span></td>
+						</tr>
+						<tr>
+						<td class="tl">&nbsp;</td>
+						<td><input type="submit" name="submit" value="执 行" class="submit_btn" style="margin-left:5px;margin-top:10px;"/></td>
+						</tr>
+						</table>
+					</form>				
+					<script type="text/javascript">
+					function check() {
+						if(document.getElementById('model').value == '') {
+							confirm('信息模型必选');
+							return false;
+						}
+						return confirm('重要提示:为防止操作失误，请务必在操作之前备份数据\n\n此操作不可恢复，您确定要执行吗？');
+					}
+					</script>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list"> 
+					&nbsp;1、主站前台导航支持的字段：菜单名称(name)、链接地址(url) <br/>
+					&nbsp;2、栏目分类支持的字段：分类名称(name)、分类链接地址（外链）(url) <br/>
+					&nbsp;3、站群子站导航菜单支持的字段：链接地址(url)、动态地址(dynamic_url) <br/>
+					&nbsp;4、模型支持的字段：内容(conditon)、标题(title)、副标题(sub_title)、摘要(summary)、追加标题(addon_title)、追加摘要(addon_summary)、跳转地址(url) <br/>
+					&nbsp;5、文章模型跳转地址支持的字段：跳转地址(url) <br/>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

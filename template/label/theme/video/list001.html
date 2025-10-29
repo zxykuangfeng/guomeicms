@@ -1,0 +1,20 @@
+<!--{php168}-->
+<ul class="label_theme_vd_ul">
+	<!--{foreach $list $value}-->
+	<li class="col-md-12 col-sm-12">
+		<div class="item">
+			<div class="frame">
+				<a href="$value[url]" target="_blank">
+					<img width="380" height="375" class="coverImg" alt="$value[full_title]" onError="this.src='$RESOURCE/images/nopic.jpg'" src="{if empty($value['frame'])}{$RESOURCE}/images/nopic.jpg{else}$value[frame]{/if}"/>
+				</a>
+			</div>
+			<div class="text">
+				<div class="title">
+					<span class="play"></span><a href="$value[url]" target="_blank" title="$value[full_title]" >$value[title]</a>
+				</div>
+			</div>
+		</div>
+	</li>
+	<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

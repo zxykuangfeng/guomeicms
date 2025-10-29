@@ -1,0 +1,315 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/sortable.js"></script>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form name="form" id="form" method="post">
+			<table width="100%" border="0" cellspacing="1" cellpadding="3" class="columntable formtable click_changeable">
+				<tr class="title fix_head">
+					<td class="title" colspan="2">设置<div class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/xinxiangshezhi.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon" style="margin-right:5px;">信件设置教程>></a></div></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['templatestyle']}</td>
+					<td class="tdR">
+					<select name="config[template]">
+					<option value="">----</option>
+					<!--{foreach $core->CONFIG['templates'] $name $alias}-->
+					<!--{if is_dir(TEMPLATE_PATH . $name .'/core/'. $MODULE)}-->
+						<option value="$name"{if !empty($config['template']) && $config['template'] == $name} selected{/if}>$alias</option>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					</select>	<span class="point">一般不作设置</span>			
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">移动风格</td>
+					<td class="tdR">
+					<select name="config[mobile_template]">
+					<option value="">----</option>
+					<!--{foreach $core->CONFIG['templates'] $name $alias}-->
+					<!--{if is_dir(TEMPLATE_PATH . 'mobile/'. $name .'/core/'. $MODULE)}-->
+						<option value="mobile/$name"{if !empty($config['mobile_template']) && $config['mobile_template'] == 'mobile/'.$name} selected{/if}>$alias</option>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					</select>	<span class="point">一般不作设置</span>			
+					</td>
+				</tr>
+				<tr>
+					<td width="100">信件列表显示策略</td>
+					<td>
+					<input type="radio" name="config[undisplay]" value="0" {if empty($config['undisplay'])}checked{/if}/>由发布者设置“公开”或“不公开”决定是否显示在列表中<br/>
+					<input type="radio" name="config[undisplay]" value="1" {if $config['undisplay']==1}checked{/if}/>无论发布者设置“公开”或“不公开”都不显示在列表中，由审核员决定是否显示<br/>
+					</td>
+				</tr>
+				<tr>
+					<td width="100">不公开的信件显示策略</td>
+					<td>
+					<input type="radio" name="config[display_model]" value="0" {if empty($config['display_model'])}checked{/if}/>列表不显示 <br/>
+					<input type="radio" name="config[display_model]" value="1" {if !empty($config['display_model'])}checked{/if}/>列表显示，标题后加（密）字样 <br/>
+					</td>
+				</tr>
+				<tr>
+					<td width="100">信件状态</td>
+					<td>
+					<input type="radio" name="config[status]" value="1" {if !empty($config['status'])}checked{/if}/>有回复即自动审核和显示办理完结 <br/>
+					<input type="radio" name="config[status]" value="0" {if empty($config['status'])}checked{/if}/>默认 <span class="help">选此项，提交后，无论会员设为“公开”或“不公开”都不显示，由审核员决定是否显示。</span><br/>
+					</td>
+				</tr>
+				<tr>
+					<td width="100">证件验证</td>
+					<td>
+					<input type="radio" name="config[id_num_confirm]" value="0" {if empty($config['id_num_confirm'])}checked{/if}/>否  <input type="radio" name="config[id_num_confirm]" value="1" {if !empty($config['id_num_confirm'])}checked{/if}/>是 <span class="help">证件号码必填，且大于等于9位。</span><br/>
+					</td>
+				</tr>
+				<tr>
+					<td width="100">短信验证</td>
+					<td>
+					<input type="radio" name="config[mobile_confirm]" value="0" {if empty($config['mobile_confirm'])}checked{/if}/>否  <input type="radio" name="config[mobile_confirm]" value="1" {if !empty($config['mobile_confirm'])}checked{/if}/>是 <span class="help">填表前需要验证手机号。</span><br/>
+					</td>
+				</tr>
+				<tr>
+					<td width="100">开启验证码</td>
+					<td>
+					<input type="radio" name="config[captcha_enable]" value="0" {if empty($config['captcha_enable'])}checked{/if}/>否 <input type="radio" name="config[captcha_enable]" value="1" {if !empty($config['captcha_enable'])}checked{/if}/>是
+					</td>
+				</tr>
+				
+				<tr>
+					<td width="100">信件内容输入方式</td>
+					<td>
+						<select name="config[widget]" id="widget">
+							<option value="widget_textarea" {if empty($config['widget']) || $config['widget'] == 'widget_textarea'} selected{/if}>{$P8LANG[widget_textarea]}</option>
+							<option value="widget_baidu" {if !empty($config['widget']) && $config['widget'] == 'widget_baidu'} selected{/if}>{$P8LANG[widget_baidu]}</option>
+							<option value="widget_basic" {if !empty($config['widget']) && $config['widget'] == 'widget_basic'} selected{/if}>{$P8LANG[widget_basic]}</option>
+						</select>
+						<span class="help">切换方式需更新模板缓存才生效，请不要随意切换，否则可能导致乱码</span>	
+					</td>
+				</tr>
+				
+				<tr>
+					<td width="100">警示设置</td>
+					<td>
+					黄灯<input type="text" class="txt" size="5" name="config[huan]" value="{if !empty($config['huan'])}$config[huan]{else}3{/if}"/> <span class="help">N天没处理完毕，黄灯警示。</span><br/>
+					红灯<input type="text" class="txt" size="5" name="config[hong]" value="{if !empty($config['hong'])}$config[hong]{else}7{/if}"/> <span class="help">N天没处理完毕，红灯警示。</span><br/>
+					</td>
+				</tr>
+				<tr>
+					<td width="100">信件流转</td>
+					<td>
+						<input type="text" name="config[finish_days]" size="3" value="{if !empty($config['finish_days'])}$config[finish_days]{else}3{/if}"/>天完成 <span class="help">信件受理后默认多少天完成。</span><br/>
+					</td>
+				</tr>
+				
+				<tr>
+					<td width="100">信件通知模式</td>
+					<td>
+						<input name="config[sendtype][]" value="email" type="checkbox" {if in_array("email",$config['sendtype'])}checked{/if}/> 电子邮件 <a href="{$core.admin_controller}/core/mail-config" target="_blank">[配置系统邮件]</a><br/>
+						<input name="config[sendtype][]" value="sms" type="checkbox" {if in_array("sms",$config['sendtype'])}checked{/if}/> 手机短信 <a href="{$core.admin_controller}/core/sms-list_interface" target="_blank">[配置短信]</a><br/>
+						<input name="config[sendtype][]" value="msg" type="checkbox" {if empty($config['sendtype']) || in_array("msg",$config['sendtype'])}checked{/if}/> 站内消息<br/>						
+					</td>
+				</tr>				
+				<tr>
+					<td width="100">收件模式</td>
+					<td>
+					<input type="radio" name="config[receive]" value="1" {if !empty($config['receive'])}checked{/if}/>信件分发统一接收&nbsp;<font color=red>接收部门ID</font><input type="text" class="txt" size="5" name="config[redepartment]" value="$config[redepartment]"/><br/>
+					<input type="radio" name="config[receive]" value="0" {if empty($config['receive'])}checked{/if}/>各部门接收<br/>
+					</td>
+				</tr>
+				<tr>
+					<td width="100">发布时部门选项显示模式</td>
+					<td>
+						<input type="radio" name="config[department_enable]" value="0" {if empty($config['department_enable'])}checked{/if}/>显示 <input type="radio" name="config[department_enable]" value="1" {if !empty($config['department_enable'])}checked{/if}/>不显示
+					</td>
+				</tr>
+				<tr>
+					<td width="100">部门</td>
+					<td id="department_box">
+						<table width="60%" border="0" cellspacing="0" cellpadding="0" class="">
+							<tr>
+								<td width="8%" align="center">部门ID</td>
+								<td width="35%" align="center">部门名称</td>
+								<td width="15%" align="center">排序</td>
+								<td width="15%" align="center">删除</td>
+								<td width="27%" align="center">操作</td>
+							</tr>
+							<!--{php
+							function _list($ms, $l = 0,$p=0){
+								$k=count($ms);
+								$j=0;
+							}-->
+							<!--{foreach $ms $v}-->
+							<!--{php $j++;}-->
+							<tr id="clone_{$v['id']}" class="data">
+								<td align="center" class="id_{$v['id']}">
+								<input type="hidden" name="department[{$v['id']}][id][]" value="{$v['id']}"/>{$v['id']}</td>
+								<td class="name_{$v['id']}">
+									<!--{if  $l != 0}-->
+									<!--{php echo str_repeat('│&nbsp;&nbsp;', $l-$p).str_repeat('&nbsp;&nbsp;&nbsp;', $p);}-->
+									<!--{if $j==$k}--><!--{php $p++;}-->└<!--{else}-->├<!--{/if}--><!--{/if}-->
+									<input type="text" class="txt txt3" name="department[{$v['id']}][name][]" value="{$v['name']}" id="matrix_name_{$v['id']}" size="18" /></td>
+								<td class="display_order_{$v['id']}" align="center">
+									<input type="hidden" name="department[{$v['id']}][parent][]" value="{$v['parent']}" />
+									<input  type="text" class="txt txt3" name="department[{$v['id']}][display_order][]" value="{$v['display_order']}" size="4" />
+								</td>
+								<td align="center"><!--{if $config['redepartment']!=$v['id']}--><input name="delete[{$v['id']}]" value="{$v['id']}" type="checkbox"/>删除<!--{/if}--></td>								
+								<td class="optlist action_{$v['id']}" align="center">
+									<!--{if !$v['parent']}--><a href="javascript:;" onclick="_add_{$v['id']}('{$v['id']}');" class="ys2">新增子部门</a><!--{/if}-->
+								</td>
+							</tr>
+							
+							<tbody id="images_{$v['id']}"></tbody>
+							<script type="text/javascript">
+							function _add_{$v['id']}(pid,data){
+								var data = data === undefined ? {} : data;
+								var newid = Math.floor(Math.random() * (4000)) + 2000;
+								var copy = $('#clone_{$v['id']}').clone(true).attr('id', 'new_menu_'+newid).show();
+								copy.find('.name_{$v['id']}').html('│&nbsp;&nbsp;├'+copy.find('.name_{$v['id']}').html());								
+								copy.find('input[type="text"]:eq(0)').attr('name', 'department[{$v['id']}][name][]').attr('id', 'matrix_name_'+newid).val('');
+								copy.find('input[type=text]:eq(1)').attr('name', 'department[{$v['id']}][display_order][]').attr('id', 'matrix_'+newid).val('');
+								copy.find('input[type=hidden]:eq(1)').attr('name', 'department[{$v['id']}][parent][]').val(pid);
+								copy.find('.action_{$v['id']}').html('<a id="menu_'+newid+'" class="ys3">删除</a>');
+								copy.find('.id_{$v['id']}').html('<input type="hidden" name="department[{$v['id']}][id][]"/>');
+								copy.find('.display_{$v['id']}').html('<img src="{$SKIN}/check_yes.gif" alt="1" /><input type="hidden" name="department[{$v['id']}][display][]" value="1" />');
+								copy.find('#menu_'+newid).click(function(){
+									copy.remove();
+								});			
+								copy.appendTo($('#images_{$v['id']}'));																										
+							}				
+							</script>												
+							<!--{php if(isset($v['menus'])) _list($v['menus'], $l+1,$p);}-->
+							<!--{/foreach}-->
+							<!--{php
+							}							
+							_list($cates['department']);
+							}-->
+							<tbody id="more_department"></tbody>
+						</table>
+						<div><input type="button" value="新增一级部门" onclick="addmore('department');" class="ys2" /></div>
+						备注：在写信时默认要选中某个部门方法：在发布页面的链接中增加?department=一级部门ID-二级部门ID，如?department=60-108
+					</td>
+				</tr>
+				<tr>
+					<td>问题类别</td>
+					<td id="type_box">
+					<!--{foreach $cates['type'] $k $row}-->		
+					<p><b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;<input type="hidden" name="type[order][]" value="{$row['id']}"/></b>
+					&nbsp;{$row['id']} <input name="type[old][{$row['id']}]" type="text" value="{$row['name']}"/> <input name="delete[{$row['id']}]" value="{$row['id']}" type="checkbox"/>删除</p>
+					<!--{/foreach}-->		
+					<span id="more_type"></span>
+					<input type="button" value="添加类别" onclick="addmore2('type')" />
+					<input type="checkbox" name="" value="" style="margin-left:120px" onclick="javascript:$('#type_box input[type=checkbox]').prop('checked',$(this).prop('checked'))"/>全选</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['custom_enable']}</td>
+					<td class="tdR">
+						<input type="radio" onclick="showmorebox(1);" name="config[allow_custom]" value="1"{if !empty($config['allow_custom'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" onclick="showmorebox(0);" name="config[allow_custom]" value="0"{if empty($config['allow_custom'])} checked{/if} />{$P8LANG['N']}								
+					</td>
+				</tr>
+				<tbody id="allow_custom" style="display:{if empty($config['allow_custom'])}none{/if}">
+					<tr>
+						<td colspan="2">{$P8LANG['custom_list_note']}</td>
+					</tr>
+					<tr>
+						<td class="tdL">{$P8LANG['custom_a']}</td>
+						<td class="tdR"><input type="text" class="txt" name="config[custom_a]" size="30" value="{if isset($config['custom_a'])}{$config['custom_a']}{else}{$P8LANG['custom_a']}{/if}" />
+						<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_a_enabled]" value="1"{if !empty($config['custom_a_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+						<input type="checkbox" title="{$P8LANG['not_null']}" name="config[custom_a_not_null]" value="1"{if !empty($config['custom_a_not_null'])} checked{/if} /> {$P8LANG['not_null']}
+						<span class="help">不超过255个字符，调用与标题title类似，标签和列表为\$value[custom_a]，详情页通常为\$data[custom_a]，具体写法与模板有关</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdL">{$P8LANG['custom_b']}</td>
+						<td class="tdR"><input type="text" class="txt" name="config[custom_b]" size="30" value="{if isset($config['custom_b'])}{$config['custom_b']}{else}{$P8LANG['custom_b']}{/if}" />
+						<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_b_enabled]" value="1"{if !empty($config['custom_b_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+						<input type="checkbox" title="{$P8LANG['not_null']}" name="config[custom_b_not_null]" value="1"{if !empty($config['custom_b_not_null'])} checked{/if} /> {$P8LANG['not_null']}
+						<span class="help">不超过255个字符，调用与标题title类似，标签和列表为\$value[custom_b]，详情页通常为\$data[custom_b]，具体写法与模板有关</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdL">{$P8LANG['custom_c']}</td>
+						<td class="tdR"><input type="text" class="txt" name="config[custom_c]" size="30" value="{if isset($config['custom_c'])}{$config['custom_c']}{else}{$P8LANG['custom_c']}{/if}" />
+						<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_c_enabled]" value="1"{if !empty($config['custom_c_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+						<input type="checkbox" title="{$P8LANG['not_null']}" name="config[custom_c_not_null]" value="1"{if !empty($config['custom_c_not_null'])} checked{/if} /> {$P8LANG['not_null']}
+						<span class="help">不超过255个字符，调用与标题title类似，标签和列表为\$value[custom_c]，详情页通常为\$data[custom_c]，具体写法与模板有关</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdL">{$P8LANG['custom_d']}</td>
+						<td class="tdR"><input type="text" class="txt" name="config[custom_d]" size="30" value="{if isset($config['custom_d'])}{$config['custom_d']}{else}{$P8LANG['custom_d']}{/if}" />
+						<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_d_enabled]" value="1"{if !empty($config['custom_d_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+						<input type="checkbox" title="{$P8LANG['not_null']}" name="config[custom_d_not_null]" value="1"{if !empty($config['custom_d_not_null'])} checked{/if} /> {$P8LANG['not_null']}
+						<span class="help">不超过255个字符，调用与标题title类似，标签和列表为\$value[custom_d]，详情页通常为\$data[custom_d]，具体写法与模板有关</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdL">{$P8LANG['custom_e']}</td>
+						<td class="tdR"><input type="text" class="txt" name="config[custom_e]" size="30" value="{if isset($config['custom_e'])}{$config['custom_e']}{else}{$P8LANG['custom_e']}{/if}" />
+						<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_e_enabled]" value="1"{if !empty($config['custom_e_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+						<input type="checkbox" title="{$P8LANG['not_null']}" name="config[custom_e_not_null]" value="1"{if !empty($config['custom_e_not_null'])} checked{/if} /> {$P8LANG['not_null']}
+						<span class="help">不超过255个字符，调用与标题title类似，标签和列表为\$value[custom_e]，详情页通常为\$data[custom_e]，具体写法与模板有关</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="tdL">{$P8LANG['custom_f']}</td>
+						<td class="tdR"><input type="text" class="txt" name="config[custom_f]" size="30" value="{if isset($config['custom_f'])}{$config['custom_f']}{else}{$P8LANG['custom_f']}{/if}" />
+						<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_f_enabled]" value="1"{if !empty($config['custom_f_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+						<input type="checkbox" title="{$P8LANG['not_null']}" name="config[custom_f_not_null]" value="1"{if !empty($config['custom_f_not_null'])} checked{/if} /> {$P8LANG['not_null']}
+						<span class="help">不超过255个字符，调用与标题title类似，标签和列表为\$value[custom_f]，详情页通常为\$data[custom_f]，具体写法与模板有关</span>
+						</td>
+					</tr>
+				</tbody>
+				<tr>
+				<td></td><td><input type="submit" value="确定" class="submit_btn" /></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+
+$('#department_box').sortable({
+    axis:"y",
+    items:"p",
+    handle:"b",
+    containmentType:"parent"
+})
+
+function addmore(kind){
+	var html = '<tr class="data">'+
+		'<td align="center">'+
+		'<input type="hidden" name="department[new][id][]" value=""></td>'+
+		'<td><input type="text" class="txt txt3" name="department[new][name][]" value="" size="18"></td>'+
+		'<td align="center"><input type="hidden" name="department[new][parent][]" value="0">'+
+		'<input type="text" class="txt txt3" name="department[new][display_order][]" value="0" size="4"></td>'+
+		'<td align="center"></td>'+			
+		'<td class="optlist"><a href="javascript:;" onclick="removeItem2(this)" class="ys3">移除</a></td>'+
+		'</tr>';
+	$('#more_'+kind).append(html);
+}
+
+$('#type_box').sortable({
+    axis:"y",
+    items:"p",
+    handle:"b",
+    containmentType:"parent"
+})
+function addmore2(kind){
+	$('#more_'+kind).append('<p><b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;<input type="hidden" name="'+kind+'[order][]" value="new[]"/></b>&nbsp;<input name=\"'+kind+'[new][]\" type=\"text\" /><input type="button" value="移除" onclick="removeItem(this)"/></p>');
+}
+function removeItem(obj){
+	$(obj).parent().remove();
+}
+function removeItem2(obj){
+	$(obj).parent().parent().remove();
+}
+function showmorebox(f){
+	if(f == '1' )
+		$("#allow_custom:hidden").show();		
+	else
+		$("#allow_custom").hide();
+}
+
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

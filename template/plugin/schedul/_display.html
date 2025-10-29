@@ -1,0 +1,33 @@
+<!--{php168}-->
+<style type="text/css">
+#schedul_box .datehead{color:#333;text-align:center;line-height:45px;height:45px;}
+#schedul_box .formtable .dname{color:#3986bd;text-align:right;border-right:#efefef solid 1px;}
+.pre_list{padding:10px 15px;text-align:center;border-top:#efefef solid 1px;}
+.pre_list a{margin:0 4px;text-decoration:underline;}
+</style>
+<div id="schedul_box" style="line-height:180%;">
+	<div class="datehead">$date $w</div>
+	<!--{foreach $list $dcode $dates}-->
+		<table border="0" width="100%" class="formtable">
+			<tr>
+			<td class="dname" width="28%">{$department[$dcode]}:</td>
+			<td>
+			<!--{foreach $dates $key $row}-->			
+				<ul>
+				<li>{$row[name]}<!--{if $row['phone']}-->$row[phone]<!--{/if}--></li>
+				</ul>			
+			<!--{/foreach}-->
+			</td>
+			</tr>
+		</table>
+	<!--{/foreach}-->	
+	<div class="pre_list">
+		<a href="#">值班记录</a><a href="#">指挥中心值班表</a><a href="#">监区值班表</a>
+	</div>
+</div>
+<script type="text/javascript">
+function change_date(s){
+	$.get('{$url}-display?date='+s,function(result){ $('#schedul_box').html(result);});
+}
+</script>
+<!--{/php168}--> 

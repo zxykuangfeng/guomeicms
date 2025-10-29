@@ -1,0 +1,73 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<form name="form1" method="post" action="$this_url" enctype="multipart/form-data">
+<input name="type" type="hidden" value="{$type}" id="{$type}">
+<div class="mainbox mainborder">
+	<div class="section">
+	<table class="formtable columntable">
+		<tr>
+			<td colspan="2" class="title">上传永久素材</td>
+		</tr>
+		<!--{if $type=='video'}-->
+		<tr> 
+		  <td class="tdL">标题 <b style="color:#f00">*</b></td>
+		  <td class="tdR"><input type="text" name="title" class="txt" placeholder="请填写视频标题" style="width: 200px;"></td>
+		</tr>
+		<tr> 
+		  <td class="tdL">描述</td>
+		  <td class="tdR"><input type="text" name="introduction" class="txt" placeholder="请填写视频简介" style="width: 500px;"></td>
+		</tr>
+    <!--{/if}-->
+      
+      <!--{if $type=='image'}-->
+	  <tr> 
+		  <td class="tdL">选择图片文件</td>
+		  <td class="tdR"><input type="text" class="txt" name="file" id="file"  size="60" />
+		<input type="button" onclick="uploader.choseup();" value="{$P8LANG['upload']}" />
+		<input type="button" id="frame_toggle" onclick="" value="" style="display: none;" />
+		<p class="help-block">2M以内，支持bmp/png/jpeg/jpg/gif格式</p>
+		<script type="text/javascript">
+		var uploader;
+		$(function(){
+			uploader = new P8_Upload({
+				element: {
+					src: $('#file'),
+					attribute: 'value'
+				},
+				param: {
+					return_thumb: true
+				}
+			});
+		});
+		</script>
+		</td>
+	</tr>
+	<!--{/if}-->
+	<!--{if $type=='voice'}-->
+		<tr> 
+		  <td class="tdL">选择声音文件</td>
+		  <td class="tdR"><input name="file" type="file" id="exampleInputFile">
+      <p class="help-block">2M，播放长度不超过60s，mp3/wma/wav/amr格式</p>
+	  </td>
+	</tr>
+     <!--{/if}-->
+	<!--{if $type=='video'}-->
+	<tr> 
+		  <td class="tdL">选择视频文件</td>
+		  <td class="tdR"><input name="file" type="file" id="exampleInputFile">	
+      <p class="help-block">10MB，支持MP4格式</p>
+	  </td>
+	</tr>
+       <!--{/if}-->
+    <tr>
+       		<td colspan="2" class="tdR" align="center">
+				<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+			</td>
+      </tr>
+</table>
+</form>
+<!--{template $core footer admin}-->
+<!--{/php168}-->
+

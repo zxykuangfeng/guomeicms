@@ -1,0 +1,27 @@
+<!--{php168}-->
+<style type="text/css">
+.list_theme_date4 .item{padding:25px 15px 22px 15px;border:1px solid #e8e6e5;margin-bottom:36px;position:relative;}
+.list_theme_date4 .date{color:#94070a;font-size:24px;padding:0 20px;position:absolute;top:-18px;left:46px;background:#fff;}
+.list_theme_date4 .text h4{font-weight:bold;margin:0;height:48px;line-height:24px;margin-bottom:10px;display:-webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow:hidden;}
+.list_theme_date4 .text h4 a{color:#222;}
+.list_theme_date4 .text p{font-size:15px;color:#7d7979;height:48px;line-height:24px;display:-webkit-box;-webkit-box-orient: vertical;-webkit-line-clamp: 2;overflow:hidden;}
+.list_theme_date4 .item:hover h4 a{color:#94070a;}
+@media (max-width: 767px){
+}
+</style>
+<div class="list_theme_date4">
+	<!--{foreach $list $value}-->
+	<div class="col-md-6 col-sm-6 col-xs-12">
+		<div class="item">
+			<div class="date">
+				<!--{php echo date('m-d', $value['timestamp']);}-->
+			</div>
+			<div class="text">
+				<h4><a href="$value[url]" target="_blank">$value[title]</a></h4>
+				<p>$value[summary]</p>
+			</div>
+		</div>
+	</div>
+	<!--{/foreach}-->
+</div>
+<!--{/php168}-->

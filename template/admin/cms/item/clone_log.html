@@ -1,0 +1,234 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_system menu_bar admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/cms/item/admin.js"></script>
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table class="formtable">
+				<tr>
+					<td class="title">{$P8LANG['search']}</td>
+				</tr>
+				<tr>
+					<td class="headerbtn_list">						
+						<form action="$this_url" method="get" id="request" onsubmit="request_item(1);return false;">
+							<div class="fleft">
+								<select name="model" id="model">
+									<option value="">{$P8LANG['cms_model']}</option>
+									<!--{foreach $models $name $v}-->
+									<option value="$name"{if $MODEL == $name} selected{/if}>$v[alias]</option>
+									<!--{/foreach}-->
+								</select>
+								<select name="order">
+									<option value="0" selected="selected">降序</option>
+									<option value="1">升序</option>									
+								</select>								
+								<input type="text" class="txt" id="cond" size="15" name="key_word" value="$key_word"/>
+								<input type="submit" value="{$P8LANG['search']}" class="submit"/>
+								<input type="button" value="{$P8LANG['refresh']}" class="refreshbtn" onclick="request_item(PAGE)" />
+							</div>
+						</form>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<div class="mainbox mainborder">
+		<div class="section">
+				<form action="" method="post" id="form">
+				<table width="100%" class="columntable formtable hover_table click_changeable">				
+					<tr class="title fix_head">
+						<td width="3%" align="center" class="title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+						<td width="5%" align="center" class="title">ID</td>
+						<td width="25%" class="title">{$P8LANG['title']}</td>
+						<td width="6%" align="center" class="title">{$P8LANG['source']}</td>
+						<td width="7%" align="center" class="title">{$P8LANG['cms_category_name']}</td>
+						<td width="6%" align="center" class="title">{$P8LANG['cms_model']}</td>
+						<td width="6%" align="center" class="title">{$P8LANG['department']}</td>
+						<td width="5%" align="center" class="title">{$P8LANG['author']}</td>
+						<td width="5%" align="center" class="title">{$P8LANG['verifier']}</td>
+						<td width="5%" align="center" class="title">{$P8LANG['cms_item']['clone_username']}</td>
+						<td width="9%" align="center" class="title">{$P8LANG['cms_item']['clone_timestamp']}</td>						
+						<td width="*" align="center" class="title">{$P8LANG['operation']}</td>
+					</tr>
+				
+				<tbody id="list">
+					
+				</tbody>
+				
+				</table>				
+				<table width="100%" class="columntable formtable">
+					<tr>
+						<td align="center" id="pages" class="pages"></td>
+					</tr>
+				</table>
+				</form>
+				<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">			
+					<tr>
+						<td>
+							<a name="op"></a>
+							<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+							<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a> 
+							<input type="button" value="{$P8LANG['cms_item']['clone_delete_log']}" onclick="delete_item(checked_values('id[]', $('#form')))" class="edit_btn" />
+						</td>
+					</tr>
+				</table>
+		</div>
+		
+	</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".boxmenu li").each(function (index) {
+		$(this).click(function(){
+			$('.boxmenu li').removeClass('active');
+			$(this).addClass('active');
+		});
+	});
+});
+</script>
+<script type="text/javascript">
+var verified = 1,	
+	MODEL_JSON = $model_json,
+	ATTR_JSON = $attr_json,
+	MODEL = '$MODEL',
+	PAGE;
+
+function delete_item(array){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(Number(v));
+	});
+	
+	if(!id.length) return false;
+	p8_window.confirm('{$P8LANG['cms_item']['clone_delete_confirm']}', function (r) {
+		if(r){
+			$.ajax({
+				type:'POST',
+				url	: '{$this_url}',
+				dataType: 'json',
+				data :ajax_parameters({id: id}),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success:function(json){
+					ajaxing({action: 'hide'});					
+					if(json){						
+						for(var i in json){
+							$('#v_'+ json[i]).remove();
+						}
+						p8_window.alert('{$P8LANG['done']}');
+					}else{
+						p8_window.alert('{$P8LANG['fail']}');
+					}
+				}
+			});
+		}else{
+			return false;
+		}
+	});
+}
+
+function request_item(page){
+	
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			PAGE = page;
+			verified = $('#request input[name=verified]:checked').val();
+			$('.boxmenu li').removeClass('active');
+			$('#verified_'+verified).addClass("active");
+			$('#list').empty();
+			for(var i in json.list){
+				_list_item(json.list[i]);
+			}
+			
+			$('#pages').html(json.pages);
+			
+			ajaxing({action: 'hide'});
+			
+			window.scrollTo(0, 0);
+			
+			$('input[name=cl]').prop('checked', false);
+			
+			init_tr($('#form'));
+			
+			var keywords = $.trim($('#request input[name=keyword]').val());
+			if(!keywords.length) return;
+			
+			var keywords = keywords.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+			
+			$('.list_item').each(function(){
+				for(var i = 0; i < keywords.length; i++){
+					var html = $(this).find('.item_title').get(0).innerHTML;
+					$(this).find('.item_title').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+				}
+			});
+			
+		}
+	});
+}
+
+function _list_item(json){
+	
+	var props = ['id', 'cid', 'title', 'push_back_reason','model', 'timestamp', 'username', 'pages','department'];
+	
+	for(var i = 0; i < props.length; i++){
+		if(json[props[i]] === undefined) json[props[i]] = '';
+	}
+	
+	json.otitle = json.title;
+	json.title = '<span class="item_title">'+ json.title +'</span>';
+	json.title_bold == 1 && (json.title = '<b>'+ json.title +'</b>');
+	json.title_color && (json.title = '<font color="'+ json.title_color +'">'+ json.title +'</font>');
+	json.title = '<span style="max-width: 300px; overflow: hidden; display: inline-block; height: 18px;">'+ json.title +'</span>';
+		
+	json.model = MODEL_JSON[json.model] || {id: 0, name: MODEL, alias: ''};
+	var attr = json.attributes.split(',');
+	var attrs = '';
+	for(var i in attr){
+		if(!attr[i]) continue;
+		
+		attrs += '<font color="red">'+ ATTR_JSON[attr[i]] +'</font> ';
+	}
+	var update_link = '{if $allow_update}<a href="$this_router-update?model='+ json.model.name +'&id='+ json.id +'&verified='+ json.verified +'" title="{$P8LANG['edit']}"><img src="{$SKIN}/button_edit.gif" border="0" /></a>{/if} ';
+	var delete_link = '<a id="delete_'+ json.clone_id +'" href="###" onclick="return delete_item(['+ json.clone_id +']);" title="{$P8LANG['delete']}"><img src="{$SKIN}/del_icon2.gif" border="0" /></a>';
+	
+	var tr = 
+	'<tr id="v_'+ json.clone_id +'" class="list_item">'+
+		'<td align="center"><input type="checkbox" name="id[]" value="'+ json.clone_id +'" /></td>'+
+		'<td align="center">'+ json.id +'</td>'+
+		'<td>'+
+			'<a href="{$this_module.controller}-view-id-'+ json.id +'?verified='+ json.verified +'" target="_blank" title="{if !empty($value['push_back_reason'])}$value[push_back_reason]{else}'+ json.otitle +'{/if}" alt="'+ json.otitle +'">'+ json.title +'</a>&nbsp;'+ attrs +
+		'</td>'+
+		'<td align="center"><a href="'+ json.sourceurl +'" target="_blank">'+ json.source +'</a></td>'+
+		'<td align="center" id="item_cat_'+ json.id +'" title="'+ json.cid +'">'+
+			'<a href="{$core.admin_controller}/cms/item-list?model=&cid='+ json.cid +'" >'+ json.category_name +'</a>'+
+		'</td>'+
+		'<td align="center">'+ json.model.alias +'</td>'+
+		'<td align="center">'+ json.department +'</td>'+
+		'<td align="center">'+ json.username +'</td>'+
+		'<td align="center">'+ json.verifier +'</td>'+
+		'<td align="center">'+ json.action_username +'</td>'+
+		'<td align="center">'+ date('Y-m-d H:i', json.action_timestamp) +'</td>'+
+		'<td align="center">'+
+			'<a href="{$this_module.controller}-view-id-'+ json.id +'?verified='+ json.verified +'" target="_blank" title="{if !empty($value['push_back_reason'])}$value[push_back_reason]{else}'+ json.otitle +'{/if}" alt="'+ json.otitle +'"><img src="{$SKIN}/button_see.png" /></a>&nbsp;'+
+			'<a href="{$this_module.controller}-view-id-'+ json.from_id +'?verified=1" target="_blank"><img src="{$SKIN}/button_src.png" /></a>&nbsp;'+ update_link + delete_link +
+		'</td>'+
+	'</tr>';
+	
+	$('#list').append($(tr));
+}
+
+$(function(){
+	request_item(1);
+});
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

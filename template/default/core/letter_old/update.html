@@ -1,0 +1,225 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta charset="{$core.CONFIG['page_charset']}">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<title>$TITLE</title>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/letter/style.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/style_list.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/images/dialog.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<!--[if lt IE 9]>
+    <script src="{$RESOURCE}/js/html5.js"></script>
+    <script src="{$RESOURCE}/js/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.touchSlider.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.iosslider.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.easing-1.3.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.SuperSlide.2.1.1.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<div id="topnav" class="topnav">
+	<div class="wrap">
+		<div id="jclose"></div>
+		<div class="wp">
+			<div class="fl red" id="position1">$label[letter_top_con1]<div class="tq" id="tq"></div></div>
+			<div class="fr top-menu">
+				<span class="zzwnum">$label[letter_top_con2]</span>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="listheader">
+	<div class="wrap">
+	</div>
+</div>
+<div class="menubar">
+	<div class="menu">
+		<div class="menulist">
+			$label[letter_top_nav_con2]
+		</div>
+		<div class="userlogin">
+			<div id="header_t">
+				<span id="header_login"><script type="text/javascript" src="{$core.U_controller}/core/member-login?style=letter&id=header_login"></script></span>
+				<span><a href="{$core.U_controller}/letter-manager" target="_blank">信件管理</a></span>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<script type="text/javascript">
+var MODEL = '$MODEL';
+var attachment_hash = '$attachment_hash';
+$(function(){
+	
+	$('#form').validate({		
+		messages: {
+			title: {
+				required: '{$P8LANG['required']}',
+				maxlength: '{$P8LANG['title_oversize']}'
+			},
+			type: {
+				required: '{$P8LANG['required']}'
+			},
+			captcha: {
+				required: '{$P8LANG['required']}',
+				remote: '{$P8LANG['captcha_incorrect']}'
+			}
+		},
+		
+		errorPlacement: function(error, element) {
+			if(element.parent().prop('tagName').toLowerCase() == 'td')
+				error.appendTo(element.parent());
+			else
+				error.appendTo(element.parent().prev());
+		},
+		
+		submitHandler: function(form){
+			form_submit = true;
+			
+			form.submit();
+		},
+		
+		onkeyup: false
+	});
+});
+</script>
+<script type="text/javascript">
+	var uploader = new P8_Upload({
+		element: {
+			src: $('#attachment'),
+			attribute: 'value'
+		},
+		callback: function(json){
+			$('input[name="attachment_name"]').val(json.attachments[0].name);
+			$('input[name="attachment"]').val(json.attachments[0].file);
+		}
+	});
+
+</script>
+<div class="wrap">
+	<div class="layout mt15">
+		<div class="maincon clearfix">
+			<div class="mainbar fl">
+				<div class="letitle">
+					<h2>我要写信</h2>
+					<div class="more"><a href="{$core.controller}/letter-list">信件</a></div>
+				</div>
+				<div class="leform">
+					<form id="form" action="" method="post">
+						<table width="100%" cellspacing="0" cellpadding="0" border="0" class="letabel">
+							<tr class="tt">
+								<td colspan="5">信件标题：</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="4"><input type="text" name="title" id="title" value="{if !empty($data['title'])}{$data['title']}{/if}" style="width:560px"/>
+									<span class="start">*</span>
+								</td>								
+							</tr>
+							<tr class="tt">
+								<td colspan="5">信件类别:</td>
+							</tr>
+							<tr>
+								<td  class="white">
+									<select name="type" id="type" style="width:225px">
+										<option value="">----请选择类别----</option>
+										<!--{foreach $cates['type'] $key $row}-->
+										<option value="{$row['id']}" {if !empty($data['type']) && $data['type']==$row['id']}selected{/if}>{$row['name']}</option>
+										<!--{/foreach}--> 
+									</select>
+									<span class="start">*</span>
+								</td>
+							</tr>
+							<!--{if !empty($letterconfig['receive']) && !empty($letterconfig['redepartment'])}-->
+							<input type="hidden" name="department" id="department" value="{$letterconfig['redepartment']}"/>
+							<!--{else}-->
+							<tr class="tt">
+								<td class="grey">选择部门:</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="5">
+									<select name="department" id="department" style="width:225px">
+										<option value="">请选择</option>
+										<!--{foreach $cates['department'] $key $row}-->
+										<option value="{$row['id']}" {if !empty($data['department']) && $data['department']==$row['id']}selected{/if}>{$row['name']}</option>
+										<!--{/foreach}-->   
+									</select> <span class="start">*</span> <span style="color:#808069">若不知部门，可选“强军网管理部门”</span>
+								</td>
+							</tr>
+							<!--{/if}-->
+							<tr class="tt">
+								<td colspan="5">信件内容:</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="3"><textarea name="content" id="content" cols="45" rows="5" style="width:710px">{if !empty($data['data'][0]['content'])}{$data['data'][0]['content']}{/if}</textarea>
+								<span class="start">*</span></td>
+							</tr>
+							<tr class="tt">
+								<td colspan="5">是否公开:</td>
+							</tr>
+							<tr>								
+								<td  class="white" colspan="3"><input type="radio" name="visual"  value="1"  {if !empty($data['visual'])}checked{/if}/>
+								公开
+								<input type="radio" name="visual"  value="0" {if empty($data['visual'])}checked{/if} />
+								不公开
+								<span style="color:#808069">（此内容是否愿意公开显示出来）</span>
+								</td>
+							</tr>
+							<tr class="tt">
+								<td colspan="5">验证码:</td>
+							</tr>
+							<tr>
+								<td class="white" colspan="3"><input name="captcha" type="text" id="captcha" class="input" />
+									<span id="captcham"></span>
+									<script type="text/javascript">
+										captcha($('#captcham'), $('#captcha'));					
+									</script><span style="color:#808069">（点击验证码图片可刷新或更换）</span>				
+								</td>
+							</tr>
+							<tr>
+								<td  align="center" colspan="5">
+									<input type="submit" name="submitbutton" class="sbtn" value="提交" />
+									<input type="reset" name="reset" class="rbtn" value="重置" />
+									<input type="hidden" name="id" value="{if !empty($id)}{$id}{/if}" />
+									<input type="hidden" name="attachment_hash" value="{$attachment_hash}" />
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>				
+			</div>
+			<div class="sidebar fr">
+				<div class="lxxz">
+					<div class="hd">
+						<h3>来信须知</h3>
+					</div>
+					<div class="bd">
+						<p>来信既可反映个人的情况和心愿，也可以对部队建设提出意见建议；既可以用单位名义，也可以用个人身份；既可以用真实姓名，也可以用虚拟网名。希望战友们解放思想，畅所欲言，反映真实情况，积极建言献策。 </p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="clear"> </div>
+<div class="footer">
+	{$core.CONFIG['copyright']}      
+</div>
+<!--{/php168}-->

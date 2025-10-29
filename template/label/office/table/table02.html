@@ -1,0 +1,15 @@
+<!--{php168}-->
+<style type="text/css">
+.label_dotlist_{$label['id']} {line-height:180%;font-size:12px;color:}
+</style>
+<table class="label_dotlist_{$label['id']}" width="99%">
+<tr>
+<td width="15%">办事编号</td><td width="45%">名称</td><td width="15%">申请人</td><td width="10%">状态</td><td width="25%">审批时间</td>
+</tr>
+<!--{foreach $list $value}-->
+	<tr>
+		<td><font color="#993300">$value[rnumber]</font></td><td>$value[title]</td><td>$value[username]</td><td>$value[status]</td><td><!--{php if(!empty($value['verifytime'])) echo date('Y-m-d',$value['verifytime']);}--></td>
+	</tr>
+<!--{/foreach}-->
+</table>
+<!--{/php168}-->

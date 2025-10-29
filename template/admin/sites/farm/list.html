@@ -1,0 +1,618 @@
+
+
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<div class="section">
+	<table class="formtable" width="100%">
+		<tr>
+			<td class="headerbtn_list">
+				<ul class="sites-top-menu">
+					<li><a href="{$this_system.admin_controller}/farm-list"><i class="fa fa-cog"></i>站点列表</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-config"><i class="fa fa-cog"></i>本站点设置</a></li>
+					<li><a href="{$this_system.admin_controller}/category-list"><i class="fa fa-cog"></i>栏目管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_list"><i class="fa fa-cog"></i>菜单管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-logo"><i class="fa fa-ravelry"></i>站点LOGO</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-acls"><i class="fa fa-user-circle-o"></i>站点授权</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-template"><i class="fa fa-tree"></i>站点模板</a></li>
+					<li><a href="{$this_system.admin_controller}-Visualization" target="_blank"><i class="fa fa-refresh"></i>页面可视化</a></li>
+					<li><a href="{$this_system.admin_controller}-publishing" target="_blank"><i class="fa fa-refresh"></i>站点发布</a></li>
+					<li><a href="javascript:void(0);" onclick="cache_base_sites()"><i class="fa fa-refresh"></i>更新本站缓存 </a></li>
+					<li><a href="javascript:;" onclick="list_to_html('{$alias}')"><i class="fa fa-refresh"></i>静态本站数据</a></li>
+					<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($site_info['ipordomain'])}{$core->CONFIG['url']}/s.php/{$site}{else}{$site_info['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$site_info['sitename']}</a></li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="section">
+	<form action="$this_router-cache" method="post" id="form">
+		<table width="100%" border="0" class="mainbox">
+			<tbody>
+			<tr>
+				<td>
+					<ul class="sites-down-menu">
+						<li class="btn-color1"><a href="javascript:void(0);" onclick="sites_domain(checked_values('id[]', $('#form')))"><i class="icon icon-ico26"></i>动态访问</a></li>
+						<li class="btn-color2"><a href="javascript:void(0);" onclick="sites_shtml_domain(checked_values('id[]', $('#form')))"><i class="icon icon-ico25"></i>域名访问</a></li>
+						<li class="btn-color3"><a href="javascript:void(0);" onclick="sites_update(checked_values('id[]', $('#form')))"><i class="icon icon-ico45"></i>设置</a></li>
+						<li class="btn-color5"><a href="{$this_system.admin_controller}/farm-acls" target="_blank"><i class="icon icon-ico23"></i>站点授权</a></li>
+						<li class="btn-color6"><a href="javascript:void(0);" onclick="sites_html_index(checked_values('id[]', $('#form')))"><i class="icon icon-ico11"></i>静态首页</a></li>
+						<li class="btn-color7"><a href="javascript:void(0);" onclick="label_view(checked_values('id[]', $('#form')))"><i class="icon icon-ico52"></i>可视化</a></li>
+						<li class="btn-color8"><a href="javascript:void(0);" onclick="cache_base_sites()"><i class="icon icon-ico43"></i>缓存</a></li>
+						<li class="btn-color9"><a href="{$this_router}-add" target="_blank"><i class="icon icon-ico44"></i>增加新站点</a></li>
+						<li class="btn-color10"><a href="{$this_system.admin_controller}/farm-list"><i class="icon icon-ico11"></i>站点列表</a></li>
+						<li class="course pull-right">
+							<ul class="operation-nav">
+								<li>
+									<a href="{$RESOURCE}/attachment/jiaocheng/zhandiancaozuo.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 站点操作教程>></a>
+									<ul class="dropdown-menu">
+										<li class="btn-color1"><a href="{$RESOURCE}/attachment/jiaocheng/zhandianhuancun.pdf" target="_blank" ><i class="icon icon-ico55"></i>站点缓存和静态操作</a></li>
+										<li class="btn-color2"><a href="{$RESOURCE}/attachment/jiaocheng/zhandiankaiqiguanbi.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>开启或关闭站点</a></li>
+										<li class="btn-color3"><a href="{$RESOURCE}/attachment/jiaocheng/xinzenzhandian.pdf" target="_blank" ><i class="icon icon-ico55"></i>快速创建站点</a></li>
+										<li class="btn-color4"><a href="{$RESOURCE}/attachment/jiaocheng/zhandianshezhi.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>修改站点设置</a></li>
+										<li class="btn-color5"><a href="{$RESOURCE}/attachment/jiaocheng/zhandianlanmushezhi.pdf" target="_blank" ><i class="icon icon-ico55"></i>站点栏目设置</a></li>
+										<li class="btn-color6"><a href="{$RESOURCE}/attachment/jiaocheng/zizhancaidan.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>站点菜单设置</a></li>
+										<li class="btn-color7"><a href="{$RESOURCE}/attachment/jiaocheng/zhandianbiaoqianshezhi.pdf" target="_blank" ><i class="icon icon-ico55"></i>站点标签设置</a></li>
+										<li class="btn-color8"><a href="{$RESOURCE}/attachment/jiaocheng/zhandianyumingbangding.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>站点域名绑定和静态</a></li>
+									</ul>
+								</li>
+							</ul>
+						</li>
+					</ul>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td width="3%" align="center" class="list_top title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+				<td width="12%" class="list_top list_left">【站点】名称</td>
+				<td width="10%" class="list_top">【站点】别名</td>
+				<td width="20%" class="list_top">【站点】域名</td>
+				<td width="16%" class="list_top">模板名称</td>
+				<td width="4%" class="list_top">排序</td>
+				<td width="4%" class="list_top">状态</td>
+				<td width="*" class="list_top list_right">操作</td>
+			</tr>
+			<!--{foreach $list $value}-->
+			<tr id="sites_{$value['alias']}" <!--{if $value['alias'] == $site}-->class="hover_tr"<!--{/if}-->>
+				<td class="list_title" align="center"><input type="checkbox" name="id[]" value="{$value['alias']}" /></td>
+				<td class="list_left list_ico"><a href="{$core->url}/s.php/{$value['alias']}" target="_blank">{$value['sitename']}</a> {if $value['authentication_mark']} <i class="fa fa-flag-checkered" style="color:green;font-size:20px;"></i>{/if}</td>
+				<td class="list_title"><a href="{if empty($value['ipordomain'])}{$core->CONFIG['url']}/s.php/{$value['alias']}/{else}{$value['domain']}{/if}" target="_blank"><strong>{$value['alias']}</strong></a></td>
+				<td class="list_title" align="left"><a style="float:left;" href="{if empty($value['ipordomain'])}{$core->CONFIG['url']}/s.php/{$value['alias']}/{else}{$value['domain']}{/if}" target="_blank">
+				<!--{if empty($value['ipordomain'])}-->
+				{$core->CONFIG['url']}/s.php/{$value['alias']}/
+				<!--{else}-->
+				{$value['domain']}
+				<!--{/if}-->
+				</a>
+				</td>
+				<td>{$templates[$value['template']]['name']}</td>
+				<td><input type="number" maxlength="3" min="0" max="999" step="1" class="txt" name="sort[{$value['id']}]" value="{$value['sort']}" size="3"  /></td>
+				<td id="sites_{$value['alias']}"><img src="$_SKIN/status_{$value['status']}.gif" /></td>
+				<td class="list_btn">
+					<ul class="operation-nav">
+						<li class="dropdown">
+							<a class="btn-color1">查看</a>
+							<ul class="dropdown-menu">
+								<li><a href="{$core->url}/s.php/{$value['alias']}" target="_blank" class="btn-color2"><i class="icon icon-ico55"></i><span id="site_s_{$value['alias']}">动态访问</span></a> </li>
+								<li><a href="{$core->CONFIG['url']}/sites/html/{$value['alias']}" target="_blank" class="btn-color1"><i class="icon icon-ico55"></i><span id="site_shtml_{$value['alias']}">静态访问</span></a></li>
+							</ul>
+						</li>
+						<li><!--{if $site_edit or in_array($value['alias'],$mysites)}--><a href="$this_router-update?alias={$value['alias']}" target="_blank" class="btn-color3"><span id="edit_{$value['alias']}">{$P8LANG['edit']}</span></a> <!--{/if}--></li>
+						<li><a href="$this_router-acl?alias={$value['alias']}" target="_blank" class="btn-color2"><span id="acl_{$value['alias']}">站点授权</span></a></li>
+						
+						<li><a href="javascript:;" onclick="html_index('{$value[alias]}');" class="btn-color10">静态首页</a></li>
+						<li><a href="javascript:;" onclick="show_edit_label('{$value[alias]}');" class="btn-color11"><span id="sites_{$value[alias]}">可视化</span></a></li>
+						
+						<li><!--{if $site_edit or in_array($value['alias'],$mysites)}--><a href="javascript:;" onclick="cache_all('{$value['alias']}')" class="btn-color12">缓存</a> <!--{/if}--></li>
+						
+						<li class="dropdown">
+							<a class="btn-color13" href="{$this_system.admin_controller}/item-add">发布内容</a>
+							<ul class="dropdown-menu">
+								<!--{php $count=1;}-->
+								<!--{foreach $this_system->models $model $value}-->
+								<!--{if $value['enabled']}-->
+								<li class="btn-color{$count}"><a href="{$this_system.admin_controller}/item-add?model={$model}"><i class="icon icon-ico55"></i>{$value[alias]}</a></li>
+								<!--{php $count++;}-->
+								<!--{/if}-->
+								<!--{/foreach}-->
+							</ul>
+						</li>
+						<li><!--{if $allow_sites_database && ($site_edit or in_array($value['alias'],$mysites))}--><a href="{$this_router}-dbm?site={$value['alias']}" class="btn-color45">数据库</a> <!--{/if}--></li>
+						<li><!--{if $allow_sites_delete && $site_recycle}--><a href="###" id="delete_$value[alias]" onclick="delete_sites(['{$value[alias]}'])" class="btn-color14">{$P8LANG['delete']}</a><!--{/if}--></li>
+					</ul>
+				</td>
+			</tr>
+			<!--{if $value['child']}-->
+			<!--{php $last_key = end(array_keys($value['child']));}-->
+			<!--{foreach $value['child'] $k=>$cvalue}-->
+			<tr id="sites_{$cvalue['alias']}" <!--{if $cvalue['alias'] == $site}-->class="hover_tr"<!--{/if}-->>
+				<td class="list_title" align="center"><input type="checkbox" name="id[]" value="{$cvalue['alias']}" /></td>
+				<td class="list_left list_ico">{if $last_key==$k}│&nbsp;└{else}│&nbsp;├{/if} <a href="{$core->url}/s.php/{$cvalue['alias']}" target="_blank">{$cvalue['sitename']}</a> {if $cvalue['authentication_mark']} <i class="fa fa-flag-checkered" style="color:green;font-size:20px;"></i>{/if}</td>
+				<td class="list_title"><a href="{if empty($cvalue['ipordomain'])}{$core->CONFIG['url']}/s.php/{$cvalue['alias']}/{else}{$cvalue['domain']}{/if}" target="_blank"><strong>{$cvalue['alias']}</strong></a></td>
+				<td class="list_title" align="left"><a style="float:left;" href="{if empty($cvalue['ipordomain'])}{$core->CONFIG['url']}/s.php/{$cvalue['alias']}/{else}{$cvalue['domain']}{/if}" target="_blank">
+				<!--{if empty($cvalue['ipordomain'])}-->
+				{$core->CONFIG['url']}/s.php/{$cvalue['alias']}/
+				<!--{else}-->
+				{$cvalue['domain']}
+				<!--{/if}-->
+				</a>
+				</td>
+				<td>{$templates[$cvalue['template']]['name']}</td>
+				<td><input type="number" maxlength="3" min="0" max="999" step="1" class="txt" name="sort[{$cvalue['id']}]" value="{$cvalue['sort']}" size="3"  /></td>
+				<td id="sites_{$cvalue['alias']}"><img src="$_SKIN/status_{$cvalue['status']}.gif" /></td>
+				<td class="list_btn">
+					<ul class="operation-nav">
+						<li class="dropdown">
+							<a class="btn-color1">查看</a>
+							<ul class="dropdown-menu">
+								<li><a href="{$core->url}/s.php/{$cvalue['alias']}" target="_blank" class="btn-color2"><i class="icon icon-ico55"></i><span id="site_s_{$cvalue['alias']}">动态访问</span></a> </li>
+								<li><a href="{$core->CONFIG['url']}/sites/html/{$cvalue['alias']}" target="_blank" class="btn-color1"><i class="icon icon-ico55"></i><span id="site_shtml_{$cvalue['alias']}">静态访问</span></a></li>
+							</ul>
+						</li>
+						<li><!--{if $site_edit or in_array($cvalue['alias'],$mysites)}--><a href="$this_router-update?alias={$cvalue['alias']}" target="_blank" class="btn-color3"><span id="edit_{$cvalue['alias']}">{$P8LANG['edit']}</span></a> <!--{/if}--></li>
+						<li><a href="$this_router-acl?alias={$cvalue['alias']}" target="_blank" class="btn-color2"><span id="acl_{$cvalue['alias']}">站点授权</span></a></li>
+						
+						<li><a href="javascript:;" onclick="html_index('{$cvalue[alias]}');" class="btn-color10">静态首页</a></li>
+						<li><a href="javascript:;" onclick="show_edit_label('{$cvalue[alias]}');" class="btn-color11"><span id="sites_{$cvalue[alias]}">可视化</span></a></li>
+						
+						<li><!--{if $site_edit or in_array($cvalue['alias'],$mysites)}--><a href="javascript:;" onclick="cache_all('{$cvalue['alias']}')" class="btn-color12">缓存</a> <!--{/if}--></li>
+						
+						<li class="dropdown">
+							<a class="btn-color13" href="{$this_system.admin_controller}/item-add">发布内容</a>
+							<ul class="dropdown-menu">
+								<!--{php $count=1;}-->
+								<!--{foreach $this_system->models $model $cvalue}-->
+								<!--{if $cvalue['enabled']}-->
+								<li class="btn-color{$count}"><a href="{$this_system.admin_controller}/item-add?model={$model}"><i class="icon icon-ico55"></i>{$cvalue[alias]}</a></li>
+								<!--{php $count++;}-->
+								<!--{/if}-->
+								<!--{/foreach}-->
+							</ul>
+						</li>
+						<li><!--{if $allow_sites_database && ($site_edit or in_array($cvalue['alias'],$mysites))}--><a href="{$this_router}-dbm?site={$cvalue['alias']}" class="btn-color45">数据库</a> <!--{/if}--></li>
+						<li><!--{if $allow_sites_delete && $site_recycle}--><a href="###" id="delete_$cvalue[alias]" onclick="delete_sites(['{$cvalue[alias]}'])" class="btn-color14">{$P8LANG['delete']}</a><!--{/if}--></li>
+					</ul>
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			<!--{/if}-->
+			<!--{/foreach}-->
+		</table>
+		<br/>
+		<a name="op"></a>
+		<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+		<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a>
+		<!--{if $site_create}--><input type="button" class="button" value=" 添加分站 " name=" {$P8LANG['add']} " onclick="window.location.href='{$this_router}-add'" class="edit_btn"  /><!--{/if}-->
+		<input type="button" class="button" value=" 更新排序 " onclick="this.form.action='$this_url';this.form.submit();"/>
+		<input type="button" class="button" value=" 开启站点 " onclick="open_site(1);"/>
+		<input type="button" class="button" value=" 关闭站点 " onclick="open_site(0)"/>
+		<input type="button" class="button" value=" 静态首页 " onclick="sites_html_index(checked_values('id[]', $('#form')))"/>
+		<!--{if $allow_menu_html}-->
+		<a href="{$this_system.admin_controller}/farm-menu_html" target="main" class="button">菜单静态化</a>
+		<!--{/if}-->
+		<!--<a href="{$this_system.admin_controller}/farm-menu_dynamic" target="main" class="button">菜单动态化</a>-->
+		<!--{if $allow_sites_deletes}-->
+		<input type="button" value="删除站点" onclick="delete_sites()" class="button" />
+		<!--{/if}-->
+		<input type="button" class="button" value=" 更新站群缓存 " name="cache" onclick="cache_base_sites()" class="edit_btn"  />
+	</form>	
+</div>
+<form id="indexhtml" action="" target="_blank"></form>
+<form action="" method="post" id="reflash" target="__reflash_statistic__">
+	<input type="hidden" name="type" value="rebuild" id="reflash_type" />
+	<input type="hidden" name="system" value="sites" />	
+	<input type="hidden" name="site" value="{$this_system->SITE}" />	
+</form>
+<iframe style="display: none;" name="__reflash_statistic__"></iframe>
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend style="font-size:14px;">列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+
+<fieldset class="field" id="shower2">
+	<legend style="font-size:14px;">内容页</legend>
+	<iframe name="shower2" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+
+<form id="list_to_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<form id="view_to_html" action="{$this_system.admin_controller}/item-view_to_html" method="post" target="shower2"></form>
+<form id="list_only_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+
+<script type="text/javascript">
+var url = window.location.href;
+index = url.indexOf("flag");
+if(index !=-1) html_index();
+function show_edit_label(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+function site_reflash(site){
+	//更新标签缓存  更新魔板缓存   静态首页   静态最近10天的内容
+	var cache_data = ['template','label'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'更新中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			//静态首页
+			html_index();
+			//静态最近10天的内容
+			view_to_html(10);
+			html_dialog.hide();
+			p8_window.alert('操作成功');
+		}
+	});	
+}
+function cache_site(site){
+	var cache_data = ['farm','template','label','manu','model','category','menu_custom'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});
+}
+function label_view(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[sites_site_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		show_edit_label(ids[i]);
+	}
+}
+function sites_acl(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[sites_site_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		$('#acl_'+ids[i]).click();
+	}
+}
+function sites_domain(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[sites_site_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		$('#site_s_'+ids[i]).click();
+	}
+}
+function sites_shtml_domain(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[sites_site_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		$('#site_shtml_'+ids[i]).click();
+	}
+}
+function sites_update(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[sites_site_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		$('#edit_'+ids[i]).click();
+	}
+}
+
+function list_to_html(site){
+	$('#list_to_html').empty();
+	$('#view_to_html').empty();	
+	var pages = 0;
+	var items = -1;
+	
+	$('#list_to_html').append($('<input type="hidden" name="pages" value="'+ pages +'" />'));
+	$('#list_to_html').submit();	
+	html_dialog.show();	
+	$('#view_to_html').append($('<input type="hidden" name="items" value="'+ items +'" />'));
+	$('#view_to_html').submit();
+	if(!site) return false;
+	$.ajax({
+			url:'{$this_system.admin_controller}-index_to_html',
+			type: 'post',
+			dataType: 'json',
+			data: ajax_parameters({site:site}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({'text':'处理中…'});
+			},
+			success: function(msg){
+				ajaxing({action: 'hide'});
+				if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态首页');
+				}else{
+					//p8_window.alert('静态成功！');
+				}
+		   }
+	});
+}
+function view_to_html(time){
+	$('#view_to_html').empty();
+	if(time){
+		var _obj = new Date(<!--{php echo P8_TIME;}-->000);
+		var _Y = _obj.getFullYear();
+		var _m = _obj.getMonth() +1;
+		var _d = _obj.getDate();
+		var _H = _obj.getHours();
+		var _j = _obj.getDay();
+		var time1 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d -30, _Y));
+		var time2 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time1 +'" />'));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time2 +'" />'));
+	}
+	$('#view_to_html').submit();
+	html_dialog.show();
+}
+function sites_html_index(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[sites_site_select]}');
+			return;
+		}
+	}
+	$("#form").attr("action", "{$this_system.admin_controller}-index_to_html");
+	$('#form').submit();
+}
+
+function html_index(thisSite){
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_system.admin_controller}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   success: function(msg){
+			   if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				}else if(msg==-2){
+					p8_window.alert('静态首页锁定中，请10秒后操作！');
+				}else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	})	
+}
+function show_edit_label(thisSite){
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+function delete_site(obj){
+	p8_window.confirm('$P8LANG[confirm_to_delete]', function (r) {
+		if(r){
+			var id = [];
+			$.each(obj, function(k, v){
+				id.push(v.replace(/[^0-9]/g, ''));
+			});
+			
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				cache: false,
+				dataType: 'json',
+				data: ajax_parameters({id: id}),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#delete_'+ json[i]).parent().parent().remove();
+					}
+				}
+			});
+			return false;
+		}else{
+			return;
+		}
+	});		
+}
+function open_site(is_open){
+	
+	var alias = checked_values('id[]', $('#form'));
+	if(!alias.length) return;
+	
+	$.ajax({
+		url: '$this_router-open',
+		type: 'POST',
+		cache: false,
+		dataType: 'json',
+		data: ajax_parameters({alias: alias,is_open:is_open}),
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			
+			for(var i in json){
+				$('#sites_'+ json[i]).html('<img src="$_SKIN/status_'+is_open+'.gif" alt="'+is_open+'" />');
+			}
+		}
+	});
+	return false;
+}
+
+var cache_dialog =  new P8_Dialog({
+	title_text:'选择缓存项目',
+	width: 246,
+	height: 280,
+	button: true,
+	ok:function(){
+		if(!$('#cache_form').find('input:checked').length)return;
+		ajaxing({});
+		$.ajax({
+			url: '{$this_router}-cacheall',
+			type: 'POST',
+			dataType: 'json',
+			data: $('#cache_form').serialize(),
+			success: function(){
+				ajaxing({action: 'hide'});
+				p8_window.alert('操作成功');
+			}
+		})
+	}
+});
+$('form input[name^=sort]').change(function(){
+	this.value = this.value.replace(/[^0-9]/g, '') || 0;
+	if(this.value > 999) this.value = 999;
+	if(this.value < 0) this.value = 0;
+	$('#form').append('<input type="hidden" name="_sort['+ this.name.replace(/[^0-9]/g, '') +']" value="'+ this.value +'" />');
+	$(this).css({border: '1px solid #ff0000'});
+});
+function cache_all(site){
+	cache_dialog.content.html('<form id="cache_form"><input type="hidden" name="site" value="'+site+'"/>\
+	<input type="checkbox" onchange="change_cache()" checked="checked" id="check_all_cache"/>全选<br/>\
+	<input type="checkbox" name="cache[]" checked="checked" value="farm"/>站点信息<br/>\
+	<input type="checkbox" name="cache[]" checked="checked" value="template"/>模板缓存<br/>\
+	<input type="checkbox" name="cache[]" checked="checked" value="label"/>标签缓存 <br/>\
+	<input type="checkbox" name="cache[]" checked="checked" value="manu"/>导航缓存 <br/>\
+	<input type="checkbox" name="cache[]" checked="checked" value="menu_custom"/>自定义菜单缓存 <br/>\
+	<input type="checkbox" name="cache[]" checked="checked" value="model"/>模型缓存 <br/>\
+	<input type="checkbox" name="cache[]" checked="checked" value="category"/>栏目缓存\
+	</form>');
+	cache_dialog.show();
+	
+}
+function do_cache(type){
+	$.ajax({
+		url:'{$this_system.admin_controller}/farm-cacheall',
+		type: 'post',
+		dataType: 'json',
+		data:ajax_parameters({cache: [type]}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({text:'缓存中…'});
+		},
+		success: function(msg){
+			ajaxing({text:'操作成功！',action: 'hide'});
+		}
+	});	
+}
+function cache_all_site(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){			
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({text:'操作成功！',action: 'hide'});
+				}
+			});			
+		}else{
+			return false;
+		}
+	});
+}
+
+
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 400,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+function change_cache(){
+	if($('#check_all_cache').prop('checked')){
+		$('#cache_form').find('input[type=checkbox]').prop('checked','checked');
+	}else{
+		$('#cache_form').find('input[type=checkbox]').prop('checked',false);
+	}
+}
+function delete_sites(site){
+	var sites = [];	
+	sites = site ? site : checked_values('id[]', $('#form'));
+	if(!sites.length) return;
+	p8_window.confirm('删除到站点回收站，可在“恢复误删除分站”中恢复！\r\n确定要删除？', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-recycle',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({sites: sites}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#sites_'+ json[i]).remove();
+					}			
+				}
+			});	
+		}else{
+			return false;
+		}
+	});
+}
+function cache_base_sites(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({text:'操作成功！',action: 'hide'});
+				}
+			});
+		}else{
+			return false;
+		}
+	});	
+}
+</script>
+</body>
+</html>
+<!--{/php168}-->

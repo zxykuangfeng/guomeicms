@@ -1,0 +1,16 @@
+<!--{php168}-->
+<ul class="label_theme_pic_com_ul5">
+	<!--{foreach $list $value}-->
+	<li class="col-md-6 col-sm-6 col-xs-6">
+		<div class="item">
+			<div class="pic"><a href="$value[url]" target="_blank" title="$value[full_title]"><img width="300" height="190" class="coverImg" alt="$value[full_title]" onError="this.src='$RESOURCE/images/nopic.jpg'" src="{if empty($value['frame'])}{$RESOURCE}/images/nopic.jpg{else}$value[frame]{/if}" /></a></div>
+			<div class="text">
+				<h3><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></h3>
+				<p class="summary">$value[summary]...</p>
+				<p class="date"><!--{php echo date('Y-m-d', $value['timestamp']);}--></p>
+			</div>
+		</div>
+	</li>
+	<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

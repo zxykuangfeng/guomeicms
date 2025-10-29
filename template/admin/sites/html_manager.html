@@ -1,0 +1,203 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$this_system.admin_controller}-recovery"><i class="fa fa-cog"></i>系统巡检</a></li>
+						<li><a href="{$this_system.admin_controller}-html_manager"><i class="fa fa-cog"></i>栏目静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}/farm-list_manager"><i class="fa fa-cog"></i>菜单静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-visualization"><i class="fa fa-cog"></i>页面可视化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-publishing"><i class="fa fa-cog"></i>站点发布管理</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="formtable zq_list hover_table" align="center">	
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">操作流程</td>
+			</tr>
+			<tr>
+				<td class="tdL">应用场景说明</td>
+				<td class="tdR">
+					1、网站栏目和内容需要静态化形式访问（就是生成html页面，脱离数据库也可以访问）。<br>
+					2、部署动静态分离模式，栏目和内容必须静态化。<br>
+					3、静态化操作形式访问速度快，所以我们基本上所有网站都是需要静态化操作。<br>
+					4、如果菜单导航重新设置静态化链接了，此处需要重新操作一遍。<br>
+				</td>
+			</tr>					
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">完整操作流程（初次设置操作或需完整的操作）</td>
+			</tr>
+			<tbody>
+			
+			<tr>
+				<td class="tdL">步骤1：设置栏目和内容允许静态化 </td>
+				<td class="tdR">
+					<input type="submit" value="一键开启本站栏目和内容静态" class="cache_btn2" onclick="do_cache('html_init')" size="30"/>可以进入栏目管理查看状态										
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤2：更新本站点缓存</td>
+				<td class="tdR">
+					<input type="submit" value="一键更新本站的缓存" class="cache_btn2" onclick="do_cache('label')" size="30"/> 避免误差，需要更新网站缓存
+
+				</td>
+			</tr>			
+			</tbody>
+			
+			
+			<form action="{$this_system.admin_controller}/category-list" method="post">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤3：一键静态本站点栏目</td>
+				<td class="tdR">		
+					<input type="hidden" name="action" value="cache_all" />
+					<input type="submit" class="cache_btn2" value="一键静态本站点栏目" />重新静态本站点所有栏目
+				</td>
+			</tr>
+			</tbody>
+			</form>
+			
+			
+			
+			<form action="{$core.admin_controller}/cms/item-list_to_html" method="post" target="_blank">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤4：一键静态本站点内容</td>
+				<td class="tdR"><input type="submit" class="cache_btn2" value="一键静态本站点内容 " />重新静态本站点所有内容</td>
+			</tr>
+			</tbody>
+			</form>			
+			
+
+			<form action="{$core.admin_controller}/cms/item-view_to_html" method="post" target="_blank">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤5：一键静态本站点首页</td>
+				<td class="tdR"><input class="cache_btn2" type="submit" value="一键静态本站点首页" />重新静态本站点首页</td>
+			</tr>
+			</tbody>
+			</form>
+			
+			<form action="{$core.admin_controller}/cms-index_to_html" method="post" target="_blank">
+			<tbody>
+			<tr>
+				<td class="tdL">步骤6：清理浏览器缓存查看效果</td>
+				<td class="tdR">
+					<input type="submit" class="cache_btn2" value="查看效果教程" onclick="this.form.type.value = 'index_to_html'" />浏览器有缓存，有时候看不到效果
+				</td>
+			</tr>
+			</tbody>
+			</form>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">快捷操作</td>
+			</tr>
+			<tbody>
+			
+			<tr>
+				<td class="tdL">操作步骤： </td>
+				<td class="tdR">
+					<input type="submit" value="一键操作本站点所有静态" class="cache_btn2" onclick="do_cache('html_init')" size="30"/>					
+					<input type="submit" value="一键操作本站点所有静态 " class="cache_btn2" onclick="do_cache('html_init')" size="30"/>		
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+	function do_cache(cache_type){		
+		$('#cache_type').val(cache_type);
+		ajaxing({'text':'处理中…'});
+		$('#cache').submit();	
+	}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var values = cs.get_value();
+		$('#option_category').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$this_system.controller}/category-json',
+	values: $('#option_category').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,180 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/echarts.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="$this_router-statistic_credit"><i class="icon icon-ico20"></i>绩效评分统计</a></li>
+						<li class="btn-color2"><a href="$this_router-add"><i class="icon icon-ico20"></i>添加绩效类型</a></li>
+						<li class="btn-color3"><a href="$this_router-list"><i class="icon icon-ico20"></i>绩效列表</a></li>
+						<li class="btn-color5"><a href="$this_router-add_rule?{if !empty($system)}&system=$system{/if}{if !empty($module)}&module=$module{/if}{if !empty($postfix)}&postfix=$postfix{/if}"><i class="icon icon-ico45"></i>添加绩效规则</a></li>
+						<li class="btn-color6"><a href="$this_router-list_rule"><i class="icon icon-ico20"></i>绩效规则列表</a></li>
+						<li class="btn-color7"><a href="$this_router-credit_log"><i class="icon icon-ico20"></i>绩效规则记录</a></li>
+						<li class="btn-color8"><a href="$this_router-cache"><i class="icon icon-ico43"></i>{$P8LANG['update_cache']}</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">按系统或模块查看</td>
+			</tr>
+			<tr>
+			<td class="headerbtn_list">
+				<form id="form1" method="post" style="float:left;">
+					系统：<select id="system" class="txt" name="system">
+						<option value="" selected>不限</option>
+						<!--{foreach $systems $name $v}-->
+						<option value="{$name}">{$v['alias']}</option>
+						<!--{/foreach}-->
+						</select>
+					绩效：
+					<select id="credit_id" class="txt" name="credit_id">
+						<!--{foreach $credit_type $type $credit_name}-->
+						<option value="{$type}" {if $type==$init_credit_type}selected{/if}>{$credit_name}</option>
+						<!--{/foreach}-->
+						</select>
+					时间段：<input type="text" class="txt" id="start_date" name="start_date" value="{if isset($start_date)}$start_date{/if}" autocomplete="off" onclick="rcalendar(this,'full')" /> - 
+					<input type="text" class="txt" id="end_date" name="end_date" value="{if isset($end_date)}$end_date{/if}" autocomplete="off" onclick="rcalendar(this,'full')" />
+					显示数量：<select class="txt" id="num" name="num">
+								<!--{foreach $nums $v}-->
+								<option value="{$v}" {if $num==$v}selected{/if}>{$v}</option>
+								<!--{/foreach}-->
+							</select>			
+					<input type="hidden" name="act" id="act" value="query"/>
+					<input type="button" value="导出Excel" class="submit_btn" onclick="download()"/>			
+				</form>
+				<span style="float:left;margin-left:10px;">
+					<a href="javascript:;" class="stabtn" onclick="get_data()" style="color:#fff;">重新统计</a>		
+				</span>
+			</td>
+			</tr>	
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table  class="columntable formtable hover_table click_changeable" align="center" style="text-align:center">
+			<tr>
+				<td width="100" class="title">排名</td>
+				<td width="100" class="title">用户名</td>
+				<td width="100" class="title">姓名</td>
+				<td width="100" class="title">绩效类型</td>		
+				<td width="100" class="title">数量</td>
+			</tr>
+			<tbody id="data_list"></tbody>
+		</table>
+		<div style="margin-top:0;background:#fff;padding:30px;">
+			<div id="myChart_scatter" style="height:400px;margin-bottom:10px;"></div>
+		</div>						
+	</div>
+</div>
+<script type="text/javascript">
+var credit_id = $credit_json;
+var iid = credit_id[0];
+function get_data(){
+	$('#act').val('query');
+	var system=$('#system').val();
+	var credit_type=$('#credit_type').val();
+	ajaxing({});
+	$.ajax({
+		url:'{$this_url}',
+		data: $('#form1').serialize(),
+		dataType: 'json',
+		type: 'POST',
+		success: function(msg){
+			if(msg!=''){
+				var shtml = '';
+				var hs = [];
+                var h=0;
+				var list=1;
+				var show_title = [];
+				var show_num = [];
+				for(var i in msg){
+					show_title[i] = msg[i].username+(msg[i].name? ' ('+msg[i].name+')':'');
+					show_num[i] = msg[i].sum;
+					h++;
+					if(i==0){
+						list = h;
+					}else{
+						if(msg[i-1].sum != msg[i].sum) list = h;
+					}
+					shtml +=  '<tr><td>'+list+'</td><td>'+msg[i].username+'</td><td>'+ msg[i].name+'</td><td>'+credit_id[msg[i].credit_id]+'</td><td>'+msg[i].sum+'</td></tr>';				
+				}				
+				$('#data_list').html(shtml);
+				//echarts
+				var myChart = echarts.init(document.getElementById('myChart_scatter'));
+				myChart.showLoading();
+				option = {
+					color: ['#3398DB'],
+					title: {
+						show: true,
+						text: '绩效统计',
+						left: 'center',
+					},
+					toolbox: {
+						feature: {
+							saveAsImage: {show: true}
+						}
+					},
+					tooltip: {
+						trigger: 'axis',					
+					},
+					legend: {				
+						right: '10%',			
+					},
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true
+					},
+					calculable: true,
+					xAxis: {
+						type: 'category',
+						data: show_title,
+					},
+					yAxis: {
+						name: '绩效评分',
+						axisLine: {
+							lineStyle: {
+								color: '#666'
+							}
+						},
+						splitLine: {
+							lineStyle: {
+								color: '#ddd'
+							}
+						}
+					},
+					series: [{
+						data: show_num,
+						type: 'bar',								
+						barWidth:'30%',					
+						label: {position:'top',show:'true'},
+					}]
+					
+				};
+				// 使用刚指定的配置项和数据显示图表。
+				myChart.setOption(option);
+				myChart.hideLoading();				
+			}else{
+				$('#data_list').html('<tr><td colspan="3" align="center">没有相关数据</td></tr>');
+			}
+			ajaxing({action: 'hide'});
+		}
+	});
+}
+function download(style){
+	$('#act').val('download');
+	$('#form1').submit();
+
+}
+get_data();
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

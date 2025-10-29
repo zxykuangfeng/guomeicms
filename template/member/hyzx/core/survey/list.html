@@ -1,0 +1,84 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="list_box">
+			<div class="head" id="boxhead">						
+				<span id="add" class="{if $ACTION == 'add'}over{/if}"><a href="$this_router-add">增加项目</a></span>
+				<span id="item" class="{if in_array($ACTION,array('item','titles','update','edit_title'))}over{/if}"><a href="$this_router-item">项目管理</a></span>
+				<span id="list" class="{if in_array($ACTION,array('list','view'))}over{/if}"><a href="$this_router-list">内容管理</a></span>
+			</div>
+		</div>
+		<form action="" method="post" id="form">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+			<tr class="head">
+				<td width="2%" align="center" class="title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>				
+				<td width="3%">编号</td>
+				<td width="20%">项目</td>
+				<td width="12%">答卷时间</td>
+				<td width="12%">答卷人/IP</td>
+				<td width="8%">操作</td>
+			</tr>
+			<!--{foreach $list $k $v}-->
+			<tr id="ad_$v[id]">
+				<td align="center"><input type="checkbox" name="id[]" value="$v[id]" /></td>
+				<td>$v[id]</td>
+				<td align="left">$v[item_title]</td>
+				<td>
+					<!--{php echo date("Y-m-d H:i:s",$v['timestamp']);}-->
+				</td>
+				<td>$v[name] / $v[ip]</td>
+				<td><a href="{$this_router}-view?id={$v['id']}" >查看</a> / <a href="javascript:void(0)" onclick="_delete(['$v[id]'])">删除</a></td>
+			</tr>
+			<!--{/foreach}-->
+			<tr>
+				<td colspan="6" class="pages">{$pages}</td>
+			</tr>
+		</table>
+		</form>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">			
+		<tr>
+			<td>
+				<a name="op"></a>
+				<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+				<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a>
+				<input type="button" class="edit_btn" value="{$P8LANG['delete']}" onclick="_delete(checked_values('id[]', $('#form')))">
+				<input type="button" class="edit_btn" value="导出EXCEL" onclick="$('#download').submit()">
+			</td>
+		</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function _delete(ids){
+	if(ids.length<1) {
+		p8_window.alert('{$P8LANG[item_need_selected]}');
+		return;
+	}	
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'post',
+				dataType: 'json',
+				data: {id: ids},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#ad_'+ json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});	
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

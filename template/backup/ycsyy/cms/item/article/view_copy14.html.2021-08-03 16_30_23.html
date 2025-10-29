@@ -1,0 +1,64 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] !== undefined ? (\$_GET['verified'] == 1 ? 1 : 0) : 1;
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_gg]
+		</div>
+		<div class="container">
+			<div class="banner_title">
+				<h2>$CAT[name]</h2>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="maincon clearfix">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				<div class="location clearfix">
+					<div class="position5 pull-left">
+						<a href="{$core.controller}">首页</a>
+						<!--{foreach $parent_cats $v}-->
+						/ <a href="$v[url]">$v[name]</a>
+						<!--{/foreach}-->
+						/ <a href="$CAT[url]">$CAT[name]</a>/ 正文
+					</div>
+				</div>
+				<div class="article">
+					<div class="artitle">
+						$data[title]
+					</div>
+					<div class="artinfo">
+						<ul>
+
+
+							<li><span id="operation" style="display: none; cursor: pointer;color:#0040ff;margin-left:15px;">{$P8LANG['operation']}>></span></li>
+						</ul>
+					</div>
+					<div class="artcon">
+						$data[content]
+					</div>	
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="{$STATIC_URL}/search/count.php?id=$data[id]"></script>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+

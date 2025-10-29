@@ -1,0 +1,201 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-template_system"><i class="fa fa-laptop"></i>主站模板</a></li>
+						<li><a href="{$core.admin_controller}/core-template_sites"><i class="fa fa-laptop"></i>子站模板</a></li>
+						<li><a href="{$core.admin_controller}/core-template_mobile"><i class="fa fa-fax"></i>移动版模板</a></li>
+						<li><a href="{$core.admin_controller}/core-template_user_center"><i class="fa fa-user-circle-o"></i>会员中心模板</a></li>
+						<li class="li5"><a href="javascript:;" onclick="do_cache('template')"><i class="fa fa-refresh"></i>{$P8LANG['update_template_cache']}</a></li>
+					</ul>
+				</td>
+			</tr>
+		  </table>
+	</div>
+</div>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="$this_url" method="post" id="request">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a onclick="dialog.show();"><i class="icon icon-ico1"></i>编辑模板html</a></li>
+							<li class="btn-color2"><a onclick="css_dialog.show();"><i class="icon icon-ico38"></i>编辑模板CSS</a></li>
+							<li class="btn-color3"><a id="deny_edit" onclick="deny_edit_temp()" ><i class="icon icon-ico17"></i>禁止编辑模板</a></li>
+                            <li class="btn-color4"><a id="system_template_import" onclick="system_template_import()" ><i class="icon icon-ico49"></i>导入模板</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable template_box">
+				<tr class="title fix_head">
+					<td class="title">模板选择</td>
+				</tr>
+				<tr>
+					<td class="list_template">
+						<!--{foreach $core->CONFIG['templates'] $name $alias}-->
+						<!--{if is_dir(TEMPLATE_PATH . $name .'/'. $system)}-->
+						<div class="each_template {if !empty($config['template']) && $config['template'] == $name} active{/if}" >
+							<img src="{$RESOURCE}/{$core.CONFIG['template_dir']}$name/$system/preview.jpg" title="双击查看效果图" border="0" width="150" height="180" ondblclick="window.open(this.src);" onerror="this.src='{$RESOURCE}/images/nopic.jpg'" />
+							<h4 class="tit1">$alias</h4>
+							<input type="radio" name="template" id="template_$name" value="$name"{if !empty($config['template']) && $config['template'] == $name} checked{/if} /><input type="hidden" name="system" value="{if empty($system)}core{else}$system{/if}" /><label for="template_$name"> 设置为当前模板</label>
+                            <br/><a type="button" onclick="downloaddb('{$name}')" href="#" class="btn btn-info">导出模板</a>
+                        </div>
+						<!--{/if}-->
+						<!--{/foreach}-->
+						
+					</td>
+				</tr>
+				<tr><td align="center">
+					<p><input type="submit" value="提交" class="submit_btn"/></p>
+				</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					
+	你可以优先选择系统方案模板，如企业方案或政府方案，则此方案下属所有系统、模块风格都采用此方案模板。<br>
+
+	如果你觉得所选择的方案模板里面的某个系统模板不好看，那么你可以单独为那个系统模块更换模板
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<form action="{$this_router}-template_download" id="dw" target="iftarget" method="post" style="display:none">
+    <input name="act" value="download"/>
+    <input name="module" value="core"/>
+    <input name="name" value=""/>
+    <input name="code" value=""/>
+</form>
+<iframe name="iftarget" frameborder="0" scrolling="no" width="0" height="0"></iframe>
+<form action="{$this_router}-template_import" id="iw" target="iftarget" method="post" style="display:none">
+    <input name="act" value="import"/>
+    <input name="module" value="core"/>
+    <input name="code" value=""/>
+    <input name="importtpl" id="importtpl" value=""/>
+</form>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript">
+var dialog = new P8_Dialog({
+	title_text:'编辑模板HTML',
+	width: 1000,
+	height: 500,
+	show: function(){
+		template_selector.init();
+	}
+});
+var this_select_tmp = $('#request input[name=template][checked]').val();
+var template_selector = new Template_Selector({
+	base_dir: '/',
+	template_dir: '{$core.CONFIG['template_dir']}',
+	dialog: dialog
+});
+function select_template(template_name){
+	$('.each_template').removeClass('active');
+	$('#'+template_name).prop('checked','checked');
+	$('#'+template_name).parent().addClass('active');
+}
+function deny_edit_temp(){
+	//if(confirm('确定禁止编辑模板？')){
+	p8_window.confirm('确定禁止编辑模板？', function (r) {
+		if(r){
+			$.get('{$this_router}-deny_edit',function(){
+				p8_window.alert('操作成功');
+				$('#deny_edit').hide();
+			});
+		}
+	});
+}
+//css
+var css_dialog = new P8_Dialog({
+	title_text:'编辑模板CSS',
+	width: 1000,
+	height: 500,
+	show: function(){
+		template_css_selector.init();
+	}
+});
+
+var template_css_selector = new Css_Selector({
+	base_dir: '/skin/',
+	template_dir: 'skin/',
+	dialog: css_dialog
+});
+
+
+function downloaddb(hash){
+    var code = prompt("请输入密码");
+	if(code){
+       $.post('{$this_router}-template_download',{code:code,name:hash,act:'checkcode'},function(ret){
+            if(ret.code=='0'){
+                alert(ret.msg)
+            }else{
+                $('#dw').find('input[name=name]').val(hash);
+                $('#dw').find('input[name=code]').val(code);
+                $('#dw').submit();
+            }
+       },'json')
+    }
+}
+var importdialog = new P8_Upload({
+    element: {
+        src: $('#importtpl'),
+        attribute: 'value'
+    },
+    callback:function(jst){
+        $('#iw').submit();
+    }
+});
+function system_template_import(){
+ var code = prompt("请输入密码");
+	if(code){
+       $.post('{$this_router}-template_import',{code:code,act:'checkcode'},function(ret){
+       console.log(ret)
+            if(ret.code=='0'){
+                alert(ret.msg)
+            }else{
+                $('#iw').find('input[name=code]').val(code);
+                importdialog.choseup();
+                
+            }
+       },'json')
+    }
+}
+function do_cache(cache_type){		
+	$.ajax({
+		url: '{$core.admin_controller}/core-cache',
+		type: 'POST',
+		dataType: 'text',
+		data: 'type='+cache_type,
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			p8_window.alert('{$P8LANG['done']}');
+		}
+	});
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,123 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox formtable">
+			<tr>
+				<td>
+					<ul class="boxmenu" style="margin:0;">
+						<li class="active"><a href="$this_url" class="bm_l">自动回复</a></li>
+						<li style="float:right;color:red;width:auto;background:none;padding-right:10px;font-weight:600;">
+						<a href="$this_url?action=edit" class="edit_btn" style="padding-top:2px;padding-bottom:2px;"> + 新增回复规则</a></li>
+					</ul>
+				</td>				
+			</tr>
+		</table>
+		<form id="form" action="$this_url" method="post" name="form">
+		<table width="100%" class="columntable formtable hover_table click_changeable">				
+			<tr class="title">
+			<td width="1%" align="center" class="title"><input type="checkbox" onclick="check_all(this, 'ids[]', $('#form'));" /></td>
+			<td width="5%" align="center" class="title">ID</td>
+			<td width="10%" align="center" class="title">关键词</td>
+			<td width="10%" align="center" class="title">回复类型</th>
+			<td width="10%" align="center" class="title">匹配模式</th>
+			<td width="25%" align="center" class="title">回复内容</th>
+			<td width="15%" align="center" class="title">操作</th>
+			</tr>
+			<!--{foreach $keywordRows $keywordRow}-->
+		  <tr id="keyword_{$keywordRow['id']}">
+			<td align="center"><input type="checkbox" name="ids[]" value="{$keywordRow['id']}" /></td>				
+			<td align="center">{$keywordRow['id']}</td>
+			 <td align="center">{$keywordRow['keyword']}</td>
+			<td align="center">{$keywordRow['type']}</td>
+			 <td align="center">{$keywordRow['pattern']}</td>
+			 <td align="center">{$keywordRow['content']}</td>
+			 <td align="center">
+				<a href="$this_url?action=edit&id={$keywordRow['id']}" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">编辑</a>
+				<a href="javascript:;" onclick="return delete_keyword(['$keywordRow[id]'])" class="edit_btn btn-success" style="padding-top:2px;padding-bottom:2px;">删除</a>
+			</td>
+			 </tr>
+			<!--{/foreach}-->
+		  </table>
+		  </form>
+		<table width="100%" class="columntable formtable">
+			<tr>
+				<td align="center" id="pages" class="pages">$pages</td>
+			</tr>
+			<tr>
+				<td align="left"><a href="javascript:" onclick="check_all(true, 'ids[]')">{$P8LANG['select_all']}</a> / <a href="javascript:" onclick="check_all(false, 'ids[]')">{$P8LANG['select_back']}</a> <input type="button" name="Submit" value="{$P8LANG['delete']}" class="submit_btn" onclick="_delete()"></td>
+			</tr>
+		</table>			  
+	</div>
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+function CheckAll(va){
+	var form=document.form_work;
+	for (var i=0;i<form.elements.length;i++){
+		var e = form.elements[i];
+		if(va=='all'){
+			e.checked = true;
+		}else{
+			e.checked == true ? e.checked = false : e.checked = true;
+		}
+	}
+}
+function get_ids(){
+	var array = checked_values('ids[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	return id;
+}
+function _delete(){
+	id=get_ids();
+	delete_keyword(id);
+}
+
+function delete_keyword(id){
+	//if(confirm('{$P8LANG['confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({id: id,action:'delete'}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#keyword_'+ json[i]).remove();
+					}
+				}
+			});
+		}
+	});
+	
+	return false;
+}
+
+
+var edit_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['reply']}',
+	width: 700,
+	height: 440
+});
+
+function _edit_keyword(id){
+	edit_dialog.show();
+	edit_dialog.content.load('{$this_url}?action=edit&id='+id);
+	return false;
+}
+</SCRIPT>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

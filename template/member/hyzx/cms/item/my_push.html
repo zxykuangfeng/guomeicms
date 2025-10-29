@@ -1,0 +1,171 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="list_box mtop10">
+			<div class="head">
+				<span $class[1]><a href="$this_router-verify?verified=1">已终审的文章</a></span>
+				<!--{if $show[0]}--><!--span $class[0]><a href="$this_router-verify?verified=0">需初审核</a></span--><!--{/if}-->
+				<!--{if $show[2]}--><!--span $class[2]><a href="$this_router-verify?verified=2">需多级审核</a></span--><!--{/if}-->
+				<span $class[3]><a href="$this_router-verify?verified=3">可直接审核的文章</a></span>
+				<span $class[66]><a href="$this_router-verify?verified=66">已审核的文章</a></span>
+				<span $class[99]><a href="$this_router-verify?verified=-99">未通过的文章</a></span>
+				<span $class[88]><a href="$this_router-my_push">推送数据状态</a></span>		
+				<a class="sendmsg_link_bg" href="$this_router-add">发布文章</a>&nbsp;&nbsp;
+				<!--{if $reflash_index}--><a class="sendmsg_link_bg" href="{$this_router}-reflash_index">更新首页</a><!--{/if}-->
+				<div class="search" style="width:600px;">
+					<form action="$this_url" method="get" id="request">
+						<label for="to_site_alias">目标站点:</label>
+						<select name="to_site_alias" id="to_site_alias">
+							<option value="">不限</option>
+							{foreach $allsites $site_tmp}
+							<option value="{$site_tmp['alias']}" {if $to_site_alias==$site_tmp['alias']}selected{/if}>{$site_tmp['sitename']}</option>
+							{/foreach}							
+						</select>						
+						<select onchange="$('#cond').attr('name', this.value);">
+							<option value="keyword">{$P8LANG['sites_item']['search_by_keyword']}</option>
+							<option value="username"{if !empty($username)} selected{/if}>按作者</option>							
+						</select>
+						<input type="text" class="txt" id="cond" size="8" {if !empty($keyword)} name="word" value="$keyword"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{elseif !empty($username)}name="username" value="$username"{else} name="word"{/if} />
+						<input type="hidden" name="cid" value="$cid" />
+						<input type="hidden" name="push_username" value="$push_username" />
+						<input type="submit" value="{$P8LANG['search']}" />
+					</form>
+				</div>
+			</div>
+		</div>
+		<form action="$this_url" method="post" id="form">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+			<tr class="title fix_head">
+				<td width="3%" class="list_top">
+					<input type="checkbox" onclick="check_all(this, 'id[]');init_tr($('#form'));" />
+				</td>
+				<td width="3%" class="list_top">ID</td>
+				<td width="5%" class="list_top">分类</td>
+				<td width="20%" class="list_top">标题</td>
+				<td width="10%" class="list_top">推送时间</td>
+				<td width="10%" class="list_top">推送人</td>
+				<td width="10%" class="list_top">发布人</td>
+				<td width="6%" class="list_top">推送方向</td>
+				<td width="6%" class="list_top">目标站点</td>
+				<td width="5%" class="list_top">状态</td>
+				<td width="10%" class="list_top">操作</td>
+			</tr>
+			
+			<tbody id="list">
+			<!--{foreach $list $data}-->
+			<tr id="list_{$data['id']}">
+			<td>
+			<input type="checkbox" name="id[]" value="{$data['id']}" id="id_{$data['id']}" />
+			</td>
+			<td>$data[id]</td>
+			<td><a href="{$this_url}?cid={$data['cid']}&push_username={$member_info[$data['push_username']]['username']}">$data[cname]>></a></td>
+			<td class="al">
+				<p><a href="$data[url]" title="{if $data['status']!=1 && $data['push_back_reason']}原因:{$data[push_back_reason]}{/if}" target="_blank">$data[title]</a>{if $data['status']!=1 && $data['push_back_reason']}<img src="{$SKIN}../fk.gif" class="tips" style="margin-left: 10px;margin-bottom: -4px;"/>{/if}</p>
+				<div class="layer layer-$data[id]">
+					<div class="layer-title" style="cursor: move;">原因</div>
+					<div id="layerDemoauto" class="layer-content">
+						<div style="padding:20px 20px;">{$data[push_back_reason]}</div>
+					</div>
+					<span class="layer-setwin"><a class="layer-close" href="javascript:;">X</a></span>
+				</div>
+			</td>
+			<td>{date('Y-m-d H:i',$data['timestamp'])}</td>
+			<td><a href="{$this_url}?cid={$cid}&push_username={$data['push_username']}">
+			{$data[push_username]}{if $member_info[$data['push_username16']]['name']} | {$member_info[$data['push_username16']]['name']}{/if}</a></td>			
+			<td>{$data[username]}{if $member_info[$data['username16']]['name']} | {$member_info[$data['username16']]['name']}{/if}</td>
+			<td>推送给分站</td>
+			<td>{if $data['to_sites']}<a href="{$this_url}?cid={$cid}&push_username={$member_info[$data['push_username']]['username']}">{$data['to_sites']}>></a>{/if}</td>
+			<td>
+				<!--{if $data['status']==-99}-->被退稿<!--{/if}-->			
+				<!--{if $data['status']==1}--><span style="color:#000;font-weight:bold;">已接收(终审)</span><!--{/if}-->
+				<!--{if $data['status']==2}--><span style="color:#000;font-weight:bold;">已接收(初审)</span><!--{/if}-->			
+				<!--{if $data['status']==88}--><span style="color:#000;font-weight:bold;">已接收(回收站)</span><!--{/if}-->
+				<!--{if $data['status']==0}--><span style="color:#c00;font-weight:bold;">未接收(待审)</span><!--{/if}-->				
+			</td>
+			<td class="list_btn2">
+			<a href="{if $data['link']}{$data['link']}{else}{$this_module.controller}-view-id-{$data['item_id']}{/if}"  class="seebtn" target="_blank">源网址</a> / 
+			{if $data['to_url']}<a href="{$data[to_url]}{if $data['status']!=1}?verified=0{/if}"  class="seebtn" target="_blank">推送预览</a> / {/if}
+			<a href="{$item_router}-update?model=$data[model]&id={$data['item_id']}&verified=1&site={$data['site']}" target="_blank">修改</a> / 
+			<a href="{$this_router}-delete&id={$data['id']}" id="delete_{$data['id']}" class="debtn" title="此删除只删推送状态，不会删除内容本身" onclick="return delete_item([this.id])">{$P8LANG['delete']}</a>
+			</td>
+			</tr>
+			<script type="text/javascript">
+				$("#list_{$data['id']} .tips").click(function(){
+					$(".layer-$data[id]").show();
+				});
+				//点击关闭按钮
+				$(".layer-setwin").click(function(){
+					$(".layer-$data[id]").hide();
+				})
+			</script>
+			<!--{/foreach}-->
+			<tr>
+				<td align="center" colspan="11" class="pages">{$pages}</td>
+			</tr>
+			</tbody>
+		</table>
+		</form>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+			<tr>
+				<td>
+					<a name="op"></a>
+					<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+					<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a>					
+					<input type="button" onclick="delete_item(checked_values('id[]', $('#form')))" value=" 删除 " title="此删除只删推送状态，不会删除内容本身" class="edit_btn" />									
+				</td>				
+			</tr>
+		</table>		
+	</div>
+</div>
+<script type="text/javascript">
+function delete_item(obj){
+	var id = [];
+	$.each(obj, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!id.length) return;
+	
+	//if(!confirm('$P8LANG[confirm_to_delete]')) return false;
+	p8_window.confirm('$P8LANG[confirm_to_delete]', function (r) {
+		if(r){
+			$.ajax({
+				url: '{$this_router}-delete_push',
+				type: 'POST',
+				cache: false,
+				dataType: 'json',
+				data: ajax_parameters({action: 'delete', id: id}),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#delete_'+ json[i]).parent().parent().remove();
+					}
+					p8_window.alert('{$P8LANG['done']}');
+				}
+			});
+		}else{
+			return false;
+		}
+	});
+	return false;
+}
+
+function request_item(page){
+	$.ajax({
+		url: '{$this_url}',
+		type: 'GET',
+		dataType: 'html',
+		data: '',
+		cache: false,
+		success: function(json){
+			window.open("{$this_url}?cid={$cid}&sc={$sc}&to_site_alias={$to_site_alias}&page="+page+"&word={$keyword}","_self");
+		}
+	});
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

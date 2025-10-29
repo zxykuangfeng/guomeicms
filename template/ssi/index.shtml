@@ -1,0 +1,35 @@
+<html>
+<header>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+<title>SSI示例</title>
+
+</header>
+<body>
+<table width="100%">
+    <tr>
+        <td width="60%">
+            <table width="100%">
+                <tr>
+                    <td width="50%"><!--#include virtual="slips/slip_slic.html"--></td>
+                    <td width="50%">
+                    <!--#config timefmt="%y-%m-%d" -->
+                    日期是：<!--#echo var ="date_local"-->
+                    时间是：<!--#include virtual="slips/script.php"-->
+                    <!--#include virtual="http://sharp.php168.net/html/jiaozhigong.html"-->
+                    </td>
+                <tr>
+                <tr>
+                    <td width="50%"><!--#include virtual="slips/slip_3.html"--></td>
+                    <td width="50%"><!--#include virtual="slips/slip_4.html"--></td>
+                <tr>
+            </table>
+        </td>
+        <td width="40%">
+        <!--#include virtual="slips/slip_1.html"-->
+        <!--#include virtual="slips/slip_2.html"-->
+        </td>
+    </tr>
+</table>
+</body>
+</html>
+

@@ -1,0 +1,38 @@
+<?php
+/**
+* 删除内容, 只能由ajax请求, 如果成功则返回被删除的ID
+**/
+defined('PHP168_PATH') or die();
+
+$this_controller->check_action($ACTION) or message('no_privilege');
+
+
+if(REQUEST_METHOD == 'POST'){
+	$id = isset($_POST['id']) ? filter_int($_POST['id']) : array();
+	$id or exit('[]');
+	
+	$where = '';
+	$verified = empty($_POST['verified']) ? false : true;
+	
+	$T = $verified ? $this_module->main_table : $this_module->unverified_table;
+	
+	if($this_system->is_main_verifier()){
+		//如果是主管理员,没限制
+	}else if($this_system->is_category_verifier()){
+		//如果是分类管理员,过滤其管辖范围的分类
+		
+		$where .= " AND $T.cid IN ($cids)";
+	}else{
+		//限制用户
+		$where .= " AND $T.uid = '$UID'";
+	}
+	
+	$this_module->delete(array(
+		'where' => $T .'.id IN ('. implode(',', $id) .')'. $where,
+		'verified' => $verified
+	)) or exit('[]');
+/**
+* your code
+**/
+	exit(jsonencode($id));
+}

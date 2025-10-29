@@ -1,0 +1,91 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+.campus-slider{$label['id']}{position: relative;height:100%;}
+.campus-slider{$label['id']} .row{margin:0;}
+.campus-slider{$label['id']} .pd0{padding:0;}
+.campus-slider{$label['id']} .slider-left-pic{$label['id']}{position:relative;}
+.campus-slider{$label['id']} .slider-right{position:absolute;right:0;top:0;margin-top:200px;}
+.campus-slider{$label['id']} .child a img {width: 100%;}
+.campus-slider{$label['id']} .child a{color:#37506c;}
+.campus-slider{$label['id']} .child a .mask{width:75%;margin-top:-42px;z-index:1;position:relative;box-sizing: border-box;}
+.campus-slider{$label['id']} .child a .mask .datetime{color:#fff;font-size:16px;padding:10px 50px;display: inline-block;background: #143270 url({$RESOURCE}/skin/label/theme/ico09.png) 15px center no-repeat;}
+.campus-slider{$label['id']} .child a .mask .text{background:#fff;padding:25px 30px;box-shadow: 0 3px 10px #efefef;}
+.campus-slider{$label['id']} .child a .mask .text h3{font-size:18px;margin:0;color:#3c3b3b;line-height:35px;}
+.campus-slider{$label['id']} .slider-left-pic{$label['id']} .number {position:absolute;z-index:100;bottom:-40px;width:126%;}
+.campus-slider{$label['id']} .slider-left-pic{$label['id']} .number li{width:18px;height:18px;font-size:0;margin:0 12px;background:#c8c8c8;border-radius:50%;cursor:pointer;}
+.campus-slider{$label['id']} .slider-left-pic{$label['id']} .number li.slick-active{background: #285bb7;}
+.campus-slider{$label['id']} .slider-right-pic{$label['id']} .child a .mask .text{padding:15px 30px;}
+.campus-slider{$label['id']} .slick-dots li button:hover:before,.campus-slider{$label['id']}  .slick-dots li button:before{content:"";}
+@media screen and (max-width: 999px){
+    .campus-slider{$label['id']} .slider-left-pic{$label['id']} .child a .text{width:100%;}
+    .campus-slider{$label['id']} .slider-left-pic{$label['id']} .number{width:100%;}
+}
+</style>
+<div class="campus-slider{$label['id']}">
+    <div class="row">
+        <div class="col-md-8 col-sm-7 col-xs-12 slider-left pd0">
+            <div class="slider-left-pic{$label['id']}">
+                <div class="frame">
+                    <!--{foreach $list $value}-->
+                    <div class="child">
+                        <a href="$value[url]" target="_blank" title="$value[full_title]">
+                            <img src="$value[frame]" alt="$value[full_title]">
+                            <div class="mask">
+                                <div class="datetime"><!--{php echo date('Y-m-d', $value['timestamp']);}--></div>
+                                <div class="text">
+                                    <h3>$value[title]</h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <!--{/foreach}-->
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5 col-sm-5 col-xs-12 slider-right pd0 hidden-xs">
+            <div class="slider-right-pic{$label['id']}">
+                <div class="frame">
+                    <!--{foreach $list $key $value}-->
+                    <div class="child">
+                        <a href="$value[url]" target="_blank" title="$value[full_title]">
+                            <!--{php $frame_item = $key == count($list)-1 ? 0 : $key+1;}-->
+                            <img src="{$list[$frame_item][frame]}">
+                            <div class="mask">
+                                <div class="datetime"><!--{php echo date('Y-m-d', $value['timestamp']);}--></div>
+                                <div class="text">
+                                    <h3>{$list[$frame_item][title]}</h3>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <!--{/foreach}-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+  $('.slider-right-pic{$label['id']} .frame').slick({
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    centerMode: false,
+    arrows:false,
+    dots:false,
+    asNavFor:$('.slider-left-pic{$label['id']} .frame')
+    });
+  $('.slider-left-pic{$label['id']} .frame').slick({
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    centerMode: false,
+    arrows:false,
+    dots:false,
+    autoplaySpeed:4000,
+    asNavFor:$('.slider-right-pic{$label['id']} .frame')
+    });
+</script>
+<!--{/php168}-->    

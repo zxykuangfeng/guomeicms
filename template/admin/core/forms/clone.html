@@ -1,0 +1,130 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<form action="$this_url" method="POST" id="form">
+<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable hover_table">
+					<tr class="title">
+						<td colspan="2" class="title">克隆表单模型</td>
+					</tr>
+					<tr>
+						<td width="30%">源模型名称</td><td>	$data[alias]($data[name])</td>
+					</tr>
+					<tr>
+						<td width="30%">新模型名称</td><td>
+						<input type="text" name="name" id="name" class="txt" value="$data[new_name]"/>
+						<!--{if $name_err}-->
+						<label id="name-error" class="error" for="name">模型名称 {$name} 重复，请更换！</label>
+						<!--{/if}-->
+						模型名称克隆之后不能修改,必须以字母开头,只能是以字母与数字和下划线的组合
+						</td>
+					</tr>
+					<tr>
+						<td>新模型别名</td><td><input type="text" name="alias" class="txt" id="alias" value="$data[new_alias]"/></td>
+					</tr>
+					<tr>
+						<td>模板文件<br/><span class="point">(若有同名文件，则可能会覆盖)</span></td><td>
+							<!--{if !empty($data['post_template'])}-->
+							发布页模板：
+							<input type="checkbox" name="template[post_template]" value="1" checked="checked"/> $data[post_template].html <br/>
+							<!--{/if}-->
+							<!--{if !empty($data['list_template'])}-->
+							列表页模板：
+							<input type="checkbox" name="template[list_template]" value="1"  checked="checked"/> $data[list_template].html<br/>
+							<!--{/if}-->
+							<!--{if !empty($data['view_template'])}-->
+							展示页模板：
+							<input type="checkbox" name="template[view_template]" value="1"  checked="checked"/> $data[view_template].html 
+							<!--{/if}-->
+							<!--{if !empty($data['post_template_mobile'])}-->
+							发布页移动模板：
+							<input type="checkbox" name="template[post_template_mobile]" value="1"  checked="checked"/> $data[post_template_mobile].html 
+							<!--{/if}-->
+							<!--{if !empty($data['list_template_mobile'])}-->
+							列表页移动模板：
+							<input type="checkbox" name="template[list_template_mobile]" value="1"  checked="checked"/> $data[list_template_mobile].html 
+							<!--{/if}-->
+							<!--{if !empty($data['view_template_mobile'])}-->
+							展示页移动模板：
+							<input type="checkbox" name="template[view_template_mobile]" value="1"  checked="checked"/> $data[view_template_mobile].html 
+							<!--{/if}-->
+							</td>
+					</tr>
+					<tr>
+						<td>语言包</td><td>没有</td>
+					</tr>
+					<tr>
+						<td>脚本文件</td><td>没有</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td>
+							<input type="submit" value="{$P8LANG['forms_model_clone']}" class="submit_btn"/>
+							<input type="hidden" name="step" value="2"/><input type="hidden" name="oname" value="$data[name]"/>
+						</td>
+					</tr>					
+					</table>
+				</td></tr>
+			</table>
+		</div>
+	</div>
+</form>
+<!--{if isset($step) && $step==1}-->
+<script type="text/javascript">
+$.validator.addMethod('valid_model', function(value, element){
+	return /^[a-zA-Z]/.test(value) && !/[^0-9a-zA-Z_]/.test(value);
+});
+$('#form').validate({
+	rules: {
+		name: {
+			required: true,
+			maxlength: 30,
+			valid_model: true,
+			remote: function(){
+				
+				return {
+					url: '$this_router-check_name',
+					cache: false,
+					type: 'post',
+					beforeSend: function(){
+						ajaxing({});
+					},
+					complete: function(){
+						ajaxing({action: 'hide'});
+					}
+				}
+			}
+			
+		},
+		alias: {
+			required: true
+		}
+	},
+	
+	messages: {
+		name: {
+			required: "{$P8LANG['forms_model_name_can_not_be_empty']}",
+			maxlength: "{$P8LANG['forms_model_name_oversize']}",
+			valid_model: "{$P8LANG['forms_model_name_invalid']}",
+			remote: "{$P8LANG['forms_model_name_duplicate']}"
+		},
+		alias: {
+			required: "{$P8LANG['forms_model_alias_required']}"
+		}
+	},
+	submitHandler:function(form){
+		$('#statuss').find('.pname').each( function(){ if($(this).val().length<1){ $(this).parent().remove(); }} );
+		$('#parts').find('.pname').each( function(){ if($(this).val().length<1){ $(this).parent().remove(); }} );
+		form.submit();
+	},
+	onkeyup: false
+});
+
+</script>
+<!--{/if}-->
+<!--{template $core footer admin}-->
+
+<!--{/php168}-->

@@ -1,0 +1,155 @@
+<!--{php168}-->
+<!--{php $TITLE='发通知';}-->
+<!--{template $this_module header2}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<div class="container">
+	<div class="notify-box">
+		<form action="$this_url" method="POST" id="form">
+			<table width="100%" border="0" align="center" cellspacing="1" cellpadding="1" class="notify-table3">
+				<tr>
+					<td width="10%" class="tdL">标&nbsp;&nbsp;题:<font color="red">*</font></td>
+					<td width="90%" class="tdR">
+						<input class="txt" type="text" name="title" value="{if isset($data['title'])}$data[title]{/if}" size="60" /><span class="tap">请输入通知标题</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">发送方式:<font color="red">*</font></td>
+					<td class="tdR">
+						<ul class="checknav clearfix">
+							<li><input type="checkbox" name="send_pm" id="pm" value="1"{if empty($data['send_pm'])&&empty($data['send_mail'])&&empty($data['send_sms']) || !empty($data['send_pm'])} checked{/if} /><label for="pm">站内短信</label></li>
+							<li><input type="checkbox" name="send_mail" id="mail" value="1"{if !empty($data['send_mail'])} checked{/if} /><label for="mail">电子邮件</label></li>
+							<li><input type="checkbox" name="send_sms" onclick="javascript:$('#sms_back').toggle()" id="sms" value="1"{if !empty($data['send_sms'])} checked{/if} /><label for="sms">手机短信</label></li>
+							<li><span id="sms_back" {if $ACTION=='add'}style="display:none"{/if}><input type="checkbox" name="sms_back"  value="1"{if !empty($data['sms_back'])} checked{/if} />要求回执</span></li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">收件人:<font color="red">*</font></td>
+					<td class="tdR">
+						<textarea id="data" name="data" disabled cols="60" rows="7">{if isset($data['data'])}$data[data]{/if}</textarea>
+						<input type="button"  value="选择通知用户" class="btn btn-blue" onclick="show_dialog();" a/>
+						<input type="button" value="清除" class="btn btn-purple"  onclick="_clear();" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL" style="border:0;">内容:<font color="red">*</font></td>
+					<td class="tdR" style="border:0;">
+						<script name="content" id="content" type="text/plain">{if isset($data['content'])}$data[content]{/if}</script>
+						<script type="text/javascript">
+						$(function(){
+							P8_UEDITOR({
+								id: 'content',
+								type:'all',
+								config: {
+									toolbars : [['fullscreen', 'source',
+									'|', 'undo', 'redo',
+									'|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'removeformat', 'formatmatch', 'autotypeset', 'blockquote', 'pasteplain', 
+									'|', 'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist', 'selectall', 'cleardoc','|','link','attachment','simpleupload', 'insertimage','pdftoimage','pdfupload']],			
+								}
+							});
+						});
+						</script>						
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2" style="border:0;">
+						<div class="forms-btn"><input type="submit" class="btn" value="提交并发送" onclick="this.form.send_at_once.value = 1;" /></div>
+					</td>
+				</tr>
+			</table>
+			<input type="hidden" name="id" value="{if isset($data['id'])}$data[id]{/if}" />
+			<input type="hidden" name="where" value="" />
+			<input type="hidden" name="ac" value="{if !empty($ac)}$ac{/if}" />
+			<input type="hidden" name="send_at_once" value="0" />
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+var check_uids = {};
+
+function _clear(){
+	check_uids = {};
+	$('#data').val('');
+}
+
+function member_single_select_callback(checked, json){
+
+	var s = $('#data').val(), rep, reg = new RegExp(',+'+ json.username +'\\([^\\)]*\\),+', 'i');
+	
+	rep = ','+ json.username +'('+ json.id +'|'+ json.role +'),';
+	
+	if(!checked){
+		s = s.replace(reg, ',');
+		delete check_uids[json.id];
+	}
+	
+	if(checked && !reg.test(s)){
+		s += (s.length ? '' : ',') + json.username +'('+ json.id +'|'+ json.role +'),';
+		check_uids[json.id] = json.id;
+	}
+	
+	$('#data').val(s);
+}
+
+var dialog = new P8_Dialog({
+	title_text:'选择通知对象',
+	width: 700,
+	height: 500,
+	button: true
+});
+dialog.content.append($('<iframe width="100%" height="380" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+
+function show_dialog(){
+	dialog.show();
+	
+	var ifr = dialog.content.find('iframe');
+	
+	ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+}
+$(function(){
+	$('#data').val();
+	
+	var data = $('#data').val().split(',');
+		for(var i = 0; i < data.length; i++){
+			if(data[i] == '') continue;
+			
+			var uid = data[i].split('(')[1].split('|')[0];
+			check_uids[uid] = uid;
+		}
+		
+	$('#form').validate({
+		rules: {
+			title: {
+				required: true
+			},
+			
+			content: {
+				required: true
+			},
+			data: {
+				required: true
+			}
+		},
+		
+		messages: {
+			title: {
+				required: ''
+			},
+			content: {
+				required: ''
+			},
+			data: {
+				required: ''
+			}
+		},
+		
+		submitHandler: function(){
+			$('#data').attr('disabled', false);
+			$('#form').get(0).submit();
+		}
+	});
+
+});
+</script>
+<!--{template $core footer}-->
+<!--{/php168}-->

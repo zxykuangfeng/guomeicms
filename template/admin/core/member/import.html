@@ -1,0 +1,147 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/core/member-add"><i class="icon icon-ico44"></i>新增账号</a></li>
+						<li class="btn-color1"><a href="{$core.admin_controller}/core/member-import"><i class="icon icon-ico44"></i>批量新增账号</a></li>
+						<li class="btn-color3"><a href="javascript:;" onclick="update_member(checked_values('id[]', $('#form')))"><i class="icon icon-ico45"></i>修改账号</a></li>
+						<li class="btn-color2"><a href="javascript:;" onclick="delete_member(checked_values('id[]', $('#form')))"><i class="icon icon-ico46"></i>删除账号</a></li>
+						<li class="btn-color10"><a href="#"><i class="icon icon-ico47"></i>导出账号</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td colspan="2" class="title">{$P8LANG['profile']}</td>
+			</tr>
+			<tr>
+				<td><strong> 操作步骤</strong><br />
+					1、下载：<a href="{$core.url}/images/import_member.xlsx" class="downloadicon">下载导入模板</a>。<br />
+					2、使用Excle打开，按格式编辑用户信息，请务必不要修改第1、2行的信息，保存时Excle后缀保持不变。<br />
+					3、将“xlsx”格式的文件上传至系统即可完成批量导入会员。</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<form name="form" action="$this_url" method="post"  enctype="multipart/form-data">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="formtable columntable hover_table click_changeable">
+							<tr class="title fix_head">
+								<td colspan="2" class="title">
+									会员导入
+								</td>
+							</tr>							
+							<tr class="">
+								<td class="tdL">上传文件</td>
+								<td width="70%">
+								<input type="file" name="import_file" accept=".xlsx" />
+								</td>
+							</tr>							
+							<tr>
+							  <td class="tdL">&nbsp;</td>
+							  <td class="tdR"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td>
+					<table class="formtable columntable hover_table click_changeable">
+						<tr>
+							<td align="center">字段名</td>
+							<td align="center">是否必填</td>
+							<td align="center">备注说明</td>
+						</tr>
+						<tr>
+							<td class="tdL" align="center">姓名/帐号</td>
+							<td class="tdL" align="center">是</td>
+							<td class="tdR">唯一性</td>
+						</tr>
+						<tr>
+							<td class="tdL" align="center">密码</td>
+							<td class="tdL" align="center">是</td>
+							<td class="tdR">8 - 20个字符，建议包含字母大小写、数字和特殊字符</td>
+						</tr>						
+						<tr>
+							<td class="tdL" align="center">电子邮箱</td>
+							<td class="tdL" align="center">否</td>
+							<td class="tdR">唯一，缺省时由系统填充随机QQ邮箱</td>
+						</tr>
+						<tr>
+							<td class="tdL" align="center">部门角色组</td>
+							<td class="tdL" align="center">是</td>
+							<td class="tdR">
+							<!--{foreach $roles->groups $id $value}-->
+							{$value['name']}：{$id}<br/>
+							<!--{/foreach}-->
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL" align="center">职位角色</td>
+							<td class="tdL" align="center">是</td>
+							<td class="tdR">
+							<!--{foreach $list['system'] $value}-->
+							{$value['name']}：{$value['id']}<br/>
+							<!--{/foreach}-->
+							<!--{foreach $list['normal'] $value}-->
+							{$value['name']}：{$value['id']}<br/>
+							<!--{/foreach}-->
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL" align="center">性别</td>
+							<td class="tdL" align="center">是</td>
+							<td class="tdR">男：1<br>女：0</td>
+						</tr>
+						<tr>
+							<td class="tdL" align="center">是否是管理员(能进后台)</td>
+							<td class="tdL" align="center">是</td>
+							<td class="tdR">管理员允许登录后台<br/>是：1<br>否：0</td>
+						</tr>
+						<tr>
+							<td class="tdL" align="center">是否创始人(管理权限最大)</td>
+							<td class="tdL" align="center">是</td>
+							<td class="tdR">管理权限最大，不限制功能<br/>是：1<br>否：0</td>
+						</tr>			
+					</table>					
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+var imgdialog = new P8_Upload({
+	element: {
+		src: $('#importurl'),
+		attribute: 'value'
+	},
+	param: {
+		filter: {
+			csv: 10240
+		}
+	}
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

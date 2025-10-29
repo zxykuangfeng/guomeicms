@@ -1,0 +1,298 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<script src="https://cdn.bootcdn.net/ajax/libs/echarts/4.7.0/echarts.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/sites/item/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0"  id="x_nav">
+  <tr>
+    <td><img src="{$_SKIN}/nav_z.gif" width="20" height="22" align="absmiddle" /> 
+	<span style="color:#0000ff;font-weight:bold;">当前站点位置：$sitename_alias</span> &gt;
+    <a href="{$this_system.admin_controller}/item-report">统计预警</a></td>
+  </tr>
+</table>
+
+<div class="mainbox mainborder">
+	<table class="zq_list" width="100%" style="text-align:left">
+		<tr>
+			<td class="headerbtn_list">				
+				<form action="$this_url" method="get" id="request">
+					<div>
+						<span id="cids"></span>
+						<input type="button" value="+{$P8LANG['sites_item']['filter_by_category']}" onclick="category_dialog.show()" class="screenbtn"/>
+						<input type="hidden" id="cid" name="cid" value="$cid" />
+						模型：<select name="model" id="model" onchange="MODEL = this.value">
+							<option value="">{$P8LANG['cms_model']}</option>
+							<!--{foreach $models $name $v}-->
+							<option value="$name"{if $MODEL == $name} selected{/if}>$v[alias]</option>
+							<!--{/foreach}-->
+						</select>
+						时间：<input type="text" name="mindate" value="{if isset($mindate)}$mindate{/if}" autocomplete="off" onclick="rcalendar(this)" /> - 
+						<input type="text" name="maxdate" value="{if isset($maxdate)}$maxdate{/if}" autocomplete="off" onclick="rcalendar(this)" />
+						<select name="compare_type" id="compare_type">
+							<option value="">{$P8LANG['compare_type']}</option>									
+							<option value="post_year"{if $compare_type == "post_year"} selected{/if}>{$P8LANG['compare_type_1']}</option>
+							<option value="post_quarter"{if $compare_type == "post_quarter"} selected{/if}>{$P8LANG['compare_type_2']}</option>	
+							<option value="post_month"{if $compare_type == "post_month"} selected{/if}>{$P8LANG['compare_type_3']}</option>	
+							<option value="post_week"{if $compare_type == "post_week"} selected{/if}>{$P8LANG['compare_type_4']}</option>	
+						</select>						
+						<input type="submit" value="{$P8LANG['refresh']}" class="refresh"/>
+						<input type="hidden" name="act" id="act" value="list"/>
+						<input type="button" value="导出Excel" class="submit_btn" onclick="download()">
+					</div>
+				</form>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="mainbox mainborder">
+	<div class="section" style="margin-top:0;background:#fff;padding:30px;">
+		<div id="myChart_scatter" style="height:400px;margin-bottom:10px;"></div>
+	</div>
+</div>
+<input type="hidden" id="select_cid" />
+<script type="text/javascript">
+var MODEL = '$MODEL',	
+	MODEL_JSON = $model_json;
+
+function request_item(page){
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			myChart.showLoading();
+		},
+		success: function(json){			
+			myChart.hideLoading();			
+			option = {
+				title: {
+					show: true,
+					text: '{$allsites[$this_site_name][sitename]}发布统计预警({$mindate}至{$maxdate})',
+					left: 'center',
+				},
+				toolbox: {
+					feature: {
+						dataView: {show: true, readOnly: false},
+						saveAsImage: {show: true}
+					}
+				},
+				tooltip: {
+					trigger: 'axis',					
+				},
+				legend: {				
+					right: '10%',			
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true
+				},
+				calculable: true,
+				xAxis: {
+					type: 'category',
+					data: json.category_title,
+				},
+				yAxis: {
+					name: '数量（篇）',
+					axisLine: {
+						lineStyle: {
+							color: '#666'
+						}
+					},
+					splitLine: {
+						lineStyle: {
+							color: '#ddd'
+						}
+					}
+				},
+				series: [{
+					data: json.category_data,
+					type: 'bar',
+					name: '{$mindate}至{$maxdate}',				
+					barWidth:'30%',					
+					label: {position:'top',show:'true'},
+				},
+				{
+					type:'bar',
+					name: json.compare_type_name,
+					data: json.compare_data,
+					itemStyle: {
+						normal: {color:'#00B0F0'}
+					},	
+					barWidth:'30%',
+				},				
+				]
+				
+			};
+			// 使用刚指定的配置项和数据显示图表。
+			myChart.setOption(option);
+			
+		}
+	});
+}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['move']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		cs.init();
+	},
+	ok: function(){
+		
+		var cid = $('#move_cid').val();
+		if(!cid) return false;
+		
+		var cat = cs.get_by_id(cid);
+		
+		$.ajax({
+			url: '$this_router-move',
+			type: 'post',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: move_item_id, cid: cid, verified: verified === undefined ? 1 : verified}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				
+				for(var i = 0; i < json.length; i++){
+					$('#item_cat_'+ json[i]).html('<a href="'+ cat['url'] +'" target="_blank">'+ cat['name'] +'</a>');
+				}
+				
+				request_item(PAGE);
+			}
+		});
+	}
+});
+
+var cs = new Recursive_Selector({
+	input: $('#move_cid'),
+	dialog: dialog,
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json',
+	item_callback: function(cat, item){
+		if(MODEL && cat.model != '$MODEL')
+			item.css({opacity: '0.3', alpha: '(opacity=30)'});
+		
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	change: function(select){
+		var cat = cs.get_by_id(select.data('value'));
+		
+		if(MODEL && cat.model != MODEL && !cat.categories) p8_window.alert('你选了一个非本模型的分类');
+	}
+});
+
+var category_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 300,
+	show: function(){
+		category_filter.init();
+	},
+	ok: function(){
+		var cid = $('#select_cid').val();
+		$('#cid').val(cid);
+		
+		category_selected(cid);
+		
+		if(cid != 0){
+			
+			var cat = category_filter.get_by_id(cid);
+			
+			var check = new _check_model(cat.model);
+			check.check(cat);
+			
+			MODEL = check.checked ? cat.model : '';
+			$('#model').val(MODEL);
+			
+		}else{
+			$('#model').val('');
+		}
+	}
+});
+
+var category_filter = new Recursive_Selector({
+	input: $('#select_cid'),
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json',
+	value: $cid,
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	init_callback: function(){
+		category_selected(this.get_value());
+	},
+	dialog: category_dialog
+});
+
+function category_selected(cid){
+	if(cid == 0){
+		$('#cids').html('');
+		return;
+	}
+	
+	var tmp = category_filter.get_by_id(cid);
+	var html = '';
+	
+	while(true){
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+		
+		tmp = category_filter.get_by_id(tmp.parent);
+	}
+	
+	$('#cids').html(html);
+}
+
+function _check_model(model){
+	this.checked = true;
+	this.last_model = model;
+	
+	this.check = function(cat){
+		if(this.last_model != cat.model){
+			this.checked = false;
+		}
+		
+		this.last_model = cat.model;
+		
+		if(cat.categories){
+			for(var i in cat.categories)
+				this.check(cat.categories[i]);
+		}
+	};
+}
+function download(){
+	$('#act').val('download');
+	$('#request').submit();
+}
+$(function(){
+	request_item(1);
+	
+	<!--{if $cid}-->
+	category_filter.init();
+	<!--{/if}-->
+});
+</script>
+
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

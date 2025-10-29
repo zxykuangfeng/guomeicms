@@ -1,0 +1,76 @@
+<!--{php168}-->
+<!--{template $core header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/guestbook/style.css">
+<style type="text/css">
+.breadnav{border-bottom:2px solid #184849;padding:0 20px 9px 45px;margin-bottom:20px;background: url({$RESOURCE}/skin/default/core/guestbook/arr4.png) 10px 5px no-repeat;}
+.position{font-size:16px;color:#656565;letter-spacing: 5px;}
+.position a{color: #656565;letter-spacing: 1px;padding-right: 5px;}
+.guestbook-top-nav{margin-bottom:15px;}
+.guestbook-top-nav .eachcid{background:url({$RESOURCE}/skin/default/core/guestbook/005.gif) no-repeat left center; padding-left:25px;display:inline-block;margin:0 10px;}
+.guestbook-top-nav .eachcid a{ color:#000000;font-weight:bold}
+.guestbook-top-nav .over a{ color:#990000;font-weight:bold}
+.guestbook-box{border:1px solid #C0CADA;font-size:12px;margin-bottom:15px;}
+.guestbook-box .head{ background-color:#f1f1f1;padding:5px 10px;line-height:30px;font-size:12px;}
+.guestbook-box .head .user{color:#990000; font-weight:bold; font-size:12px;background:url(by.gif) no-repeat left 1px; padding-left:15px; float:left}
+.guestbook-box .head .title{padding-left:10px;float:left;font-weight:bold}
+.guestbook-box .main{ padding:15px;}
+.guestbook-box .main p{margin-bottom:10px;}
+.guestbook-box .buttom{line-height:30px;padding:0 10px}
+.guestbook-box .buttom .datatime{float:right; color:#333;margin:0 15px; }
+.guestbook-box .buttom .status{float:right; background:url({$RESOURCE}/skin/default/core/guestbook/status.gif) no-repeat left center; padding-left:18px; margin:0 15px; color:#F6760C; font-weight:bold}
+.guestbook-text{ border:1px solid #FC0; padding:5px 10px 3px 10px;font-size:12px;}
+.guestbook-text .replyer{color:#008000; margin-top:10px}
+.guestbook-page{text-align:center;}
+.guestbook{border:1px solid #cccccc; background-color:#F7FCFF; padding:10px; font-size:12px}
+.guestbook-form table td{padding:5px;}
+.guestbook-form .txt{height:28px;line-height:28px;padding:0 5px;border:1px solid #c1c1c1;background: #fff;}
+.guestbook-form .textarea{border:1px solid #c1c1c1;padding:5px;background: #fff;}
+.guestbook-form .submit{color:#fff;background:#184849;border:1px solid #184849;padding:0 10px;border-radius:5px;}
+.pages a, .pages span {display: inline-block;margin:0px 2px;padding:2px 8px;font-size: 1rem;color: #555;border: 1px solid #d9d9d9;border-radius: 3px;background: #fff;}
+.pages a.on, .pages a.s2, .pages a.on:hover, .pages a.s2:hover{background: #184849;border: 1px solid #184849;color: #fff;}
+</style>
+<div class="container">
+	<div class="layout">
+		<div class="breadnav clearfix">
+			<div class="position fl"><a href="{$core.controller}">首页</a>/<a href="{$this_module.controller}">{$this_module.CONFIG['name']} </a></div>
+		</div>
+		<div class="guestbook-box">
+			<p class="head clearfix">
+				<span class="user">
+				<!--{if !empty($data['username'])}-->
+				$data[username] :
+				<!--{else}-->
+				$data[ip] :
+				<!--{/if}-->
+				</span>
+				<span class="title">$data[title]</span>
+			</p>
+			<div class="main" >
+				$data[content]
+				<span id="reply_$data[id]">
+				<!--{if !empty($data['reply'])}-->
+				<div class="border3 mtop">
+					$data[reply]
+					<p class="replyer">回复人：$data[replyer] &nbsp;回复时间：
+						<!--{php echo date("Y-m-d H:i:s",$data['replytime']);}-->
+					</p>
+				</div>
+				<!--{/if}-->
+				</span>
+			</div>
+			<div class="buttom">
+				<span class="status">状态：<!--{if !empty($data['reply'])}-->已回复<!--{else}-->未回复<!--{/if}--></span>
+				<!--{if $reply}-->
+				<a href="javascript:void(0)" class="fright" onclick="_reply_guestbook($data[id])">回复</a>
+				<!--{/if}-->
+				<span class="datatime">发表时间：
+					<!--{php echo date("Y-m-d H:i:s",$data['posttime']);}-->
+				</span>
+				
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $core footer}-->
+<!--{/php168}-->

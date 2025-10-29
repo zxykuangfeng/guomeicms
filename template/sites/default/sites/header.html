@@ -1,0 +1,99 @@
+<!--{php168}-->
+<!--{template $this_system seo}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$TITLE</title>
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<meta http-equiv="X-UA-Compatible" content="IE=10" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}core/header/common.css" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}core/header/header.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+
+</head>
+<body>
+<div class="wrap">
+	    <div class="header">
+	<div class="logo">
+		<a href="{if $this_system->domain}{$this_system.domain}{else}{str_replace('index.php/cms','',$this_system->controller)}{/if}">{if !empty($SITE['config']['logo'])}<img src="{$SITE['config']['logo']}" width="960" />{/if}</a>
+	</div>
+		<div class="top_right">
+			<div class="top_right_top" id="header_t">
+			<span id="header_login">	
+				</span>
+				<script type="text/javascript" src="{$core.RESOURCE}/u.php/core/member-login?style=com&id=header_login"></script>
+		<a class="each_item" href="javascript:alert('请按键盘CTRL+D进行收藏');">收藏本站</a> |
+<a class="each_item" onclick="this.style.behavior='url(#default#homepage)';this.setHomePage('{$RESOURCE}');" href="javascript:void(0)">设为首页   </a>
+			</div>
+<div class="search_form">
+<form action="{if $STATIC_URL}{$STATIC_URL}/search{else}{$this_system->controller}/item-search{/if}" target="_blank" method="get" name="form1" id="form1">
+<input type="hidden" name="site" value="{$this_system->SITE}" /><input type="text" value="" class="keyword" id="keyword" name="word" /> <input type="submit" class="submitbtn" value="" id="button" name="button" />
+</form>
+</div>
+
+		</div>
+		</div>
+</div>
+<div class="wrap">
+		<div  class="nav_menu clearfix">
+		    <div class="home_link"><a href="{$this_system.domain}" title="首页">&nbsp; </a></div>
+			<ul id="menu_nav">
+				<li><a href="{$this_system.domain}">首页</a></li>
+				 <!--{php 
+			$navigation_menu = $CACHE->read($this_system->name.'/menu', $this_system->SITE);
+			}-->
+				<!--{foreach $navigation_menu $k $v}-->
+				<!--{php if(!$v['display'])continue;}-->
+				<li><a href="$v[url]" target="$v[target]">$v[name]</a>
+				<!--{if !empty($v['menus'])}-->
+					<dl style="display:none">
+					<!--{foreach $v['menus'] $k2 $v2}-->
+					<dt><a href="$v2[url]" target="$v2[target]">$v2[name]</a></dt>
+					
+					<!--{/foreach}-->
+					</dl>
+				<!--{/if}-->
+				</li>
+				<!--{/foreach}-->		
+			</ul>
+			</div>			
+
+<script type="text/javascript">
+var USERNAME = get_username();
+$(document).ready(function(){
+	//**show_edit**//					   
+	init_labelshows('header_t');
+	//**menu**//
+	$('#menu_nav li>dl').hide();
+	 $("#menu_nav li:first").addClass('over');
+	$("#menu_nav li").each(function () {
+  		$(this).hover(
+			function(){
+				$('#menu_nav li').removeClass();
+				$('#menu_nav li>dl').hide();
+				$(this).addClass('over');
+				$(this).find('dl').show();
+				$(this).find('dl').css({left: parseInt($(this).position().left) + 'px'});
+	 		},
+			function(){
+				$(this).find('dl').hide();
+				}
+  		)
+    });	
+})
+</script>
+<div class="container mtop">$label[school45_mainBanner]</div>
+<!--{/php168}-->

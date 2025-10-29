@@ -1,0 +1,11 @@
+<!--{php168}-->
+<table border="0" width="100%" class="label_statistic">
+<tr><th width="20%" align="center">排序</th><th width="50%" align="center">来源</th><th width="30%" align="center">数量</th></tr>
+<!--{foreach $list $key $value}-->
+<!--{if $value[source]}-->
+<!--{php $source = explode('|',$value['source']);}-->
+<tr><td>$key</td><td align="center">$source[0]</td><td align="center">$value[post]</td></tr>
+<!--{/if}-->
+<!--{/foreach}-->
+</table>
+<!--{/php168}-->

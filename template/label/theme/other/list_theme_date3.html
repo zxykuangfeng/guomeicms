@@ -1,0 +1,27 @@
+<!--{php168}-->
+<style type="text/css">
+.list_theme_date3 li{margin-bottom:20px;overflow:hidden;}
+.list_theme_date3 .date{width:73px;height:64px;float:left;text-align:center;background:#004ea2;}
+.list_theme_date3 .date span{display:block;text-align:center;}
+.list_theme_date3 .date .d{color:#fff;font-size:24px;}
+.list_theme_date3 .date .y{color:#fff;}
+.list_theme_date3 .text{margin-left:90px;}
+.list_theme_date3 .text h4{width:100%;display:block;margin-top:5px;margin-bottom:10px;white-space: nowrap;overflow:hidden;text-overflow: ellipsis;}
+.list_theme_date3 .text h4 a{color:#202020;font-size:16px;}
+.list_theme_date3 .text p{color:#535353;}
+</style>
+<ul class="list_theme_date3">
+	<!--{foreach $list $value}-->
+	<li>
+		<div class="date">
+			<span class="d"><!--{php echo date('d', $value['timestamp']);}--></span>
+			<span class="y"><!--{php echo date('Y-m', $value['timestamp']);}--></span>
+		</div>
+		<div class="text">
+			<h4><a href="$value[url]" target="_blank">$value[title]</a></h4>
+			<p>作者：$value[author]</p>
+		</div>
+	</li>
+	<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

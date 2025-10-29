@@ -1,0 +1,43 @@
+<!--{php168}-->
+<div class="container">
+	<div class="box">
+		<section class="date">
+			<div class="head">
+				<div class="prev">上一月</div>
+				<div class="tomon"><span class="year"></span>年 <span class="month"></span>月<span class="day" style="display:none;"></span></div>
+				<div class="next">下一月</div>
+			</div>
+			<ol><li>周日</li><li>周一</li><li>周二</li><li>周三</li><li>周四</li><li>周五</li><li>周六</li></ol>
+			<ul>
+			</ul>
+		</section>
+	</div>
+</div>
+<script>
+//日历开始
+$(function(){
+    var date=new Date();            //定义一个日期对象；
+    var year={$today_array[0]};
+    var month={$today_array[1]};
+    var day={$today_array[2]};
+	var url="{$this_url}";
+	//回填数据
+    $('.year').text(year);
+    $('.month').text(month);
+	$('.day').text(day);
+    datt(year,month,day,url);
+    $('.next').click(function(){
+        next(url);
+    });
+    $('.prev').click(function(){
+        prev(url);
+    });
+    $('.tomon').click(function(){
+        datt(year,month,'',url);
+        $('.year').text(year);
+        $('.month').text(month);
+		$('.day').text(day);
+    });
+});
+</script>
+<!--{/php168}-->

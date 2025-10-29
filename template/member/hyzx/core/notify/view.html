@@ -1,0 +1,54 @@
+<!--{php168}-->
+<!--{php $TITLE='通知管理';}-->
+<!--{template $this_module header}-->
+
+<div class="container">
+	<div class="notify-section">
+		<h2>$data[title]</h2>
+		<div class="info">
+			<ul class="clearfix">
+				<li>通知发布人：$data[username] </li>
+				<li>发布时间：<!--{php echo date("Y年m月d日",$data['timestamp']);}--></li>
+				<li>来源：$data[source]</li>
+				<li>编辑：$data[editer]</li>
+	            <li>浏览量：$data[views]</li>
+			</ul>
+		</div>
+		<div class="notify-content"> 
+			<div class="content" id="p8_content_show">$data[content]</div>
+			<div class="notify-btn">
+				<a href="javascript:self.close()" class="colse">关闭</a>
+				<a href="{$HTTP_REFERER}" onclick="window.history.go(-1);" class="goto">返回</a>
+			</div>
+		</div>
+	</div>
+	<div class="notify-form">
+		<form id="postform" action="$this_url" method="post">
+			<div class="notify-form-top">
+				<!--{if $data['status']}-->
+				<p class="coni_53"><span></span>您已对本通知信息进行确定性操作！</p>
+				<!--{else}-->
+				<p class="coni_53"><span></span>提醒：您还未对本通知信息进行确定性操作！</p>
+				<!--{/if}-->
+				<!--{foreach $this_module->CONFIG['status'] $key $st}-->
+				<input type="radio" name="status" value="$key" {if $data['status']==$key}checked{/if}/>
+				$st
+				<!--{/foreach}-->
+			</div>
+			<div class="notify-form-bottom">
+				<p class="coni_65">备注信息:</p>
+				<!--{if empty($data['comment'])}-->
+				<textarea style="width:100%;height:150px;color:#666;font-size:12px;border:1px solid #88abda;background:#fff;" name="comment" onfocus="this.value=''"></textarea>
+				<!--{else}-->
+				<textarea style="width:100%;height:150px;border:1px solid #88abda;background:#fff;" name="comment">$data[comment]</textarea>
+				<!--{/if}-->
+				<input type="hidden" name="id" value="$data[id]"/>
+				<input type="hidden" name="hash" value="$data[hash]"/>
+				<br />
+				<div class="forms-btn"><input type="submit" class="btn" value="提交" /></div>
+			</div>
+		</form>
+	</div>
+</div>
+<!--{template $core footer}-->
+<!--{/php168}-->

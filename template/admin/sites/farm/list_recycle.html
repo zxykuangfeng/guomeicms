@@ -1,0 +1,178 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$this_system.admin_controller}/farm-list"><i class="fa fa-cog"></i>站点列表</a></li>
+						<li><a href="{$this_system.admin_controller}/farm-list_recycle"><i class="fa fa-refresh"></i>恢复误删站点</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<form action="$this_router-cache" method="post" id="form">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list" align="center">
+			<tr class="title fix_head">
+				<td width="3%" align="center" class="list_top title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+				<td width="9%" class="list_top list_left">名称</td>
+				<td width="10%" class="list_top">别名</td>
+				<td width="29%" class="list_top">域名</td>
+				<td width="4%" class="list_top">排序</td>
+				<td width="4%" class="list_top">状态</td>
+				<td width="25%" class="list_top list_right">操作</td>
+			</tr>
+			<!--{foreach $list $value}-->
+			<tr id="sites_{$value['alias']}">
+				<td class="list_title" align="center"><input type="checkbox" name="id[]" value="{$value['alias']}" /></td>
+				<td class="list_left list_ico">{$value['sitename']}</td>
+				<td class="list_title"><strong>{$value['alias']}</strong></td>
+				<td class="list_title"><a href="{if empty($value['ipordomain'])}{$core->CONFIG['url']}/s.php/{$value['alias']}/{else}{$value['domain']}{/if}" target="_blank">
+				<!--{if empty($value['ipordomain'])}-->
+				{$core->CONFIG['url']}/s.php/{$value['alias']}/
+				<!--{else}-->
+				{$value['domain']}
+				<!--{/if}-->
+				</a>
+				</td>
+				<td><input type="text" class="txt" name="sort[{$value['id']}]" value="{$value['sort']}" size="3"  /></td>
+				<td ><img src="$_SKIN/status_{$value['status']}.gif" /></td>
+				<td class="list_btn2">
+					<!--{if $site_recycle}--><a href="###" id="delete_$value[alias]" class="rebtn" onclick="restore_sites(['{$value[alias]}'])">{$P8LANG['restore']}</a><!--{/if}-->
+					<!--{if $site_delete}--><a href="###" id="delete_$value[alias]" class="debtn" onclick="delete_sites(['{$value[alias]}'])">{$P8LANG['delete']}</a><!--{/if}-->			
+				</td>
+			</tr>
+			<!--{if $value['child']}-->
+			<!--{php $last_key = end(array_keys($value['child']));}-->
+			<!--{foreach $value['child'] $k=>$cvalue}-->
+			<tr id="sites_{$cvalue['alias']}">
+				<td class="list_title" align="center"><input type="checkbox" name="id[]" value="{$cvalue['alias']}" /></td>
+				<td class="list_left">{if $last_key==$k}│&nbsp;└{else}│&nbsp;├{/if} {$cvalue['sitename']}</td>
+				<td class="list_title"><strong>{$cvalue['alias']}</strong></td>
+				<td class="list_title"><a href="{if empty($cvalue['ipordomain'])}{$core->CONFIG['url']}/s.php/{$cvalue['alias']}/{else}{$cvalue['domain']}{/if}" target="_blank">
+					<!--{if empty($cvalue['ipordomain'])}-->
+					{$core->CONFIG['url']}/s.php/{$cvalue['alias']}/
+					<!--{else}-->
+					{$cvalue['domain']}
+					<!--{/if}-->
+				</a>
+				</td>
+				<td><input type="text" class="txt" name="sort[{$cvalue['id']}]" value="{$cvalue['sort']}" size="3"  /></td>
+				<td ><img src="$_SKIN/status_{$cvalue['status']}.gif" /></td>
+				<td class="list_btn2">
+					<!--{if $site_recycle}--><a href="###" id="delete_$cvalue[alias]" class="rebtn" onclick="restore_sites(['{$cvalue[alias]}'])">{$P8LANG['restore']}</a><!--{/if}-->			
+					<!--{if $site_delete}--><a href="###" id="delete_$cvalue[alias]" class="debtn" onclick="delete_sites(['{$cvalue[alias]}'])">{$P8LANG['delete']}</a><!--{/if}-->
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			<!--{/if}-->
+			<!--{/foreach}-->
+		</table>
+
+		<br/>
+		<a name="op"></a>
+		<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+		<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a>
+		<input type="button" value=" 更新缓存 " name="cache" onclick="do_farm_cache()" class="button"  />  
+		<input type="button" value="{$P8LANG['delete']}" onclick="delete_sites()" class="button" />
+		</form>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+		<tr>
+			<td align="center">
+				<span  id="page" class="pages">$pages</span>
+			</td>
+		</tr>
+
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function do_farm_cache(){
+	//if(!confirm('{$P8LANG['confirm_to_do']}')) return false;
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			ajaxing({text:'处理中...'});
+			$('#form').submit();
+		}else{
+			return;
+		}
+	});	
+}
+$('form input[name^=sort]').change(function(){
+	this.value = this.value.replace(/[^0-9]/g, '') || 0;
+	if(this.value > 255) this.value = 255;
+	if(this.value < 0) this.value = 0;
+	$('#form').append('<input type="hidden" name="_sort['+ this.name.replace(/[^0-9]/g, '') +']" value="'+ this.value +'" />');
+	$(this).css({border: '1px solid #ff0000'});
+});
+function delete_sites(site){
+	var sites = [];	
+	sites = site ? site : checked_values('id[]', $('#form'));
+	if(!sites.length) return;
+	p8_window.confirm('删除站点会同时清除与此相关的一切数据，不可恢复！\r\n确定要删除？', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({sites: sites}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#sites_'+ json[i]).remove();
+					}			
+				}
+			});	
+		}else{
+			return false;
+		}
+	});
+}
+function change_cache(){
+	if($('#check_all_cache').prop('checked')){
+		$('#cache_form').find('input[type=checkbox]').prop('checked','checked');
+	}else{
+		$('#cache_form').find('input[type=checkbox]').prop('checked',false);
+	}
+}
+function restore_sites(site){
+	if(!site.length) return;
+	p8_window.confirm('还原站点！\r\n确定要还原此站么？', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-recycle',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({sites: site,restore:1}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#sites_'+ json[i]).remove();
+					}			
+				}
+			});	
+		}else{
+			return false;
+		}
+	});
+}
+</script>
+
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

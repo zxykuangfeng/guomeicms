@@ -1,0 +1,82 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<!--{template $core config/menu_bar admin}-->
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<form action="$this_url" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core-static_config"><i class="icon icon-ico10"></i>{$P8LANG['static_config']}</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/cms/item-config"><i class="icon icon-ico26"></i>{$P8LANG['item_content_config']}</a></li>
+							<li class="btn-color3"><a href="{$core.admin_controller}/sites-index?frame=/sites/item-config" target="sites_main"><i class="icon icon-ico30"></i>{$P8LANG['sites_content_config']}</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">{$P8LANG['module_config']}</td>
+				</tr>
+				
+								
+				<tr>
+					<td class="tdL">{$P8LANG['wiebo_enable']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[wiebo_enable]" value="1"{if !empty($config['wiebo_enable'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[wiebo_enable]" value="0"{if empty($config['wiebo_enable'])} checked{/if} />{$P8LANG['N']}
+					</td>
+				</tr>				
+				<tr>
+					<td class="tdL">{$P8LANG['wiebo_name']}</td>
+					<td class="tdR">
+						<input type="text" name="config[wiebo_name]" class="txt" value="{if !empty($config['wiebo_name'])}{$config['wiebo_name']}{/if}" size="15" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['wiebo_key']}</td>
+					<td class="tdR">
+						<input type="text" name="config[wiebo_key]" class="txt" value="{if !empty($config['wiebo_key'])}{$config['wiebo_key']}{/if}" size="20" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['wiebo_secret']}</td>
+					<td class="tdR">
+						<input type="text" name="config[wiebo_secret]" class="txt" value="{if !empty($config['wiebo_secret'])}{$config['wiebo_secret']}{/if}" size="20" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['wiebo_access_token']}</td>
+					<td class="tdR">
+						<input type="text" name="config[wiebo_access_token]" class="txt" value="{if !empty($config['wiebo_access_token'])}{$config['wiebo_access_token']}{/if}" size="30" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['wiebo_oauth']}</td>
+					<td class="tdR">
+						<input type="text" name="config[wiebo_oauth]" class="txt" value="{if !empty($config['wiebo_oauth'])}{$config['wiebo_oauth']}{/if}" size="50" />
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['wiebo_unoauth']}</td>
+					<td class="tdR">
+						<input type="text" name="config[wiebo_unoauth]" class="txt" value="{if !empty($config['wiebo_unoauth'])}{$config['wiebo_unoauth']}{/if}" size="50" />
+					</td>
+				</tr>
+				
+								
+				<tr>
+					<td colspan="2">
+						<div style="text-align:center;"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

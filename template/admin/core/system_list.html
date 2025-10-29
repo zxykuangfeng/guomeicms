@@ -1,0 +1,119 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<form action="" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="app-box">
+			<ul class="app-nav">
+				<li class="li1"><a href="{$core.admin_controller}/core-plugin_module"><img src="{$RESOURCE}/skin/admin/app-ico1.png"/>我已安装的应用</a></li>
+				<li class="li2"><a href="{$core.admin_controller}/core-plugin_module_installed"><img src="{$RESOURCE}/skin/admin/app-ico2.png"/>功能应用市场</a></li>
+			</ul>
+			<div class="apptab-nav-main"> 
+				<ul id="appTabs" class="nav nav-tabs" role="tablist"> 
+					<li role="presentation"><a href="{$core.admin_controller}/core-plugin_list">插件库</a></li>
+					<li role="presentation"><a href="{$core.admin_controller}/core-module_list">模块库</a></li>       
+					<li role="presentation" class="active"><a href="{$core.admin_controller}/core-system_list">系统库</a></li>    
+				</ul>
+				<div id="tab-content" class="tab-content">
+					<div role="tabpanel" class="tab-pane fade in active" id="gwxtk">
+						<div class="row">
+							<script type="text/javascript">
+								var systems = {};
+							</script>
+							<!--{foreach $list $k $v}-->
+							<div class="col-md-3 col-sm-4 col-xs-6">
+								<div class="app-item">
+									<div class="app-item-top">
+										<div class="icon">
+										<a href="{$core.admin_controller}/core-module_list?system={$k}">
+										<img src="{$RESOURCE}/$k/icon.png" onerror="this.src='{$RESOURCE}/images/nopic.jpg'">
+										</a></div>
+										<div class="main">
+											<h3><a href="{$core.admin_controller}/core-module_list?system={$k}">{$v['alias']}</a><span>v{$v['version']}</span></h3>
+											<p class="text"><!--{php echo p8_cutstr($v['description'],44);}--> {$P8LANG['table_prefix']}：<input type="text" class="txt" name="table_prefix[$k]" value="{$v[table_prefix]}" size="15"/></p>
+											<p class="inlet">
+												<a href="javascript:void();" onclick="show_more('$v[description]')">功能介绍>></a> 
+												<!--a href="$this_router/../{$k}/item-list">应用入口>></a-->
+											</p>
+										</div>
+									</div>
+									<div class="app-item-option">
+										<ul class="app-item-list">
+											<li class="title">操作：</li>
+											<li>安装<img src="{$SKIN}/{if $v['installed']}check_yes{else}check_no{/if}.gif" style="cursor: pointer;" onclick="install_system('$k')" alt="$k" title="1"/></li>
+											<li>启用<img src="{$SKIN}/{if $v['enabled']}check_yes{else}check_no{/if}.gif" style="cursor: pointer;" alt="$k" title="1" /></li>
+											<li>卸载<img src="{$SKIN}/check_un.png" style="cursor: pointer;" onclick="uninstall_system('$k')" /></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+							<script type="text/javascript">
+								systems['$k'] = {installed: '{$v['installed']}', enabled: '{$v['enabled']}'};
+							</script>
+							<!--{/foreach}-->
+						</div>      
+					</div>
+				</div>
+			</div>
+			<div class="app-botton">
+				<div class="text-center">
+					<input type="hidden" name="system" />
+					<input type="submit" value="{$P8LANG['refresh_system']}"  class="edit_btn" />					
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="table_prefixes"></div>	
+	<div id="submits"></div>
+</form>
+
+
+<script type="text/javascript">
+	function install_system(system){
+		if(systems[system].installed){
+			//if(!confirm('{$P8LANG['system_installed_reinstall?']}')) return;
+			p8_window.confirm('{$P8LANG['system_installed_reinstall?']}', function (r) {
+				if(r){
+					$('input[name=system]').val(system);
+					$('#form').attr('method', 'get').attr('action', '{$core.admin_controller}/'+ system +'-install').submit();
+				}else{
+					return;
+				}
+			});
+		}		
+	}
+	
+	function uninstall_system(system){
+		//if(confirm('{$P8LANG['uninstall_system?']}')){
+		p8_window.confirm('{$P8LANG['uninstall_system?']}', function (r) {
+			if(r){
+				$('input[name=system]').val(system);
+				$('#form').attr('action', '$this_router-uninstall_system').submit();
+			}
+		});
+		return;
+	}
+	
+	$('input[name^=prefix]').change(function(){
+		var name = this.name.replace(/^prefix_/, '');
+		
+		$(this).css({border: '1px solid #ff0000'});
+		$('#table_prefixes').append($('<input type="hidden" name="table_prefix['+ name +']" value="'+ this.value +'" />'));
+	});
+	
+	$('.enables img').click(function(){
+		var system = this.alt;
+		var enabled = this.title;
+		p8_window.confirm('{$P8LANG['system_enable_change?']}', function (r) {			
+			$(this).attr('src', enabled == 1 ? '{$SKIN}/check_no.gif' : '{$SKIN}/check_yes.gif').
+			attr('title', enabled == 1 ? 0 : 1);
+			
+			$('#submits').append('<input type="hidden" name="enables['+ system +']" value="'+ (enabled == 1 ? 0 : 1) +'" />');
+		});
+	});
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

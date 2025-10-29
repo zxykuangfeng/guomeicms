@@ -1,0 +1,30 @@
+<!--{php168}-->
+<input type="hidden" name="#field_{$field}_posted" />
+<img width="120" height="144" id="field_photo_{$field}" onError="this.src='{$RESOURCE}/images/nomenpic.gif'" src="{if empty($data[$field])}{$RESOURCE}/images/nomenpic.gif{else}$data[$field]{/if}" />
+<input type="hidden" name="field#[$field]" id="field_{$field}" value="{if isset($data[$field])}{$data[$field]}{/if}" />
+<span id="{$field}_holder"></span>
+<script type="text/javascript">
+$(function(){
+	var {$field}_uploader = new P8_Upload({
+		element: {
+			src: $("#field_{$field}"),
+			attribute: 'value'
+		},
+		callback: function(json){
+			$("input[name='field#[$field]']").val(json.attachments[0].file);
+			$("#field_photo_{$field}").attr('src',json.attachments[0].file);
+		},
+		param: {
+			<!--{if isset($field_data['CONFIG']['thumb_width']) && isset($field_data['CONFIG']['thumb_width'])}-->
+			thumb_width: {$field_data['CONFIG']['thumb_width']},
+			thumb_height: {$field_data['CONFIG']['thumb_height']}
+			<!--{/if}-->
+		}
+	});
+
+	$('<input type="button" value="{$P8LANG['upload']}" style="margin-left: 10px;position: relative;top: 40px;"/>').click(function(){
+		{$field}_uploader.uploader();
+	}).appendTo($('#{$field}_holder'));
+});
+</script>
+<!--{/php168}-->

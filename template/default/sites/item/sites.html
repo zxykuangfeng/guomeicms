@@ -1,0 +1,224 @@
+<!--{php168}-->
+<!--{template $core header school795}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}../sites/style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/sites/item/admin.js"></script>
+<div class="sites-search">
+	<div class="container">
+		<div class="search-box text-right">
+			<form action="$this_url" method="get" id="request" onsubmit="request_item(1);return false;">
+				<div>
+					输入关键字 <input type="text" class="search-txt" id="cond" size="15" {if strlen($keyword)} name="word" value="$keyword"{elseif !empty($username)}name="username" value="{$username}"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{else} name="word"{/if} />
+					<!--{if count($mysites)>1}-->
+					<select name="site" id="this_site" onchange="set_site(this)" class="search-set">
+					 <option value="">请选择分站</option>
+					<!--{foreach $mysites $site}-->
+					<option value="$site" {if !empty($select_site) && $site==$select_site}selected{/if}>{$allsites[$site]['sitename']}</option>
+					 <!--{/foreach}-->
+					</select>
+					<!--{else}--> 
+					<input type="hidden" id="this_site" value="{$this_system->SITE}" />
+					<!--{/if}--> 
+					<select name="order" class="search-set">
+						<option value="0" selected="selected">降序</option>
+						<option value="1">升序</option>
+					</select>
+					<select onchange="$('#cond').attr('name', this.value);" class="search-set">
+						<option value="keyword">按关键字</option>
+						<option value="id"{if !empty($id)} selected{/if}>按内容ID</option>
+						<option value="username"{if !empty($username)} selected{/if}>按作者</option>
+						<option value="allitem"{if !empty($allitem)} selected{/if}>按全文</option>
+					</select>
+					<input type="submit" value="{$P8LANG['search']}" class="submit" />
+					<input type="button" value="{$P8LANG['refresh']}" class="refresh" onclick="request_item(PAGE)" />
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<div class="sites-section">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3 col-sm-4 col-xs-12">
+				<div class="sites-box">
+					<div class="sites-head clearfix">
+						<div class="sites-title pull-left">最新评分内容</div>
+						<div class="sites-more pull-right"><a href="#">更多>></a></div>
+					</div>
+					<div class="sites-main">
+						
+					</div>
+				</div>
+				<div class="sites-tab">
+					<div class="hd clearfix">
+						<div class="title pull-left">用户排名</div>
+						<ul class="sites-nav">
+							<li>月度<span>|</span></li>
+							<li>季度<span>|</span></li>
+							<li>年度</li>
+						</ul>
+						<div class="more pull-right"><a href="#">更多>></a></div>
+					</div>
+					<div class="bd">
+						<div class="sites-item">
+							$label[sites_tab_con1]
+						</div>
+						<div class="sites-item">
+							$label[sites_tab_con2]
+						</div>
+						<div class="sites-item">
+							$label[sites_tab_con3]
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9 col-sm-8 col-xs-12">
+				<div class="sites-location">
+					<span><a href="{$core.controller}" class="home">首页</a></span> > <span>站群系统</span> > <span>所有站群内容</span>
+				</div>
+				<div class="sites-form">
+					<form action="$this_url" method="post" id="form">
+						<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table" align="center">
+							<tr class="title fix_head">
+								<td width="*" class="list_top title">标题</td>
+								<td width="20%" align="center" class="list_top title" align="center">{$P8LANG['addtime']}</td>	
+								<td width="10%" align="center" class="list_top title">{$P8LANG['view']}</td>		
+							</tr>
+							
+							<tbody id="list">
+								
+							</tbody>
+						</table>
+						<table width="100%" class="columntable formtable">
+							<tr>
+								<td align="center" id="pages" class="pages">$pages</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">jQuery(".sites-tab").slide({});</script>
+<script type="text/javascript">
+var move_item_id = [],
+	verified = 1,
+	MODEL = '$MODEL',	
+	MODEL_JSON = $model_json,
+	ATTR_JSON = $attr_json,
+	PAGE;
+function request_item(page){
+	
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			PAGE = page;
+			verified = $('#verified').val();
+			
+			$('#list').empty();
+			for(var i in json.list){
+				_list_item(json.list[i]);
+			}
+			
+			$('#pages').html(json.pages);
+			
+			ajaxing({action: 'hide'});
+			
+			window.scrollTo(0, 0);
+			
+			$('input[name=cl]').prop('checked', false);
+			
+			if($('#request input[name=id]').val()){
+				check_all(true, 'id[]');
+			}
+			
+			init_tr($('#form'));
+			
+			var keywords = $.trim($('#request input[name=keyword]').val());
+			if(!keywords.length) return;
+			
+			var keywords = keywords.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+			
+			$('.list_item').each(function(){
+				for(var i = 0; i < keywords.length; i++){
+					var html = $(this).find('.item_title').get(0).innerHTML;
+					$(this).find('.item_title').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+				}
+			});
+			
+		}
+	});
+}
+
+function _list_item(json){
+	
+	var props = ['id', 'cid', 'attributes', 'title', 'push_back_reason', 'model', 'timestamp', 'views', 'level', 'comments', 'username', 'verified', 'pages'];
+	
+	for(var i = 0; i < props.length; i++){
+		if(json[props[i]] === undefined) json[props[i]] = '';
+	}
+	
+	json.otitle = json.title;
+	json.title = '<span class="item_title">'+ json.title +'</span>';
+	json.title_bold == 1 && (json.title = '<b>'+ json.title +'</b>');
+	json.title_color && (json.title = '<font color="'+ json.title_color +'">'+ json.title +'</font>');
+	json.title = '<span style="width: 240px; overflow: hidden; display: inline-block; height: 18px;">'+ json.title +'</span>';	
+	json.model = MODEL_JSON[json.model] || {id: 0, name: MODEL, alias: ''};
+	
+	var attr = json.attributes.split(',');
+	var attrs = '';
+	for(var i in attr){
+		if(!attr[i]) continue;
+		
+		attrs += '<font color="red">'+ ATTR_JSON[attr[i]] +'</font> ';
+	}
+	var this_domain = "{$this_system.domain}";
+	var view_url = json.url;
+	if(this_domain.indexOf('/s.php/')==-1 && json.url.indexOf('http://')==-1 && json.url.indexOf('/s.php/')==-1){
+		view_url = this_domain+json.url;			
+	}else if(json.url.indexOf('http://')==-1 && json.url.indexOf('/s.php/')==-1){
+		view_url = '/sites/html/{$this_system.SITE}'+ json.url;	
+	}
+	
+	var tr = 
+	'<tr class="list_item">'+		
+		'<td class="item_td">'+
+			'[<a href="{$this_router}/item-list?site='+ json.site +'">'+ json.sitename +'</a>]<a href="'+ json.url +'" target="_blank" title="{if !empty($value['push_back_reason'])}$value[push_back_reason]{else}'+ json.otitle +'{/if}" alt="'+ json.otitle +'" alert="left">'+ json.title +'</a>&nbsp;'+ 
+		'</td>'+
+		'<td align="center">'+ date('Y-m-d H:i', json.timestamp) +'</td>'+	
+		'<td align="center">'+ json.views +'</td>'+		
+	'</tr>';
+	
+	$('#list').append($(tr));
+}
+
+function _check_model(model){
+	this.checked = true;
+	this.last_model = model;
+	
+	this.check = function(cat){
+		if(this.last_model != cat.model){
+			this.checked = false;
+		}
+		
+		this.last_model = cat.model;
+		
+		if(cat.categories){
+			for(var i in cat.categories)
+				this.check(cat.categories[i]);
+		}
+	};
+}
+
+$(function(){
+	request_item(1);
+});
+</script>
+<!--{template $core footer school795}-->
+<!--{/php168}-->

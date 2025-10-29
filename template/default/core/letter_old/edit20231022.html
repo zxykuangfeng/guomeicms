@@ -1,0 +1,335 @@
+<!--{php168}-->
+<!--{template $core header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery-ui.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/letter/style.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/css/style_list.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/images/dialog.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<script type="text/javascript">
+	jQuery(document).ready(function($) {
+        $(".letternav li").hover(function() {
+            $(this).children("ul").slideDown();
+        }, function() {
+            $(this).children("ul").stop(true,false).slideUp();
+        });
+ });
+</script>
+<script type="text/javascript">
+$().ready(function() {
+    $("#form").validate();
+});
+function(factory) {
+	if (typeof define === "function" && define.amd ){
+		define(["jquery", "../jquery.validate"], factory);
+	}else{
+		factory(jQuery);
+	}
+}
+
+(function($) {
+	$.extend($.validator.messages, {
+		required: "必填或必选",
+		remote: "请修正",
+		email: "请输入有效的电子邮件地址",
+		url: "请输入有效的网址",
+		date: "请输入有效的日期",
+		dateISO: "请输入有效的日期 (YYYY-MM-DD)",
+		number: "请输入有效的数字",
+		digits: "只能输入数字",
+		equalTo: "你的输入不相同",
+		extension: "请输入有效的后缀",
+		maxlength: $.validator.format("最多可以输入 {0} 个字符"),
+		minlength: $.validator.format("最少要输入 {0} 个字符"),
+		rangelength: $.validator.format("请输入长度在 {0} 到 {1} 之间"),
+		range: $.validator.format("请输入范围在 {0} 到 {1} 之间的数值"),
+		max: $.validator.format("请输入不大于 {0} 的数值"),
+		min: $.validator.format("请输入不小于 {0} 的数值")
+	});
+});
+$.validator.addMethod('valid_email', function(value, element){
+	return value.length > 3 && /^[\w\-\.]+@[\w\-\.]+(\.\w+)+$/.test(value);
+});
+$.validator.addMethod('valid_phone', function(value, element){
+	return value.length > 3 && /^[0-9_-]+$/.test(value);
+});
+var MODEL = '$MODEL';
+var attachment_hash = '$attachment_hash';
+</script>
+<div class="container">
+	<div class="breadbanner delmag">
+		<div class="fluid">
+			<div class="bigbanner">
+				$label[bigbanner_letter_gg]
+			</div>
+		</div>
+	</div>
+	<div class="layout">
+		<div class="row">
+			<div class="col-md-12 col-sm-12">
+				<div class="letter-title mb15">
+					<h2>{$cates_alias[$department]['name']}</h2>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12">
+				<div class="menubar">
+					<div class="menu">
+						<div class="menulist">
+							$label[letter_top_nav_con2]
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-md-8 col-sm-8 col-xs-12">
+				<div class="letitle">
+					<h2>我要写信</h2>
+					<div class="more"><a href="{$core.controller}/letter-list">信件</a></div>
+				</div>
+				<div class="leform">
+					<form id="form" action="" method="post">
+						{if $data['department']}<h1 style="text-align:center;margin:10px;">{$cates['department'][$data['department']]['name']}</h1>{/if}
+						<table width="100%" cellspacing="0" cellpadding="0" border="0" class="letabel">
+							<tr class="tt">
+								<td colspan="5">写信人称呼：</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="4">
+									<input type="text" name="username" id="username" value="{if !empty($data['username'])}{$data['username']}{else}{$USERNAME}{/if}" required />
+									<span class="start">*</span></td>
+								</td>
+							</tr>
+							<tr class="tt">
+								<td colspan="5">身份：</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="4">
+									<select name="profession" id="profession">
+										<option value="">请选择</option>
+										<option value="学生" {if !empty($data['profession']) && $data['profession']=='学生'}selected{/if}>学生</option>
+										<option value="老师" {if !empty($data['profession']) && $data['profession']=='老师'}selected{/if}>老师</option>
+										<option value="相关单位" {if !empty($data['profession']) && $data['profession']=='相关单位'}selected{/if}>相关单位</option>
+										<option value="游客" {if !empty($data['profession']) && $data['profession']=='游客'}selected{/if}>游客</option>
+									</select>
+								</td>
+							</tr>
+							<tr class="tt">
+								<td colspan="5">联系电话：</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="4"><input type="phone" name="phone" id="phone"  value="{if !empty($data['phone'])}{$data['phone']}{/if}" required />
+									<span class="start">*</span>
+								</td>
+							</tr>
+
+							<tr class="tt">
+								<td colspan="5">联系邮箱：</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="4"><input type="email" name="email" id="email" value="{if !empty($data['email'])}{$data['email']}{/if}" required  />
+									<span class="start">*</span>
+								</td>
+							</tr>							
+							<tr class="tt">
+								<td colspan="5">信件类别:</td>
+							</tr>
+							<tr>
+								<td  class="white">
+									<select name="type" id="type" class="input2" required>
+										<option value="">----请选择类别----</option>
+										<!--{foreach $cates['type'] $key $row}-->
+										<option value="{$row['id']}" {if !empty($data['type']) && $data['type']==$row['id']}selected{/if}>{$row['name']}</option>
+										<!--{/foreach}-->
+									</select>
+									<span class="start">*</span>
+								</td>
+							</tr>
+							<!--{if empty($letterconfig['department_enable'])}-->
+							<tr class="tt">
+								<td colspan="5">信访部门:</td>
+							</tr>
+							<tr>
+								 <td  class="white" colspan="3">
+								 <!--{if $select_size>=2}-->
+									<!--{php
+									for($i=0;$i<$select_size;$i++){
+										$this_value = empty($data_field[$i])? '' : $data_field[$i];
+										if($i==0){
+											$selectdata = $select_data;
+										}elseif($data_field){
+											$selectdata = (empty($selectdata[$data_field[$i-1]])? array() : $selectdata[$data_field[$i-1]]['s']);
+										}else{
+											$selectdata = array();
+										}
+										$inputname = $select_size-1==$i?'department':'parent_department';
+									}-->
+									<select name="$inputname" id="department" onchange="department_select.change(this)">
+										<option value="">--请选择--</option>
+										<!--{foreach $selectdata $key $value}-->
+										<option value="{$value['i']}" {if $this_value==$key}selected{/if}>{$value['n']}</option>
+										<!--{/foreach}-->
+									</select>
+									<!--{php }}-->							
+									<script type="text/javascript">
+									var department_select = {
+									CAT : <!--{$select_json_data}-->,
+									change : function (obj){
+										var shtml = dhtml = '<option value="">--请选择--</option>';
+										var thisv = $(obj).val();
+										$(obj).nextAll('select').html(dhtml);
+										if(!thisv){
+											return false;
+										}
+										var path = thisv.split('-');
+										var temp = this.CAT;
+										if(path.length==1)
+											temp=this.CAT[path]['s'];
+										else{
+											for (var k in path)
+												temp = temp[path[k]]['s'];
+										}
+										if(temp !=''){
+											for(var j in temp)
+												shtml += '<option value="'+temp[j]['i']+'">'+temp[j]['n']+'</option>';	
+											$(obj).next().html(shtml);	
+									}}}
+									</script>
+								<!--{else}-->
+										<select name="department" id="department" required>
+											<option value="">请选择</option>
+											<!--{foreach $cates['department'] $key $row}-->
+											<option value="{$row['id']}" {if !empty($data['department']) && $data['department']==$row['id']}selected{/if}>{$row['name']}</option>
+											<!--{/foreach}-->   
+										</select>
+								<!--{/if}-->
+								<span class="start">*</span>
+								<span style="color:#808069">（请选择需要写信的机构和下属具体部门。）</span>
+								</td>
+							</tr>
+							<!--{/if}-->
+							<tr class="tt">
+								<td colspan="5">是否公开:</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="3"><input type="radio" name="visual"  value="1"  {if !empty($data['visual'])}checked{/if}/>
+								公开
+								<input type="radio" name="visual"  value="0" {if empty($data['visual'])}checked{/if} />
+								不公开
+								<span style="color:#808069">（如果“公开”则会自动显示，如果“不公开”则只有权限人的才可查看。）</span>
+								</td>
+							</tr>
+							<tr class="tt">
+								<td colspan="5">信件标题：</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="4"><input type="text" name="title" id="title"  class="input1" value="{if !empty($data['title'])}{$data['title']}{/if}" required />
+									<span class="start">*</span>
+								</td>
+							</tr>
+							<tr class="tt">
+								<td colspan="5">信件内容:</td>
+							</tr>
+							<tr>
+								<td  class="white" colspan="3">
+								<!--{template $this_module $widget default}-->																
+								<span class="start">*</span></td>
+							</tr>
+							<!--{if $mobile_confirm}-->
+							<tr class="tt">
+								<td colspan="5">手机号码:</td>
+							</tr>
+							<tr>
+								 <td class="white" colspan="3"><input type="text" name="phone" id="phone"  value="{if !empty($data['phone'])}{$data['phone']}{/if}"/>
+								<span class="start">*</span><span style="color:#808069">必须填写您的手机号码才能收到手机短信动态验证码，否则无法提交信息。</span></td>						  
+							</tr>
+							<tr class="tt">
+								<td colspan="5">手机验证码:</td>
+							</tr>
+							<tr>
+								<td class="white" colspan="3"><input type="text" name="checkcode" id="checkcode"  value=""/>
+								<span class="start">*</span><img id="p8_sendsms" src="{$RESOURCE}/images/dtyzm.gif" />
+								<script type="text/javascript">
+									$(document).ready(function(){
+									  $("#p8_sendsms").click(function(){
+										var phone = $('#phone').val();
+										if(phone.length==11){
+											$.ajax({
+												url: '{$core.url}/index.php/core/letter-checksms',
+												type: 'post',
+												dataType: 'json',
+												cache: false,
+												data: ajax_parameters({phone: phone, uid: $UID}),
+												beforeSend: function(){
+													ajaxing({});
+												},
+												success: function(json){
+													ajaxing({action: 'hide'});
+													if(json=='OK')
+														alert('手机短信发送成功！');
+													else
+														alert('发送失败！'+json);
+												}
+											});
+										}else{
+											alert('请正确输入手机号！');
+										}
+									  })
+									})
+								</script>
+								</td>
+							 </tr>
+							 <!--{/if}-->
+							
+							<!--{if $captcha_enable}-->
+							<tr class="tt">
+								<td colspan="5">验证码:</td>
+							</tr>
+							<tr>
+								<td class="white" colspan="3"><input name="captcha" type="text" id="captcha" class="input" />
+									<span id="captcham"></span>
+									<script type="text/javascript">
+										captcha($('#captcham'), $('#captcha'));
+									</script><span style="color:#808069">（点击填写框显示验证码 / 点击验证码可更新）</span>
+								</td>
+							</tr>
+							<!--{/if}-->
+							<tr>
+								<td  align="center" colspan="5">
+									<input type="submit" name="submitbutton" class="sbtn" value="提交" />
+									<input type="reset" name="reset" class="rbtn" value="重置" />
+									<input type="hidden" name="id" value="{if !empty($id)}{$id}{/if}" />
+									<input type="hidden" name="token" value="{$token}" />
+									<!--{if $letterconfig['department_enable']}-->
+									<input type="hidden" name="department" value="{$department}" />
+									<!--{/if}-->
+									<input type="hidden" name="attachment_hash" value="{$attachment_hash}" />
+								</td>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<div class="letternav">
+					$label[letter_nav_con1]
+				</div>
+				<div class="lxxz">
+					<div class="hd">
+						<h3>$label[list_letter_box1_tt1]</h3>
+					</div>
+					<div class="bd">
+						$label[list_letter_box1_con1]
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="clear"> </div>
+<!--{template $core footer}-->
+<!--{/php168}-->

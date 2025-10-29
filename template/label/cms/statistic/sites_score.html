@@ -1,0 +1,22 @@
+<!--{php168}-->
+<style type="text/css">
+.label_forms_table1{margin-bottom:0;}
+.label_forms_table1 .head td{padding: 2px 2px;font-size: 14px;color: #323232;font-weight: normal;text-align: center;background-color: #e3ecff;}
+.label_forms_table1 td {padding: 1px 2px;text-align: center;font-size: 14px;color: #525252;background-color: #fafafa;}
+.label_forms_table1 .tr1 td{background-color: #ededed;}
+</style>
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="label_forms_table1">
+	<tr class="head title">
+		<td>分站</td>		
+		<td>优秀量/推送量</td>
+	</tr>
+	<!--{php $i=0;}-->
+	<!--{foreach $list $key $value}-->
+	<!--{php $i++;$j=$i%2;}-->  
+	<tr class="tr$j" id="item_$value[id]">
+		<td>$value[name]</td>		
+		<td>{$value[score]} / {$value[count]}</td>
+	</tr>
+	<!--{/foreach}-->
+</table>
+<!--{/php168}-->

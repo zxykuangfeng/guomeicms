@@ -1,0 +1,26 @@
+<!--{php168}-->
+<style type="text/css">
+.list_theme_date2 li{padding:5px;margin-bottom:14px;overflow:hidden;box-shadow:0 4px 10px rgba(152,148,148,.25);}
+.list_theme_date2 .date{width:100px;height:87px;float:left;text-align:center;background: url({$RESOURCE}/skin/label/theme/bg.png) no-repeat;}
+.list_theme_date2 .date span{display:block;text-align:center;}
+.list_theme_date2 .date .d{color:#605e5e;font-size:24px;padding-top:15px;padding-bottom:5px;}
+.list_theme_date2 .date .y{color:#605e5e;}
+.list_theme_date2 .text{margin-left:112px;padding:10px;height:87px;}
+.list_theme_date2 .text h4{font-weight:normal;margin:0;line-height:33px;}
+.list_theme_date2 .text h4 a{color:#605e5e;font-size:16px;}
+.list_theme_date2 .text h4 a:hover{color:#890707;}
+</style>
+<ul class="list_theme_date2">
+	<!--{foreach $list $value}-->
+	<li>
+		<div class="date">
+			<span class="d"><!--{php echo date('d', $value['timestamp']);}--></span>
+			<span class="y"><!--{php echo date('Y-m', $value['timestamp']);}--></span>
+		</div>
+		<div class="text">
+			<h4><a href="$value[url]" target="_blank">$value[title]</a></h4>
+		</div>
+	</li>
+	<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

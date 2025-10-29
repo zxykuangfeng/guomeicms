@@ -1,0 +1,192 @@
+<!--{php168}-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$core.CONFIG['page_charset']}" />
+<title>$TITLE</title>
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/forms/style_model.css" />
+<link rel="Shortcut Icon" href="favicon.ico">
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<div class="forms">
+	<div class="formshd">
+		<img src="{$RESOURCE}/skin/default/core/forms/icon_books.png">$this_model[alias]
+	</div>
+	<div class="formsbd" id="formsbd">
+		<div class="formsbox">
+			<div class="searchcon">
+				<form name="request" id="request" action="" method="get">
+					<table class="formtable">
+						<tr>
+							<td class="headerbtn_list">
+								<!--{foreach $this_model['filterable_fields'] $field $field_data}-->
+								<div class="search_option">
+									<!--{php $field_data['editable'] = 1;}-->
+									<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+								</div>
+								<!--{/foreach}-->
+								<!--{if $p8_status}-->
+								<div class="search_option">
+								<select name="search_status">
+									<option value="">所有</option>
+									<!--{foreach $p8_status $v}-->
+									<option value="$v" {if $search_status == $v}selected{/if}>$v</option>
+									<!--{/foreach}-->
+								</select>
+								</div>
+								<!--{/if}-->
+								<div class="search_option">
+									<input type="submit" class="submit_btn" value="搜索" onclick="this.form.action='';this.form.method='get'"/>
+									<input type="reset" name="" class="reset_btn" value="重置">
+									<input type="hidden" name="mid" value="$mid" />
+									<input type="hidden" name="ids" value="" />
+								</div>
+							</td>
+						</tr>
+					</table>
+				</form>
+			</div>
+			<div class="formsitem">
+				<div class="formstable">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tabelList">
+						<tr  height="28" class="title" style="color:#333333">
+							<!--{if $mid}-->
+							<!--{php $j = 0;}-->
+							<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+							<!--{php $j++;}-->
+							<th align="left" class="th$j">$field_data[alias]</th>
+							<!--{/foreach}-->
+							<!--{/if}-->
+						</tr>
+						<!--{foreach $list $key $value}-->
+						<tr id="item_$value[id]" class="details">
+							<!--{if $mid}-->
+							<!--{php $i = 1;}-->
+							<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+							<td>
+								<!--{php $i = 0;}-->
+								<span style="{if !empty($field_data['color'])}color:$field_data[color]{/if}">
+								<!--{if isset($value[$field]) && ($field_data['widget']=='radio' || $field_data['widget']=='select' || $field_data['widget']=='city')}-->
+								<!--{php echo is_array($field_data['data'][$value[$field]]) ? $field_data['data'][$value[$field]][0] : $field_data['data'][$value[$field]];}-->
+								<!--{elseif isset($value[$field]) && ($field_data['widget']=='checkbox' || $field_data['widget']=='multi_select')}-->
+								<!--{foreach $value[$field] $v}-->
+								{$field_data['data'][$v]},
+								<!--{/foreach}-->
+								<!--{elseif isset($value[$field]) && $field_data['widget']=='linkage'}-->
+								{current($value[$field])}	
+								<!--{else}-->	
+									{if $field=='name'}<a href="javascript:;">{$value[$field]}</a>{else}{$value[$field]}{/if}
+								<!--{/if}-->
+								</span>
+							</td>
+							<!--{/foreach}-->
+							<!--{/if}-->
+						</tr>
+						<div class="popupbox">
+							<div class="popup">
+								<div class="hd">
+									<div class="title">{$value[name]}</div>
+									<div class="closebtn"></div>
+								</div>
+								<div class="bd">
+									<div class="pbox pline">
+										<h3>基础信息<a href="{$this_module.controller}-update?id=$value[id]&mid=$value[mid]" target="_blank" style="float:right;color:#0040ff;">编辑</a></h3>
+										<div class="plist clearfix">
+											<ul>
+												<li>书&nbsp;&nbsp;&nbsp;号：{$value[number]}</li>
+												<li>价&nbsp;&nbsp;&nbsp;格：￥{$value[price]}</li>
+												<li>书&nbsp;&nbsp;&nbsp;名：{$value[name]}</li>
+												<li>出版社：{$value[press]}</li>
+											</ul>
+										</div>
+									</div>
+									<div class="pbox">
+										<h3>分类信息</h3>
+										<div class="plist clearfix">
+											<ul>
+												<li>类别：{$value[genre]}</li>
+												<li>状态：{$this_model['fields']['state']['data'][$value[state]]}</li>
+												<li>作者：{$value[author]}</li>
+												<li>架位：{$value[bookcase]}</li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!--{/foreach}-->
+					</table>
+				</div>
+				<div class="formspage">
+					<div class="pages" id="page">$pages</div>
+					<div class="formsopt">
+						<!--{if $manage}-->
+						<a href="{$core.U_controller}/core/forms-intranetforms?mid=$mid&se=0&ac=manage" target="_blank">【处理】</a>
+						<!--{/if}-->
+						<!--{if $download}-->
+						<span class="download"><a href="{$this_router}-download" onclick="download_forms();return false;">【导出】</a></span>
+						<script type="text/javascript">
+						function download_forms(){
+						$('#request').attr('action',"{$this_router}-download");
+						$('#request').attr('method',"post");
+						$('#request').submit();
+						}
+						</script>
+						<!--{/if}-->
+						<!--{if $import_list}-->
+						<span class="download"><a href="{$this_router}-import_list?mid=$mid" target="_blank">【导入】</a></span>
+						<!--{/if}-->
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{if $manage}-->
+<!--{template $this_module manage}-->
+<!--{/if}-->
+<script type="text/javascript">
+$(document).ready(function(){
+	<!--{if empty($this_model['CONFIG']['parts'])}-->	   
+	$('.tabelList tr:even').addClass('hover');	
+	<!--{/if}-->
+	heightauto();
+	function heightauto(){
+		var winHeight=0;
+		if (window.innerHeight)
+			winHeight = window.innerHeight;
+		else if ((document.body) && (document.body.clientHeight))
+			winHeight = document.body.clientHeight;
+		if (document.documentElement && document.documentElement.clientHeight)
+			winHeight = document.documentElement.clientHeight;
+		document.getElementById("formsbd").style.height= (winHeight-86)+"px";
+	}
+	window.onresize=heightauto;
+	$(".tabelList .details").click(function(){
+		var formsIndex=$(".tabelList .details").index($(this));
+		$(".popupbox").hide();
+		$(".popupbox").eq(formsIndex).slideDown("normal");
+	})
+	$(".formstable .closebtn").click(function(){
+		$(".popupbox").hide();
+	})
+	$(".popup").draggable();
+}); 
+</script>
+<div class="clear"></div>
+</body>
+</html>
+<!--{/php168}-->

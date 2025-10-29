@@ -1,0 +1,70 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}search/style.css" />
+<div class="container-fluid">
+	<div class="row search-header">
+		<div class="search-logo">
+			<a href="{$core.url}"><img src="{$SKIN}search/logo.gif" border="0" /></a>
+		</div>
+	</div>
+	<!-- form -->
+	<div class="row searchdiv">
+		<div class="searchform">
+			<form name="form1" action="" method="get">
+				<input type="text" name="keyword" maxlength="255" autocomplete="off" autofocus="on" value="{$keyword}" placeholder="请输入关键字">
+				<button type="submit"><span class="icon icon-search"></span> 搜一下</button>
+			</form>
+		</div>
+	</div>
+	<!-- content -->
+	<div class="row">
+		<div class="search-content" id="search-content">
+			<div class="count">找到相关内容 <em>{$count}</em> 篇,用时 <em>{$usetime}</em> 秒</div>
+			<!--{php $i=0;}-->
+			<!--{foreach $list $value}-->
+			<div class="result">
+				<h3>
+					<a href="$value[url]" target="_blank">$value[title]</a>
+				</h3>
+				<p class="desc">
+					$value[summary]
+				</p>
+				<p class="info">
+					<a href="$value[url]" target="_blank">$value[url]</a>
+					<small>分类：</small><a href="$value[category_url]" target="_blank">$value[category_name]</a>
+					<small>日期：</small><!--{php echo date('m-d', $value['timestamp']);}-->
+				</p>
+			</div>
+			<!--{/foreach}-->
+		</div>
+	</div>
+	<!-- pager -->
+	<div class="row">
+		<div class="pages" id="page">
+			{$pages}
+		</div>
+	</div>
+</div>
+	<script>
+		+jQuery(function($){
+			var keywords = '<!--{php echo str_replace('\'', '\\\'', $keyword);}-->'.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+			$('#content .result').each(function(){
+				for(var i = 0; i < keywords.length; i++){
+					var _this = $(this);
+					var _h3 = _this.find('h3');
+					_h3.html(_h3.html().replace(keywords[i], '<em>'+ keywords[i] +'</em>', 'ig'));
+					var _desc = _this.find('.desc');
+					_desc.html(_desc.html().replace(keywords[i], '<em>'+ keywords[i] +'</em>', 'ig'));
+				}
+			});
+			$('#search').submit(function() {
+				var keywords = $.trim($(this).find('input[name=keyword]').val());
+				if(keywords.length < 2){
+					alert('请正确输入关键字！');
+					return false;
+				}
+			});
+		});
+	</script>
+<!--{template $core footer}-->
+<!--{/php168}-->

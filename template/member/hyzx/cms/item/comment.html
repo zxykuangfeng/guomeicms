@@ -1,0 +1,384 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="list_box">
+			<div class="head">
+				<span id="verified_0" class="$very[0]"><a class="bm_l" href="$this_url?verified=0">未审核</a></span>
+				<span id="verified_2" class="$very[2]"><a class="bm_l" href="$this_url?verified=2">处理中</a></span>
+				<span id="verified_1" class="$very[1]"><a class="bm_l" href="$this_url?verified=1">已审核</a></span>			
+				<div class="search" style="width:620px;">
+					<form action="$this_url" method="get" id="request">						
+							<input type="radio" name="verified" value="0" id="verified0"{if $verified == 0} checked{/if} /><label for="verified0">未审核</label>														
+							<input type="radio" name="verified" value="2" id="verified3"{if $verified == 2} checked{/if} /><label for="verified2">处理中</label>				
+							<input type="radio" name="verified" value="1" id="verified1"{if $verified == 1} checked{/if} /><label for="verified1">已审核/办结</label>											
+							<select name="order">
+								<option value="0" selected="selected">降序</option>
+								<option value="1">升序</option>								
+							</select>
+							<select onchange="$('#cond').attr('name', this.value);">
+								<option value="keyword">{if $order_enabled}订单内容{else}按评论{/if}</option>
+								<option value="iid"{if !empty($iid)} selected{/if}>{if $order_enabled}产品ID{else}按对应信息ID{/if}</option>
+								<option value="username">按用户名</option>
+								<option value="verifier">按审核人</option>															
+							</select>
+							<input type="text" class="txt" id="cond" size="15" 
+								{if !empty($keyword)} name="word" value="$keyword"
+								{elseif !empty($iid)}name="iid" value="$iid"
+								{elseif !empty($username)}name="username" value="$username"
+								{elseif !empty($verifier)}name="verifier" value="$verifier"
+								{else} name="word"
+								{/if} />
+							<input type="submit" value="{$P8LANG['search']}" class="submit"/>						
+					</form>
+				</div>
+			</div>
+		</div>
+			<form action="" method="post" id="form">
+			{if $order_enabled}
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+					<tr class="head">
+						<td align="center"><input type="checkbox" onclick="check_all(this, 'id[]');init_tr($('#form'));" /></td>
+						<td>ID</td>
+						<td>订单编号</td>
+						<td>订单信息</td>
+						<td>产品信息</td>	
+						{if $ACTION != 'my_comment'}<td>发布者</td>{/if}
+						<td>发布时间</td>						
+						{if $verified}
+						<td>审核人</td>
+						<td>审核时间</td>
+						<td>物流状态</td>
+						<td>厂商信息</td>
+						{/if}						
+						<td>订单状态</td>
+						<td>操作</td>
+					</tr>
+					
+					<!--{foreach $list $value}-->
+					<tr>
+						
+						<td align="center"><input type="checkbox" name="id[]" value="$value[id]" /></td>
+						<td align="center">$value[id]</td>
+						<td align="center">$value[code]</td>
+						<td align="center">
+							<div style="display:none;" class="content" id="content_$value[id]">
+							{if $config['order']['field_1_enabled']}<div>{$config['order']['field_1']}：{$value['field_1']}</div>{/if}
+							{if $config['order']['field_2_enabled']}<div>{$config['order']['field_2']}：{$value['field_2']}</div>{/if}
+							{if $config['order']['field_3_enabled']}<div>{$config['order']['field_3']}：{$value['field_3']}</div>{/if}
+							{if $config['order']['field_4_enabled']}<div>{$config['order']['field_4']}：{$value['field_4']}</div>{/if}
+							{if $config['order']['field_5_enabled']}<div>{$config['order']['field_5']}：{$value['field_5']}</div>{/if}
+							{if $config['order']['field_6_enabled']}<div>{$config['order']['field_6']}：{$value['field_6']}</div>{/if}
+							{if $config['order']['field_7_enabled']}<div>{$config['order']['field_7']}：{$value['field_7']}</div>{/if}
+							<div>订单留言：<br>$value[content]</div>				
+							</div>
+							<input type="button" value="订单留言" onclick="view_comment(['$value[id]']);" class="edit_btn" />
+						</td>						
+						<td>
+							<a href="$this_url?verified={$verified}&iid={$value[iid]}"><!--{php echo p8_cutstr($value['title'],30);}--></a>						
+							<a href="{$this_system.modules['item']['controller']}-view-id-$value[iid]" class="edit_btn" style="float:right;height:20px;color:#fff;" target="_blank">{$P8LANG['view']}</a>
+						</td>
+						{if $ACTION != 'my_comment'}<td align="center">$value[username]</td>{/if}
+						<td align="center"><!--{php echo date('Y-m-d', $value['timestamp']);}--></td>
+						{if $verified}
+						<td align="center">$value[verifier]</td>
+						<td align="center"><!--{php echo $value['verify_timestramp'] ? date('m-d H:i', $value['verify_timestramp']):'';}--></td>
+						<td align="center">
+							{if $value['exp_no']}<a href="javascript:;" style="color:#f40;" onclick="view_express('{$value[exp_type]}','{$value[exp_no]}')">查看物流</a><br>{/if}
+						</td>
+						<td>
+							<span id="exp_type_$value[id]" style="display:none;">$value[exp_type]</span>
+							<span id="exp_no_$value[id]" style="display:none;">$value[exp_no]</span>
+							<span id="verify_$value[id]" style="display:none;">$value[reason]</span>
+							<div style="display:none;" class="reason" id="reason_$value[id]">
+								{if $exp_list[$value['exp_type']]}物流公司：{$exp_list[$value[exp_type]]}， {/if}
+								{if $value['exp_no']} 快递单号：$value[exp_no]<br>{/if}
+								{if $value['reason']} 审核意见：$value[reason]{/if}
+							</div>						
+							<a href="javascript:;" onclick="view_reason(['$value[id]']);">查看详情</a>
+						</td>
+						{/if}						
+						<td align="center">
+						{if $value['verified']}
+							{if $value['verified'] == '2'}处理中{else}已审核{/if}
+						{else}
+							未审核
+						{/if}
+						</td>
+						<td align="center">
+							{if $allow_verify_comment}<a href="javascript:void(0)" onclick="verify_comment(['{$value[id]}'])">审核</a> / {/if}
+							{if $allow_delete_comment}<a href="javascript:void(0)" onclick="return delete_comment(['$value[id]']);" id="delete_$value[id]">删除</a>{/if}
+						</td>
+					</tr>
+					<!--{/foreach}-->
+					<!--{if empty($list)}-->
+					<tr>
+						<td colspan="{if $ACTION != 'my_comment'}12{else}11{/if}">没有相关信息</td>
+					</tr>
+					<!--{/if}-->
+				</table>
+			{else}
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+					<tr class="head">
+						<td align="center"><input type="checkbox" onclick="check_all(this, 'id[]');init_tr($('#form'));" /></td>
+						<td>ID</td>						
+						<td>评论</td>
+						<td>对应信息</td>									
+						{if $ACTION != 'my_comment'}<td>发布者</td>{/if}
+						<td>发布时间</td>
+						{if $verified}
+						<td>审核人</td>
+						<td>审核时间</td>
+						<td>审核意见</td>
+						{/if}
+						<td>状态</td>
+						<td>操作</td>
+					</tr>
+					
+					<!--{foreach $list $value}-->
+					<tr>
+						
+						<td align="center"><input type="checkbox" name="id[]" value="$value[id]" /></td>
+						<td align="center">$value[id]</td>						
+						<td>
+							<div style="display:none;" class="content" id="content_$value[id]">
+							$value[content]						
+							</div>
+							<input type="button" value="查看详情" onclick="view_comment(['$value[id]']);" class="edit_btn" />
+						</td>						
+						<td>
+							<a href="$this_url?verified={$verified}&iid={$value[iid]}"><!--{php echo p8_cutstr($value['title'],30);}--></a>						
+							<a href="{$this_system.modules['item']['controller']}-view-id-$value[iid]" class="edit_btn" style="float:right;height:20px;color:#fff;" target="_blank">{$P8LANG['view']}</a>
+						</td>
+						{if $ACTION != 'my_comment'}<td align="center">$value[username]</td>{/if}				
+						<td align="center"><!--{php echo date('Y-m-d', $value['timestamp']);}--></td>
+						{if $verified}
+						<td align="center">$value[verifier]</td>
+						<td align="center"><!--{php echo $value['verify_timestramp'] ? date('m-d H:i', $value['verify_timestramp']):'';}--></td>
+						<td align="center">						
+							<div style="display:none;" class="reason" id="reason_$value[id]">								
+								审核意见：$value[reason]
+							</div>						
+							<a href="javascript:;" class="edit_btn" style="color:#fff;" onclick="view_reason(['$value[id]']);">详情</a>
+						</td>
+						{/if}
+						<td align="center">
+						{if $value['verified']}
+							{if $value['verified'] == '2'}处理中{else}已审核{/if}
+						{else}
+							未审核
+						{/if}
+						</td>
+						<td align="center">
+							{if $allow_verify_comment}<a href="javascript:void(0)" onclick="verify_comment(['{$value[id]}'])">审核</a> / {/if}
+							{if $allow_delete_comment}<a href="javascript:void(0)" onclick="return delete_comment(['$value[id]']);" id="delete_$value[id]">删除</a>{/if}
+						</td>
+					</tr>
+					<!--{/foreach}-->
+					<!--{if empty($list)}-->
+					<tr>						
+						<td colspan="{if $ACTION != 'my_comment'}9{else}8{/if}">没有相关信息</td>
+					</tr>
+					<!--{/if}-->
+				</table>
+			{/if}		
+			<!--set attribute-->
+			<input type="hidden" name="act" value="" />
+			<div id="post_attributes"></div>
+		</form>
+		
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+			<tr>
+				<td align="center" class="pages">$pages</td>
+			</tr>
+			<tr>
+				<td><a  href="javascript:void(0)" onclick="check_all(true, 'id[]')">全选</a> /
+					<a  href="javascript:void(0)" onclick="check_all(false, 'id[]')">全不选</a>
+					<!--{if $allow_delete_comment}-->
+					<input type="button" value="{$P8LANG['delete']}" onclick="delete_comment(checked_values('id[]', $('#form')))" class="edit_btn" />
+					<!--{/if}-->
+					<!--{if $allow_verify_comment && $verified == 0}-->
+					<input type="button" value="审核" onclick="verify_comment(checked_values('id[]', $('#form')))" class="edit_btn" />
+					<!--{/if}-->
+				</td>
+			</tr>
+		</table>
+	</div>	
+</div>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$(".boxmenu li").each(function (index) {
+		$(this).click(function(){
+			$('.boxmenu li').removeClass('active');
+			$(this).addClass('active');
+		});
+	});
+});
+var contents = {};
+var reasons = {};
+var	verified = {$verified};
+var verify_item_id = [];
+var exp_type = {$exp_type_json};
+var view_dialog = new P8_Dialog({
+	width: 600,
+	height: 300,
+	title_text: '查看评论/处理意见/订单物流',
+	button: true,
+	ok: function(){
+		
+	}
+});
+view_dialog.content.append($('<div id="view_content" style="height: 220px; overflow-y: auto;"></div>'));
+view_dialog.content.append($('<div id="verify">&nbsp;</div>'));
+
+var verify_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['cms_item']['verify']['']}',
+	width: 500,
+	height: 220,
+	button: true,
+	ok: function(){
+		var value = this.content.find('input[name=value]:checked').val();
+		var exp_type = this.content.find('select[name=exp_type] option:selected').val();
+		var exp_no = this.content.find('input[name=exp_no]').val();
+		var reason = this.content.find('textarea').val();
+		$.ajax({
+			url: '$this_url',
+			type: 'post',
+			dataType: 'json',
+			data: ajax_parameters({action: 'verify',exp_type:exp_type,exp_no:exp_no, id: verify_item_id, value: value, verified: verified, push_back_reason: reason}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				
+				for(var i = 0; i < json.length; i++){
+					if(verified != value) $('#delete_'+ json[i]).parent().parent().remove();
+				}
+			}
+		});
+	},
+	show: function(){
+		var verify_html = '设置状态：<span><input type="radio" id="verify2" name="value" value="2" checked><label for="verify2">处理中</label> </span><span><input type="radio" id="verify1" name="value" value="1"><label for="verify1">已审核</label> </span>';
+		{if $order_enabled}
+		verify_html += '<br/>快递信息：<select name="exp_type"><option value="">选择物流公司</option>';
+		for(i in exp_type){
+			verify_html += '<option value="'+exp_type[i].code+'">'+exp_type[i].name+'</option>';
+		}
+		verify_html += '</select> 快递单号：<input name="exp_no" class="txt" size="18" />';
+		{/if}
+		verify_html += '<fieldset><legend>审核理由</legend><textarea rows="5" cols="70"></textarea></fieldset>';
+		this.content.html(verify_html);
+		
+		this.content.find('input[type=radio]').click(function(){
+			this.value == '-99' && this.checked ? $(this).parent().parent().find('div').show() : $(this).parent().parent().find('div').hide();
+		});
+	}
+});
+function view_comment(id){
+	view_dialog.show();
+	$('#view_content').html(nl2br(contents[id]));
+}
+function view_reason(id){
+	view_dialog.show();	
+	$('#view_content').html(nl2br(reasons[id]));
+}
+function view_express(type,no){
+	view_dialog.show();
+	$.ajax({
+		url: P8CONFIG.url +'/api/aliyun_express.php?type='+type+'&no='+no+'&_='+Math.random(),
+		type: 'GET',
+		dataType: 'json',
+		data: ajax_parameters({type: type, no: no}),
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			$('#view_content').empty();
+			if(json.status == '201') $('#view_content').append($('<div>快递单号为空</div>'));
+			if(json.status == '202') $('#view_content').append($('<div>快递公司为空</div>'));
+			if(json.status == '203') $('#view_content').append($('<div>快递公司不存在</div>'));
+			if(json.status == '204') $('#view_content').append($('<div>快递公司识别失败</div>'));
+			if(json.status == '205') $('#view_content').append($('<div>没有信息；单号错误 (一个单号对应多个快递公司，须指定快递公司)</div>'));
+			if(json.status == '207') $('#view_content').append($('<div>错误单号；一个单号对应多个快递公司，须指定快递公司</div>'));
+			if(json.status == '0') {
+				json.result.expName = json.result.expName && json.result.expName != 'undefined' ? json.result.expName : '';
+				json.result.expPhone = json.result.expPhone && json.result.expPhone != 'undefined' ? json.result.expPhone : '';
+				$('#view_content').append($('<div>运单号码：'+json.result.number+' 物流公司：'+json.result.expName+' 客服电话：'+json.result.expPhone+'</div>'));
+				for(i in json.result.list){
+					$('#view_content').append($('<div>'+json.result.list[i].time+' '+json.result.list[i].status+'</div>'));
+				}
+			}
+		}
+	});
+	
+}
+function verify_comment(array, value, verified){
+	verify_item_id = [];
+	$.each(array, function(k, v){
+		verify_item_id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!verify_item_id.length) return;
+	
+	verify_dialog.show();
+	if(verify_item_id.length == 1){
+		var exp_type = $('#exp_type_'+verify_item_id[0]).text();
+		var exp_no = $('#exp_no_'+verify_item_id[0]).text();
+		var verify_reason = $('#verify_'+verify_item_id[0]).text();
+		if(exp_type) verify_dialog.content.find('select[name=exp_type]').val(exp_type);
+		if(exp_no) verify_dialog.content.find('input[name=exp_no]').val(exp_no);
+		if(verify_reason) verify_dialog.content.find('textarea').val(verify_reason);	
+	}
+}
+
+function delete_comment(array){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!id.length) return;
+	
+	//if(!confirm('{$P8LANG['confirm_to_delete']}')) return;
+	p8_window.confirm("{$P8LANG['confirm_to_delete']}", function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'post',
+				dataType: 'json',
+				data: ajax_parameters({action: 'delete', id: id, verified: $verified}),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i = 0; i < json.length; i++){
+						$('#delete_'+ json[i]).parent().parent().remove();
+					}
+				}
+			});
+		}else{
+			return false;
+		}
+	});	
+}
+
+$(function(){
+	$('tr .content').each(function(){
+		var id = this.id.replace(/[^0-9]/g, '');
+		contents[id] = $(this).html();		
+		$(this).html('<a href="###" onclick="view_comment('+ id +')">'+ contents[id].substr(0, 40) +'</a>');
+	});
+	$('tr .reason').each(function(){
+		var id = this.id.replace(/[^0-9]/g, '');
+		reasons[id] = $(this).html();		
+		$(this).html('<a href="###" onclick="view_reason('+ id +')">'+ reasons[id].substr(0, 40) +'</a>');
+	});
+});
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

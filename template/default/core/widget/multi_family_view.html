@@ -1,0 +1,20 @@
+<!--{php168}-->
+<table width="100%" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center">{$P8LANG['family']['members']['name']}</td>
+		<td align="center">{$P8LANG['family']['name']}</td>
+		<td align="center">{$P8LANG['family']['phone']}</td>										
+		<td align="center">{$P8LANG['family']['email']}</td>
+		<td align="center">{$P8LANG['family']['employer']}/{$P8LANG['family']['position']}</td>
+	</tr>
+	<!--{foreach $data[$field] $vv}-->
+	<tr>
+		<td align="center" style="border-top:1px solid #000;">{$vv['members']}</td>
+		<td align="center" style="border-top:1px solid #000;">{$vv['name']}</td>
+		<td align="center" style="border-top:1px solid #000;">{$vv['phone']}</td>										
+		<td align="center" style="border-top:1px solid #000;">{$vv['email']}</td>
+		<td align="center" style="border-top:1px solid #000;">{$vv['employer']}/{$vv['position']}</td>
+	</tr>
+	<!--{/foreach}-->
+</table>
+<!--{/php168}-->

@@ -1,0 +1,95 @@
+<!--{php168}-->
+<input type="hidden" name="#field_{$field}_posted" />
+<div id="{$field}_holder">
+<div></div>
+<input type="button" value="{$P8LANG['add']}" />
+</div>
+<script type="text/javascript" src="{$RESOURCE}/js/sortable.js"></script>
+<script type="text/javascript">
+$(function(){
+	
+	function copy(value, title,note,thumb){
+		var div = $('<div><b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;</b>'+
+			
+			'<span>'+ P8LANG.videoname +' </span>&nbsp;<span>'+ P8LANG.note +' </span>&nbsp;<span>'+ P8LANG.thumb_image +' </span>&nbsp;<span>'+ P8LANG.attlink +' </span>&nbsp;</div>'
+		);
+		
+		$('<input type="text" class="txt" name="field#[$field][title][]" size="10" autocomplete="off" />').val(title === undefined ? '' : title).appendTo(div.find('span:eq(0)'));
+		$('<input type="text" class="txt" name="field#[$field][note][]" size="10" autocomplete="off" />').val(note === undefined ? '' : note).appendTo(div.find('span:eq(1)'));
+		var thumb = $('<input type="text" class="txt" name="field#[$field][thumb][]" size="18" />').val(thumb === undefined ? '' : thumb).appendTo(div.find('span:eq(2)'));
+		
+		var input = $('<input type="text" class="txt" name="field#[$field][url][]" id="field#[$field]" {$field_data['widget_addon_attr']} size="18" /> ').val(value === undefined ? '' : value).appendTo(div.find('span:eq(3)'));
+		
+		var uploader_thumb = new P8_Upload({
+			element: {
+				src: input,
+				attribute: 'value'
+			},
+			callback: function(json){
+				var files = json.attachments;
+				
+				//input.val(files[0].thumb == 2 ? files[0].file + '.cthumb.jpg' : files[0].file);
+				$('input:eq(2)', div).val(files[0].thumb != 0 ? files[0].file +'.thumb.jpg' : files[0].file);
+				
+				if(!$('input:eq(0)', div).val().length){
+					$('input:eq(0)', div).val(files[0].name);
+				}
+			},
+			param: {
+				<!--{if isset($field_data['CONFIG']['thumb_width']) && isset($field_data['CONFIG']['thumb_height'])}-->
+				thumb_width: {$field_data['CONFIG']['thumb_width']},
+				thumb_height: {$field_data['CONFIG']['thumb_height']}
+				<!--{/if}-->
+			}
+		});
+		
+		var uploader = new P8_Upload({
+			element: {
+				src: input,
+				attribute: 'value'
+			},
+			callback: function(json){
+				var files = json.attachments;				
+				input.val(files[0].file);
+			},
+			param: {
+				<!--{if isset($field_data['CONFIG']['thumb_width']) && isset($field_data['CONFIG']['thumb_width'])}-->
+				thumb_width: {$field_data['CONFIG']['thumb_width']},
+				thumb_height: {$field_data['CONFIG']['thumb_height']}
+				<!--{/if}-->
+			}
+		});
+		
+		$('<input type="button" class="up_botton" value="'+ P8LANG.upload +'" /> ').click(function(){
+			uploader_thumb.choseup();
+		}).appendTo(div.find('span:eq(2)'));
+		
+		$('<input type="button" class="up_botton" value="'+ P8LANG.upload +'" /> ').click(function(){
+			uploader.choseup();
+		}).appendTo(div);
+		
+		$(' <input type="button" class="up_botton" value="'+ P8LANG['delete'] +'" />').click(function(){
+			$(this).parent().remove();
+		}).appendTo(div);
+		
+		$('#{$field}_holder div:last').after(div);
+	}
+	
+	$('#{$field}_holder input[type=button]:last').click(function(){
+		copy();
+	});
+	<!--{foreach $data[$field] $vv}-->
+		copy('$vv[url]', '$vv[title]','$vv[note]', '$vv[thumb]');
+	<!--{/foreach}-->
+	<!--{foreachelse}-->
+		copy();
+	<!--{/foreachelse}-->
+	$('#{$field}_holder').sortable({
+		axis:"y",
+		items:"div",
+		handle:"b",
+		containmentType:"parent"
+	})
+});
+</script>
+<!--{/php168}-->

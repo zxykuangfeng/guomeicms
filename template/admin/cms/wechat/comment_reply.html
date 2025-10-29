@@ -1,0 +1,28 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<form name="form1" method="post" action="$this_url?action=replycomment">
+<table width='100%' cellspacing='1' cellpadding='3' class="tablewidth">
+    <tr  class="head"> 
+      <td colspan="2"> 
+        <div align='center'><b><font color="#FFFFFF">回复留言</font></b></div>
+      </td>
+    </tr>
+    <tr>
+	  <td bgcolor='#FFFFFF' width="25%" align="center">回复内容</td>
+	  <td bgcolor='#FFFFFF' width="75%">
+	  <textarea class="" name="reply" id="reply" cols="50" rows="10"></textarea></td>
+	  <td></td>
+	</tr>
+	<tr> 
+      <td align="center" bgcolor='#FFFFFF' colspan="2"> 
+        <input class="submit_btn"  type='submit' name='submit' value="回复">
+        <input type="hidden" name="comment_id" value="$comment_id">
+		<input type="hidden" name="msg_id" value="$msg_id">
+		<input type="hidden" name="no" value="$no">
+		<input type="hidden" name="aid" value="$aid">
+      </td>
+    </tr>
+</table>
+</form>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

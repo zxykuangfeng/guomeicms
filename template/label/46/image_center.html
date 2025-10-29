@@ -1,0 +1,25 @@
+<!--{php168}-->
+<style type="text/css">
+#p8_ad_image_{$data['id']} .p8_ann_body {
+	z-index: 9999;
+	width: {$data['width']}px;
+	height: {$data['height']}px;
+	position: absolute;
+	margin:auto;
+	left:0;
+	top:0;
+	right:0;
+	bottom:0;
+}
+@media (max-width: 991px){
+	#p8_ad_image_{$data['id']} .p8_ann_body{width:60%;height:40%;}
+	#p8_ad_image_{$data['id']} .p8_ann_body img{width:100%;height:auto;}
+}
+</style>
+<div id="p8_ad_image_{$data['id']}" style="display: block;">
+	<div class="p8_ann_body">
+		<a href="$url" target="_blank"><img width="{$data['width']}" height="{$data['height']}" src="{$data['data']['media']}" title="{$data['data']['name']}" border="0" /></a>
+		<span style="top:2px;right:2px;cursor:pointer;position: absolute;width: 18px; height: 18px; background: url($RESOURCE/images/close.gif) no-repeat 0 -18px;" onclick="$('#p8_ad_image_{$data['id']}').hide();"></span>
+	</div>
+</div>
+<!--{/php168}-->

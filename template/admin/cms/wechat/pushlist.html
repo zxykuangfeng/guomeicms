@@ -1,0 +1,152 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu fleft">
+						<li><a href="$this_router-list?cid=$cid" class="bm_l">{$P8LANG['pushlist']}</a></li>
+						<li class="active"><a href="$this_router-pushlist" class="bm_l">{$P8LANG['pushlogs']}</a></li>
+					</ul>
+				</td>
+				<td width="280">
+					<form action="$this_url" method="get" id="request">
+						<input type="hidden" name="verified" value="1" id="verified1" checked />													
+						<div class="boxmenu fright" style="height:29px;padding:6px 10px 4px 10px;">															
+							<select onchange="$('#cond').attr('name', this.value);">
+								<option value="keyword">{$P8LANG['cms_item']['search_by_keyword']}</option>
+								<option value="id"{if !empty($id)} selected{/if}>{$P8LANG['cms_item']['search_by_id']}</option>
+								<option value="username"{if !empty($username)} selected{/if}>按作者</option>
+								<option value="verifier">按审核人</option>
+							</select>
+							<input type="text" class="txt" id="cond" size="15" {if !empty($keyword)} name="word" value="$keyword"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{elseif !empty($username)}name="username" value="$username"{else} name="word"{/if} />
+							<input type="submit" value="{$P8LANG['search']}" />
+						</div>
+					</form>
+				</td>					
+			</tr>
+		</table>
+		<form action="" method="post" id="form">
+		<table width="100%" class="columntable formtable hover_table click_changeable">
+			<tr class="title fix_head">
+				<td width="3%" align="center" class="title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+				<td width="5%" align="center" class="title">ID</td>
+				<td width="30%" class="title">{$P8LANG['title']}</td>
+				<td width="5%" align="center" class="title">{$P8LANG['author']}</td>
+				<td width="5%" align="center" class="title">{$P8LANG['username']}</td>
+				<td width="5%" align="center" class="title">{$P8LANG['verifier']}</td>
+				<td width="14%" align="center" class="title">{$P8LANG['push_at']}</td>
+				<td width="3%" align="center" class="title">{$P8LANG['status']}</td>
+				<td width="16%" align="center" class="title">{$P8LANG['operation']}</td>
+			</tr>
+			
+			<!--{foreach $list $row}-->
+			<tr class="list_item" id="log_{$row['id']}">
+				<td align="center"><input type="checkbox" name="id[]" value="{$row['id']}" /></td>
+				<td align="center">{$row['aid']}</td>
+				<td align="center">{$row['title']}</td>
+				<td align="center">{$row['author']}</td>
+				<td align="center">{$row['username']}</td>
+				<td align="center">{$row['verifier']}</td>
+				<td align="center">{$row['push_at']}</td>
+				<td align="center">
+				{if $row['push_at']}
+					<img src="{$SKIN}/check_yes.gif" title="{$P8LANG['status_ok']}" />
+				{else}
+					<img src="{$SKIN}/check_no.gif" title="{$P8LANG['status_false']}" />
+				{/if}
+				</td>
+				<td align="center">
+				{if $row['push_at']}
+					{if $row['open_comment']}
+						<a href="$this_url?action=closecomment&aid={$row['aid']}&msg_id={$row['msg_data_id']}&no={$row['no']}" title="点击关闭" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">关闭评论</a>
+					{else}
+						<a href="$this_url?action=opencomment&aid={$row['aid']}&msg_id={$row['msg_data_id']}&no={$row['no']}" title="点击开启" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">开启评论</a>
+					{/if}
+					<a href="$this_router-replylist?aid={$row['aid']}" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">查看评论</a>
+				{/if}
+				{if $allow_delete}<a href="$this_url?action=delete&id={$row['id']}" onclick="return delete_item(['$row[id]'])" class="edit_btn btn-success" style="padding-top:2px;padding-bottom:2px;" title="{$P8LANG['delete']}">删除</a>{/if}
+				</td>
+			</tr>
+			<!--{/foreach}-->
+		</table>
+		<table width="100%" class="columntable formtable">
+			<tr>
+				<td align="center" id="pages" class="pages">$pages</td>
+			</tr>
+			<tr>
+					<td align="left"><a href="javascript:" onclick="check_all(true, 'id[]')">{$P8LANG['select_all']}</a> / <a href="javascript:" onclick="check_all(false, 'id[]')">{$P8LANG['select_back']}</a> <input type="button" name="Submit" value="{$P8LANG['delete']}" class="submit_btn" onclick="_delete()"></td>
+			</tr>
+		</table>
+		</form>
+	</div>		
+</div>	
+
+<input type="hidden" id="select_cid" />
+<script type="text/javascript">
+function CheckAll(va){
+	var form=document.form_work;
+	for (var i=0;i<form.elements.length;i++){
+		var e = form.elements[i];
+		if(va=='all'){
+			e.checked = true;
+		}else{
+			e.checked == true ? e.checked = false : e.checked = true;
+		}
+	}
+}
+$(document).ready(function(){
+	$(".boxmenu li").each(function (index) {
+		$(this).click(function(){
+			$('.boxmenu li').removeClass('active');
+			$(this).addClass('active');
+		});
+	});
+});
+function get_ids(){
+	var array = checked_values('id[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	return id;
+}
+
+function _delete(){
+	id=get_ids();
+	delete_item(id);
+}
+
+function delete_item(id){
+	//if(confirm('{$P8LANG['confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({id: id,action:'delete'}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#log_'+ json[i]).remove();
+					}
+				}
+			});
+		}
+	});	
+	return false;
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

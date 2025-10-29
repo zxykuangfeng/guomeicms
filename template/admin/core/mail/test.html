@@ -1,0 +1,99 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+
+<script type="text/javascript" src="{$RESOURCE}/ueditor/ueditor.config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/ueditor/ueditor.all.min.js"></script>
+<form action="$this_url" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core/sms-list_interface"><i class="icon icon-ico13"></i>手机短信接口</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core/sms-test"><i class="icon icon-ico13"></i>手机短信接口测试</a></li>
+							<li class="btn-color3"><a href="{$core.admin_controller}/core/mail-config"><i class="icon icon-ico31"></i>邮件接口</a></li>
+							<li class="btn-color5"><a href="{$core.admin_controller}/core/mail-test"><i class="icon icon-ico31"></i>邮件发送测试</a></li>
+							<li class="btn-color6"><a href="{$core.admin_controller}/core/shortcutsms-list"><i class="icon icon-ico17"></i>快捷回复信息管理</a></li>
+							<li class="btn-color7"><a href="{$core.admin_controller}/core/shortcutsms-add"><i class="icon icon-ico17"></i>添加快捷回复信息</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">{$P8LANG['test']}</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL" width="15%">{$P8LANG['email']}</td>
+					<td class="tdR" width="85%">
+						<input type="text" class="txt" name="send_to" size="60" />{$P8LANG['memail']['note7']}
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['title']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="subject" size="80" />
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">{$P8LANG['content']}</td>
+					<td class="tdR"><input type="hidden" name="message" />
+						<textarea name="message" id="message" style="display: none;">{if isset($data['content'])}{html_entities($data['content'])}{/if}</textarea>
+						<script type="text/javascript">
+						$(function(){
+							P8_UEDITOR({
+								id: 'message',
+								type:'all',
+								config: {initialFrameHeight:300},
+							});
+						});
+						</script>					
+					</td>
+				</tr>
+				
+				<tr>
+				  <td class="tdL">&nbsp;</td>
+				  <td class="tdR"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	
+</form>
+
+<script type="text/javascript">
+$(".headerbtn_list li").removeClass();
+$(".headerbtn_list li:nth-child(3)").addClass("active");
+$('#form').validate({
+	rules: {
+		send_to: {
+			required: true
+		},
+		subject: {
+			required: true
+		},
+		message: {
+			required: true
+		}
+	},
+	
+	messages: {
+		send_to: {
+			required: '{$P8LANG['memail']['email_required']}'
+		},
+		subject: {
+			required: '{$P8LANG['memail']['subject_required']}'
+		},
+		message: {
+			required: '{$P8LANG['memail']['content_required']}'
+		}
+	}
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

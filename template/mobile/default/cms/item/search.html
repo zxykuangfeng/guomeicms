@@ -1,0 +1,87 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="{$core.CONFIG['page_charset']}">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>搜索</title>
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/mobile/school/search.css" />
+<script src="{$RESOURCE}/js/util_mobile.js"></script>
+<script src="{$RESOURCE}/skin/mobile/school/TouchSlide.1.1.js"></script>
+<!--[if IE]>
+   <script src="{$RESOURCE}/skin/mobile/school/html5.js"></script>
+<![endif]-->
+<!--[if IE 6]>
+<script type="text/javascript" src="{$RESOURCE}/skin/mobile/school/DD_belatedPNG_0.0.8a.js" ></script>
+<script>
+DD_belatedPNG.fix('.,img,background');
+</script>
+<![endif]-->
+</head>
+<body>
+<div class="search">
+	<div class="search-head">
+		<h3>内容搜索</h3>
+		<div class="search-form">
+			<form name="form1" action="" method="get">
+				<input name="word" type="text" class="keyword" value="{$keyword}" />
+				<input type="submit" class="submit" value="搜索"/>
+			</form>
+		</div>
+	</div>
+	<div class="search-list">
+		<ul>
+			<!--{php $i=0;}-->
+			<!--{foreach $list $value}-->
+			<li class="search-result">
+				<div class="title">
+					<a href="$value[url]" target="_blank" class="item-title">$value[title]</a>
+				</div>
+				<p class="summary">
+					$value[summary]
+				</p>
+				<p class="suctime fix">
+					<span class="time"><!--{php echo date('Y年m月d日',$value[timestamp]);}--></span><span class="category">$value[category_name]</span><span class="views">阅读($value[views])</span>
+				</p>
+			</li>
+			<!--{/foreach}-->
+		</ul>
+		<div style="text-align:center;" class="pages">
+			$pages
+		</div>
+		<script type="text/javascript">
+
+			$(function(){
+
+					   $('#search_top span').each(function (i){ $(this).click( function(){ $('#search_top span').removeClass();$(this).addClass('over');})});
+
+				var keywords = '<!--{php echo str_replace('\'', '\\\'', $keyword);}-->'.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+
+				
+
+				$('.search-result').each(function(){
+
+					for(var i = 0; i < keywords.length; i++){
+
+						var html = $(this).find('.item-title').get(0).innerHTML;
+
+						$(this).find('.item-title').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+
+						
+
+						var html = $(this).find('.summary').get(0).innerHTML;
+
+						$(this).find('.summary').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+
+					}
+
+				});
+
+			});
+		</script>
+	</div>
+</div>
+</body>
+</html>
+<!--{/php168}-->

@@ -1,0 +1,38 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+
+<!--{php isset($MODEL) || $MODEL = '';}-->
+<script type="text/javascript">
+var MODEL = '$MODEL';
+</script>
+<!--{if !empty($MODEL)}-->
+<div class="mainbox mainborder">
+	<table class="formtable" width="100%">
+		<tr>
+			<td class="title">{$P8LANG['operation']}</td>
+		</tr>
+		<tr>
+			<td class="headerbtn_list">
+				<ul>
+					<li><a href="{$core.admin_controller}/{$this_system.name}/model-manage?model=$MODEL"><i class="fa fa-cog"></i>{$P8LANG['manage']}</a></li>
+					<li><a href="$this_router-add?model=$MODEL" target="_blank"><i class="fa fa-check-square-o"></i>{$P8LANG['sites_item']['add']}</a></li>
+					<!--{if $ACTION != 'list'}-->
+					<li><a href="$this_router-list?model={if !empty($MODEL)}$MODEL{/if}"><i class="fa fa-list-ul"></i>{$P8LANG['sites_item']['list']}</a></li>
+					<!--{/if}-->
+					
+					<!--{if $ACTION == 'list_addon'}-->
+						<li><a href="$this_router-addon?model=$MODEL&iid=$data[id]{if isset($verified)}&verified=$verified{/if}"><i class="fa fa-plus-square"></i>{$P8LANG['sites_item']['addon']}</a></li>
+					<!--{/if}-->
+					
+					<!--{if $ACTION == 'addon' || $ACTION == 'update_addon'}-->
+						<li><a href="$this_router-list_addon?model=$MODEL&iid=$data[iid]{if isset($verified)}&verified=$verified{/if}"><i class="fa fa-plus-square"></i>{$P8LANG['sites_item']['addon']}</a></li>
+					<!--{/if}-->
+					<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($site_info['ipordomain'])}{$core->CONFIG['url']}/s.php/{$site}{else}{$site_info['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$site_info['sitename']}</a></li>
+				</ul>				
+			</td>
+		</tr>
+	</table>
+</div>
+<!--{/if}-->
+
+<!--{/php168}-->

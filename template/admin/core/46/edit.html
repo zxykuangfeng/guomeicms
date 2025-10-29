@@ -1,0 +1,226 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<form action="$this_url" method="POST" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable hover_table">
+						<tr class="title">
+						  <td colspan="2">添加广告</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">广告名称</td>
+							<td class="tdR"><input type="text" class="txt" name="name" value="{if isset($data['name'])}$data[name]{/if}" size="30" /></td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">广告类型</td>
+							<td class="tdR">
+								<select name="type" onchange="$('#template')[this.value == 'effect' || this.value == 'text' || this.value == 'image' || this.value == 'scroll' || this.value == 'windows' || this.value == 'fly' ? 'show' : 'hide']();">
+									<!--{foreach $this_module->types $k $v}-->
+									<option value="$k"{if isset($data['type']) && $data['type'] == $k} selected{/if}>{$P8LANG[$v]}</option>
+									<!--{/foreach}-->
+								</select>
+								
+								<script type="text/javascript">
+								$(function(){
+									var v = $('#form select[name=type]').val();
+									$('#template')[v == 'effect' || v == 'text' || v == 'image' || v == 'scroll' || v == 'windows' || v == 'fly' ? 'show' : 'hide']();
+								});
+								</script>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">广告投放位置</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="source" id="source" value="{if isset($data['source'])}$data[source]{/if}" size="30">
+								仅备注使用！
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">链接类型</td>
+							<td class="tdR">
+								<input type="radio" name="link_type" value="0"{if !isset($data['link_type'])} checked{/if} />跳转(可统计点击次数,扣点击扣费)
+								<input type="radio" name="link_type" value="1"{if !empty($data['link_type']) || empty($data['link_type'])} checked{/if} />直链(不统计，无负担)
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">广告宽高</td>
+							<td class="tdR">
+								<input type="text" name="width" value="{if isset($data['width'])}$data[width]{/if}" size="3" /> X
+								<input type="text" name="height" value="{if isset($data['height'])}$data[height]{/if}" size="3" />
+								展示多条广告时，宽度或高度将视应用的模板决定
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">广告展示数</td>
+							<td class="tdR">
+								<input type="text" name="show_count" value="{if isset($data['show_count'])}$data[show_count]{else}1{/if}" size="3" />
+								默认1条，选择幻灯模板按情况展示多条广告
+							</td>
+						</tr>
+						
+						<tr id="template">
+							<td class="tdL">广告模板</td>
+							<td class="tdR">
+								<input type="text" name="template" value="{if isset($data['template'])}$data[template]{/if}" />
+								<input type="button" value="选择" class="submit_btn" onclick="template_dialog.show();" />
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">是否允许购买</td>
+							<td class="tdR">
+								<input type="checkbox" name="buyable" value="1"{if !empty($data['buyable'])} checked{/if} onclick="$('#buy')[this.checked ? 'show' : 'hide']();" />
+								<script type="text/javascript">
+								$(function(){
+									$('#buy')[$('#form input[name=buyable]').attr('checked') ? 'show' : 'hide']();
+								});
+								</script>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">管理员</td>
+							<td class="tdR">
+								<ul id="manager" class="manager_ids">
+								<!--{foreach $managers $user}-->
+								<li>{$user['username']}<input type="hidden" name="manager[]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+								<!--{/foreach}-->
+								</ul>
+								<input type="button" value="选择管理员" onclick="show_dialog('manager')"/><br>
+								能管理此站点的用户,所选之人需在会员管理内勾上"管理员",让此人可登录后台。
+							</td>
+						</tr>
+						<tbody id="buy">
+						
+						<tr>
+							<td class="tdL">广告计费类型</td>
+							<td class="tdR">
+								<select name="expense_type">
+									<!--{foreach $this_module->expense_types $k $v}-->
+									<option value="$k"{if isset($data['expense_type']) && $data['expense_type'] == $k} selected{/if}>{$P8LANG[$v]}</option>
+									<!--{/foreach}-->
+								</select>
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">费用</td>
+							<td class="tdR">
+								<!--{foreach $core->credits $id $v}-->
+								<input type="radio" name="credit_type" id="credit_$id" value="$id"{if isset($data['credit_type']) && $data['credit_type'] == $id} checked{/if} /><label for="credit_$id">$v[name]</label>
+								<!--{/foreach}-->
+								<input type="text" name="credit" size="3" value="{if isset($data['credit'])}{$data['credit']}{/if}" />
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">是否需要审核</td>
+							<td class="tdR">
+								<input type="checkbox" name="verify" value="1"{if !isset($data['verify']) || $data['verify'] == 1} checked{/if} />
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">最大投放天数</td>
+							<td class="tdR">
+								<input type="text" name="max_day" size="3" value="{if isset($data['max_day'])}{$data['max_day']}{else}1{/if}" />
+							</td>
+						</tr>						
+						</tbody>						
+					</table>
+					<table class="columntable formtable hover_table">
+					<tr>
+							<td class="tdL"></td>
+							<td class="tdR">
+								<input type="submit" class="submit_btn" value="提交数据" />
+							</td>
+						</tr>
+					</table>
+				</td>
+				</tr>				
+			</table>
+		</div>
+	</div>
+
+<input type="hidden" name="id" value="{if isset($data['id'])}$data[id]{/if}"/>
+</form>
+<script type="text/javascript">
+$('.headerbtn_list li').removeClass('active');
+$(".headerbtn_list li:nth-child(1)").addClass("active");
+$('#form').validate({
+	rules: {
+		name: {
+			required: true
+		}
+	},
+	
+	messages: {
+		name: {
+			required: '&nbsp;'
+		}
+	},
+	
+	onkeyup: false
+});
+
+var template_dialog = new P8_Dialog({
+	title_text: '$P8LANG[select_template]',
+	button: true,
+	width: 700,
+	height: 500,
+	show: function(){
+		template_selector.init();
+	},
+	ok: function(){
+		$('#form input[name=template]').val(template_selector.value);
+	}
+});
+
+var template_selector = new Template_Selector({
+	template_dir: '{$core.CONFIG['template_dir']}',
+	base_dir: 'label/$MODULE/',
+	selected: $('#form input[name=template]').val(),
+	dialog: template_dialog
+});
+
+<!--{if $ACTION == 'add'}-->
+$('#form input[name=name]').focus();
+<!--{/if}-->
+function delete_manager(obj){
+$(obj).parent().remove();	
+}
+var cutten_item = null;
+function member_single_select_callback(checked, json){
+	$('#'+cutten_item).find("input[value="+json.id+"]").parent().remove();
+	if(checked)		$('#'+cutten_item).append('<li>'+json.username+'<input type="hidden" name="'+cutten_item+'[]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+
+
+
+}
+var dialog = new P8_Dialog({
+	title_text:'选择管理员',
+	width: 700,
+	height: 500,
+	button: true
+});
+dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+
+function show_dialog(item){
+	dialog.show();
+	cutten_item = item;
+	var ifr = dialog.content.find('iframe');
+	var check_uids = {};
+	$('#'+cutten_item).find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+	ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

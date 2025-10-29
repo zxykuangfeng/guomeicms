@@ -1,0 +1,322 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<!--{template $this_module dbm_menu admin}-->
+<form action="$this_url" method="post" id="request">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">
+			<tr>
+				<td colspan="2" class="title">字段映射关系配置</td>
+			</tr>
+			<tr>
+				<td class="tdL">数据源</td>
+				<td class="tdR">
+					{if $dbm_config['_db_name']}数据库：{$dbm_config['_db_name']}{/if}
+					{if $dbm_table_config['db_category']} 数据表：{$dbm_table_config['db_category']}{else}暂无{/if} 
+					<a style="color:blue"  href="{$this_router}-dbm_table" target="_blank">修改配置</a>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">导入保存到系统</td>
+				<td class="tdR">
+					<input type="radio" name="system" id="cms" value="cms" onchange="select_sys(this.value)" {if $config['system'] == 'cms'  || $system == "cms"}checked{/if}/><label for="cms"> 主站 </label>
+					<input type="radio" name="system" id="sites" value="sites" onchange="select_sys(this.value)" {if $config['system'] == 'sites'  || $system == "sites"}checked{/if}/><label for="sites"> 分站 </label>
+					切换对接系统后，请设置参数后再操作!
+				</td>
+			</tr>			
+			<!--{if $system == 'sites'}-->
+			<tr>
+				<td class="tdL">对应分站类型</td>
+				<td class="tdR">
+					<input type="radio" id="num_1" name="sites_num" value="1" onclick="sites_tab('one')" {if $config['sites_num'] == '1'}checked{/if}/><label for="num_1"> 仅导入一个分站栏目 </label>
+					<input type="radio" id="num_2" name="sites_num" value="2" onclick="sites_tab('two')" {if $config['sites_num'] == '2'}checked{/if}/><label for="num_2"> 导入多个分站栏目(数据源携带站点标识字段) </label>
+					
+				</td>
+			</tr>
+			<tbody id="sites_one" style="display:{if $config['sites_num'] == '1'}{else}none{/if}">
+			<tr>
+				<td class="tdL">选择对接分站</td>
+				<td class="tdR">
+					<select name="sites_alias">
+						 <option value="">请选择分站</option>
+						<!--{foreach $sites_system->sites $site}-->
+						<option value="{$site['alias']}" {if !empty($config['sites_alias']) && $site['alias']==$config['sites_alias']}selected{/if}>{$site['sitename']}({$site['alias']})</option>
+						 <!--{/foreach}-->
+					</select>
+				</td>
+			</tr>
+			</tbody>
+			<tbody id="sites_two" style="display:{if $config['sites_num'] == '2'}{else}none{/if}">
+			<tr>
+				<td class="tdL">站点标识ID/别名</td>
+				<td class="tdR">
+					<select id="site" name="site" onchange="dbm_get_sites()">
+						<option value="">请选择映射字段</option>						
+						<!--{foreach $struct $s}-->
+						<option value="{$s['Field']}" {if $config['site'] == $s['Field']}selected{/if}>{$s['Field']} {$s['Comment']}</option>
+						<!--{/foreach}-->
+					</select>
+					<input type="button" onclick="dbm_get_sites()" value="获取站点标识" class="submit_btn"/>
+					栏目分类所在站点的标识字段
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">分站映射关系网络</td>
+				<td class="tdR">
+					<table width="70%" border="0" cellspacing="0" cellpadding="0" class="">
+					<tr>
+						<td width="20%" align="center">名称</td>
+						<td width="20%" align="center">别名</td>
+						<td width="15%" align="center">匹配</td>
+						<td width="45%" align="center">原(旧)站点标识匹配映射</td>
+					</tr>
+					<!--{foreach $sites_system->sites $site}-->
+					<tr>
+						<td align="center">{$site['sitename']}</td>
+						<td align="center">{$site['alias']}</td>
+						<td align="center"><----></td>
+						<td align="center">
+							<select name="sites_map[{$site['alias']}]" class="sites_map">
+								<option value="">请选择站点标识</option>
+							<!--{foreach $old_sites $v}-->
+								<option value="{$v}" {if $v == $config['sites_map'][$site['alias']]}selected{/if}>{$v}</option>
+							<!--{/foreach}-->
+							</select>
+							不选则不对接，不导入
+						</td>
+					</tr>
+					<!--{/foreach}-->
+					</table>
+					请选择对接站点映射对接关系
+				</td>
+			</tr>
+			</tbody>
+			<!--{/if}-->
+			<tr>
+				<td class="tdL">栏目ID <font color="red">*</font></td>
+				<td class="tdR">
+					<select name="id">
+						<option value="">请选择映射字段</option>						
+						<!--{foreach $struct $s}-->
+						<option value="{$s['Field']}" {if $config['id'] == $s['Field']}selected{/if}>{$s['Field']} {$s['Comment']}</option>
+						<!--{/foreach}-->
+					</select>
+					分类ID
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">栏目名称 <font color="red">*</font></td>
+				<td class="tdR">
+					<select name="name">
+						<option value="">请选择映射字段</option>						
+						<!--{foreach $struct $s}-->
+						<option value="{$s['Field']}" {if $config['name'] == $s['Field']}selected{/if}>{$s['Field']} {$s['Comment']}</option>
+						<!--{/foreach}-->
+					</select>
+					分类名称
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">所属栏目</td>
+				<td class="tdR">
+					<select name="parent">
+						<option value="">请选择映射字段</option>
+						<!--{foreach $struct $s}-->
+						<option value="{$s['Field']}" {if $config['parent'] == $s['Field']}selected{/if}>{$s['Field']} {$s['Comment']}</option>
+						<!--{/foreach}-->
+					</select>
+					父栏目ID，没有则不选，默认为一级栏目
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">栏目每页内容数</td>
+				<td class="tdR">
+					<select name="page_size">
+						<option value="">请选择映射字段</option>						
+						<!--{foreach $struct $s}-->
+						<option value="{$s['Field']}" {if $config['page_size'] == $s['Field']}selected{/if}>{$s['Field']} {$s['Comment']}</option>
+						<!--{/foreach}-->
+					</select>
+					<input type="text" class="txt" name="page_sizes" value="{if $config['page_sizes']}{$config['page_sizes']}{else}30{/if}" size="3">
+					没有则不选，默认为30
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">栏目模型</td>
+				<td class="tdR">
+					<select name="model" id="model">
+						<option value="">请选择模型</option>
+						<!--{foreach $models $mod $v}-->
+						<option value="$mod"{if !empty($config['model']) && $config['model'] == $mod}selected{/if}>$v[alias]
+						</option>
+						<!--{/foreach}-->
+					</select>
+					默认使用"文章"模型
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">栏目静态化</td>
+				<td class="tdR">
+					<input type="radio" name="htmlize" id="htmlize_1" value="1"{if !empty($config['htmlize']) && $config['htmlize'] == 1} checked{/if} /><label for="htmlize_1">全部静态</label>
+					<input type="radio" name="htmlize" id="htmlize_2" value="2"{if !empty($config['htmlize']) && $config['htmlize'] == 2} checked{/if} /><label for="htmlize_2">仅内容页静态</label>
+					<input type="radio" name="htmlize" id="htmlize_0" value="0"{if empty($config['htmlize'])} checked{/if} /><label for="htmlize_0">不静态</label>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">栏目是否清空</td>
+				<td class="tdR">
+					<input type="checkbox" name="clear_table" value="1"{if !empty($config['clear_table'])} checked{/if} />清空（危险项），勾选则强制清空 <b style="color:red;text-decoration:underline;">{$systems[$system]['alias']}</b> 所有栏目，清空可保持原数据源栏目ID不变，默认不清空为新增栏目
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">筛选条件</td>
+				<td class="tdR">
+					<input name="where" value="{if $config['where']}{$config['where']}{/if}" /> 如`id`>=5 适用于数据太多时可分批次导入或其它筛选 {if $dbm_table_config['db_category']}<a style="color:blue" href="{$this_router}-dbm_struct?name={$dbm_table_config['db_category']}" target="_blank">查看数据结构</a>{/if}
+				</td>
+			</tr>
+			<tr>
+			  <td class="tdL">调试/预览<br/>(只取代表性的一个数据)</td>
+			  <td class="tdR"><div id="preview" style="display:none;width:640px;max-width:640px;overflow-x:scroll;"></div></td>
+			</tr>
+			<tr>
+			  <td class="tdL">操作步骤</td>
+			  <td class="tdR">
+				<input type="hidden" id="action" name="action" value="config"/>
+				请按步骤操作：
+				<input type="button" onclick="dbm_action_config('config','0')" value="4.1{$P8LANG['config']}" class="submit_btn"/><span style="font-weight:700;font-size:14px;"> --> </span>
+				<input type="button" onclick="dbm_action_config('test','0')" value="4.2导入数据预览" class="submit_btn"/><span style="font-weight:700;font-size:14px;"> --> </span>
+				<input type="button" onclick="dbm_action_import('import')" value="4.3正式导入栏目" class="submit_btn"/></td>
+			</tr>
+		</table>		
+	</div>
+</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">			
+			<tr>
+				<td class="title">应用场景说明</td>
+			</tr>
+			<tr>
+				<td>
+					1、当需要将某个使用MySQL数据库的系统数据采集入库到本系统中时使用。<br>
+					2、如遇到提示“严正警告！！！您的攻击行为已经被记录在案，我们已保留证据！”，请在全局设置中暂时关闭“开启攻击防护模式”再操作。
+					<a style="color:blue;" href="{$core.admin_controller}/core-global_config" target="_blank">后台全局设置</a>
+				</td>
+			</tr>							
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+$('.mysqlboxmenu li').removeClass('active');
+$(".mysqlboxmenu li:nth-child(5)").addClass("active");
+
+function select_sys(sys){
+	location.href="{$this_url}?system="+sys;
+}
+
+function dbm_get_sites(field){
+	if(!field && !$('#request select[name=site]').val()){
+		p8_window.alert('请选择站点标识ID/别名的映射字段');	
+	}else{
+		$('#request input[name=action]').val('get_sites');	
+		$.ajax({
+			url: '$this_url',
+			data: $('#request').serialize(),
+			type:'POST',
+			dataType: 'json',
+			cache: false,
+			beforeSend: function(){
+				ajaxing({'text':'获取中...'});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				$('.sites_map').html('');
+				$('<option value="">请选择站点标识</option>').appendTo($('.sites_map'));
+				for(var i in json){
+					$('<option value="'+ json[i] +'">'+ json[i] +'</option>').appendTo($('.sites_map'));
+				}
+				p8_window.alert('{$P8LANG['done']}');			
+			}
+		});
+	}
+}
+
+function init_group(selected){
+	for(var i in ROLE_GROUP_JSON){
+		$('<option value="'+ ROLE_GROUP_JSON[i].id +'">'+ ROLE_GROUP_JSON[i].name +'</option>').appendTo($('#role_group')).attr('selected', selected == ROLE_GROUP_JSON[i].id ? true : false);
+	}
+}
+
+function dbm_action_config(action,site){
+	$('#request input[name=action]').val(action);
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize()+(site != '0' ? '&each_site='+site : ''),
+		type:'POST',
+		dataType: 'text',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({'text':'操作中...'});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			$('#preview').show();
+			$('#preview').html(json);
+			p8_window.alert('{$P8LANG['done_preview']}');
+		}
+	});
+}
+
+function dbm_action_i(action,site,offset){
+	$('#request input[name=action]').val(action);
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize()+(site != '0' ? '&each_site='+site : '')+'&offset='+offset,
+		type:'POST',
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({'text':'操作中...'});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			$('#preview').hide();
+			if(json['count']){
+				dbm_action_i(action,site,json['offset']);
+				p8_window.alert(json['message']);
+			}else{
+				p8_window.alert(json['message']);
+			}
+		}
+	});
+}
+
+function dbm_action_import(action){
+	p8_window.confirm('{$P8LANG['confirm_to_do_warning']}', function (r) {
+		if(r){
+			if($('#request input[name=sites_num][checked]').val() == 2 && $('#request select[name=site]').val()){				
+				$('#request select[name^=sites_map]').each(function(index,domElement){
+					if($(this).val()) dbm_action_i(action,$(this).val(),0);
+				});				
+			}else{
+				dbm_action_i(action,0,0);
+			}
+		}else{
+			return;
+		}
+	});	
+}
+
+function sites_tab(num){
+	if(num == 'one'){
+		$('#sites_one').show();
+		$('#sites_two').hide();
+	}else{
+		$('#sites_one').hide();
+		$('#sites_two').show();
+	}
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,278 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<link rel="stylesheet" href="{$RESOURCE}/skin/admin/style.css" type="text/css">
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<link rel="stylesheet" href="{$SKIN}/sites/category_selector.css" type="text/css" />
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<script type="text/javascript">
+var pids = [];
+</script>
+<div class="section">
+	<table class="formtable">
+		<tr>
+			<td class="headerbtn_list">
+				<ul class="sites-top-menu">
+					<li><a href="{$this_system.admin_controller}-index_menu"><i class="fa fa-cog"></i>所有快捷导航</a></li>	
+					<li><a href="{$this_system.admin_controller}/farm-menu_custom"><i class="fa fa-cog"></i>本站快捷发布栏目管理 </a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_nav"><i class="fa fa-cog"></i>本站专属导航管理 </a></li>
+					<li><a href="{$this_system.admin_controller}-menu_user"><i class="fa fa-cog"></i>本账号专属菜单管理</a></li>
+					<li><a href="{$this_system.admin_controller}-index_mconfig"><i class="fa fa-cog"></i>站群公共导航管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_list"><i class="fa fa-cog"></i>网站前台导航管理</a></li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<form action="$this_url" method="post" id="form">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table">
+			<tr class="title">
+				<td width="4%" class="list_top">ID</td>
+				<td width="15%" class="list_top">名称</td>
+				<td width="25%" class="list_top">链接</td>
+				<td width="10%" class="list_top">新窗口打开</td>
+				<td width="8%" class="list_top">状态</td>
+				<td width="10%" class="list_top">排序</td>
+				<td width="15%" class="list_top list_right">操作</td>
+			</tr>
+			<!--{php
+					function _list($ms, $l = 0,$p=0){
+						global $this_router, $P8LANG, $SKIN;
+						$k=count($ms);
+						$j=0;
+					}-->
+					<!--{foreach $ms $v}-->
+					<!--{if $v['id']}-->
+					<!--{php $j++;}-->
+					<tr id="clone_{$v['id']}" class="data">
+						<td class="id_{$v['id']}"><input type="hidden" name="option[{$v['id']}][id][]" value="{$v['id']}"/>{$v['id']}</td>
+						<td align="left">
+							<span style="float:left;"><!--{if  $l != 0}-->
+							<!--{php echo str_repeat('│&nbsp;&nbsp;', $l-$p).str_repeat('&nbsp;&nbsp;&nbsp;', $p);}-->
+							<!--{if $j==$k}--><!--{php $p++;}-->└<!--{else}-->├<!--{/if}--><!--{/if}-->
+							&nbsp;<input type="text" class="txt txt3" name="option[{$v['id']}][name][]" value="{$v['name']}" id="matrix_name_{$v['id']}" size="12" /></span></td>
+						<td align="left" style="text-align:left;padding-left:5px;"><input type="text" class="txt txt3" id="matrix_{$v['id']}" name="option[{$v['id']}][url][]" value="{$v['url']}" size="75" /></td>
+						<td align="center"><input type="checkbox" class="txt txt3" name="option[{$v['id']}][target][]" value="_blank"{if !empty($v['target']) && $v['target'] == '_blank'} checked{/if}/></td>					
+						<td class="display_{$v['id']}" align="center"> <span style="cursor: pointer;" id="display_$v[id]" onclick="display_menu(this)">
+							<!--{if $v['display']}-->
+							<img src="{$SKIN}/check_yes.gif" alt="1" />
+							<!--{else}-->
+							<img src="{$SKIN}/check_no.gif" alt="0" />
+							<!--{/if}-->
+							</span>
+							<input type="hidden" name="option[{$v['id']}][display][]" value="{$v['display']}" />
+						</td>
+						<td align="center">
+							<input type="hidden" name="option[{$v['id']}][parent][]" value="{$v['parent']}" />
+							<input type="number" maxlength="3" min="0" max="999" step="1" class="txt txt3" name="option[{$v['id']}][display_order][]" value="{$v['display_order']}" size="3" />
+						</td>
+						<td class="optlist action_{$v['id']}">
+							<!--{if $l}-->
+							<a href="javascript:;" onclick="_add_{$v['id']}('{$v['id']}');" class="ys2">新增同级菜单</a>
+							<!--{else}-->
+							<a href="javascript:;" onclick="_add_submenu('{$v['id']}')" class="ys2">新增下级菜单</a>
+							<!--{/if}-->
+							<a href="$this_router-menu_update?id={$v['id']}" class="btn-color3">{$P8LANG[edit]}</a>
+							<a id="menu_{$v['id']}" href="javascript:void(0)" onclick="return delete_menu(this);" class="btn-color14">{$P8LANG[delete]}</a></td>
+					</tr>
+					<tbody id="images_{$v['id']}"></tbody>
+					<script type="text/javascript">
+						function _add_{$v['id']}(id){
+							var id = id === undefined ? 0 : id;
+							var newid = Math.floor(Math.random() * (4000)) + 1000;
+							var copy = $('#clone_{$v['id']}').clone(true).attr('id', 'new_menu_'+newid).show();					
+							copy.find('input[type="text"]:eq(0)').attr('name', 'option[{$v['id']}][name][]').attr('id', 'matrix_name_'+newid).val('');
+							copy.find('input[type=text]:eq(1)').attr('name', 'option[{$v['id']}][url][]').attr('id', 'matrix_'+newid).val('');
+							copy.find('.action_{$v['id']}').html('<a id="menu_'+newid+'" class="btn-color14">{$P8LANG[delete]}</a>');
+							copy.find('.id_{$v['id']}').html('<input type="hidden" name="option[{$v['id']}][id][]"/>');
+							copy.find('.display_{$v['id']}').html('<img src="{$SKIN}/check_yes.gif" alt="1" /><input type="hidden" name="option[{$v['id']}][display][]" value="1" />');
+							copy.find('#menu_'+newid).click(function(){
+								copy.remove();
+							});			
+							copy.appendTo($('#images_{$v['id']}'));
+							pids.push(newid);					
+						}			
+					</script>
+					<!--{php if(isset($v['menus'])) _list($v['menus'], $l+1,$p);}-->
+					<!--{/if}-->
+					<!--{/foreach}-->
+					<!--{php
+					}			
+					_list($menus);
+					}-->
+				<tbody id="images_top"></tbody>
+				<tr id="clone_0" class="data" style="display:none;">
+					<td class="id_0"><input type="hidden" name="option[0][id][]" value="0"></td>
+					<td align="left"><span style="float:left;"><input type="text" class="txt txt3" name="option[0][name][]" value="" id="matrix_name_0" size="12"></span></td>
+					<td align="left" style="text-align:left;padding-left:5px;"><input type="text" class="txt txt3" id="matrix_0" name="option[0][url][]" value="" size="75"></td>
+					<td align="center"><input type="checkbox" class="txt txt3" name="option[0][target][]" value="_blank" checked /></td>					
+					<td class="display_0" align="center">
+						<span style="cursor: pointer;" id="display_0" onclick="display_menu(this)">
+							<img src="{$SKIN}/check_yes.gif" alt="1" />
+						</span>
+						<input type="hidden" name="option[0][display][]" value="1">
+					</td>
+					<td align="center">
+						<input type="hidden" name="option[0][parent][]" value="0" />
+						<input type="number" maxlength="3" min="0" max="999" step="1" class="txt txt3" name="option[0][display_order][]" value="100" size="3">
+					</td>
+					<td class="optlist action_0">
+						<a id="menu_0" href="javascript:void(0)" onclick="return delete_menu(this);" class="btn-color14">{$P8LANG[delete]}</a>
+					</td>
+				</tr>
+				<tr id="clone_sub" class="data" style="display:none;">
+					<td class="id_sub"><input type="hidden" name="option[0][id][]" value="0"></td>
+					<td align="left"><span style="float:left;">│&nbsp;&nbsp;├&nbsp;<input type="text" class="txt txt3" name="option[0][name][]" value="" id="matrix_name_0" size="12"></span></td>
+					<td align="left" style="text-align:left;padding-left:5px;"><input type="text" class="txt txt3" id="matrix_0" name="option[0][url][]" value="" size="75"></td>
+					<td align="center"><input type="checkbox" class="txt txt3" name="option[0][target][]" value="_blank" checked /></td>					
+					<td class="display_0" align="center">
+						<span style="cursor: pointer;" id="display_0" onclick="display_menu(this)">
+							<img src="{$SKIN}/check_yes.gif" alt="1" />
+						</span>
+						<input type="hidden" name="option[0][display][]" value="1">
+					</td>
+					<td align="center parent_0">
+						<input type="hidden" name="option[0][parent][]" value="0" />
+						<input type="text" class="txt txt3" name="option[0][display_order][]" value="100" size="4">
+					</td>
+					<td class="optlist action_0">
+						<a id="menu_0" href="javascript:void(0)" onclick="return delete_menu(this);" class="btn-color14">{$P8LANG[delete]}</a>
+					</td>
+				</tr>
+			</table>
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+				<tr>
+					<td>
+					<input type="hidden" id="matrix_gid">
+					<input type="hidden" id="matrix_pid">
+					<input type="hidden" id="type" name="type" value="" />
+					<input type="button" onclick="_add_topmenu();" class="edit_btn" value="新增一级菜单"/>
+					<input type="submit" value=" {$P8LANG['submit_cache']} " class="edit_btn" />
+					<input type="button" value=" 更新缓存 " name="cache" onclick="cache_custom_menu()" class="edit_btn" /> 	
+					<input type="hidden" name="display_json" id="display_json" />			
+				</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0" class="columntable formtable">
+			<tr class="title">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td>操作提示：请添加一级菜单并提交，才能新增下级菜单。<br/>	
+					会员中心：{\$U_controller}，主站后台：{\$cadmin_controller}，分站后台：{\$sadmin_controller}
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+	function _add_topmenu(){
+		var newid = Math.floor(Math.random() * (4000)) + 1000;
+		var copy = $('#clone_0').clone(true).attr('id', 'new_menu_'+newid).show();					
+		copy.find('input[type="text"]:eq(0)').attr('name', 'option[0][name][]').attr('id', 'matrix_name_'+newid).val('');
+		copy.find('input[type=text]:eq(1)').attr('name', 'option[0][url][]').attr('id', 'matrix_'+newid).val('');
+		copy.find('.action_0').html('<a id="menu_'+newid+'" class="btn-color14">{$P8LANG[delete]}</a>');
+		copy.find('.id_0').html('<input type="hidden" name="option[0][id][]"/>');
+		copy.find('.display_0').html('<img src="{$SKIN}/check_yes.gif" alt="1" /><input type="hidden" name="option[0][display][]" value="1" />');
+		copy.find('#menu_'+newid).click(function(){
+			copy.remove();
+		});			
+		copy.appendTo($('#images_top'));
+		pids.push(newid);					
+	}
+	function _add_submenu(id){
+		var id = id === undefined ? 0 : id;
+		var newid = Math.floor(Math.random() * (4000)) + 1000;
+		var copy = $('#clone_sub').clone(true).attr('id', 'new_menu_'+newid).show();
+		copy.find('input[type="hidden"]:eq(0)').attr('name', 'option['+id+'][id][]');
+		copy.find('input[type="text"]:eq(0)').attr('name', 'option['+id+'][name][]').attr('id', 'matrix_name_'+newid).val('');
+		copy.find('input[type=text]:eq(1)').attr('name', 'option['+id+'][url][]').attr('id', 'matrix_'+newid).val('');
+		copy.find('input[type="hidden"]:eq(2)').attr('name', 'option['+id+'][parent][]').val(id);
+		copy.find('.action_0').html('<a id="menu_'+newid+'" class="btn-color14">{$P8LANG[delete]}</a>');
+		copy.find('.id_0').html('<input type="hidden" name="option['+id+'][id][]"/>');
+		copy.find('.display_0').html('<img src="{$SKIN}/check_yes.gif" alt="1" /><input type="hidden" name="option['+id+'][display][]" value="1" />');
+		copy.find('#menu_'+newid).click(function(){
+			copy.remove();
+		});			
+		copy.appendTo($('#images_'+id));
+		pids.push(newid);					
+	}
+	var display_json = {};
+	
+	function display_menu(obj){
+		var id = intval($(obj).attr('id'));
+		switch(parseInt($('img', obj).attr('alt'))){
+			case 0:
+				//show
+				display_json[id] = 1;
+				
+				$('img', obj).attr('src', '{$SKIN}/check_yes.gif').attr('alt', '1');
+			break;
+			
+			case 1:
+				//hide
+				display_json[id] = 0;
+				
+				$('img', obj).attr('src', '{$SKIN}/check_no.gif').attr('alt', '0');
+			break;
+		}
+		
+		$('#display_json').val($.toJSON(display_json));
+	}
+	
+	function delete_menu(obj){
+		//if(confirm('{$P8LANG['confirm_to_delete']}')){
+		p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+			if(r){
+				$.ajax({
+					url: '$this_url',
+					type: 'POST',
+					dataType: 'json',
+					data: {type:'delete',id: obj.id.replace(/[^0-9]/g, '')},
+					cache: false,
+					success: function(json){
+						for(var i in json){
+							$('#menu_'+ json[i]).parent().parent().remove();
+						}
+					}
+				});
+			}
+		});
+		
+		return false;
+	}
+	
+	$('form input[name^=display_order]').change(function(){
+		this.value = this.value.replace(/[^0-9]/g, '') || 0;
+		if(this.value > 255) this.value = 255;
+		if(this.value < 0) this.value = 0;
+		
+		$('#form').append('<input type="hidden" name="_display_order['+ this.name.replace(/[^0-9]/g, '') +']" value="'+ this.value +'" />');
+		$(this).css({border: '1px solid #ff0000'});
+	});
+	function cache_custom_menu(){		
+		$.ajax({
+			url: '$this_url',
+			type: 'POST',
+			dataType: 'text',
+			data: {type:'cache'},
+			cache: false,
+			success: function(json){
+				p8_window.alert('{$P8LANG[done]}');
+			}
+		});
+		
+	}
+</script>
+</body>
+</html>
+<!--{/php168}-->	

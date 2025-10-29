@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="x-dns-prefetch-control" content="on" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+	<meta name="renderer" content="webkit">
+	<link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon" />
+	<link rel="stylesheet" type="text/css" href="./../skin/sites/common/css/bootstrap.min.css" >
+    <link rel="stylesheet" type="text/css" href="./css/search.css">
+	<script type="text/javascript" src="./../js/util.js"></script>
+	<script type="text/javascript" src="./../skin/sites/common/js/bootstrap.min.js"></script>
+	<script type="text/javascript">document.write('<script type="text/javascript" src="./../js/sites_all.js?_t='+Math.random()+'"><\/script>');</script>
+	<script type="text/javascript" src="./../js/search.js"></script>
+	<title>搜索一下，你就知道</title>
+</head>
+<body>
+	<div id="header">
+		<div class="container">
+			<div class="searchbar">
+				<div class="row">
+					<div class="col-md-3 col-sm-3 col-xs-12">
+						<div class="logo">
+							<a href="javascript:;">内容搜索</a>
+						</div>
+					</div>
+					<div class="col-md-9 col-sm-9 col-xs-12">
+						<div class="searchbox">
+							<div class="searchform">
+								<form action="search.php" method="get" id="request" onsubmit="request_item(1);return false;">						
+									<input name="word" id="p8_kw" class="search_i" value="" placeholder="请输入关键词" onFocus="if(this.value=='请输入关键词') this.value='';" autocomplete="off" x-webkit-speech="" speech="" type="text">
+									<input id="p8_select" class="search_m" value="选择站点" readonly="" onFocus="this.blur();" onClick="$('#search_module').fadeIn('fast');" type="text"><label for="p8_select"></label>
+									<input value="搜索" class="search_s" type="button" onclick="request_item(1);" />
+									<input type="hidden" name="site" value="" id="site"/>
+									<input type="hidden" name="cid" value="0" id="cid"/>
+									<input type="hidden" name="Csrf_Token" value="" id="Csrf_Token"/>
+									<a href="javascript:;" class="searchbtn">高级搜索</a>
+									<div class="searchopt">
+										<input name="search_type" type="radio" value="0" id="search_type_0" /><label for="search_type_0"> 标题/摘要</label>
+										<input name="search_type" type="radio" value="1" id="search_type_1" checked="checked" /><label for="search_type_1"> 标题</label>
+										<input name="search_type" type="radio" value="2" id="search_type_2" /><label for="search_type_2"> 全文</label>
+										<input name="search_type" type="radio" value="3" id="search_type_3" /><label for="search_type_3"> 作者</label>
+										<input name="search_type" type="radio" value="4" id="search_type_4" /><label for="search_type_4"> 用户名</label>
+										<input name="search_type" type="radio" value="5" id="search_type_5" /><label for="search_type_5"> 来源</label>
+										&nbsp;&nbsp;按年份
+										<select name="year" style="color:#333;padding:0 5px;">
+											<option value="">不限</option>
+											<option value="2022">2022年</option>
+											<option value="2021">2021年</option>
+											<option value="2020">2020年</option>
+											<option value="2019">2019年</option>
+											<option value="2018">2018年</option>
+											<option value="2017">2017年</option>
+											<option value="2016">2016年</option>
+											<option value="2015">2015年</option>
+											<option value="2014">2014年</option>
+											<option value="2013">2013年</option>
+											<option value="2012">2012年</option>
+										</select>
+									</div>
+									
+								</form>
+							</div>
+							<div id="search_module" style="display:none;" onMouseOut="$('#search_module').hide();" onMouseOver="$('#search_module').show();"></div>
+							<script>
+								var p8_sites_select = '<ul><li onClick="setModule(\'allstation\',\'全站\')">全站</li><li onClick="setModule(\'mainstation\',\'主站\')">主站</li>';
+									if(P8_SITES_ALL){
+										$.each(P8_SITES_ALL,function(index,alias){							
+											p8_sites_select += '<li onClick="setModule(\''+P8_SITES_ALL[index].alias+'\',\''+P8_SITES_ALL[index].name+'\')">'+P8_SITES_ALL[index].name+'</li>';
+										});
+									}
+									p8_sites_select += '</ul>';
+									$('#search_module').html(p8_sites_select);
+							</script>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3 col-sm-3 col-xs-12">
+				<div class="content_left">
+					<div class="searchyear">
+						
+					</div>
+				</div>
+			</div>
+			<div class="col-md-9 col-sm-9 col-xs-12">
+				<div class="content_right">
+					<div class="head_nums_cont_outer" id="search_info"></div>
+					<div class="searchlist">
+						<ul id="list"></ul>
+					</div>
+					<div class="pages" id="pages"></div>			
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="clear"></div>
+	<div id="footer">
+		<div class="copyright">			
+			<p><script type="text/javascript">
+			var today = new Date();
+			var week = ["星期天", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
+			document.write("今天日期：" + today.getFullYear() + "年" +
+				(today.getMonth() + 1) + "月" +
+				today.getDate() + "日 " + week[today.getDay()]);
+		</script></p>			
+		</div>
+    </div>
+<script>
+var get_word = getQueryVariable("word");
+var get_site = getQueryVariable("site");
+var cid = parseInt(getQueryVariable("cid"));
+if(get_site && get_site != undefined){
+	if(get_site == 'mainstation'){
+		setModule('mainstation','主站');
+	}else{
+		$.each(P8_SITES_ALL,function(index,alias){		
+			if(P8_SITES_ALL[index].alias == get_site) setModule(P8_SITES_ALL[index].alias,P8_SITES_ALL[index].name);
+		}
+		);
+	}
+}else{
+	setModule('allstation','全站');
+}
+if(cid) $('#cid').val(cid);
+if(get_word && get_word != undefined){
+	$('#p8_kw').val(get_word);
+	if(get_site) $('#site').val(get_site);
+	request_item(1);
+}
+</script>
+</body> 
+</html>

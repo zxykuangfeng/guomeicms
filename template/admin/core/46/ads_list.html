@@ -1,0 +1,172 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<link rel="stylesheet" type="text/css" href="{$_SKIN}/style.css" />
+<div class="mainbox mainborder">
+	<div class="section">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr><td>
+			<table class="formtable">
+				<tr>
+					<ul class="sites-top-menu">
+						<ul>
+							<li><a href="$this_router-ads_list"><i class="fa fa-tencent-weibo"></i>广告类型管理</a></li>
+							<li><a href="$this_router-buy_list{if !empty($aid)}?aid=$aid{/if}"><i class="fa fa-gears"></i>已投放广告管理</a></li>
+							<li><a href="javascript:void(0);" onclick="cache()"><i class="fa fa-refresh"></i>更新广告缓存</a></li>
+							<li><a href="javascript:;" onclick="html_index()"><i class="fa fa-refresh"></i>静态首页</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			</td></tr>
+		</table>
+	</div>
+</div>
+<form action="$this_url" method="POST" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="sites-down-menu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core/46-add" target="_blank"><i class="icon icon-ico44"></i>新增广告类型</a></li>
+							<li class="btn-color2"><a href="javascript:;" onclick="views_item(checked_values('id[]', $('#form')))"><i class="icon icon-ico5"></i>预览广告</a></li>
+							<li class="btn-color3"><a href="javascript:;" onclick="update_item(checked_values('id[]', $('#form')))"><i class="icon icon-ico45" target="_blank"></i>修改</a></li>
+							<li class="btn-color5"><a href="javascript:;" onclick="_delete()"><i class="icon icon-ico46" target="_blank"></i>删除</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table" align="center">
+			<tr class="title">
+				<td width="3%" class="list_top"><input type="checkbox" onclick="check_all(this, 'id[]'); init_tr($('#form'));" /></td>
+				<td width="5%" class="list_top">ID</td>
+				<td width="18%" class="list_top">广告名称</td>
+				<td width="10%" class="list_top">广告类型</td>
+				<td width="8%" class="list_top">投放数量</td>
+				<td width="20%" class="list_top">调用代码</td>
+				<td width="12%" class="list_top">时间</td>
+				<td width="15%" class="list_top">{$P8LANG['operation']}</td>
+			</tr>
+			
+			<!--{foreach $list $value}-->
+			<tr id="ad_$value[id]">
+				<td align="center"><input type="checkbox" name="id[]" value="$value[id]" /></td>
+				<td align="center">{$value['id']}</td>
+				<td align="center" id="name_$value[id]">{$value['name']}</td>
+				<td align="center">{$P8LANG[$value['type']]}</td>
+				<td align="center">$value[buy_count]</td>
+				<td align="left"><input type="text" value="$value[invoke]" class="txt" title="复制任一种调用代码，粘贴到页面尾部的HTML自定义标签中" onclick="show_invoke(this.value)" size="30" /> <span class="help"><br>复制任一种调用代码，粘贴到页面尾部的HTML自定义标签中</span></td>
+				<td align="center">{date('Y-m-d H:i', $value['timestamp'])}</td>
+				<td align="center">
+					<a href="$this_router-add_buy?aid={$value['id']}">我要投放广告</a> / 
+					<a href="$this_router-buy_list?aid={$value['id']}">投放管理</a> / 
+					<a href="$this_router-ads_update?id={$value['id']}">{$P8LANG['edit']}</a> / 
+					<a href="$value[preview_url]" target="_blank">预览</a>
+				</td>
+			</tr>
+			<!--{/foreach}-->			
+			</table>
+			<table width="100%" class="columntable formtable">
+				<tr>
+					<td align="center" id="pages" class="pages">
+						$pages
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<input type="button" value="重新统计投放数" onclick="_submit('statistic')" class="edit_btn" />
+						<input type="button" value="更新广告缓存" onclick="cache()" class="edit_btn" />
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+<input type="hidden" name="action" value="" />
+</form>
+
+<script type="text/javascript">
+function html_index(){
+	thisSite = '{$this_system->SITE}';
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_system->admin_controller}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   success: function(msg){
+			   if(msg==-1)
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	});	
+}
+function cache(){
+	if(!checked_values('id[]', $('#form')).length) check_all(true, 'id[]');	
+	ajaxing({text:'处理中...'});
+	$('#form input[name=action]').remove();
+	$('#form').attr('action', '$this_router-ads_cache');
+	$('#form').submit();
+}
+
+function _submit(val){
+	ajaxing({text:'处理中...'});
+	$('#form input[name=action]').val(val);	
+	$('#form').submit();
+}
+
+function _delete(){
+	var id = checked_values('id[]');
+	if(!id.length) return;
+	
+	//if(!confirm('{$P8LANG['confirm_to_delete']}')) return;
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'post',
+				dataType: 'json',
+				data: {id: id},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#ad_'+ json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});
+	
+}
+
+var dialog = new P8_Dialog({
+	width: 600,
+	height: 360
+});
+
+function show_invoke(value){
+	dialog.show();
+	var tmp = value.split('|');
+	
+	var s = '';
+	for(var i in tmp){
+		s += html_entities(tmp[i]) +'<hr />';
+	}
+	
+	dialog.content.html(s);
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

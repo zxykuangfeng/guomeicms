@@ -1,0 +1,31 @@
+<!--{php168}-->
+<ul class="label-news63 line-37" style="color:#454545;">
+<!--{foreach $list $value}-->
+<!--{php 
+	$this_enddate = '';
+	if(strtotime($value['enddate'])){								
+		$remainingSeconds = strtotime($value['enddate']) - time();
+		if ($remainingSeconds < 0) {
+			$this_enddate = "已过期";
+		} else {
+			$days = floor($remainingSeconds / 86400);
+			$remainingSeconds %= 86400;
+			$hours = floor($remainingSeconds / 3600);
+			if($days){
+				$this_enddate = "剩余".$days."天".$hours."小时";
+			}else{
+				$this_enddate = "剩余".$hours."小时";
+			}
+		}
+	}
+}-->
+	<li>
+		<div class="row">
+			<div class="col-md-6 col-sm-6 col-xs-12"><div class="title clam1"><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></div></div>
+			<div class="col-md-4 col-sm-4 col-xs-4 text-center">{$this_enddate}</div>
+			<div class="col-md-2 col-sm-2 col-xs-4 text-center"><span class="datatime"><!--{php echo date('Y-m-d',$value['timestamp']);}--></span></div>
+		</div>
+	</li>
+<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

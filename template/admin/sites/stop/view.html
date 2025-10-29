@@ -1,0 +1,89 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table">
+			<tr>
+				<td colspan="2" class="list_top" style="text-align:left;padding-left:10px;">推送内容信息</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL2">标题</td>
+				<td class="tdR2">
+					$data[title]
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL2">副标题</td>
+				<td class="tdR2">
+					$data[sub_title]
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL2">来源</td>
+				<td class="tdR2">
+					$data[source]
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL2">关键词</td>
+				<td class="tdR2">
+					$data[keywords]
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL2">摘要</td>
+				<td class="tdR2">
+					$data[summary]
+				</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL2">时间</td>
+				<td class="tdR2">
+					{$data['timestamp']}
+				</td>
+			</tr>
+			<!--{foreach $data['field#'] $name $v}-->
+			<tr>
+				<td class="tdL2">$name</td>
+				<td class="tdR2">
+					<!--{php print_r($v);}-->
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			
+			<!--{foreach $data['addon'] $v}-->
+			<tr>
+				<td class="tdL2">追加数据</td>
+				<td class="tdR2">
+					<table width="100%" class="zq_list hover_table">
+						<tr>
+							<td class="tdL">追加标题</td>
+							<td class="tdR">$v[addon_title]</td>
+						</tr>
+						<tr>
+							<td class="tdL">追加摘要</td>
+							<td class="tdR">$v[addon_summary]</td>
+						</tr>
+						<!--{foreach $v['field#'] $kk $vv}-->
+						<tr>
+							<td class="tdL">$kk</td>
+							<td class="tdR"><!--{php print_r($vv);}--></td>
+						</tr>
+						<!--{/foreach}-->
+					</table>
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			
+		</table>
+	</div>
+</div>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

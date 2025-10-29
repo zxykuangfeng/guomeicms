@@ -1,0 +1,75 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<form name="form1" method="post" action="$this_url">
+<table width='100%' cellspacing='1' cellpadding='3' class="tablewidth">
+    <tr  class="head"> 
+      <td colspan="2"> 
+        <div align='center'><b><font color="#FFFFFF">{$action_name}</font></b></div>
+      </td>
+    </tr>
+    <tr> 
+      <td bgcolor='#FFFFFF' width="25%" align="center">菜单名称</td>
+      <td bgcolor='#FFFFFF' width="75%"><input class="txt" type="text" value="{if !empty($menu['name'])}{$menu['name']}{/if}" name="name">
+	  仅支持中英文和数字，字数不超过4个汉字或8个字母
+	  </td>
+    </tr>
+	 <tr> 
+      <td bgcolor='#FFFFFF' width="25%" align="center">上级菜单</td>
+      <td bgcolor='#FFFFFF' width="75%">
+			<select class="txt" name="pid" id="pid" {if $menu['pid']===0}disabled{/if}>
+				<option value="0">无</option>
+				<!--{foreach $topMenus $kid $name}-->
+				<option value="{$kid}" {if $menu['pid']==$kid || $pid == $kid}selected{/if}>{$name}</option>
+				<!--{/foreach}-->
+            </select>
+	 如果要创建一级菜单，这里选：无
+	  </td>
+    </tr>
+     <tr>
+         <td bgcolor='#FFFFFF' width="25%" align="center">菜单类型</td>
+          <td bgcolor='#FFFFFF' width="75%">			  
+			 <label class="radio-inline">
+			  <input type="radio" name="type" class="push_type" value="view" onclick="showoutlink(2)" checked /> 跳转网页
+			</label>
+			</td>
+        </tr>
+        <tr id="media_id">
+          <td bgcolor='#FFFFFF' width="25%" align="center">素材id</td>
+          <td><input class="txt" type="text" value="{if !empty($menu['value'])}{$menu['value']}{/if}" name="value" id="value">
+          填写素材的id，可以在素材管理中找到 <a href="" target="{$this_router}-material">去查看</a></td>
+        </tr>
+		<tr id="view">
+          <td bgcolor='#FFFFFF' width="25%" align="center">页面地址</td>
+          <td><input class="txt" type="text" value="{if !empty($menu['value'])}{$menu['value']}{/if}" name="value" id="value">
+		  填写要跳转的地址，例如：http://www.php168.net 如果该菜单下还有子菜单，则留空</td>
+        </tr>
+        <tr>
+          <td bgcolor='#FFFFFF' width="25%" align="center">排序</td>
+          <td><input class="txt" type="text" value="{if !empty($menu['list_order'])}{$menu['list_order']}{else}0{/if}" name="list_order" id="list_order">
+		  数字越小，排序越靠前
+		  </td>
+        </tr>
+        <tr>
+          <input type="hidden" name="id" value="{$_GET['id']}">
+		  <input type="hidden" name="action" value="{$action}">
+          <td colspan="2" style="text-align: center"><input class="submit_btn" type="submit" value="提交"></td>
+        </tr>
+      </table>
+    </form>
+  </div>
+</div>
+</div>
+<script type="text/javascript">
+function showoutlink(f){
+	if(f=='1'){
+		$('#media_id').show();
+		$('#view').hide();
+	}else{
+		$('#media_id').hide();
+		$('#view').show();
+	}
+}
+showoutlink(2);
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

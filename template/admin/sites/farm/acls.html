@@ -1,0 +1,244 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<div class="section">
+	<table class="formtable" width="100%">
+		<tr>
+			<td class="headerbtn_list">
+				<ul class="sites-top-menu">				
+					<li><a href="{$this_system.admin_controller}/farm-list"><i class="fa fa-cog"></i>站点列表</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-config"><i class="fa fa-cog"></i>本站点设置</a></li>
+					<li><a href="{$this_system.admin_controller}/category-list"><i class="fa fa-cog"></i>栏目管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_list"><i class="fa fa-cog"></i>菜单管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-logo"><i class="fa fa-ravelry"></i>站点LOGO</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-acls"><i class="fa fa-user-circle-o"></i>站点授权</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-template"><i class="fa fa-tree"></i>站点模板</a></li>
+					<li><a href="{$this_system.admin_controller}-Visualization" target="_blank"><i class="fa fa-refresh"></i>页面可视化</a></li>
+					<li><a href="{$this_system.admin_controller}-publishing" target="_blank"><i class="fa fa-refresh"></i>站点发布</a></li>
+					<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($site_info['ipordomain'])}{$core->CONFIG['url']}/s.php/{$site}{else}{$site_info['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$site_info['sitename']}</a></li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="section">
+	<form action="" method="post" id="form">
+		<table width="100%" border="0" class="mainbox">
+			<tbody>
+			<tr>
+				<td>
+					<ul class="sites-down-menu">
+						<li class="btn-color1"><a href="{$this_system.admin_controller}/farm-add"><i class="icon icon-ico10"></i>站点基本设置</a></li>
+						<li class="btn-color2"><a href="{$this_system.admin_controller}/farm-logo"><i class="icon icon-ico11"></i>站点logo管理</a></li>
+						<li class="btn-color4"><a href="{$this_system.admin_controller}/farm-acls"><i class="icon icon-ico12"></i>站点授权</a></li>
+						<li class="btn-color5"><a href="{$this_system.admin_controller}/farm-template"><i class="icon icon-ico12"></i>站点模板</a></li>
+						<li class="btn-color9"><a href="{$this_system.admin_controller}/farm-add" target="_blank"><i class="icon icon-ico44"></i>新增站点</a></li>
+					</ul>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table" align="center">
+			<tr class="title">
+				<td width="3%" align="center" class="list_top title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+				<td width="9%" class="list_top list_left">名称</td>
+				<td width="6%" class="list_top">别名</td>
+				<td width="20%" class="list_top">域名</td>
+				<td width="5%" class="list_top">状态</td>
+				<td width="8%" class="list_top">独立审核权限</td>
+				<td width="8%" class="list_top">管理员</td>				
+				<td width="8%" class="list_top">投稿角色</td>				
+				<td width="8%" class="list_top">投稿人</td>
+				<td width="*" class="list_top list_right">操作</td>
+			</tr>
+			<!--{foreach $list $value}-->
+			<tr id="sites_{$value['alias']}">
+				<td class="list_title" align="center"><input type="checkbox" name="id[]" value="{$value['alias']}" /></td>
+				<td class="list_left list_ico">{$value['sitename']} {if $value['authentication_mark']} <i class="fa fa-flag-checkered" style="color:green;font-size:20px;"></i>{/if}</td>
+				<td class="list_title"><strong>{$value['alias']}</strong></td>
+				<td class="list_title"><a href="{if empty($value['ipordomain'])}{$core->CONFIG['url']}/s.php/{$value['alias']}/{else}{$value['domain']}{/if}" target="_blank">
+				<!--{if empty($value['ipordomain'])}-->
+				{$core->CONFIG['url']}/s.php/{$value['alias']}/
+				<!--{else}-->
+				{$value['domain']}
+				<!--{/if}-->
+				</a>
+				</td>
+				<td id="sites_{$value['alias']}"><img src="$_SKIN/status_{$value['status']}.gif" /></td>
+				<td align="left">
+					<label><input type="radio" name="independent_verify[$value[alias]]" value="1"{if !empty($value['independent_verify'])} checked{/if} />启用</label> 
+					<label style="margin-left:8px;"><input type="radio" name="independent_verify[$value[alias]]" value="0"{if empty($value['independent_verify'])} checked{/if} />关闭(默认)</label>
+				</td>
+				<td>
+					<!--{if $IS_FOUNDER}-->
+					<ul id="manager_{$value['alias']}">
+					<!--{foreach $value['manager'] $user}-->
+					<!--{if $users_info[$user]['username']}-->
+					<li>{$users_info[$user]['username']}{if $users_info[$user]['name']} | {$users_info[$user]['name']}{/if}<input type="hidden" name="manager[{$value['alias']}][]" value="{$users_info[$user]['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					</ul>
+					<!--{else}-->
+					仅超级管理员有权限配置
+					<!--{/if}-->
+				</td>
+				<td>
+					<ul id="role_{$value['alias']}">
+					<!--{foreach $value['manager_role'] $rid}-->
+					<!--{if $roles[$rid]['name']}-->
+					<li>{$roles[$rid]['name']}<input type="hidden" name="role[{$value['alias']}][]" value="{$rid}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					</ul>
+				</td>
+				<td>
+					<ul id="poster_{$value['alias']}">
+					<!--{foreach $value['poster'] $user}-->
+					<!--{if $users_info[$user]['username']}-->
+					<li>{$users_info[$user]['username']}{if $users_info[$user]['name']} | {$users_info[$user]['name']}{/if}<input type="hidden" name="poster[{$value['alias']}][]" value="{$users_info[$user]['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					</ul>
+				</td>
+				<td align="center" class="list_btn">
+					<ul class="operation-nav">
+						<li><a href="javascript:void(0)" class="btn-color3" onclick="show_dialog('manager','{$value['alias']}')">选择管理员</a></li>
+						<li><a href="javascript:void(0)" class="btn-color12" onclick="cutten_site = '{$value['alias']}';dialog_role.show()">选择投稿角色</a></li>
+						<li><a href="javascript:void(0)" class="btn-color10" onclick="show_dialog('poster','{$value['alias']}')">选择投稿人</a></li>
+						<li><a href="$this_router-acl?alias={$value['alias']}" target="_blank" class="btn-color2"><span id="acl_{$value['alias']}">站点授权</span></a></li>
+					</ul>
+				</td>
+			</tr>
+			<!--{if $value['child']}-->
+			<!--{php $last_key = end(array_keys($value['child']));}-->
+			<!--{foreach $value['child'] $k=>$cvalue}-->
+			<tr id="sites_{$cvalue['alias']}">
+				<td class="list_title" align="center"><input type="checkbox" name="id[]" value="{$cvalue['alias']}" /></td>
+				<td class="list_left">{if $last_key==$k}│&nbsp;└{else}│&nbsp;├{/if} {$cvalue['sitename']} {if $cvalue['authentication_mark']} <i class="fa fa-flag-checkered" style="color:green;font-size:20px;"></i>{/if}</td>
+				<td class="list_title"><strong>{$cvalue['alias']}</strong></td>
+				<td class="list_title"><a href="{if empty($cvalue['ipordomain'])}{$core->CONFIG['url']}/s.php/{$cvalue['alias']}/{else}{$cvalue['domain']}{/if}" target="_blank">
+					<!--{if empty($cvalue['ipordomain'])}-->
+					{$core->CONFIG['url']}/s.php/{$cvalue['alias']}/
+					<!--{else}-->
+					{$cvalue['domain']}
+					<!--{/if}-->					
+				</a>
+				</td>
+				<td id="sites_{$cvalue['alias']}"><img src="$_SKIN/status_{$cvalue['status']}.gif" /></td>
+				<td align="left">
+					<label><input type="radio" name="independent_verify[$cvalue[alias]]" value="1"{if !empty($cvalue['independent_verify'])} checked{/if} />启用</label> 
+					<label style="margin-left:8px;"><input type="radio" name="independent_verify[$cvalue[alias]]" value="0"{if empty($cvalue['independent_verify'])} checked{/if} />关闭(默认)</label>
+				</td>
+				<td>
+					<ul id="manager_{$value['alias']}">
+					<!--{foreach $cvalue['manager'] $user}-->
+					<!--{if $users_info[$user]['username']}-->
+					<li>{$users_info[$user]['username']}{if $users_info[$user]['name']} | {$users_info[$user]['name']}{/if}<input type="hidden" name="manager[{$vcalue['alias']}][]" value="{$users_info[$user]['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					</ul>					
+				</td>
+				<td>
+					<ul id="role_{$cvalue['alias']}">
+					<!--{foreach $cvalue['manager_role'] $rid}-->
+					<!--{if $roles[$rid]['name']}-->
+					<li>{$roles[$rid]['name']}<input type="hidden" name="role[{$cvalue['alias']}][]" value="{$rid}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					</ul>
+				</td>
+				<td>
+					<ul id="poster_{$value['alias']}">
+					<!--{foreach $cvalue['poster'] $user}-->
+					<!--{if $users_info[$user]['username']}-->
+					<li>{$users_info[$user]['username']}{if $users_info[$user]['name']} | {$users_info[$user]['name']}{/if}<input type="hidden" name="poster[{$cvalue['alias']}][]" value="{$users_info[$user]['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					</ul>
+				</td>
+				<td align="center" class="list_btn">
+					<ul class="operation-nav">
+						<li><a href="javascript:void(0)" class="btn-color3" onclick="show_dialog('manager','{$cvalue['alias']}')">选择管理员</a></li>
+						<li><a href="javascript:void(0)" class="btn-color12" onclick="cutten_site ='{$cvalue['alias']}';dialog_role.show()">选择投稿角色</a></li>
+						<li><a href="javascript:void(0)" class="btn-color10" onclick="show_dialog('poster','{$cvalue['alias']}')">选择投稿人</a></li>
+						<li><a href="$this_router-acl?alias={$cvalue['alias']}" target="_blank" class="btn-color2"><span id="acl_{$cvalue['alias']}">站点授权</span></a></li>
+					</ul>
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			<!--{/if}-->
+			<!--{/foreach}-->
+			<tr>
+				<td colspan="10" class="text-center"><input type="submit" value=" {$P8LANG['config']} " class="submit_btn"/></td>
+			</tr>
+		</table>
+	</form>
+</div>
+<script type="text/javascript">
+var role_json = $role_json;
+var cutten_site = null;
+var manage = null;
+var dialog_role = new P8_Dialog({
+	title_text:'选择角色组',
+	width: 550,
+	height: 330,
+	button: true,
+	show: function(){
+		var check_roles = {};
+		$('#role_'+cutten_site).find('input').each( function(){ check_roles[$(this).val()]=$(this).val(); } );
+		
+		var shtml = '';
+		for(var i in role_json){
+			shtml+= '<span class="role_span" style="display:inline-block;margin:4px 6px;"><input type="checkbox" name="role['+cutten_site+']" value="'+role_json[i].id+'" '+(check_roles[role_json[i].id]?'checked':'')+'/>'+role_json[i].name+'</span>';
+		}
+		dialog_role.content.html(shtml);
+		
+	},
+	ok: function(){
+		$('#role_'+cutten_site).html('');
+		dialog_role.content.find('input:checked').each(function(){
+				j = $(this).val();
+				$('#role_'+cutten_site).append('<li>'+role_json[j].name+'<input type="hidden" name="role['+cutten_site+'][]" value="'+j+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+		});
+														
+	}
+});
+function delete_manager(obj){
+$(obj).parent().remove();	
+}
+var cutten_item = null;
+function member_single_select_callback(checked, json){
+	var u_name = '';
+	$('#'+cutten_item).find("input[value="+json.id+"]").parent().remove();
+	if(checked){
+		if (json.name && json.name != 'undefined') u_name = json.name;
+		$('#'+cutten_item).append('<li>'+json.username + (u_name ? ' | '+u_name :'')+'<input type="hidden" name="'+manage+'['+cutten_site+'][]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+	}
+}
+
+function show_dialog(item,site){
+	manage = item;
+	cutten_site = site;
+	cutten_item = item+'_'+site;
+	var dialog = new P8_Dialog({
+		title_text:'选择管理员',
+		width: 700,
+		height: 500,
+		button: true
+	});
+	dialog.content.append($('<iframe width="100%" height="380" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+	dialog.show();	
+	var ifr = dialog.content.find('iframe');
+	var check_uids = {};
+	$('#'+cutten_item).find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+	ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+}
+</script>
+
+</script>
+</body>
+</html>
+<!--{/php168}-->

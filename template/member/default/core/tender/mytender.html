@@ -1,0 +1,159 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $core intranet_header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<div class="forms-container">
+	<div class="forms-right" style="margin-left:0;">
+		<div class="main-title"><span>{if $model_alias}{$model_alias}{else}我的投标项目{/if}</span></div>
+		<div class="search-myforms search-manage">
+			<form name="request" id="request" class="search-form" action="$this_url" method="get">
+				<div class="form-item4">
+					<label class="form-label">投标时间:</label>
+					<div class="input-block">
+						<input type="text" name="mindate" size="10" onclick="rcalendar(this);" value="{if !empty($mindate)}$mindate{/if}" class="input2"/>
+						-
+						<input type="text" name="maxdate" size="10" onclick="rcalendar(this);"  value="{if !empty($maxdate)}$maxdate{/if}" class="input2"/>
+					</div>
+				</div>
+				<!--{foreach $this_model['filterable_fields'] $field $field_data}-->
+				<!--{php $field_data['editable'] = 1;}-->				
+				<div class="form-item4">
+					<label class="form-label">{$field_data['alias']}:</label>
+					<div class="input-block">
+						<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+					</div>
+				</div>
+				<!--{/foreach}-->				
+				<div class="clear"></div>
+				<div class="form-item4" style="text-align:center;margin:0 auto;padding:0;width:100%;">
+					<div class="input-block">
+						<input type="submit" class="btn" onclick="request.action='$this_url';request.method='get'" value="查询" />
+						<input type="reset" name="" class="btn btn-reset" value="重置">						
+						<input type="hidden" name="ids" value="" />
+						<input type="hidden" name="mid" value="{$mid}" />
+					</div>
+				</div>
+			</form>
+		</div>		
+		<div id="show_myforms" style="">
+			<div class="forms-content">
+				<form name="form" id="form" action="$this_url" method="post">
+				<table width='99%' cellspacing='1' cellpadding='3' class="show_table" style="text-align:center">
+					<tr class="tablehead">
+						<td width="5%">ID</td>
+						<!--{if $mid == 2}--><td align="center"><a href="$this_url">招标源</a></td><!--{/if}-->
+						<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+						<td width="">$field_data[alias]</td>
+						<!--{/foreach}-->
+						<td width="5%">提交者</td>
+						<td width="5%">真实姓名</td>
+						<td width="8%">填写时间</td>
+						<td width="5%">状态</td>
+						<td width="5%">审核流程</td>
+						<!--{if $mid == 2}-->
+						<td width="5%">平均分</td>
+						<!--{if $p8_status}--><td width="5%">项目状态</td><!--{/if}-->
+						<!--{/if}-->
+						<!--{if $mid == 1}--><td width="5%">前台显示</td><!--{/if}-->
+						<td width="*">操作</td>
+					</tr>
+					<!--{foreach $list $key $value}-->
+					<tr id="item_$value[id]">
+						<td>$value[id]</td>
+						<!--{if $mid == 2}-->
+						<td align="center"><a href="{$this_module.controller}-view-id-$value[iid]" target="_blank">{$value[tender_title]}</a></td>
+						<!--{/if}-->
+						<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+						<td>
+							<!--{if !empty($value[$field]) && ($field_data['widget']=='radio' || $field_data['widget']=='select')}-->					
+								<!--{php echo is_array($field_data['data'][$value[$field]]) ? $field_data['data'][$value[$field]][0] : $field_data['data'][$value[$field]];}-->
+							<!--{elseif !empty($value[$field]) && ($field_data['widget']=='checkbox' || $field_data['widget']=='multi_select')}-->
+								<!--{foreach $value[$field] $v}-->
+									{$field_data['data'][$v]}, 
+								<!--{/foreach}-->
+							<!--{elseif isset($value[$field]) && $field_data['widget']=='linkage'}-->
+									<!--{php  $field_value= array_pop($value[$field]);}-->
+										{$field_value}	
+							<!--{else}-->	
+								{$value[$field]}
+							<!--{/if}-->
+							<!--{if !empty($field_data['units'])}-->
+								$field_data[units]
+							<!--{/if}-->
+						</td>
+						<!--{/foreach}-->
+						<td>$value[username]</td>
+						<td>$value[uname]</td>
+						<td>{date('Y-m-d',$value['timestamp'])}</td>
+						<td id="status_$value[id]">
+							<!--{if $value['status']==0}-->
+							<strong>
+							<!--{/if}-->
+							{$status[$value['status']]}
+							<!--{if $value['status']==0}-->
+							</strong>
+							<!--{/if}-->
+						</td>
+						<td align="center">
+							<span style="font-weight:700;color:#008000;">						
+							{$P8LANG['tender_verify'][$value['verified']]}
+							</span>
+						</td>
+						<!--{if $mid == 2}-->
+						<td align="center">{$value['score_avg']}</td>
+						<!--{if $p8_status}--><td align="center" id="p8_status_$value[id]">{$value['p8_status']}</td><!--{/if}-->
+						<!--{/if}-->
+						<!--{if $mid == 1}--><td align="center" id="verified_$value[id]"><!--{if $value['display']==0}-->是<!--{else}--><strong>否</strong><!--{/if}--></td><!--{/if}-->			
+						<td class="operation">
+							<a href="{$this_module.controller}-view?id=$value[id]&mid=$value[mid]" target="_blank">查看</a> / 
+							<a href="{$this_module.controller}-update?id=$value[id]&mid=$value[mid]" target="_blank">修改</a> / 							
+							{if $value['status']==9}<!--a href="javascript:void()" onclick="deleteitem($value[id],$value[mid]);return false">删除</a-->{/if}
+						</td>
+					</tr>
+					<!--{/foreach}-->						
+				</table>
+				<table width='99%' cellspacing='1' cellpadding='3' class="formtable columntable hover_table mtop" style="text-align:center">
+					<tr>
+						<td align="center" style="border:0;padding:20px;">									
+							<span class="pages-forms">$pages</span>
+						</td>
+					</tr>
+				</table>
+				</form>				
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var MID = $mid;
+function deleteitem(id,mid){
+	if(id==undefined){	
+		if(!check_ids())return;
+	}
+	//if(!confirm('确定要删除？'))return;
+	p8_window.confirm('确定要删除？', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: $('#form').serialize()+'&action=delete&oid='+id+"&mid="+(mid==undefined? MID : mid),
+				beforeSend: function(){
+					//ajaxing({});
+				},
+				success: function(json){
+					//ajaxing({action: 'hide'});
+					for(var i in json){
+						$('#item_'+json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});	
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

@@ -1,0 +1,248 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>$TITLE</title>
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}zhuanti/style_zhuanti.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/label.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+
+</head>
+<body>
+<div class="header_zt">
+<div class="top">
+$label[zt_toplink]<br><div id="header_t"></div></div>
+</div>
+<div class="wrap">
+<div class="nav">$label[zt_mainNav]</div>
+</div>
+<script type="text/javascript">
+var USERNAME = get_username();
+$(document).ready(function(){
+	//**show_edit**//					   
+	init_labelshows('header_t');
+	
+})
+</script>
+<!--content-->
+<div class="wrap">
+<div class="hei18"></div>
+<div style="width:987px; margin:0 auto">
+<table width="987" cellspacing="0" cellpadding="0" border="0" align="center">
+  <tbody><tr>
+    <td width="737" valign="top">
+    <table width="735" cellspacing="0" cellpadding="0" border="0" class="menu">
+      <tbody><tr>
+        <td width="362" align="center" valign="top">        
+            <!-- 新闻频道_焦点图开始 -->
+<div style="width:362px; font-size:12px;overflow:hidden;" id="flashcontent">
+$label[zt_focuspic]
+</div>
+<!-- 新闻频道_焦点图结束 --> 
+</td>
+        <td valign="top">
+        <table width="360" cellspacing="0" cellpadding="0" border="0" align="right" style="border:solid 1px #ECD798">
+          <tbody><tr>
+            <td height="31" class="pic"><table width="100%" cellspacing="0" cellpadding="0" border="0" class="main">
+              <tbody><tr>
+                <td width="116" align="center" class="wit">$label[zt_gzdt_tt]</td>
+                <td width="183">&nbsp;</td>
+                <td height="27" align="center" class="red">$label[zt_gzdt_more]</td>
+              </tr>
+            </tbody></table></td>
+          </tr>
+          <tr>
+            <td valign="top" height="224"><div style="margin:0 auto; width:332px;">
+            <table width="331" cellspacing="0" cellpadding="0" border="0" align="center">
+            <tbody><tr>
+                <td height="10"></td>
+              </tr>      
+             $label[zt_gzdt_con]         
+             
+             
+            </tbody></table></div></td>
+          </tr>
+        </tbody></table>        </td>
+      </tr>
+    </tbody></table>
+    
+    <div class="hei11"></div>
+    
+    <table width="737" cellspacing="0" cellpadding="0" border="0">
+  <tbody><tr>
+    <td width="362" valign="top">
+    <table width="360" height="236" cellspacing="0" cellpadding="0" border="0" class="pic2">
+      <tbody><tr>
+        <td valign="top" height="27">
+        <table width="360" cellspacing="0" cellpadding="0" border="0" class="main">
+  <tbody><tr>
+    <td width="116" align="center" class="wit">$label[zt_tzgg_tt]</td>
+    <td width="183">&nbsp;</td>
+    <td width="61" height="27" align="center" class="red">$label[zt_tzgg_more]</td>
+  </tr>
+</tbody></table>        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+        <div style="margin:0 auto; width:329px;">
+        <table width="329" cellspacing="0" cellpadding="0" border="0" align="center">
+          <tbody><tr>
+            <td height="10"></td>
+          </tr>
+$label[zt_tzgg_con]
+           
+        </tbody></table>
+        </div>
+        <div class="hei11"></div>        </td>
+      </tr>
+    </tbody></table></td>
+    <td width="12"></td>
+    <td valign="top"><table width="360" height="236" cellspacing="0" cellpadding="0" border="0" class="pic2">
+      <tbody><tr>
+        <td valign="top" height="27"><table width="360" cellspacing="0" cellpadding="0" border="0" class="main">
+            <tbody><tr>
+              <td width="116" align="center" class="wit">$label[zt_zyjs_tt]</td>
+              <td width="183">&nbsp;</td>
+              <td width="61" height="27" align="center" class="red">$label[zt_zyjs_more]</td>
+            </tr>
+        </tbody></table></td>
+      </tr>
+      <tr>
+        <td valign="top">
+        <div style="margin:0 auto; width:329px;">
+        <table width="329" cellspacing="0" cellpadding="0" border="0" align="center">
+            <tbody><tr>
+              <td height="10"></td>
+$label[zt_zyjs_con]
+           
+          </tbody></table>
+          </div>
+            <div class="hei11"></div></td>
+      </tr>
+    </tbody></table></td>
+  </tr>
+</tbody></table>
+
+     <div class="hei11"></div>
+    
+    <table width="737" cellspacing="0" cellpadding="0" border="0">
+  <tbody><tr>
+    <td width="362" valign="top">
+    <table width="360" height="236" cellspacing="0" cellpadding="0" border="0" class="pic2">
+      <tbody><tr>
+        <td valign="top" height="27">
+        <table width="360" cellspacing="0" cellpadding="0" border="0" class="main">
+  <tbody><tr>
+    <td width="116" align="center" class="wit">$label[zt_xxfd_tt]</td>
+    <td width="183">&nbsp;</td>
+    <td width="61" height="27" align="center" class="red">$label[zt_xxfd_more]</td>
+  </tr>
+</tbody></table>        </td>
+      </tr>
+      <tr>
+        <td valign="top">
+        <div style="margin:0 auto; width:329px;">
+        <table width="329" cellspacing="0" cellpadding="0" border="0" align="center">
+          <tbody><tr>
+            <td height="10"></td>
+          </tr>
+$label[zt_xxfd_con]
+           
+        </tbody></table>
+        </div>
+        <div class="hei11"></div>        </td>
+      </tr>
+    </tbody></table></td>
+    <td width="12"></td>
+    <td valign="top"><table width="360" height="236" cellspacing="0" cellpadding="0" border="0" class="pic2">
+      <tbody><tr>
+        <td valign="top" height="27"><table width="360" cellspacing="0" cellpadding="0" border="0" class="main">
+            <tbody><tr>
+              <td width="116" align="center" class="wit">$label[zt_hdjb_tt]</td>
+              <td width="183">&nbsp;</td>
+              <td width="61" height="27" align="center" class="red">$label[zt_hdjb_more]</td>
+            </tr>
+        </tbody></table></td>
+      </tr>
+      <tr>
+        <td valign="top">
+        <div style="margin:0 auto; width:329px;">
+        <table width="329" cellspacing="0" cellpadding="0" border="0" align="center">
+            <tbody><tr>
+              <td height="10"></td>
+            </tr>
+$label[zt_hdjb_con]
+           
+          </tbody></table>
+          </div>
+            <div class="hei11"></div></td>
+      </tr>
+    </tbody></table></td>
+  </tr>
+</tbody></table>    </td>
+    <td width="13"></td>
+    <td width="237" valign="top">
+    <table width="237" cellspacing="0" cellpadding="0" border="0" align="center" class="pic3">
+  <tbody><tr>
+    <td height="32" class="padd"><table width="140" cellspacing="0" cellpadding="0" border="0">
+      <tbody><tr>
+        <td height="32" align="center" class="wit">$label[zt_gzjg_tt]</td>
+      </tr>
+    </tbody></table></td>
+  </tr>
+   <tr>
+    <td valign="top" height="537" style="font-size:14px" class="txt">
+$label[zt_gzjg_con]
+	
+	</td>
+  </tr>
+</tbody></table>
+<table width="237" cellspacing="0" cellpadding="0" border="0" align="center">
+      <tbody><tr>
+        <td height="8"></td>
+      </tr>
+</tbody></table>
+      <table width="237" cellspacing="0" cellpadding="0" border="0" align="center" class="pic2">
+        <tbody><tr>
+          <td height="29"><table width="100%" height="27" cellspacing="0" cellpadding="0" border="0" class="pic4">
+              <tbody><tr>
+                <td width="91" align="center" style="color:#FFFFFF; font-weight:bold" class="red">友情链接</td>
+                <td width="138"></td>
+              </tr>
+          </tbody></table></td>
+        </tr>
+        <tr>
+          <td height="35" align="center">
+$label[zt_frdlink01]</td>
+        </tr>
+        <tr>
+          <td height="35" align="center">
+$label[zt_frdlink02]</td>
+        </tr>
+</tbody></table>
+
+    </td></tr></tbody></table>
+</div>
+</div>
+<!--footer-->
+<div class="wrap">
+<div class="hei18"></div>
+<div style="font-size:14px" class="foot"><br>
+$label[zt_footer-txt]
+</div>
+</div>
+</body></html><!--{/php168}-->
+

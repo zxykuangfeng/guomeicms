@@ -1,0 +1,161 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<style>
+.box { padding:2px; border:1px solid #cccccc; }
+.head{ background-color:#eeeeee}
+.formtable .title{ color:#FFF}
+#showimgbox{ display:none; width:305px; height:105px; position:absolute;  border:1px solid #cccccc}
+</style>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="title">{$P8LANG['operation']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li class="active"><a href="{$this_url}?plugin=employment"><i class="fa fa-calendar"></i>查看就业信息</a></li>
+						<li><a href="{$this_url}?plugin=employment&job=add"><i class="fa fa-check-square-o"></i>增加就业信息</a></li>
+						<li><a href="{$STATIC_URL}/plugin.php/employment-detail" target="_blank"><i class="fa fa-wpforms"></i>就业信息效果查看</a></li>
+						<li><a href="{$this_url}?plugin=employment&job=cache"><i class="fa fa-refresh"></i>刷新缓存</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="title">{$P8LANG['operation']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					<form name="form" action="{$this_url}"  method="get">
+						时间：<input type="text" name="date" value="{if !empty($date)}$date{/if}" autocomplete="off" onclick="rcalendar(this, 'YYYY-MM-DD')"/> 
+						关键字：<input type="text" name="name" value="{if !empty($name)}$name{/if}"/>
+						<input type="submit" value="搜索" class="submit"/>
+						<input type="hidden" name="plugin" value="employment"/>
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder" style="display:">
+	<div class="section">
+		<form name="form1" action="{$this_url}"  onsubmit="return check();" method="post" id="form">
+			<table class="columntable formtable hover_table click_changeable">
+				<tr class="title">
+					<td width="3%" align="center" class="title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+					<td width="5%" align="center" class="title">ID</td>
+					<td class="title">日期</td>
+					<td class="title">标题</td>
+					<td class="title">链接URL</td>
+					<td class="title">排序</td>
+					<td class="title">操作</td>
+				</tr>
+				<!--{foreach $list $row}-->
+				<tr>
+					<td align="center"><input type="checkbox" name="id[]" value="$row[id]" /></td>
+					<td align="center"><input type="hidden" name="listorder[]" value="$row[id]"/>$row[id]</td>
+					<td align="center">$row[date]</td>
+					<td>$row[name]</td>
+					<td>$row[url]</td>
+					<td align="center"><a href="javascript:;" onclick="up(this)">↑</a><a href="javascript:;" onclick="down(this)">↓</a></td>
+					<td align="center"><a id="delete_{$row[id]}" href="{$this_url}?plugin=employment&job=edit&date=$row[date]&id=$row[id]"><img src="{$SKIN}/button_edit.gif" border="0" /></a> <a href="javascript:;" onclick="removeitem(this,$row[id])"><img src="{$SKIN}/del_icon2.gif" border="0" /></a></td>
+				</tr>
+				<!--{/foreach}-->
+				<tr>
+					<td class="pages" colspan="7" align="center">{$pages}</td>
+				</tr>
+			</table>
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">			
+				<tr>
+					<td>
+						<a name="op"></a>
+						<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+						<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a>
+						<input type="submit" class="submit_btn" value="保存排序" /><input type="hidden" name="do" value="order"/>
+						<input type="button" value="删除内容" onclick="removeitems(checked_values('id[]', $('#form')))" class="edit_btn" />
+						<input type="hidden" name="plugin" value="employment"/>
+					</td>
+				</tr>				
+			</table>
+		</form>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					<button onclick="show_msg_win()">查看调用本插件的代码</button>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div id="showimgbox"><img src="" id="showimg" width="300" height="100" /></div>
+<script type="text/javascript">
+function removeitem(obj,id){
+	if(confirm('确定要删除？'))$.post('{$this_url}','plugin=employment&do=delete&id='+id, function(){ $(obj).parent().parent().remove(); alert('操作成功');})
+}
+function removeitems(ids){
+	if(!confirm('$P8LANG[confirm_to_delete]')) return;
+	var id = [];
+	$.each(ids, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	$.ajax({
+		url: '{$this_url}?plugin=employment',
+		type: 'POST',
+		dataType: 'json',
+		data: ajax_parameters({do: 'deleteitems', id: id}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			
+			for(var i in json){
+				$('#delete_'+ json[i]).parent().parent().remove();
+			}
+			location.reload();
+		}
+	});
+}
+function up(obj){
+	var pre = $(obj).parent().parent().prev();
+	pre.before($(obj).parent().parent());
+}
+
+function down(obj){
+	var ne = $(obj).parent().parent().next();
+	ne.after($(obj).parent().parent());
+}
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['help_about']}',
+	width: 680,
+	height: 280
+});
+function show_msg_win(){
+	dialog.show();
+	var msg_win = "步骤1、在当前模板的HTML文件中的引用JS和CSS文件。<br/>"+
+	"<xmp><link href=\"{\$"+"RESOURCE}/skin/sites/common/css/bootstrap.min.css\" type=\"text/css\"  rel=\"stylesheet\" ></xmp>"+
+	"<xmp><link type=\"text/css\" rel=\"stylesheet\" href=\"{\$"+"RESOURCE}/skin/plugin/employment_date.css\"></xmp>"+
+	"<xmp><script type=\"text/javascript\" src=\"{\$"+"RESOURCE}/js/employment.js\"><\/script></xmp>"+
+	"<xmp>步骤2：在适当位置添加调用代码：{\$"+"plugin[employment]}</xmp>"+
+	"<xmp>必要说明：默认嵌入的日期尺寸为：width:345px;height:365px;</xmp>";
+	dialog.content.html(msg_win);
+}
+</script>
+<!--{/php168}-->

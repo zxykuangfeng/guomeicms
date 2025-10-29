@@ -1,0 +1,82 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<form action="$this_url" method="post" id="form">
+<div class="mainbox mainborder">
+	<div class="section" style="text-align:center">
+			选择组织架构:
+			<!--{foreach $parents $n $p}-->
+				<select onchange="if(this.value) window.location.href = '$this_url?parent='+ this.value">
+					<option value="$p">请选择</option>
+					<!--{foreach $list $k $v}-->
+						<!--{if $v['parent'] == $p}-->
+						<!--{php if(isset($parents[$n +1])) unset($list[$k]);}-->
+						<option value="$v[id]"{if isset($parents[$n +1]) && $v['id'] == $parents[$n +1]} selected{/if}>$v[id]: $v[name]</option>
+						<!--{/if}-->
+					<!--{/foreach}-->
+				</select>
+			<!--{/foreach}-->					
+			
+			&nbsp;统计时间段：
+				<input type="text" name="config[statistic_start_date]" class="txt" value="{if isset($config['statistic_start_date'])}$config[statistic_start_date]{/if}" autocomplete="off" onclick="rcalendar(this, 'full')" /> - 
+				<input type="text" name="config[statistic_end_date]" class="txt" value="{if isset($config['statistic_end_date'])}$config[statistic_end_date]{/if}" autocomplete="off" onclick="rcalendar(this, 'full')" />
+				<input type="hidden" name="act" value="config">
+				<input type="submit" value="{$P8LANG['config']}" class="submit_btn"/>
+				<a href="javascript:;" class="stabtn" style="text-indent:18px;color:#fff;" onclick="$('#form input[name=act]').val('fix');$('#form').get(0).submit();">重新统计</a>{if $statistic_date}&nbsp;统计时间：<span id="statis_time">{$statistic_date} </span>{/if}
+				<div class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/jigoutongji.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 机构统计教程>></a></div>		
+	</div>
+</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr>
+				<td>
+					<table class="columntable formtable hover_table">
+						<tr class="title fix_head">
+							<td width="3%" class="title" align="center">{$P8LANG['id']}</td>
+							<td width="25%" class="title">{$P8LANG['dept_name']}</td>
+							<td width="18%" class="title" align="center">{$P8LANG['dept_display_order']}</td>
+							<td width="13%" class="title" align="center">{$P8LANG['item_count']}</td>
+							<td width="13%" class="title" align="center">{$P8LANG['item_score']}</td>
+							<td width="13%" class="title" align="center">{$P8LANG['item_count_sites']}</td>
+							<td width="13%" class="title" align="center">{$P8LANG['item_score_sites']}</td>
+						</tr>
+						
+						<!--{foreach $list $value}-->
+						<tr>
+							<td align="center">{$value[id]}</td>
+							<td>{$value[name]}<a href="$this_url?parent={$value[id]}" style="float:right;margin-right:10px;">详情>></a>
+							<!--{if $value['parent']}-->
+							<a href="$this_url?parent={$parentid}" style="float:right;margin-right:10px;"><<返回上级</a>
+							<!--{/if}-->
+							</td>
+							<td align="center">{$value[display_order]}</td>
+							<td align="center">{$value[item_count]}</td>
+							<td align="center">{$value[item_score]}</td>
+							<td align="center">{$value[item_count_sites]}</td>
+							<td align="center">{$value[item_score_sites]}</td>
+						</tr>
+						<!--{/foreach}-->
+					</table>
+				</td>
+			</tr>					
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function statistic(){
+	p8_window.confirm('{$P8LANG['confirm_to_selected']}', function (r) {
+		if(r){
+			ajaxing({text:'处理中...'});
+			$('#form input[name=act]').val('fix');
+			$('#form').submit();
+		}else{
+			return;
+		}
+	});
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,154 @@
+<!--{php168}-->
+<!--{template $this_system seo}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$core.CONFIG['page_charset']}" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=2.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<title>$TITLE</title>
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/sites/common/css/global.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$SKIN}special2/style.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/jquery-ui.min.css">
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/special/label_special.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/slick.css">
+<link href="{$RESOURCE}/skin/label/swiper-3.3.1.min.css" type="text/css" rel="stylesheet" type="text/css" />
+<!--[if lt IE 9]>
+    <script src="{$RESOURCE}/html5shiv.min.js"></script>
+    <script src="{$RESOURCE}/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/guowei.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/breakpoints.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap-hover-dropdown.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/wow.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/slick.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.SuperSlide.2.1.1.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.iosslider.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.easing-1.3.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<!--<div class="top">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-6 col-sm-6 col-xs-4">
+				<div class="topleft">$label[list_special_top_con1]</div>
+			</div>
+			<div class="col-md-6 col-sm-6 col-xs-8">
+				<div class="text-right" id="header_t">
+					$label[list_special_top_con2]
+				</div>
+			</div>
+		</div>
+	</div>
+</div>-->
+<div class="banner">$label[list_special_banner]</div>
+<div class="header">
+	<div class="head-btn hidden-xs" id="header_t"></div>
+	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+		<span class="sr-only">Toggle navigation</span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+		<span class="icon-bar"></span>
+	</button>
+</div>
+<div class="container">
+	<div class="navbar-collapse navbar-collapse-toolbar collapse navbar-main" id="bs-example-navbar-collapse-1" aria-expanded="false" style="height: 1px;">	
+		$label[list_special_nav]
+	</div>
+</div>
+<div class="container">
+	<div class="dybox mb25" style="background: #fff;">
+		<div class="row">
+			<div class="col-md-3 col-sm-3 col-xs-12">
+				<div class="pic text-center">$label[list_special_dybox_pic1]</div>
+			</div>
+			<div class="col-md-9 col-sm-9 col-xs-12">
+				<div class="text">
+					$label[list_special_dybox_con2]
+					<div class="dybtn clearfix">
+						$label[list_special_dybox_con3]
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="sbox mb20">
+		<div class="hd">
+			<div class="title">$label[list_special_sbox_tt1]</div>
+			<div class="more">$label[list_special_sbox_more1]</div>
+		</div>
+		<div class="row">
+			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="spic">$label[list_special_sbox_con1]</div>
+			</div>
+			<div class="col-md-6 col-sm-6 col-xs-12">
+				<div class="slist">$label[list_special_sbox_con2]</div>
+			</div>
+		</div>
+	</div>
+	<div class="sbox mb20">
+		<div class="hd">
+			<div class="title">$label[list_special_sbox8_tt1]</div>
+			<div class="more">$label[list_special_sbox8_more1]</div>
+		</div>
+		<div class="row">
+			$label[list_special_sbox8_con1]
+		</div>
+	</div>
+<div class="row">
+	<div class="col-md-6 col-sm-6 col-xs-12">
+		<div class="sbox mb20">
+			<div class="hd">
+				<div class="title">$label[list_special_sbox5_tt1]</div>
+				<div class="more">$label[list_special_sbox5_more1]</div>
+			</div>
+			<div class="spic">$label[list_special_sbox5_con1]</div>
+		</div>
+	</div>
+	<div class="col-md-6 col-sm-6 col-xs-12">
+		<div class="sbox mb20">
+			<div class="hd">
+				<div class="title">$label[list_special_sbox5_tt2]</div>
+				<div class="more">$label[list_special_sbox5_more2]</div>
+			</div>
+			<div class="spic">$label[list_special_sbox5_con2]</div>
+		</div>
+	</div>
+</div>
+
+
+</div>
+<div class="footer">
+	<div class="container">
+		<div class="copyright">
+			$label[list_special_copyright]
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var USERNAME = get_username();
+$(document).ready(function(){
+	//**show_edit**//					   
+	init_labelshows('header_t');
+})
+</script>
+</body>
+</html>
+<!--{/php168}-->

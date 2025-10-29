@@ -1,0 +1,101 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+<script>document.domain=window.location.host;</script>
+
+<style>
+.uploder_box{margin:5% 12%;font-size:12px;line-height:200%;}
+.uploder_form{padding:10px;font-size:12px;line-height:200%;border:1px dashed #dadada;}
+.uploder_main{background:#e7edf3;text-align:center;height:212px;}
+.upload,.submit{background:url({$SKIN}button.jpg) no-repeat; width:89px;height:32px;display:block; border:none;margin:20px auto;cursor:pointer;}
+.uploder_container{position:relative;padding-top:30px;}
+.uploder_form .uploder_pick{font-size: 15px;background: #f19149;border-radius:15px;line-height:35px;padding: 0 10px;*width: 150px;color: #fff;display: inline-block;margin:10px auto;box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);cursor: pointer;}
+.uploder_form .uploder_file{width: 150px;height: 35px;position: absolute;top:65px;left: 50%;margin-left: -75px;}
+.upfiles{width:155px;height:35px;opacity:0;cursor: pointer;}
+.upfiles2{max-width:100%;height:30px;line-height:30px;border:1px solid #d1d1d1;padding:2px 5px;background:#fff;cursor: pointer;}
+.uploder_form .notice{color:#1d1d1d;}
+select{font-size:12px;border: 1px solid #ccc;height:24px; line-height:24px;border-radius:4px;}
+#upload_file_preview{display:none;line-height:25px;margin:0 auto;text-align:center;}
+#preview_photo{max-width:94%;margin-top:10px;height:120px;display:none;}
+#upload_file_name{height:25px;line-height:25px;}
+.ajaxing {font-size:12px; position: absolute; width: 100px; background: #EFEFEF url(../images/wait-big.gif) no-repeat 2px 2px; padding: 10px 0px 10px 40px; border: 1px solid #AAAAAA; font-weight: bold; }
+</style>
+</head>
+
+<body>
+
+<script type="text/javascript">
+var file_id = 1;
+var upload_count = $count;
+var file_count = 1;
+var filter_json = $filter_json;
+
+var uploader = new P8_Upload({});
+
+function _check(){
+	return $('#form input[type=file]').get(0).value.length != 0;
+}
+</script>
+<div class="uploder_box">
+<!--a href="javascript:window.location.href += '&swf=1'">{$P8LANG['swf_upload']}</a><br /-->
+<!--{if empty($only)}-->
+<form id="form" action="$this_url?system=$system&module=$module&isback=$ISBACK" method="post" enctype="multipart/form-data" onsubmit="return _check();">
+	<div class="uploder_form">
+		<div class="uploder_main">
+			<div id="up_input_box">
+				<!--<label>{if $store}温馨提示：支持批量选择多个文件上传！{else}{$P8LANG['upload_tis']}{/if}</label><br />-->
+				<!--{if $store}--><input type="hidden" name="store_path" value="{$store_type}" /><!--{/if}-->
+				<div id="filePicker" class="uploder_container">
+					<div id="upload_file_preview"><img id="preview_photo" /></div>
+					<div id="upload_file_name"></div>
+					<div class="uploder_pick">选择本地照片或附件</div>					
+					<div class="uploder_file">						
+						<input type="file" id="attachment1" class="upfiles" size="50" name="upload_files[]" {if $store}multiple="multiple"{/if} onchange="P8_Upload.verify(this, $(this).clone().val(''), $('#add'))" />
+					</div>
+				</div>
+				<label id="fileNotice" class="notice">支持JPG，JPEG，PNG，MP4，zip等格式；图片不要超过6M；<br>视频不要超过200M；附件包不要超过50M</label>
+				<div id="add"></div>
+			</div>			
+		</div>			
+	</div>
+	<input type="submit" class="upload" value="{$P8LANG['upload']}" onclick="ajaxing({'text':'{$P8LANG['uploading']}'});"/>	
+	<input type="hidden" name="thumb_width" value="$thumb_width" />
+	<input type="hidden" name="thumb_height" value="$thumb_height" />
+	<input type="hidden" name="content_thumb_width" value="$cthumb_width" />
+	<input type="hidden" name="content_thumb_height" value="$cthumb_height" />
+	<input type="hidden" name="isback" value="$ISBACK" />
+</form>
+
+<!--{else}-->
+
+<form action="$this_url?system=$system&module=$module&isback=$ISBACK" method="post">
+	<div class="uploder_form">
+		<div class="uploder_main">
+			<label>{$P8LANG['capture_tis']}</label><br />
+			<input type="text" name="upload_files[]" class="upfiles2" size="60" value="http://" onchange="var ext=P8_Upload.verify_ext(this.value, filter_json);if(!ext){alert(P8LANG.core.uploader.type_denied);this.value = 'http://';}if(!P8_Upload.verify_size(this.value, ext, filter_json)){alert(P8LANG.core.uploader.oversize);this.value = 'http://';}" />
+			<input type="submit" class="submit" value="{$P8LANG['submit']}" onclick="ajaxing({'text':'{$P8LANG['uploading']}'});"/>
+			<input type="hidden" name="action" value="capture" />
+			<input type="hidden" name="thumb_width" value="$thumb_width" />
+			<input type="hidden" name="thumb_height" value="$thumb_height" />
+			<input type="hidden" name="content_thumb_width" value="$cthumb_width" />
+			<input type="hidden" name="content_thumb_height" value="$cthumb_height" />
+            <input type="hidden" name="isback" value="$ISBACK" />
+		</div>
+	</div>
+</form>
+<!--{/if}-->
+</div>
+</body>
+</html>
+<!--{/php168}-->

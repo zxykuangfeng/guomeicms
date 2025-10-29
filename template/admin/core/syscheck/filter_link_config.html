@@ -1,0 +1,92 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-filter_link"><i class="fa fa-shield"></i>风险外链扫描</a></li>
+						<li><a href="{$core.admin_controller}/core-word_scan"><i class="fa fa-shield"></i>内容扫描体检</a></li>
+						<li><a href="{$core.admin_controller}/core-word_censor_config"><i class="fa fa-shield"></i>大数据内容扫描体检</a></li>
+						<li><a href="{$core.admin_controller}/core-word_filter"><i class="fa fa-shield"></i>内容敏感词</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-set_lan"><i class="fa fa-shield"></i>超年限内容限定访问</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<form action="$this_url" method="post">
+	<div class="mainbox mainborder">
+	<div class="section">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0" >
+			<tr><td>
+				<table class="columntable formtable hover_table">
+					<tr class="title fix_head">
+						<td colspan="2" class="title">可信域名设置</td>
+					</tr>
+					<tr>
+						<td class="tdL">上传附件可信</td>
+						<td class="tdR">
+							<input name="config[filter_link_exe]" type="checkbox" value="1" {if isset($config['filter_link_exe']) && $config['filter_link_exe']=='1'}checked{/if} />启用
+							启用则后缀为：<!--{foreach $filter $exe}--><span>{$exe}&nbsp;</span>&nbsp;<!--{/foreach}-->的资源或链接识别为非风险项
+						</td>
+					</tr>
+					<tr id="filter">
+						<td class="tdL">可信域名</td>
+						<td class="tdR">						
+							<div id="data_copy" style="display: none;">
+								可信域名 <input type="text" class="txt" name="" size="30" />
+								<input type="button" value="{$P8LANG['delete']}" />
+							</div>
+							<input type="button" value="添加可信域名" onclick="_copy_data()" />
+							<script type="text/javascript">
+							function _copy_data(link){
+								var copy = $('#data_copy').clone().show().attr('id', '');
+								
+								$('input:eq(0)', copy).attr('name', 'config[link_filter][]').val(link === undefined ? '' : link);								
+								copy.find('input[type=button]').
+								attr('onclick', '').
+								click(function(){
+									$(this).parent().remove();
+								});								
+								$('#filter div:last').after(copy);
+							}							
+							$(document).ready(function(){
+								<!--{foreach $link_filter $link}-->
+								_copy_data('$link');
+								<!--{/foreach}-->
+							});
+							</script>							
+						</td>
+					</tr>
+					<tr>
+						<td class="tdL">&nbsp;</td>
+						<td class="tdR"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></td>
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	</div>
+</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['help_about']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+				1、外链属于以上设置可信域名的，则不认为是风险项；<br>
+				2、可灵活在 <a style="font-weight:700;color:blue;text-decoration:underline;" href="{$core.admin_controller}/core/uploader-config">上传设置</a> 中设置“允许上传附件类型”
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

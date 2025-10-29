@@ -1,0 +1,130 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu" style="margin:0;">
+							<li class="active"><a href="$this_url" class="bm_l">消息列表</a></li>
+							<li style="float:right;color:red;width:auto;background:none;padding-right:10px;font-weight:600;">注意：只能回复48小时内的消息</li>
+						</ul>
+					</td>				
+				</tr>
+			</table>
+	  	  <form id="form" action="$this_url" method="post" name="form">
+			<table width="100%" class="columntable formtable hover_table click_changeable">				
+				<tr class="title">
+				<td width="1%" align="center" class="title"><input type="checkbox" onclick="check_all(this, 'ids[]', $('#form'));" /></td>
+				<td width="5%" align="center" class="title">ID</td>
+				<td width="10%" align="center" class="title">用户</td>
+				<td width="10%" align="center" class="title">类型</td>
+				<td width="15%" align="center" class="title">消息内容</td>
+				<td width="15%" align="center" class="title">时间</td>
+				<td width="5%" align="center" class="title">已回复</td>
+				<td width="15%" align="center" class="title">操作</td>
+			  </tr>
+			  <!--{foreach $dataList $messageRow}-->
+			  <tr id="message_{$messageRow['id']}">
+				<td align="center"><input type="checkbox" name="ids[]" value="{$messageRow['id']}" /></td>				
+				<td align="center">{$messageRow['id']}</td>
+				<td align="center">{$messageRow['user']}</td>
+				<td align="center">{$messageRow['type']}</td>
+				<td align="center">{$messageRow['content']}</td>
+				<td align="center">{$messageRow['created_at']}</td>
+				<td align="center"><img src="{$SKIN}/{if $messageRow['reply']}check_yes{else}check_no{/if}.gif" /></td>
+				<td align="center">
+				  <a href="$this_url?action=doreply&id={$messageRow['id']}" onclick="return _reply_message(['$messageRow[id]'])" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">回复</a>
+				  <a href="$this_url?action=delete&id={$messageRow['id']}" onclick="return delete_message(['$messageRow[id]'])" class="edit_btn btn-success" style="padding-top:2px;padding-bottom:2px;">删除</a>
+				</td>
+			  </tr>
+			  <!--{/foreach}-->
+			</table>
+			</form>
+			<table width="100%" class="columntable formtable">
+				<tr>
+					<td align="center" id="pages" class="pages">$pages</td>
+				</tr>
+				<tr>
+					<td align="left"><a href="javascript:" onclick="check_all(true, 'ids[]')">{$P8LANG['select_all']}</a> / <a href="javascript:" onclick="check_all(false, 'ids[]')">{$P8LANG['select_back']}</a> <input type="button" name="Submit" value="{$P8LANG['delete']}" class="submit_btn" onclick="_delete()"></td>
+				</tr>
+			</table>
+	</div>
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+function CheckAll(va){
+	var form=document.form_work;
+	for (var i=0;i<form.elements.length;i++){
+		var e = form.elements[i];
+		if(va=='all'){
+			e.checked = true;
+		}else{
+			e.checked == true ? e.checked = false : e.checked = true;
+		}
+	}
+}
+function get_ids(){
+	var array = checked_values('ids[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) return false;
+	return id;
+}
+function _delete(){
+	id=get_ids();
+	delete_message(id);
+}
+
+function delete_message(id){
+	//if(confirm('{$P8LANG['confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({id: id,action:'delete'}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#message_'+ json[i]).remove();
+					}
+				}
+			});
+		}
+	});
+	
+	return false;
+}
+
+
+var edit_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['reply']}',
+	width: 700,
+	height: 440
+});
+
+function _reply_message(id){
+	edit_dialog.show();
+	edit_dialog.content.load('{$this_url}?action=doreply&id='+id);
+	return false;
+}
+
+function _show_user(id){
+	edit_dialog.show();
+	edit_dialog.content.load('{$this_url}?action=showuser&id='+id);
+	return false;
+}
+</SCRIPT>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

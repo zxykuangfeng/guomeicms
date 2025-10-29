@@ -1,0 +1,238 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$this_system.admin_controller}-recovery"><i class="fa fa-cog"></i>系统巡检</a></li>
+						<li><a href="{$this_system.admin_controller}/category-html_manager"><i class="fa fa-cog"></i>栏目静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}/farm-list_manager"><i class="fa fa-cog"></i>菜单静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-visualization"><i class="fa fa-cog"></i>页面可视化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-publishing"><i class="fa fa-cog"></i>站点发布管理</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="formtable zq_list hover_table" align="center">	
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">操作流程</td>
+			</tr>
+			<tr>
+				<td class="tdL">应用场景说明</td>
+				<td class="tdR">
+					1、网站栏目和内容需要静态化形式访问（就是生成html页面，脱离数据库也可以访问）。<br>
+					2、部署动静态分离模式，栏目和内容必须静态化。<br>
+					3、静态化操作形式访问速度快，所以我们基本上所有网站都是需要静态化操作。<br>
+					4、如果菜单导航重新设置静态化链接了，此处需要重新操作一遍。<br>
+				</td>
+			</tr>					
+		</table>
+	</div>
+</div>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">完整操作流程（初次设置操作或需完整的操作）</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤1：设置栏目和内容允许静态化 </td>
+				<td class="tdR">
+					<input type="text" value="一键开启本站栏目和内容静态" class="cache_btn2" onclick="set_category_htmlize('{$this_system->SITE}')" size="30"/>可以进入栏目管理查看状态										
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤2：更新本站点缓存</td>
+				<td class="tdR">
+					<input type="text" value="一键更新本站的缓存" class="cache_btn2" onclick="cache_site('{$this_system->SITE}')" size="30"/> 避免误差，需要更新网站缓存
+
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤3：一键静态本站点栏目</td>
+				<td class="tdR">
+					<input type="text" class="cache_btn2" onclick="list_only_html()" value="一键静态本站点栏目" />重新静态本站点所有栏目
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤4：一键静态本站点内容</td>
+				<td class="tdR"><input type="text" class="cache_btn2" onclick="view_to_html()" value="一键静态本站点内容 " />重新静态本站点所有内容</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤5：一键静态本站点首页</td>
+				<td class="tdR">
+				<input class="cache_btn2" type="text" onclick="html_index()" value="一键静态本站点首页" />重新静态本站点首页</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤6：清理浏览器缓存查看效果</td>
+				<td class="tdR">
+					<input type="text" class="cache_btn2" value="查看效果" onclick="window.open('{$core->CONFIG['url']}/sites/html/{$this_system->SITE}')" />浏览器有缓存，有时候看不到效果
+				</td>
+			</tr>			
+		</table>
+	</div>
+</div>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">快捷操作</td>
+			</tr>
+			<tr>
+				<td class="tdL">操作步骤： </td>
+				<td class="tdR">
+					<input type="submit" value="一键操作本站点所有静态" class="cache_btn2" onclick="list_to_html()" size="30"/> 栏目页+内容页+静态首页											
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<form action="$this_router-list?site={$this_system->SITE}" method="post" id="form">
+<input type="hidden" name="action" value="" />
+</form>
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend style="font-size:14px;">列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+
+<fieldset class="field" id="shower2">
+	<legend style="font-size:14px;">内容页</legend>
+	<iframe name="shower2" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+
+<form id="list_to_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<form id="view_to_html" action="{$this_system.admin_controller}/item-view_to_html" method="post" target="shower2"></form>
+<form id="list_only_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+
+<script type="text/javascript">
+var thisSite = '{$this_system->SITE}';
+function list_to_html(){
+	$('#list_to_html').empty();
+	$('#view_to_html').empty();	
+	var pages = 0;
+	var items = -1;
+	
+	$('#list_to_html').append($('<input type="hidden" name="pages" value="'+ pages +'" />'));
+	$('#list_to_html').submit();	
+	html_dialog.show();	
+	$('#view_to_html').append($('<input type="hidden" name="items" value="'+ items +'" />'));
+	$('#view_to_html').submit();
+	if(!thisSite) return false;
+	$.ajax({
+			url:'{$this_system.admin_controller}-index_to_html',
+			type: 'post',
+			dataType: 'json',
+			data: ajax_parameters({site:thisSite}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({'text':'处理中…'});
+			},
+			success: function(msg){
+				ajaxing({action: 'hide'});
+				if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态首页');
+				}else{
+					//p8_window.alert('静态成功！');
+				}
+		   }
+	});
+}
+var html_dialog = new P8_Dialog({
+	width: 700,
+	height: 500,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+function list_only_html(){
+	$('#list_only_html').empty();
+	$('#list_only_html').append($('<input type="hidden" name="pages" value="0" />'));
+	$('#list_only_html').submit();	
+	html_dialog.show();	
+	$('#list_only_html').empty();
+}
+
+function view_to_html(){
+	$('#view_to_html').empty();
+	$('#view_to_html').submit();
+	html_dialog.show();
+}
+function html_index(){
+	thisSite = '{$this_system->SITE}';
+	if(!thisSite)return false;
+	$.ajax({
+			url:'{$this_system.admin_controller}-index_to_html',
+			type: 'post',
+			dataType: 'json',
+			data: ajax_parameters({site:thisSite}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({'text':'处理中…'});
+			},
+			success: function(msg){
+				ajaxing({action: 'hide'});
+				if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				}else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	})
+	
+}
+function set_category_htmlize(site){
+	$.ajax({
+		url: '$this_router-list?site='+site,
+		type: 'POST',
+		dataType: 'json',
+		data: {action:'sethtmlize',site:site},
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});
+}
+function cache_site(site){
+	var cache_data = ['farm','template','label','manu','model','category','menu_custom'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});
+}
+
+function do_cache(cache_type){		
+	$('#cache_type').val(cache_type);
+	ajaxing({'text':'处理中…'});
+	$('#cache').submit();	
+}
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

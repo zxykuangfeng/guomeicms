@@ -1,0 +1,2080 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/dist_echarts.5.4.3.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jscolor.js"></script>
+<style>
+.chart {width: 100%;min-height:480px;height:100%;margin-bottom:10px;}
+.form-group{line-height:22px;}
+.btn{height:34px;}
+</style>
+<script type="text/javascript">
+_order_by_offset = -1;
+var label_type = 'module_data';
+var _system;
+var _module;
+</script>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form name="request" id="request" action="$this_url" method="post">
+			<table class="columntable formtable">
+				<tr>
+					<td class="headerbtn_list">
+						<div class="h3 text-center">表单模型：[{$this_model['alias']}]</div>						
+					</td>
+				</tr>				
+				<tr>
+					<td style="border:none;">					
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="h4 text-center">数据源筛选</div>
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-1 col-sm-1 col-xs-1 text-right"></div>
+									<div class="col-md-11 col-sm-11 col-xs-11">
+										<div class="btn-group btn-group-md">
+											<!--{foreach $appnames $aid $appname}-->
+											<button type="button" id="btn_app_{$aid}" class="btn btn-success {if $aid == $app}active{/if}" onclick="refreshPage({$aid})">{$appname}</button>
+											<!--{/foreach}-->
+										</div>								
+									</div>
+								</div>
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">场景名称：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<input type="text" class="txt" name="appname" size="30" oninput="reflash_button($app)" value="{if $appconfig['p8_charts_appname']}{$appconfig['p8_charts_appname']}{else}{$this_appname}{/if}">
+									</div>
+								</div>
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">类目轴(X轴)：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+									<!--{foreach $dimensions $dimension}-->
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="dimension_x" value="{$dimension[name]}" {if $dimension['name'] == $appconfig['p8_charts_dimension_x']} checked{/if}>{$dimension[alias]}
+										</label>
+									<!--{/foreach}-->									
+									</div>
+								</div>
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">数值轴(Y轴)：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+									<!--{foreach $dimensions $dimension}-->
+										<label class="checkbox-inline" style="margin-left:0;">
+											<input type="checkbox" name="dimension[]" value="{$dimension[name]}" {if in_array($dimension['name'],$appconfig['p8_charts_dimension'])} checked{/if}>{$dimension[alias]}
+										</label>
+									<!--{/foreach}-->
+									<label style="margin-left:0;">
+										<input type="text" class="txt" name="unit" size="3" value="{if $appconfig['p8_charts_unit']}{$appconfig['p8_charts_unit']}{/if}" placeholder="单位" onFocus="if(this.value=='单位') this.value='';" autocomplete="off" x-webkit-speech="" speech="">
+									</label>
+									<label style="color:blue;">（至少选一项，且至少有一项是数字、单选或多选）</label>
+									</div>
+								</div>
+								<!--{foreach $this_model['filterable_fields'] $field $field_data}-->
+								<!--{php if(in_array($field_data['widget'],array('radio','checkbox','multi_select','select'))) continue;}-->
+								<!--{php in_array($field_data['widget'],array('text','vscode','captcha')) && $data[$field] = '';}-->							
+								<!--{php $field_data['editable'] = 1;}-->
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">{$field_data['alias']}：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+									</div>
+								</div>
+								<!--{/foreach}-->
+								<!--{foreach $list_field $key $value}-->
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">{$value[alias]}：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<!--{foreach $value['widgetdata'] $k $v}-->
+										<label class="checkbox-inline" style="margin-left:0;">
+										<input type="checkbox" name="field#[{$value[name]}][]" value="{$k}" {if in_array($k,$appconfig['p8_charts_field#'][$value[name]])} checked{/if}>{$v}
+										</label>
+										<!--{/foreach}-->
+										<label> <input type="button" value="全选" class="btn btn-xs btn-danger" id="selectAll{$value[name]}">（全选或不选都指全部）</label>
+									</div>
+								</div>
+								<script type="text/javascript">
+								$("#selectAll{$value[name]}").click(function () {
+								  let checkboxes = $("#{$value[name]} input:checkbox");
+								  let isChecked = checkboxes.prop('checked');
+								  checkboxes.prop('checked', !isChecked);
+								});
+								</script>
+								<!--{/foreach}-->
+								<!--{if $status}-->
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">内容状态：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<!--{foreach $status $k $v}-->
+										<label class="checkbox-inline" style="margin-left:0;">
+										<input type="checkbox" name="selectstatus[]" value="{$v}" {if isset($selectstatus) && $selectstatus===$k}checked{/if}>{$v}
+										</label>
+										<!--{/foreach}-->
+										<label> <input type="button" value="全选" class="btn btn-xs btn-danger" id="selectAllStatus">（全选或不选都指全部）</label>
+									</div>
+								</div>
+								<script type="text/javascript">
+								$("#selectAllStatus").click(function () {
+								  let checkboxes = $("#selectstatus input:checkbox");
+								  let isChecked = checkboxes.prop('checked');
+								  checkboxes.prop('checked', !isChecked);
+								});
+								</script>
+								<!--{/if}-->								
+								<!--{if $p8_status}-->
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">项目状态：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<!--{foreach $p8_status $v}-->
+										<label class="checkbox-inline" style="margin-left:0;">
+										<input type="checkbox" name="search_status[]" value="{$v}" {if $search_status == $v}checked{/if}>{$v}
+										</label>
+										<!--{/foreach}-->
+										<label> <input type="button" value="全选" class="btn btn-xs btn-danger" id="selectAllSearchStatus">（全选或不选都指全部）</label>
+									</div>
+								</div>
+								<script type="text/javascript">
+								$("#selectAllSearchStatus").click(function () {
+								  let checkboxes = $("#search_status input:checkbox");
+								  let isChecked = checkboxes.prop('checked');
+								  checkboxes.prop('checked', !isChecked);
+								});
+								</script>
+								<!--{/if}-->
+								
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">统计图表模式：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<!--label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="count" {if in_array('count',$appconfig['p8_charts_count_model'])} checked{/if}><span title="数据的个数">分类统计(单选/多选/下拉选项)</span></label-->
+										<label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="" {if empty($appconfig['p8_charts_count_model'])} checked{/if}><span title="不统计">不统计</span></label>	
+										<label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="count_x" {if $appconfig['p8_charts_count_model'] == 'count_x'} checked{/if}><span title="数据的个数">计数</span></label>																				
+										<label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="average" {if $appconfig['p8_charts_count_model'] == 'average'} checked{/if}><span title="数据的平均水平">平均值</span></label>
+										<label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="sum" {if $appconfig['p8_charts_count_model'] == 'sum'} checked{/if}><span title="数据的平均水平">求和</span></label>
+										<label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="median" {if $appconfig['p8_charts_count_model'] == 'median'} checked{/if}><span title="数据的中间水平">中位数</span></label>									
+										<label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="range" {if $appconfig['p8_charts_count_model'] == 'range'} checked{/if}><span title="数据的变异程度">极差</span></label>
+										<label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="variance" {if $appconfig['p8_charts_count_model'] == 'variance'} checked{/if}><span title="数据的离散程度">方差</span></label>
+										<label class="radio-inline" style="margin-left:0;"><input type="radio" name="count_model" value="deviation" {if $appconfig['p8_charts_count_model'] == 'deviation'} checked{/if}><span title="数据的离散程度">标准差</span></label>
+										<select name="count_model_x" id="count_model_x">
+											<option value="category" {if empty($appconfig['p8_charts_cout_model_x']) || $appconfig['p8_charts_count_model_x'] == 'category'} selected{/if}>按X轴选中项类目统计</option>
+											<option value="countall" {if $appconfig['p8_charts_count_model_x'] == 'all'} selected{/if}>按竖列(数值轴Y)统计</option>
+										</select>
+									</div>
+								</div>
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">提交时间：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<input type="text" name="start_date" class="txt" value="{$appconfig['p8_charts_start_date']}" autocomplete="off" onclick="rcalendar(this,'full')" /> - 
+										<input type="text" name="end_date" class="txt" value="{$appconfig['p8_charts_end_date']}" autocomplete="off" onclick="rcalendar(this,'full')" />										
+									</div>
+								</div>
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">排序规则：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<!-- for clone -->
+										<div id="order_by">
+											<div style="display: none;">
+												<select name="">
+													<option value="">------</option>
+													<!--{foreach $dimensions $dimension}-->
+													<option value="{$dimension[name]}">{$dimension[alias]}</option>
+													<!--{/foreach}-->																
+												</select>
+												<input type="radio" name="" value="1" />{$P8LANG['forms_desc']}
+												<input type="radio" name="" value="0" />{$P8LANG['forms_asc']}
+												<input type="button" value="{$P8LANG['delete']}" onclick="label_delete_order_by(this)" />
+											</div>
+										</div>
+										<!-- /for clone -->
+
+										<div id="add_order_by">
+											<!--{foreach $appconfig['p8_charts_option']['order_by'] $field $v}-->
+											<script type="text/javascript">
+												label_add_order_by($('#order_by'), $('#add_order_by'), '$v', {$appconfig['p8_charts_option']['order_by_desc'][$field]});
+											</script>
+											<!--{/foreach}-->
+										</div>
+										<input type="button" value="{$P8LANG['forms_add_order_by']}" onclick="label_add_order_by($('#order_by'), $('#add_order_by'))" />									
+									</div>
+								</div>
+								<div class="row form-group" style="border-right:1px dotted #e8ebec;margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">限定数据：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										从第<input type="text" name="start_count" class="txt" size="4" value="{$appconfig['p8_charts_start_count']}" />条 - 
+										至第<input type="text" name="end_count" class="txt" size="4" value="{$appconfig['p8_charts_end_count']}" />条&nbsp;&nbsp;
+										<span id="countAll"></span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="h4 text-center">图表配置</div>
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">标题：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<input type="text" class="txt" name="pictitle" size="30" value="{if $appconfig['p8_charts_pictitle']}{$appconfig['p8_charts_pictitle']}{else}{$this_model['alias']}{/if}">
+										<input type="text" class="txt" name="piccolor" size="8" value="{if $appconfig['p8_charts_piccolor']}{$appconfig['p8_charts_piccolor']}{else}333333{/if}" data-jscolor="{}">
+										<select name="fontsize" id="fontsize">
+											<option value="18" {if empty($appconfig['p8_charts_fontsize'])} selected{/if}>字号</option>
+											<option value="14" {if $appconfig['p8_charts_fontsize'] == '14'} selected{/if}>14px</option>
+											<option value="16" {if $appconfig['p8_charts_fontsize'] == '16'} selected{/if}>16px</option>
+											<option value="18" {if $appconfig['p8_charts_fontsize'] == '18'} selected{/if}>18px</option>
+											<option value="20" {if $appconfig['p8_charts_fontsize'] == '20'} selected{/if}>20px</option>
+											<option value="22" {if $appconfig['p8_charts_fontsize'] == '22'} selected{/if}>22px</option>	
+											<option value="24" {if $appconfig['p8_charts_fontsize'] == '24'} selected{/if}>24px</option>
+										</select>								
+									</div>
+								</div>
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">副标题：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<input type="text" class="txt" name="picsubtitle" size="22" value="{$appconfig['p8_charts_picsubtitle']}">
+										显示标题：
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="titposition" value="0" {if empty($appconfig['p8_charts_titposition'])} checked{/if}>不显示
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="titposition" value="1" {if $appconfig['p8_charts_titposition'] == 1} checked{/if}>顶部居中
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="titposition" value="2" {if $appconfig['p8_charts_titposition'] == 2} checked{/if}>左上角			
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="titposition" value="3" {if $appconfig['p8_charts_titposition'] == 3} checked{/if}>底部居中			
+										</label>
+									</div>
+								</div>
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">类型：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="line" {if empty($appconfig['p8_charts_charts']) || $appconfig['p8_charts_charts'] == 'line'} checked{/if}>折线图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="stackedline" {if $appconfig['p8_charts_charts'] == 'stackedline'} checked{/if}>折线图堆叠
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="stackedarea" {if $appconfig['p8_charts_charts'] == 'stackedarea'} checked{/if}>渐变堆叠面积图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="bar" {if $appconfig['p8_charts_charts'] == 'bar'} checked{/if}>柱状图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="barwithbg" {if $appconfig['p8_charts_charts'] == 'barwithbg'} checked{/if}>带背景色柱状图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="doublebar" {if $appconfig['p8_charts_charts'] == 'doublebar'} checked{/if}>行+列双柱状图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="pieandline" {if $appconfig['p8_charts_charts'] == 'pieandline'} checked{/if}>饼图+折线联动图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="pie" {if $appconfig['p8_charts_charts'] == 'pie'} checked{/if}>饼图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="rcpie" {if $appconfig['p8_charts_charts'] == 'rcpie'} checked{/if}>圆角环形饼图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="doughnutpie" {if $appconfig['p8_charts_charts'] == 'doughnutpie'} checked{/if}>环形图
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="charts" value="nightingale" {if $appconfig['p8_charts_charts'] == 'nightingale'} checked{/if}>南丁格尔玫瑰图
+										</label>										
+									</div>
+								</div>
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">图例：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="legend" value="0" {if empty($appconfig['p8_charts_legend'])} checked{/if}>不显示
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="legend" value="1" {if $appconfig['p8_charts_legend'] == 1} checked{/if}>靠左
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="legend" value="2" {if $appconfig['p8_charts_legend'] == 2} checked{/if}>靠左竖排
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="legend" value="3" {if $appconfig['p8_charts_legend'] == 3} checked{/if}>居中
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="legend" value="4" {if $appconfig['p8_charts_legend'] == 4} checked{/if}>靠右
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="legend" value="5" {if $appconfig['p8_charts_legend'] == 5} checked{/if}>靠右竖排
+										</label>
+									</div>
+								</div>
+								
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">数据标签：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="label_position" value="0" {if empty($appconfig['p8_charts_label_position'])} checked{/if}>无
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="label_position" value="1" {if $appconfig['p8_charts_label_position'] == 1} checked{/if}>上方/外侧
+										</label>																													
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="label_position" value="2" {if $appconfig['p8_charts_label_position'] == 2} checked{/if}>内部
+										</label>										
+										<label class="radio-inline" style="margin-left:0;">
+											<input type="radio" name="label_position" value="3" {if $appconfig['p8_charts_label_position'] == 3} checked{/if}>中心
+										</label>										
+									</div>
+								</div>
+								
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">辅助线：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="marker_line" value="0"  {if empty($appconfig['p8_charts_marker_line'])} checked{/if}>无
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="marker_line" value="1" {if $appconfig['p8_charts_marker_line'] == 1} checked{/if}>平均
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="marker_line" value="2" {if $appconfig['p8_charts_marker_line'] == 2} checked{/if}>最大
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="marker_line" value="3" {if $appconfig['p8_charts_marker_line'] == 3} checked{/if}>最小
+										</label>
+										<label class="radio-inline" style="margin-left:0;">
+										<input type="radio" name="marker_line" value="4" {if $appconfig['p8_charts_marker_line'] == 4} checked{/if}>中位线
+										</label>
+									</div>
+								</div>
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">绘图网格：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<label style="margin-left:0;">上：</label>
+										<select name="gridTop" id="gridTop">
+											<option value="auto" {if empty($appconfig['p8_charts_gridTop']) || $appconfig['p8_charts_gridTop'] == 'auto'} selected{/if}>自动</option>
+											<option value="3%" {if $appconfig['p8_charts_gridTop'] == '3%'} selected{/if}>3%</option>
+											<option value="5%" {if $appconfig['p8_charts_gridTop'] == '5%'} selected{/if}>5%</option>
+											<option value="8%" {if $appconfig['p8_charts_gridTop'] == '8%'} selected{/if}>8%</option>
+											<option value="12%" {if $appconfig['p8_charts_gridTop'] == '12%'} selected{/if}>12%</option>
+											<option value="60" {if $appconfig['p8_charts_gridTop'] == '60'} selected{/if}>60</option>
+											<option value="80" {if $appconfig['p8_charts_gridTop'] == '80'} selected{/if}>80</option>
+											<option value="100" {if $appconfig['p8_charts_gridTop'] == '100'} selected{/if}>100</option>
+										</select>
+										
+										<label style="margin-left:0;">&nbsp;下：</label>
+										<select name="gridBottom" id="gridBottom">
+											<option value="auto" {if empty($appconfig['p8_charts_gridBottom']) || $appconfig['p8_charts_gridBottom'] == 'auto'} selected{/if}>自动</option>
+											<option value="3%" {if $appconfig['p8_charts_gridBottom'] == '3%'} selected{/if}>3%</option>
+											<option value="5%" {if $appconfig['p8_charts_gridBottom'] == '5%'} selected{/if}>5%</option>
+											<option value="8%" {if $appconfig['p8_charts_gridBottom'] == '8%'} selected{/if}>8%</option>
+											<option value="12%" {if $appconfig['p8_charts_gridBottom'] == '12%'} selected{/if}>12%</option>
+											<option value="60" {if $appconfig['p8_charts_gridBottom'] == '60'} selected{/if}>60</option>
+											<option value="80" {if $appconfig['p8_charts_gridBottom'] == '80'} selected{/if}>80</option>
+											<option value="100" {if $appconfig['p8_charts_gridBottom'] == '100'} selected{/if}>100</option>
+										</select>
+										
+										<label style="margin-left:0;">&nbsp;左：</label>
+										<select name="gridLeft" id="gridLeft">
+											<option value="auto" {if empty($appconfig['p8_charts_gridLeft']) || $appconfig['p8_charts_gridLeft'] == 'auto'} selected{/if}>自动</option>
+											<option value="3%" {if $appconfig['p8_charts_gridLeft'] == '3%'} selected{/if}>3%</option>
+											<option value="5%" {if $appconfig['p8_charts_gridLeft'] == '5%'} selected{/if}>5%</option>
+											<option value="8%" {if $appconfig['p8_charts_gridLeft'] == '8%'} selected{/if}>8%</option>
+											<option value="10%" {if $appconfig['p8_charts_gridLeft'] == '10%'} selected{/if}>10%</option>
+											<option value="15%" {if $appconfig['p8_charts_gridLeft'] == '15%'} selected{/if}>15%</option>											
+										</select>
+										
+										<label style="margin-left:0;">&nbsp;右：</label>	
+										<select name="gridRight" id="gridRight">
+											<option value="auto" {if empty($appconfig['p8_charts_gridRight']) || $appconfig['p8_charts_gridRight'] == 'auto'} selected{/if}>自动</option>
+											<option value="3%" {if $appconfig['p8_charts_gridRight'] == '3%'} selected{/if}>3%</option>
+											<option value="5%" {if $appconfig['p8_charts_gridRight'] == '5%'} selected{/if}>5%</option>
+											<option value="8%" {if $appconfig['p8_charts_gridRight'] == '8%'} selected{/if}>8%</option>
+											<option value="10%" {if $appconfig['p8_charts_gridRight'] == '10%'} selected{/if}>10%</option>
+											<option value="15%" {if $appconfig['p8_charts_gridRight'] == '15%'} selected{/if}>15%</option>
+										</select>						
+									</div>
+								</div>								
+								<div class="row form-group" style="margin-bottom:10px;">
+									<div class="col-md-2 col-sm-2 col-xs-2 text-right">其它配置：</div>
+									<div class="col-md-10 col-sm-10 col-xs-10">
+										<label class="checkbox-inline" style="margin-left:0;">
+											<input type="checkbox" name="others[]" value="decal" {if in_array('decal',$appconfig['p8_charts_others'])} checked{/if}>无障碍花纹
+										</label>
+										<label class="checkbox-inline" style="margin-left:0;">
+											<input type="checkbox" name="others[]" value="smooth" {if in_array('smooth',$appconfig['p8_charts_others'])} checked{/if}>平滑折线
+										</label>
+										<label class="checkbox-inline" style="margin-left:0;">
+											<input type="checkbox" name="others[]" value="toolbox" {if in_array('toolbox',$appconfig['p8_charts_others'])} checked{/if}>工具栏
+										</label>
+										<label class="checkbox-inline" style="margin-left:0;">背景色：
+											<input type="text" class="txt" name="backgroundcolor" size="8" value="{if $appconfig['p8_charts_backgroundcolor']}{$appconfig['p8_charts_backgroundcolor']}{else}ffffff{/if}" data-jscolor="{}">										
+										</label>
+									</div>
+								</div>								
+							</div>
+						</div>
+						<div class="form-group text-center">
+							<input type="hidden" name="mid" value="$mid" />
+							<input type="hidden" name="SetConfiG" value="1" />
+							<input type="hidden" name="app" value="{$app}" />
+							<a href="javascript:void(0);" class="text-center submit_btn" style="color:#fff;height:30px;line-height:30px;display:inline-block;" onclick="statistic()"><i class="fa fa-bar-chart"></i>生成预览数据+图表</a>						
+						</div>						
+					</td>
+				</tr>
+				
+			</table>
+		</form>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<div class="row">
+			<div class="col-md-4 col-sm-4 col-xs-4">
+				<div class="table-responsive">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table table-striped columntable formtable hover_table">
+						<tbody id="data_title"></tbody>							
+						<tbody id="data_list"></tbody>						
+					</table>
+				</div>
+				<div class="text-center h4"><span id="show_count"></span><span id="show_more"></span></div>	
+			</div>
+			<div class="col-md-8 col-sm-8 col-xs-8"><div id="myChart_scatter" class="chart"></div></div>
+		</div>		
+	</div>
+</div>
+<script type="text/javascript">
+$('.headerbtn_list li').removeClass('active');
+$(".headerbtn_list li:nth-child(4)").addClass("active");
+//颜色配置
+jscolor.presets.default = {
+	palette: [
+		'#333333', '#7d7d7d', '#870014', '#ec1c23', '#ff7e26', '#fef100', '#22b14b', '#00a1e7', '#3f47cc', '#a349a4',
+		'#ffffff', '#0f375f', '#b87957', '#feaec9', '#ffc80d', '#eee3af', '#b5e61d', '#99d9ea', '#7092be', '#c8bfe7',
+	],
+}
+var color_list = ['#5470c6', '#91cc75', '#fac858', '#ee6666', '#73c0de', '#3ba272', '#fc8452', '#9a60b4', '#ea7ccc'];
+var Dimensions_json = {$dimensions_json};
+var Count_model_json = {$count_model_json};
+var count_model = null;
+var Dimensions_count = 0;
+var series_name = "{$this_model['alias']}";
+var title_name = '';
+var subtitle_name = '';
+var unit_name = '';
+var title_flag = false;
+var title_position = 'center';
+var titposition = 1;
+var piccolor = '#333333';
+var backgroundcolor = '#ffffff';
+var aria_flag = false;
+var smooth_flag = false;
+var toolbox_flag = false;
+var legend_flag = false;
+var legend_orient = 'horizontal';
+var legend_position = 'left';
+var legend_top = '8%';
+var label_flag = true;
+var label_position = 'outside';
+var marker_line = 0;
+var fontsize = 18;
+var option = {};
+
+function reflash_button(app) {
+	// 获取input的值
+	let inputValue = $('input[name="appname"]').val();
+	// 将input的值赋值给显示内容的标签元素
+    $('#btn_app_'+app).html(inputValue);
+}
+function refreshPage(app) {
+	window.location.href = '{$this_url}?mid={$mid}&app=' + app;
+}
+function statistic(){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();
+	if(Dimension_x == '' || Dimension_x == undefined){
+		p8_window.alert('请选择类目轴(X轴)');
+		return false;
+	}
+	let checkboxes = $("input[name='dimension[]']");
+    let checked = false;
+    checkboxes.each(function() {
+      if ($(this).is(":checked")) {
+        checked = true;
+        return false; // 结束循环
+      }
+    });
+
+    if (!checked) {
+		p8_window.alert('请选择至少一个数值轴(Y轴)');
+		return false;
+    }
+	$("input[name='SetConfiG']").val('1');
+	$.ajax({
+		url:'{$this_url}',
+		data: $('#request').serialize() +'&SetConfiG=1',
+		dataType: 'json',
+		type: 'POST',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(msg){
+			ajaxing({action: 'hide'});
+			if(Object.keys(msg).length>0){
+				get_data();
+			}else{
+				p8_window.alert('设置失败!');			
+			}
+		}
+	});
+}
+
+function get_data(){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();
+	var Checkboxes = $("input[name='dimension[]']");
+	var CountModel = $('input[name="count_model"]:checked').val();
+	var Charts = $('input[name="charts"]:checked').val();
+	var checked = false;
+    Checkboxes.each(function() {
+      if ($(this).is(":checked")) {
+        checked = true;
+        return false; // 结束循环
+      }
+    });
+	if (!checked) {
+		return false;
+    }	
+	count_model = CountModel;
+	var shtml = '<tr class="title">';
+	shtml += '<td align="center">'+Dimensions_json[Dimension_x].alias+'</td>';
+	Checkboxes.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+	    Dimensions_count++;		
+		if(count_model)
+			shtml += '<td align="center">'+Dimensions_json[$(this).val()].alias+'('+Count_model_json[count_model]+')</td>';
+		else
+			shtml += '<td align="center">'+Dimensions_json[$(this).val()].alias+'</td>';
+      }
+    });
+	shtml += '</tr>';
+	$('#data_title').html(shtml);
+	//remove config set
+	$("input[name='SetConfiG']").val('0');
+	$.ajax({
+		url:'{$this_url}',
+		data: $('#request').serialize()+'&SetConfiG=0',
+		dataType: 'json',
+		type: 'POST',
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){		
+			$('#data_list').empty();
+			var tr = '';
+			var attr = '';
+			var count_name = '';
+			for(var i in json){
+				if(i>15) break;								
+				tr = '<tr><td align="center">'+json[i][Dimension_x]+'</td>';
+				Checkboxes.each(function() {
+				  if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+					attr = $(this).val();
+					tr += '<td align="center">'+json[i][attr]+'</td>';
+				  }
+				});
+				tr += '</tr>';
+				
+				$('#data_list').append($(tr));
+			}
+			
+			var dataset = {
+				source: []
+			};
+			// 获取标题行的名称
+			var header = Object.keys(json[0]);
+			var headers = [];
+			header.forEach(function(item){
+				if(item != 'p8_alias_score_dim') headers.push(Dimensions_json[item].alias ? Dimensions_json[item].alias : item);
+			});
+			dataset.source.push(headers);
+			// 遍历每个对象，并将属性值添加到对应的列中
+			var countAll = 0;
+			json.forEach(function(item) {		  
+			  var row = [];
+			  header.forEach(function(key) {
+				row.push(item[key]);
+			  });
+			  dataset.source.push(row);
+			  countAll++;
+			});
+			if(countAll>0) {
+				$('#countAll').html("<button type=\"button\" disabled=\"disabled\" class=\"btn btn-primary btn-xs\">共有数据 "+countAll+" 条<\/button>");
+				if(countAll<=15)
+					$('#show_count').html("共有数据 "+countAll+" 条");
+				else
+					$('#show_count').html("共有数据 "+countAll+" 条，当前为代表性数据");
+					
+			}
+			//echarts config
+			set_Chart_config();
+			switch(Charts){
+				case 'line' : Charts_line(dataset);break;
+				case 'stackedline' : Charts_stackedline(dataset);break;
+				case 'stackedarea' : Charts_stackedarea(dataset);break;
+				case 'bar' : Charts_bar(dataset);break;
+				case 'doublebar' : Charts_doublebar(dataset);break;
+				case 'barwithbg' : Charts_barwithbg(dataset);break;
+				case 'pie' : Charts_pie(dataset);break;
+				case 'rcpie' : Charts_rcpie(dataset);break;
+				case 'pieandline' : Charts_pieandline(dataset);break;
+				case 'doughnutpie' : Charts_doughnutpie(dataset);break;
+				case 'nightingale' : Charts_nightingale(dataset);break;
+				case 'scatter' : Charts_scatter(dataset);break;			
+			}			
+		}
+	});
+}
+
+function set_Chart_config(){
+	let Checkboxes = $("input[name='dimension[]']");
+	let PicTitle = $('input[name="pictitle"]').val();
+	let PicSubTitle = $('input[name="picsubtitle"]').val();
+	let Unit = $('input[name="unit"]').val();	
+	let Legend = $('input[name="legend"]:checked').val();
+	let TitPosition = $('input[name="titposition"]:checked').val();
+	let Charts = $('input[name="charts"]:checked').val();
+	let LabelPosition = $('input[name="label_position"]:checked').val();
+	let MarkerLine = $('input[name="marker_line"]:checked').val();
+	let Others = $("input[name='others[]']");
+	let PicColor = $('input[name="piccolor"]').val();
+	let BackgroundColor = $('input[name="backgroundcolor"]').val();
+	let FontSize = $('select[name="fontsize"]').val();
+	
+	series_name = PicTitle ? PicTitle : "{$this_model['alias']}";
+	title_name = PicTitle ? PicTitle : '';
+	subtitle_name = PicSubTitle ? PicSubTitle : '';
+	unit_name = Unit ? Unit : '';
+	title_flag = TitPosition >0 ? true : false;
+	title_position = TitPosition == 2 ? 'left' : 'center';
+	titposition = TitPosition ? parseInt(TitPosition) : 1;
+	piccolor = PicColor ? PicColor : '#333333';
+	backgroundcolor = BackgroundColor ? BackgroundColor : '#ffffff';
+	fontsize = FontSize ? parseInt(FontSize) : 18;
+	legend_flag = Legend >=1 ? true : false;
+	legend_orient = Legend == 2 || Legend == 5 ? 'vertical':'horizontal';
+	legend_position = Legend == 1 || Legend == 2 ? 'left' : (Legend == 3 ? 'center':(Legend == 4 || Legend == 5 ? 'right':'left'));
+	label_flag = LabelPosition >=1 ? true : false;
+	label_position = LabelPosition == 1 ? 'outside' : (LabelPosition == 2 ? 'inside':(LabelPosition == 3 ? 'center':'outside'));	
+	marker_line = MarkerLine;
+	Others.each(function() {		
+		if($(this).val() == 'decal') {
+			aria_flag = $(this).is(":checked") ? true : false;
+		}
+		if($(this).val() == 'smooth') {
+			smooth_flag = $(this).is(":checked") ? true : false;
+		}
+		if($(this).val() == 'toolbox') {
+			toolbox_flag = $(this).is(":checked") ? true : false;
+		}
+	});
+	
+}
+function Charts_line(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	$('#myChart_scatter').css("height","480");
+	myChart.clear();
+	myChart.showLoading();
+	
+	var Dimensions_count = 0;	
+	var chart_series = [];	
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		Dimensions_count++;
+		var objs = {
+			name: Dimensions_json[$(this).val()].alias,
+			type: 'line',
+			smooth: smooth_flag,
+			label: {
+				show: label_flag,
+				position: label_position
+			}
+		};
+		switch(marker_line){
+			case '1': objs['markLine'] = {data: [{type: 'average'}]};break;
+			case '2': objs['markLine'] = {data: [{type: 'max'}]};break;
+			case '3': objs['markLine'] = {data: [{type: 'min'}]};break;
+			case '4': objs['markLine'] = {data: [{type: 'median'}]};break;
+		}
+	    chart_series.push(objs);
+	  }
+    });
+	legend_flag = Dimensions_count == 1 ? false : legend_flag;
+	option = {		
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: {
+			show: title_flag,
+			text: title_name,
+			textStyle:{color:piccolor,fontSize:fontsize},
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+		},
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val(),
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+				dataZoom: {yAxisIndex: "none"},
+				dataView: { readOnly: false },
+				magicType: {
+					type: ['line', 'bar', 'stack']
+				},
+				saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'item',			
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'8%',
+		},
+		xAxis: { type: 'category' },
+		yAxis: { name:unit_name},
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.resize();
+	myChart.hideLoading();			
+	ajaxing({action: 'hide'});
+}
+function Charts_bar(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	$('#myChart_scatter').css("height","480");
+	myChart.clear();
+	myChart.showLoading();
+	
+	var Dimensions_count = 0;	
+	var chart_series = [];
+	var xAxis_data = [];
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		let name = Dimensions_json[$(this).val()].alias;		
+		xAxis_data.push(name);	
+		let formatter = '{a}:{@'+name+'}';
+		var objs = {
+			name: name,
+			type: 'bar',
+			label: {
+				show: label_flag,
+				position: label_position,
+				formatter: formatter
+			}			
+		};
+		switch(marker_line){
+			case '1': objs['markLine'] = {data: [{type: 'average'}]};break;
+			case '2': objs['markLine'] = {data: [{type: 'max'}]};break;
+			case '3': objs['markLine'] = {data: [{type: 'min'}]};break;
+			case '4': objs['markLine'] = {data: [{type: 'median'}]};break;
+		}
+	    chart_series.push(objs);
+		Dimensions_count ++;
+	  }
+    });
+	legend_flag = Dimensions_count == 1 ? false : legend_flag;
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: {
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},
+		},
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val(),
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+				dataZoom: {yAxisIndex: "none"},
+				dataView: { readOnly: false },
+				magicType: {
+					type: ['line', 'bar', 'stack']
+				},			
+				saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'axis',
+			axisPointer: {
+			  type: 'shadow'
+			}
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'8%',
+		},
+		xAxis: { type: 'category' },
+		yAxis: { name:unit_name},
+		series: chart_series,		
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.resize();
+	myChart.hideLoading();			
+	ajaxing({action: 'hide'});
+}
+function Charts_barwithbg(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	$('#myChart_scatter').css("height","480");
+	myChart.clear();
+	myChart.showLoading();
+	
+	var Dimensions_count = 0;	
+	var chart_series = [];
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		let name = Dimensions_json[$(this).val()].alias;		
+		let formatter = '{a}:{@'+name+'}';
+		var objs = {
+			name: name,
+			type: 'bar',
+			showBackground: true,
+			backgroundStyle: {
+				color: 'rgba(180, 180, 180, 0.2)'
+			},
+			label: {
+				show: label_flag,
+				position: label_position,
+				formatter:formatter,
+			}
+		};
+		switch(marker_line){
+			case '1': objs['markLine'] = {data: [{type: 'average'}]};break;
+			case '2': objs['markLine'] = {data: [{type: 'max'}]};break;
+			case '3': objs['markLine'] = {data: [{type: 'min'}]};break;
+			case '4': objs['markLine'] = {data: [{type: 'median'}]};break;
+		}
+	    chart_series.push(objs);
+		Dimensions_count ++;
+	  }
+    });
+	legend_flag = Dimensions_count == 1 ? false : legend_flag;
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: {
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},
+		},
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val(),
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+				dataZoom: {yAxisIndex: "none"},
+				dataView: { readOnly: false },
+				magicType: {
+					type: ['line', 'bar', 'stack']
+				},			
+				saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'item'
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'8%',
+		},
+		xAxis: { type: 'category' },
+		yAxis: { name:unit_name},
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.resize();
+	myChart.hideLoading();			
+	ajaxing({action: 'hide'});
+}
+
+function generateArray(n, returnX, returnY) {
+  var result = [];
+  if (n === 1) {
+    result.push(['50%', '50%']);
+  } else {
+    var rows = Math.ceil(n / 2); // 计算行数
+    var cols = Math.ceil(n / rows); // 计算列数
+    var xOffset = 100 / (cols + 1); // 计算列的偏移量
+    var yOffset = 100 / (rows + 1); // 计算行的偏移量
+    
+    // 生成坐标
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < cols; j++) {
+        var x = (j%2 == 0 ? '25' : '75') + '%'; // 四舍五入并添加百分号
+        var y = (Math.round((i + 1) * yOffset * 100) / 100) + '%'; // 四舍五入并添加百分号
+        if (returnX && !returnY) {
+          result.push(x);
+        } else if (returnY && !returnX) {
+          result.push(y);
+        } else {
+          result.push([x, y]);
+        }
+      }
+    }
+  }
+  return result;
+}
+function Charts_pie(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");	
+	var itemName = Dimensions_json[Dimension_x].alias;
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	myChart.clear();
+	myChart.showLoading();	
+	var Dimensions_count = 0;	
+	var chart_series = [];	
+	var xAxis_data = [];
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		xAxis_data.push(Dimensions_json[$(this).val()].alias);
+		Dimensions_count ++;		
+	  }
+    });
+	let centers = generateArray(Dimensions_count,true,true);
+	let lefts = generateArray(Dimensions_count,true,false);	
+	let tops = generateArray(Dimensions_count,false,true);
+	let radius = '60%';
+	switch(Dimensions_count){
+		case 1 : 
+			radius = '60%';
+			$('#myChart_scatter').css("height","480");
+			break;
+		case 2 :
+			radius = '25%';
+			$('#myChart_scatter').css("height","600");
+			break;
+		case 3 :
+		case 4 :
+			radius = '22%';
+			$('#myChart_scatter').css("height","840");
+			break;
+		case 5 :
+		case 6 :		
+			radius = '20%';
+			$('#myChart_scatter').css("height","1240");
+			break;
+		default:
+			radius = '20%';
+			var chart_height = Dimensions_count % 2 === 0 ? Dimensions_count / 2 : (Dimensions_count + 1) / 2;
+			chart_height = chart_height * 410;
+			$('#myChart_scatter').css("height",chart_height);
+			break;
+	}
+	var chart_titles = [];
+	chart_titles.push({
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},			
+	});
+	let temp_count = 0;
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {		
+		var name = Dimensions_json[$(this).val()].alias;
+		var objs = {
+			name: name,
+			type: 'pie',	
+			radius: radius,
+			center: centers[temp_count],
+			label: {
+				show: label_flag,
+				position: label_position,
+				formatter: '{b}: {@' + name + '} ({d}%)'
+			},
+			emphasis: {
+				itemStyle: {
+				  shadowBlur: 10,
+				  shadowOffsetX: 0,
+				  shadowColor: 'rgba(0, 0, 0, 0.5)'
+				}
+			},
+			encode: {
+				itemName: itemName,
+				value: Dimensions_json[$(this).val()].alias
+			}
+		};	
+	    chart_series.push(objs);		
+		if(Dimensions_count>=2){
+			var this_top = Dimensions_count == 2 && parseInt(tops[temp_count]) == 33 ? 50 : parseInt(tops[temp_count]);
+			this_top = this_top + parseInt(100/(tops.length+2))-1;
+			chart_titles.push({
+				show: title_flag,
+				subtext: name,
+				left: lefts[temp_count],
+				top: this_top+'%',
+				textAlign: 'center',
+				subtextStyle:{color:piccolor,fontWeight:'bold'},
+			});	
+		}
+		temp_count++;
+	  }
+    });
+	
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: chart_titles,
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val(),
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+			  dataView: { readOnly: false },			
+			  saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'item'
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'8%',
+		},
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.hideLoading();
+	myChart.resize();
+	ajaxing({action: 'hide'});
+}
+function Charts_doughnutpie(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");	
+	var itemName = Dimensions_json[Dimension_x].alias;
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	myChart.clear();
+	myChart.showLoading();	
+	var Dimensions_count = 0;	
+	var chart_series = [];
+	var xAxis_data = [];
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		xAxis_data.push(Dimensions_json[$(this).val()].alias);
+		Dimensions_count ++;		
+	  }
+    });
+	let centers = generateArray(Dimensions_count,true,true);
+	let lefts = generateArray(Dimensions_count,true,false);	
+	let tops = generateArray(Dimensions_count,false,true);
+	let radius = ['40%', '70%'];
+	switch(Dimensions_count){
+		case 1 : 
+			radius = ['40%', '70%'];
+			$('#myChart_scatter').css("height","480");
+			break;
+		case 2 :
+			radius = ['15%', '25%'];
+			$('#myChart_scatter').css("height","600");
+			break;
+		case 3 :
+		case 4 :
+			radius = ['15%', '25%'];
+			$('#myChart_scatter').css("height","840");
+			break;
+		default:
+			radius = ['15%', '25%'];
+			var chart_height = Dimensions_count % 2 === 0 ? Dimensions_count / 2 : (Dimensions_count + 1) / 2;
+			chart_height = chart_height * 410;
+			$('#myChart_scatter').css("height",chart_height);
+			break;
+	}
+	var chart_titles = [];
+	chart_titles.push({
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},			
+	});
+	var temp_count = 0;
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {		
+		var name = Dimensions_json[$(this).val()].alias;
+		var objs = {
+			name: name,
+			type: 'pie',	
+			radius: radius,
+			center: centers[temp_count],
+			itemStyle: {
+				borderRadius: 0,
+				borderColor: '#fff',
+				borderWidth: 0
+			},
+			label: {
+				show:label_flag,
+				formatter: '{b}:({d}%)',
+				position:label_position,
+			},
+			emphasis: {
+				label: {
+				  show: true,
+				  fontSize: 18,
+				  fontWeight: 'bold'
+				}
+			},
+			labelLine: {
+				show: true
+			},
+			encode: {
+				itemName: itemName,
+				value: Dimensions_json[$(this).val()].alias
+			}
+		};	
+	    chart_series.push(objs);
+		if(Dimensions_count>=2){
+			var this_top = Dimensions_count == 2 && parseInt(tops[temp_count]) == 33 ? 50 : parseInt(tops[temp_count]);
+			this_top = this_top + parseInt(100/(tops.length+2))-1;
+			chart_titles.push({
+				show: title_flag,
+				subtext: name,
+				left: lefts[temp_count],
+				top: this_top+'%',
+				textAlign: 'center',
+				subtextStyle:{color:piccolor,fontWeight:'bold'},
+			});	
+		}
+		temp_count++;
+	  }
+    });
+	
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: chart_titles,
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val(),
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+			  dataView: { readOnly: false },
+			  saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'item'
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,			
+			type:'scroll',
+			top:'8%',
+		},
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.hideLoading();
+	myChart.resize();
+	ajaxing({action: 'hide'});
+}
+function Charts_rcpie(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");	
+	var itemName = Dimensions_json[Dimension_x].alias;
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	myChart.clear();
+	myChart.showLoading();	
+	var Dimensions_count = 0;	
+	var chart_series = [];
+	var xAxis_data = [];
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		xAxis_data.push(Dimensions_json[$(this).val()].alias);
+		Dimensions_count ++;		
+	  }
+    });	
+	let centers = generateArray(Dimensions_count,true,true);
+	let lefts = generateArray(Dimensions_count,true,false);	
+	let tops = generateArray(Dimensions_count,false,true);
+	let radius = ['40%', '70%'];
+	switch(Dimensions_count){
+		case 1 : 
+			radius = ['40%', '70%'];
+			$('#myChart_scatter').css("height","480");
+			break;
+		case 2 :
+			radius = ['15%', '25%'];
+			$('#myChart_scatter').css("height","600");
+			break;
+		case 3 :
+		case 4 :
+			radius = ['15%', '25%'];
+			$('#myChart_scatter').css("height","840");
+			break;
+		default:
+			radius = ['15%', '25%'];
+			var chart_height = Dimensions_count % 2 === 0 ? Dimensions_count / 2 : (Dimensions_count + 1) / 2;
+			chart_height = chart_height * 410;
+			$('#myChart_scatter').css("height",chart_height);
+			break;
+	}
+	var chart_titles = [];
+	chart_titles.push({
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},			
+	});
+	
+	var temp_count = 0;
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {		
+		var name = Dimensions_json[$(this).val()].alias;
+		var objs = {
+			name: name,
+			type: 'pie',	
+			radius: radius,
+			center: centers[temp_count],
+			itemStyle: {
+				borderRadius: 10,
+				borderColor: '#fff',
+				borderWidth: 2
+			},
+			label: {
+				show:label_flag,
+				formatter: '{b}:({d}%)',
+				position:label_position,
+			},
+			emphasis: {
+				label: {
+				  show: true,
+				  fontSize: 14,
+				  fontWeight: 'bold'
+				}
+			},
+			labelLine: {
+				show: true
+			},
+			encode: {
+				itemName: itemName,
+				value: Dimensions_json[$(this).val()].alias
+			}
+		};	
+	    chart_series.push(objs);
+		if(Dimensions_count>=2){
+			var this_top = Dimensions_count == 2 && parseInt(tops[temp_count]) == 33 ? 50 : parseInt(tops[temp_count]);
+			this_top = this_top + parseInt(100/(tops.length+2))-1;
+			chart_titles.push({
+				show: title_flag,
+				subtext: name,
+				left: lefts[temp_count],
+				top: this_top+'%',
+				textAlign: 'center',
+				subtextStyle:{color:piccolor,fontWeight:'bold'},
+			});	
+		}
+		temp_count++;
+	  }
+    });
+	
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: chart_titles,
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val(),
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+			  dataView: { readOnly: false },
+			  saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'item'
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,			
+			type:'scroll',
+			top:'8%',
+		},
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.hideLoading();
+	myChart.resize();
+	ajaxing({action: 'hide'});
+}
+function Charts_doublebar(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	$('#myChart_scatter').css("height","800");
+	myChart.clear();
+	myChart.showLoading();
+	
+	var chart_series = [];
+	for(let i = 1; i < dataset.source.length; i++) {
+		let name = dataset.source[i][0];
+		let formatter = '{b}:{@'+name+'}';
+		let first_grid = {
+			type: 'bar',			
+			seriesLayoutBy: 'row',
+			label: {
+				show: label_flag,
+				position: label_position,
+				formatter: formatter
+			}
+		};
+	    chart_series.push(first_grid);
+	}
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked")) {
+		let name2 = Dimensions_json[$(this).val()].alias;
+		let formatter2 = '{a}:{@'+name2+'}';
+		var objs = {
+			name: name,						
+			type: 'bar',			
+			label: {
+				show: label_flag,
+				position: label_position,
+				formatter:formatter2,
+			},
+			xAxisIndex: 1,
+			yAxisIndex: 1
+		};		
+	    chart_series.push(objs);
+	  }
+    });
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: {
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},
+		},		
+		grid: [{ 
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: '55%',
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val()
+		}, 
+		{ 
+			containLabel: true,
+			top: '55%',
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val()
+		}],
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+				dataZoom: {yAxisIndex: "none"},
+				dataView: { readOnly: false },
+				magicType: {
+					type: ['line', 'bar', 'stack']
+				},			
+				saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'item'
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'5%'
+		},
+		xAxis: [
+			{ type: 'category', gridIndex: 0 },
+			{ type: 'category', gridIndex: 1 }
+		],
+		yAxis: [{ gridIndex: 0,name:unit_name }, { gridIndex: 1,name:unit_name }],
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.resize();
+	myChart.hideLoading();			
+	ajaxing({action: 'hide'});
+}
+function Charts_stackedline(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	$('#myChart_scatter').css("height","480");
+	myChart.clear();
+	myChart.showLoading();
+	
+	var Dimensions_count = 0;	
+	var chart_series = [];
+	var legend_data = [];
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		Dimensions_count ++;
+		legend_data.push(Dimensions_json[$(this).val()].alias);
+		var objs = {
+			name: Dimensions_json[$(this).val()].alias,
+			type: 'line',
+			stack: 'Total',
+			label: {
+				show: label_flag,
+				position: label_position,
+				formatter: '{c}',
+			},
+			encode: {
+				x: Dimension_x,
+				y: $(this).val()
+			}	
+		};
+		
+		switch(marker_line){
+			case '1': objs['markLine'] = {data: [{type: 'average'}]};break;
+			case '2': objs['markLine'] = {data: [{type: 'max'}]};break;
+			case '3': objs['markLine'] = {data: [{type: 'min'}]};break;
+			case '4': objs['markLine'] = {data: [{type: 'median'}]};break;
+		}
+	    chart_series.push(objs);
+	  }
+    });
+	legend_flag = Dimensions_count == 1 ? false : legend_flag;
+	legend_top = Dimensions_count>=2 ? '6%' : '8%';
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: {
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},
+		},
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val(),
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+			  dataView: { readOnly: false },
+			  saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'axis'
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'8%',
+			data:legend_data,
+		},
+		xAxis: { 
+			type: 'category',
+			boundaryGap: false,
+		},
+		yAxis: {type: 'value',name:unit_name},
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.resize();
+	myChart.hideLoading();			
+	ajaxing({action: 'hide'});
+}
+function Charts_stackedarea(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	$('#myChart_scatter').css("height","480");
+	myChart.clear();
+	myChart.showLoading();
+	
+	var Dimensions_count = 0;	
+	var chart_series = [];
+	var legend_data = [];
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		Dimensions_count ++;
+		legend_data.push(Dimensions_json[$(this).val()].alias);		
+		var objs = {
+			name: Dimensions_json[$(this).val()].alias,			
+			type: 'line',
+			stack: 'Total',
+			smooth: true,
+			lineStyle: {
+				width: 0
+			},
+			showSymbol: false,
+			areaStyle: {
+				opacity: 0.8,
+				color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+					offset: 0,
+					color: 'rgb(128, 255, 165)'
+				},
+				{
+					offset: 1,
+					color: 'rgb(1, 191, 236)'
+				}
+				])
+			},
+			emphasis: {
+				focus: 'series'
+			},
+			label: {
+				show: label_flag,
+				position: label_position,
+				formatter: '{c}',
+			},
+			encode: {
+				x: Dimension_x,
+				y: $(this).val()
+			}	
+		};
+	    chart_series.push(objs);
+	  }
+    });
+	legend_flag = Dimensions_count == 1 ? false : legend_flag;
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: {
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},
+		},
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val()			
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+			  dataView: { readOnly: false },
+			  saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'axis',
+			axisPointer: {
+			  type: 'cross',
+			  label: {
+				backgroundColor: '#6a7985'
+			  }
+			}
+		 },
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'8%',
+			data:legend_data,
+		},
+		xAxis: [{ 
+			type: 'category',
+			boundaryGap: false,
+		}],
+		yAxis: [{type: 'value',name:unit_name}],
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.resize();
+	myChart.hideLoading();			
+	ajaxing({action: 'hide'});
+}
+function Charts_pieandline(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var itemName = Dimensions_json[Dimension_x].alias;
+	var Dimensions_Select = $("input[name='dimension[]']");
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	$('#myChart_scatter').css("height","800");
+	myChart.clear();
+	myChart.showLoading();
+	
+	let chart_series = [];
+	for(let i = 0; i < dataset.source.length; i++) {
+		let objs = {
+			type: 'line',			
+			smooth: true,
+			seriesLayoutBy: 'row',
+			emphasis: { focus: 'series' },
+		};
+	    chart_series.push(objs);
+	}
+	var first_dim = '';
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked")) {
+			first_dim = Dimensions_json[$(this).val()].alias;
+			return;
+	  }
+	});
+	var formatter = '{b}: {@'+first_dim+'} ({d}%)';
+	let pie_series = {
+        type: 'pie',
+        id: 'pie',
+        radius: '30%',
+        center: ['50%', '25%'],
+        emphasis: {
+			focus: 'self'
+        },
+        label: {
+			show: label_flag,
+			position: label_position,
+			formatter: formatter
+        },
+        encode: {
+          itemName: itemName,
+          value: first_dim,
+          tooltip: first_dim
+        }
+    };
+	chart_series.push(pie_series);
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: {
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},
+		},
+		grid: {
+			top: '55%',
+			containLabel: true
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+			  dataView: { readOnly: false },			  
+			  saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'axis',
+			showContent: false
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'5%',
+		},
+		xAxis: { 
+			type: 'category',			
+		},
+		yAxis: {gridIndex: 0,name:unit_name},
+		series: chart_series
+	};
+	myChart.on('updateAxisPointer', function (event) {
+    const xAxisInfo = event.axesInfo[0];
+    if (xAxisInfo) {
+      const dimension = xAxisInfo.value + 1;
+      myChart.setOption({
+        series: {
+          id: 'pie',
+          label: {
+            formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+          },
+          encode: {
+            value: dimension,
+            tooltip: dimension
+          }
+        }
+      });
+    }
+	});
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.resize();
+	myChart.hideLoading();			
+	ajaxing({action: 'hide'});
+}
+function Charts_nightingale(dataset){
+	var Dimension_x = $('input[name="dimension_x"]:checked').val();	
+	var Dimensions_Select = $("input[name='dimension[]']");	
+	var itemName = Dimensions_json[Dimension_x].alias;
+	var myChart = echarts.init(document.getElementById('myChart_scatter'));
+	myChart.clear();
+	myChart.showLoading();	
+	var Dimensions_count = 0;	
+	var chart_series = [];
+	var xAxis_data = [];
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		xAxis_data.push(Dimensions_json[$(this).val()].alias);
+		Dimensions_count ++;		
+	  }
+    });
+	let centers = generateArray(Dimensions_count,true,true);
+	let lefts = generateArray(Dimensions_count,true,false);	
+	let tops = generateArray(Dimensions_count,false,true);
+	let radius = '65%';
+	switch(Dimensions_count){
+		case 1 : 
+			radius = '65%';
+			$('#myChart_scatter').css("height","480");
+			break;
+		case 2 :
+			radius = '30%';
+			$('#myChart_scatter').css("height","600");
+			break;
+		case 3 :
+		case 4 :
+			radius = '30%';
+			$('#myChart_scatter').css("height","840");
+			break;
+		case 5 :
+		case 6 :		
+			radius = '25%';
+			$('#myChart_scatter').css("height","1240");
+			break;
+		default:
+			radius = '20%';
+			var chart_height = Dimensions_count % 2 === 0 ? Dimensions_count / 2 : (Dimensions_count + 1) / 2;
+			chart_height = chart_height * 410;
+			$('#myChart_scatter').css("height",chart_height);
+			break;
+	}
+	var chart_titles = [];
+	chart_titles.push({
+			show: title_flag,
+			text: title_name,
+			subtext:subtitle_name,
+			subtextStyle:{color:piccolor,fontSize:13,lineHeight: 16},
+			left: title_position,
+			top: titposition != 3 ? '2%' : 'bottom',
+			textStyle:{color:piccolor,fontSize:fontsize},			
+	});
+	var temp_count = 0;
+	Dimensions_Select.each(function() {
+      if ($(this).is(":checked") && $(this).val() != Dimension_x) {
+		var name = Dimensions_json[$(this).val()].alias;
+		var objs = {
+			name: name,
+			type: 'pie',	
+			radius: radius,
+			center: centers[temp_count],
+			roseType: 'radius',			  
+			itemStyle: {
+				borderRadius: 5,
+				borderColor: '#fff',
+				borderWidth: 0,
+			},
+			label: {
+				show:label_flag,
+				formatter: '{b}:({d}%)',
+				position:label_position,
+			},
+			emphasis: {
+				label: {
+				  show: true
+				},
+				itemStyle: {
+				  shadowBlur: 10,
+				  shadowOffsetX: 0,
+				  shadowColor: 'rgba(0, 0, 0, 0.5)'
+				}
+			},
+			encode: {
+				itemName: itemName,
+				value: Dimensions_json[$(this).val()].alias
+			}
+		};
+	    chart_series.push(objs);
+		if(Dimensions_count>=2){
+			var this_top = Dimensions_count == 2 && parseInt(tops[temp_count]) == 33 ? 50 : parseInt(tops[temp_count]);
+			this_top = this_top + parseInt(100/(tops.length+2))-1;
+			chart_titles.push({
+				show: title_flag,
+				subtext: name,
+				left: lefts[temp_count],
+				top: this_top+'%',
+				textAlign: 'center',
+				subtextStyle:{color:piccolor,fontWeight:'bold'},
+			});	
+		}
+		temp_count++;
+	  }
+    });
+	
+	option = {
+		dataset: dataset,
+		color:color_list,
+		aria: {enabled: aria_flag,decal: {show: aria_flag}},
+		backgroundColor: backgroundcolor,
+		title: chart_titles,
+		grid: {
+			containLabel: true,
+			top: $('#gridTop').val(),
+			bottom: $('#gridBottom').val(),
+			left: $('#gridLeft').val(),
+			right: $('#gridRight').val(),
+		},
+		toolbox: {
+			show: toolbox_flag,
+			feature: {
+			  dataView: { readOnly: false },
+			  saveAsImage: {}
+			}
+		},
+		tooltip: {
+			trigger: 'item'
+		},
+		legend: {
+			show: legend_flag,
+			orient: legend_orient,
+			left: legend_position,
+			type:'scroll',
+			top:'8%',
+		},
+		series: chart_series
+	};
+	if(count_model){
+		option['graphic'] = [{
+			type: 'text',
+			left: '10',
+			top: '10',
+			style: {
+			  text: Count_model_json[count_model],
+			  fill: piccolor,
+			  fontSize: 16
+			}
+		}];
+	}
+	myChart.setOption(option);
+	myChart.hideLoading();
+	myChart.resize();
+	ajaxing({action: 'hide'});
+}
+$(function(){
+	get_data();
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

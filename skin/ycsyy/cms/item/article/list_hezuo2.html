@@ -1,0 +1,67 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<div class="maincon">
+	<div class="container">
+		<div class="position4">
+			<a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			&gt; <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			&gt; <a href="$CAT[url]">$CAT[name]</a> 
+		</div>
+		<div class="row">
+			<div class="contain-left fl">	
+				<div class="border1">
+					<div class="head2">
+						<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+						<span class="title2">$parent_name</span>
+					</div>	
+					<div class="main2">
+						<!--{template $this_module step_category_jx3}-->
+					</div>
+				</div>
+			</div>
+			<div class="contain-right fr">
+				<div class="er-right">
+					<div class="er-right-title">
+						<span class="windowstyle110862">$CAT[name]</span>
+						<span id="operation" style="display: none;float:right;padding-right:10px; cursor: pointer;">编辑</span>
+					</div>
+					<div class="er-right-con">
+						<div class="xs">
+							<ul class="jiaol clearfix">
+								<li class="">
+									<div>$label[hzjl01]</div>
+									<p class="gray-3 f-12" style="padding-bottom: 10px;padding-left: 10px;padding-right: 10px;padding-top: 10px">$label[hzjl01_txt]</p>
+								</li>
+								<li class="">
+									<div>$label[hzjl02]</div>
+									<p class="gray-3 f-12" style="padding-bottom: 10px;padding-left: 10px;padding-right: 10px;padding-top: 10px">$label[hzjl02_txt]</p>
+								</li>
+								<li class="">
+									<div>$label[hzjl03]</div>
+									<p class="gray-3 f-12" style="padding-bottom: 10px;padding-left: 10px;padding-right: 10px;padding-top: 10px">$label[hzjl03_txt]</p>
+								</li>
+								<li class="">
+									<div>$label[hzjl04]</div>
+									<p class="gray-3 f-12" style="padding-bottom: 10px;padding-left: 10px;padding-right: 10px;padding-top: 10px">$label[hzjl04_txt]</p>
+								</li>
+								<li class="">
+									<div>$label[hzjl05]</div>
+									<p class="gray-3 f-12" style="padding-bottom: 10px;padding-left: 10px;padding-right: 10px;padding-top: 10px">$label[hzjl05_txt]</p>
+								</li>
+								<li class="">
+									<div>$label[hzjl06]</div>
+									<p class="gray-3 f-12" style="padding-bottom: 10px;padding-left: 10px;padding-right: 10px;padding-top: 10px">$label[hzjl06_txt]</p>
+								</li>
+							</ul>
+						</div>
+					</div>
+</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

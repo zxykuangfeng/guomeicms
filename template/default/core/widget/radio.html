@@ -1,0 +1,10 @@
+<!--{php168}-->
+<input type="hidden" name="#field_{$field}_posted" />
+<!--{foreach $field_data['data'] $value $key}-->
+	<!--{if is_array($key)}-->
+		<input type="radio" data-note="$key[1]" name="field#[$field]" id="field#[$field][$value]" value="$value"{if isset($data[$field]) && $data[$field] == $value} checked{elseif !isset($data[$field]) && $field_data['default_value'] == $value} checked{/if} {$field_data['widget_addon_attr']} /><label for="field#[$field][$value]">$key[0]</label> 
+	<!--{else}-->
+		<input type="radio" name="field#[$field]" id="field#[$field][$value]" value="$value"{if isset($data[$field]) && $data[$field] == $value} checked{elseif !isset($data[$field]) && $field_data['default_value'] == $value} checked{/if} {$field_data['widget_addon_attr']} /><label for="field#[$field][$value]">$key</label>
+	<!--{/if}-->
+<!--{/foreach}-->
+<!--{/php168}-->

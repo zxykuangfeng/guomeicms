@@ -1,0 +1,574 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<link rel="stylesheet" href="{$RESOURCE}/skin/admin/style.css" type="text/css">
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<link rel="stylesheet" href="{$SKIN}/sites/category_selector.css" type="text/css" />
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<script type="text/javascript">
+var pids = [];
+</script>
+<div class="section">
+	<table class="formtable" width="100%">
+		<tr>
+			<td class="headerbtn_list">
+				<ul class="sites-top-menu">
+				
+					<li><a href="{$this_system.admin_controller}/farm-list"><i class="fa fa-cog"></i>站点列表</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-config"><i class="fa fa-cog"></i>本站点设置</a></li>
+					<li><a href="{$this_system.admin_controller}/category-list"><i class="fa fa-cog"></i>栏目管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_list"><i class="fa fa-cog"></i>菜单管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-logo"><i class="fa fa-ravelry"></i>站点LOGO</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-acls"><i class="fa fa-user-circle-o"></i>站点授权</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-template"><i class="fa fa-tree"></i>站点模板</a></li>
+					<li><a href="{$this_system.admin_controller}-Visualization" target="_blank"><i class="fa fa-refresh"></i>页面可视化</a></li>
+					<li><a href="{$this_system.admin_controller}-publishing" target="_blank"><i class="fa fa-refresh"></i>站点发布</a></li>
+					<li><a href="javascript:void(0);" onclick="cache_base_sites()"><i class="fa fa-refresh"></i>更新本站缓存 </a></li>
+					<li><a href="javascript:;" onclick="list_to_html('{$alias}')"><i class="fa fa-refresh"></i>静态本站数据</a></li>
+					<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($site_info['ipordomain'])}{$core->CONFIG['url']}/s.php/{$site}{else}{$site_info['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$site_info['sitename']}</a></li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="zq_list" width="100%" style="text-align:left">
+			<tr>
+				<td class="headerbtn_list" style="border-bottom:0;">				
+					<form action="$this_url" method="post">
+						导航菜单静态化模式 <input name="config[menu_mode]" value="1" type="radio" {if $data['config']['menu_mode'] == 1}checked{/if}/>相对地址 
+						<input name="config[menu_mode]" value="0" type="radio" {if empty($data['config']['menu_mode'])}checked{/if}/>绝对地址（默认）
+						<input name="config[menu_mode]" value="2" type="radio" {if $data['config']['menu_mode'] == 2}checked{/if}/>简短地址（目录绑定域名）
+						<input name="config[menu_change_forbidden]" value="1" type="checkbox" {if !empty($data['config']['menu_change_forbidden'])}checked{/if}/> 禁止恢复动态菜单					
+						<input type="hidden" name="type" value="config" />
+						<input name="" type="submit" value="{$P8LANG['submit_cache']}" class="edit_btn" />					
+						<input type="button" value="{$P8LANG['add_menu']}" name="{$P8LANG['add']}" onclick="window.location.href='{$this_router}-menu_add?site={$this_system->SITE}'" class="edit_btn"  />
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<form action="$this_router-menu_cache" method="post" id="form">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0" class="mainbox">
+			<tbody>
+				<tr>
+					<td>
+						<ul class="sites-down-menu">
+							<li class="btn-color1"><a href="javascript:void(0);" onclick="window.location.href='{$this_router}-menu_add?site={$this_system->SITE}'"><i class="icon icon-ico44"></i>添加菜单</a></li>
+							<li class="btn-color2"><a href="{$this_system.admin_controller}/farm-menu_list"><i class="icon icon-ico48"></i>菜单列表</a></li>
+							<li class="course pull-right">
+								<ul class="operation-nav">
+									<li>
+										<a href="{$RESOURCE}/attachment/jiaocheng/zizhancaidan.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 菜单教程>></a>
+										<ul class="dropdown-menu" style="left:auto;right:0;">
+											<li class="btn-color1"><a href="{$RESOURCE}/attachment/jiaocheng/zizhancaidanwuxiaoguo.pdf" target="_blank" ><i class="icon icon-ico55"></i>菜单没有效果的处理方法</a></li>
+											<li class="btn-color2"><a href="{$RESOURCE}/attachment/jiaocheng/xiugaizizhancaidan.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>修改和删除菜单</a></li>
+											<li class="btn-color3"><a href="{$RESOURCE}/attachment/jiaocheng/xinzengzizhancaidan.pdf" target="_blank" ><i class="icon icon-ico55"></i>新增网站菜单 </a></li>
+											<li class="btn-color4"><a href="{$RESOURCE}/attachment/jiaocheng/xiugaipaixuzizhancaidan.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>调整菜单排序</a></li>
+											<li class="btn-color5"><a href="{$RESOURCE}/attachment/jiaocheng/lanmuhecaidanzizhan.pdf" target="_blank" ><i class="icon icon-ico55"></i>菜单和栏目关系</a></li>
+											<li class="btn-color6"><a href="{$RESOURCE}/attachment/jiaocheng/zizhancaidan.pdf" target="_blank" class="ys2"><i class="icon icon-ico55"></i>完整菜单教程</a></li>
+										</ul>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table">
+			<tr class="title">
+				<td width="4%" class="list_top">ID</td>
+				<td width="15%" class="list_top">名称</td>
+				<td width="15%" class="list_top">链接</td>
+				<td width="10%" class="list_top">新窗口打开</td>
+				<td width="8%" class="list_top">状态</td>
+				<td width="10%" class="list_top">排序</td>
+				<td width="*" class="list_top list_right">操作</td>
+			</tr>
+			<!--{php
+					function _list($ms, $l = 0,$p=0){
+						global $this_router, $P8LANG, $SKIN;
+						$k=count($ms);
+						$j=0;
+					}-->
+					<!--{foreach $ms $v}-->
+					<!--{if $v['id']}-->
+					<!--{php $j++;}-->
+					<tr id="clone_{$v['id']}" class="data">
+						<td class="id_{$v['id']}"><input type="hidden" name="option[{$v['id']}][id][]" value="{$v['id']}"/>{$v['id']}</td>
+						<td align="left">
+							<span style="float:left;"><!--{if  $l != 0}-->
+							<!--{php echo str_repeat('│&nbsp;&nbsp;', $l-$p).str_repeat('&nbsp;&nbsp;&nbsp;', $p);}-->
+							<!--{if $j==$k}--><!--{php $p++;}-->└<!--{else}-->├<!--{/if}--><!--{/if}-->
+							&nbsp;<input type="text" class="txt txt3" name="option[{$v['id']}][name][]" value="{$v['name']}" id="matrix_name_{$v['id']}" size="12" /></span></td>
+						<td align="left" style="text-align:left;padding-left:5px;">
+							<input type="text" class="txt txt3" id="matrix_{$v['id']}" name="option[{$v['id']}][url][]" value="{$v['url']}" size="60" />
+							<input type="hidden" id="dynamic_url_{$v['id']}" name="option[{$v['id']}][dynamic_url][]" value="{$v['dynamic_url']}" />
+						</td>
+						<td align="center"><input type="checkbox" class="txt txt3" name="option[{$v['id']}][target][]" value="_blank"{if !empty($v['target']) && $v['target'] == '_blank'} checked{/if}/></td>					
+						<td class="display_{$v['id']}" align="center"> <span style="cursor: pointer;" id="display_$v[id]" onclick="display_menu(this)">
+							<!--{if $v['display']}-->
+							<img src="{$SKIN}/check_yes.gif" alt="1" />
+							<!--{else}-->
+							<img src="{$SKIN}/check_no.gif" alt="0" />
+							<!--{/if}-->
+							</span>
+							<input type="hidden" name="option[{$v['id']}][display][]" value="{$v['display']}" />
+						</td>
+						<td align="center">
+							<input type="hidden" name="option[{$v['id']}][parent][]" value="{$v['parent']}" />
+							<input type="number" maxlength="3" min="0" max="999" step="1" class="txt txt3" name="option[{$v['id']}][display_order][]" value="{$v['display_order']}" size="3" />
+						</td>
+						<td class="optlist action_{$v['id']}">
+							<a href="javascript:;" onclick="_add_{$v['id']}('{$v['id']}');" class="ys2">新增同级菜单</a>	
+							<a href="javascript:;" onclick="_add_submenu('{$v['id']}','{$l}')" class="ys2">新增下级菜单</a>											
+							<a href="javascript:;" onclick="_category({$v['id']},{$v['id']})" class="ys7">栏目选择</a>
+							<a href="$this_router-menu_update?id={$v['id']}" target="_blank"><img src="{$SKIN}/button_edit.gif" border="0" /></a>
+							<a id="menu_{$v['id']}" href="$this_router-menu_delete?id={$v['id']}" onclick="return delete_menu(this);"><img src="{$SKIN}/del_icon2.gif" border="0" /></a></td>
+					</tr>
+					<tbody id="images_{$v['id']}"></tbody>
+					<script type="text/javascript">
+						function _add_{$v['id']}(id){
+							var id = id === undefined ? 0 : id;
+							var newid = Math.floor(Math.random() * (4000)) + 1000;
+							var copy = $('#clone_{$v['id']}').clone(true).attr('id', 'new_menu_'+newid).show();					
+							copy.find('input[type="text"]:eq(0)').attr('name', 'option[{$v['id']}][name][]').attr('id', 'matrix_name_'+newid).val('');
+							copy.find('input[type=text]:eq(1)').attr('name', 'option[{$v['id']}][url][]').attr('id', 'matrix_'+newid).val('');
+							copy.find('input:eq(3)').attr('name', 'option[{$v['id']}][dynamic_url][]').attr('id', 'dynamic_url_'+newid).val('');
+							copy.find('.action_{$v['id']}').html('<a href="javascript:;" onclick="_category(\''+newid+'\',\''+id+'\')" class="ys7">栏目选择</a> <a id="menu_'+newid+'"><img src="{$SKIN}/del_icon2.gif" border="0" /></a>');
+							copy.find('.id_{$v['id']}').html('<input type="hidden" name="option[{$v['id']}][id][]"/>');
+							copy.find('.display_{$v['id']}').html('<img src="{$SKIN}/check_yes.gif" alt="1" /><input type="hidden" name="option[{$v['id']}][display][]" value="1" />');
+							copy.find('#menu_'+newid).click(function(){
+								copy.remove();
+							});			
+							copy.appendTo($('#images_{$v['id']}'));
+							pids.push(newid);					
+						}			
+					</script>
+					<!--{php if(isset($v['menus'])) _list($v['menus'], $l+1,$p);}-->
+					<!--{/if}-->
+					<!--{/foreach}-->
+					<!--{php
+					}			
+					_list($menus);
+					}-->
+					<tbody id="images_top"></tbody>
+					<tr id="clone_0" class="data" style="display:none;">
+						<td class="id_0"><input type="hidden" name="option[0][id][]" value="0"></td>
+						<td align="left"><span style="float:left;"><input type="text" class="txt txt3" name="option[0][name][]" value="" id="matrix_name_0" size="12"></span></td>
+						<td align="left" style="text-align:left;padding-left:5px;"><input type="text" class="txt txt3" id="matrix_0" name="option[0][url][]" value="" size="60"></td>
+						<td align="center"><input type="checkbox" class="txt txt3" name="option[0][target][]" value="_blank"/></td>					
+						<td class="display_0" align="center">
+							<span style="cursor: pointer;" id="display_0" onclick="display_menu(this)">
+								<img src="{$SKIN}/check_yes.gif" alt="1" />
+							</span>
+							<input type="hidden" name="option[0][display][]" value="1">
+						</td>
+						<td align="center">
+							<input type="hidden" name="option[0][parent][]" value="0" />
+							<input type="number" maxlength="3" min="0" max="999" step="1" class="txt txt3" name="option[0][display_order][]" value="0" size="3">
+						</td>
+						<td align="center" class="optlist action_0">
+							<a id="menu_0" href="javascript:void(0)" onclick="return delete_menu(this);" class="btn-color14">{$P8LANG[delete]}</a>
+						</td>
+					</tr>
+					<tr id="clone_sub" class="data" style="display:none;">
+						<td class="id_sub"><input type="hidden" name="option[0][id][]" value="0"></td>
+						<td align="left"><span style="float:left;"><span id="prefix"></span><input type="text" class="txt txt3" name="option[0][name][]" value="" id="matrix_name_0" size="12"></span></td>
+						<td align="left" style="text-align:left;padding-left:5px;"><input type="text" class="txt txt3" id="matrix_0" name="option[0][url][]" value="" size="60"></td>
+						<td align="center"><input type="checkbox" class="txt txt3" name="option[0][target][]" value="_blank" /></td>					
+						<td class="display_0" align="center">
+							<span style="cursor: pointer;" id="display_0" onclick="display_menu(this)">
+								<img src="{$SKIN}/check_yes.gif" alt="1" />
+							</span>
+							<input type="hidden" name="option[0][display][]" value="1">
+						</td>
+						<td align="center">
+							<input type="hidden" name="option[0][parent][]" value="0" />
+							<input type="number" maxlength="3" min="0" max="999" step="1" class="txt txt3" name="option[0][display_order][]" value="0" size="3">
+						</td>
+						<td align="center" class="optlist action_0">
+							<a id="menu_0" href="javascript:void(0)" onclick="return delete_menu(this);" class="btn-color14">{$P8LANG[delete]}</a>
+						</td>
+					</tr>
+			</table>
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+				<tr>
+					<td>
+					<input type="hidden" id="matrix_gid">
+					<input type="hidden" id="matrix_pid">
+					<input type="button" value=" {$P8LANG['submit_cache']} " onclick="this.form.action='$this_router-menu_cache';this.form.submit()" class="edit_btn" />
+					<input type="button" onclick="_add_topmenu();" class="edit_btn" value="新增一级菜单"/>
+					<input type="button" value=" 更新缓存 " name="cache" onclick="location.href='$this_router-menu_cache?site={$this_system->SITE}'" class="edit_btn" /> 
+					<!--{if empty($item_config['menu_html_menu'])}-->
+					<input type="button" value="{$P8LANG['html_menu']}" onclick="dynamic_html('html');" class="edit_btn" />
+					<!--{/if}-->
+					<!--{if empty($item_config['menu_dynamic_menu'])}-->
+					<input type="button" value="{$P8LANG['dynamic_menu']}" onclick="dynamic_html('dynamic');" class="edit_btn" />
+					<!--{/if}-->
+					<input type="button" value="{$P8LANG['add_menu']}" name="{$P8LANG['add']}" onclick="window.location.href='{$this_router}-menu_add?site={$this_system->SITE}'" class="edit_btn"  />
+					<input type="hidden" name="display_json" id="display_json" />			
+				</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<form action="$this_url" id="dynamic_html" method="post">
+<input type="hidden" id="type" name="type" value="html" />
+</form>
+<form action="" method="post" id="reflash" target="__reflash_statistic__">
+	<input type="hidden" name="type" value="rebuild" id="reflash_type" />
+	<input type="hidden" name="system" value="sites" />	
+	<input type="hidden" name="site" value="{$this_system->SITE}" />	
+</form>
+<iframe style="display: none;" name="__reflash_statistic__"></iframe>
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend style="font-size:14px;">列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+
+<fieldset class="field" id="shower2">
+	<legend style="font-size:14px;">内容页</legend>
+	<iframe name="shower2" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+
+<form id="list_to_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<form id="view_to_html" action="{$this_system.admin_controller}/item-view_to_html" method="post" target="shower2"></form>
+<form id="list_only_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<script type="text/javascript">
+var menu_mode = {$menu_mode};
+var pids = [];
+var url = window.location.href;
+index = url.indexOf("flag");
+if(index !=-1) html_index();
+function show_edit_label(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+function _add_topmenu(){
+	var newid = Math.floor(Math.random() * (4000)) + 1000;
+	var copy = $('#clone_0').clone(true).attr('id', 'new_menu_'+newid).show();					
+	copy.find('input[type="text"]:eq(0)').attr('name', 'option[0][name][]').attr('id', 'matrix_name_'+newid).val('');
+	copy.find('input[type=text]:eq(1)').attr('name', 'option[0][url][]').attr('id', 'matrix_'+newid).val('');
+	copy.find('.action_0').html('<a href="javascript:;" onclick="_category(\''+newid+'\',\'0\')" class="ys7">栏目选择</a> <a id="menu_'+newid+'" class="btn-color14">{$P8LANG[delete]}</a>');
+	copy.find('.id_0').html('<input type="hidden" name="option[0][id][]"/>');
+	copy.find('.display_0').html('<img src="{$SKIN}/check_yes.gif" alt="1" /><input type="hidden" name="option[0][display][]" value="1" />');
+	copy.find('#menu_'+newid).click(function(){
+		copy.remove();
+	});			
+	copy.appendTo($('#images_top'));
+	pids.push(newid);					
+}
+function _add_submenu(id,p){
+	var pids = [];
+	var id = id === undefined ? 0 : id;
+	var newid = Math.floor(Math.random() * (4000)) + 1000;
+	var copy = $('#clone_sub').clone(true).attr('id', 'new_menu_'+newid).show();
+	var prefix = '│&nbsp;';
+	var j=0;
+	for(j=0;j<p;j++) prefix += '&nbsp;│&nbsp;';
+	prefix += '&nbsp;├&nbsp;';
+	copy.find('#prefix').html(prefix);
+	copy.find('input[type="hidden"]:eq(0)').attr('name', 'option['+id+'][id][]');
+	copy.find('input[type="text"]:eq(0)').attr('name', 'option['+id+'][name][]').attr('id', 'matrix_name_'+newid).val('');
+	copy.find('input[type=text]:eq(1)').attr('name', 'option['+id+'][url][]').attr('id', 'matrix_'+newid).val('');
+	copy.find('input[type="hidden"]:eq(2)').attr('name', 'option['+id+'][parent][]').val(id);
+	copy.find('.action_0').html('<a href="javascript:;" onclick="_category(\''+newid+'\',\''+id+'\')" class="ys7">栏目选择</a> <a id="menu_'+newid+'" class="btn-color14">{$P8LANG[delete]}</a>');
+	copy.find('.id_0').html('<input type="hidden" name="option['+id+'][id][]"/>');
+	copy.find('.display_0').html('<img src="{$SKIN}/check_yes.gif" alt="1" /><input type="hidden" name="option['+id+'][display][]" value="1" />');
+	copy.find('#menu_'+newid).click(function(){
+		copy.remove();
+	});			
+	copy.appendTo($('#images_'+id));
+	pids.push(newid);					
+}
+function site_reflash(site){
+	//更新标签缓存  更新魔板缓存   静态首页   静态最近10天的内容
+	var cache_data = ['template','label'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'更新中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			//静态首页
+			html_index();
+			//静态最近10天的内容
+			view_to_html(10);
+			html_dialog.hide();
+			p8_window.alert('操作成功');
+		}
+	});	
+}
+function cache_site(site){
+	var cache_data = ['farm','template','label','manu','model','category','menu_custom'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});
+}
+function list_to_html(site){
+	$('#list_to_html').empty();
+	$('#view_to_html').empty();	
+	var pages = 0;
+	var items = -1;
+	
+	$('#list_to_html').append($('<input type="hidden" name="pages" value="'+ pages +'" />'));
+	$('#list_to_html').submit();	
+	html_dialog.show();	
+	$('#view_to_html').append($('<input type="hidden" name="items" value="'+ items +'" />'));
+	$('#view_to_html').submit();
+	if(!site) return false;
+	$.ajax({
+			url:'{$this_system.admin_controller}-index_to_html',
+			type: 'post',
+			dataType: 'json',
+			data: ajax_parameters({site:site}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({'text':'处理中…'});
+			},
+			success: function(msg){
+				ajaxing({action: 'hide'});
+				if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态首页');
+				}else{
+					//p8_window.alert('静态成功！');
+				}
+		   }
+	});
+}
+function view_to_html(time){
+	$('#view_to_html').empty();
+	if(time){
+		var _obj = new Date(<!--{php echo P8_TIME;}-->000);
+		var _Y = _obj.getFullYear();
+		var _m = _obj.getMonth() +1;
+		var _d = _obj.getDate();
+		var _H = _obj.getHours();
+		var _j = _obj.getDay();
+		var time1 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d -30, _Y));
+		var time2 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time1 +'" />'));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time2 +'" />'));
+	}
+	$('#view_to_html').submit();
+	html_dialog.show();
+}
+
+function html_index(thisSite){
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_system.admin_controller}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   success: function(msg){
+			   if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				}else if(msg==-2){
+					p8_window.alert('静态首页锁定中，请10秒后操作！');
+				}else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	})	
+}
+
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 400,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+function change_cache(){
+	if($('#check_all_cache').prop('checked')){
+		$('#cache_form').find('input[type=checkbox]').prop('checked','checked');
+	}else{
+		$('#cache_form').find('input[type=checkbox]').prop('checked',false);
+	}
+}
+function cache_base_sites(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({text:'操作成功！',action: 'hide'});
+				}
+			});
+		}else{
+			return false;
+		}
+	});	
+}
+
+
+	
+	var display_json = {};
+	
+	function display_menu(obj){
+		var id = intval($(obj).attr('id'));
+		switch(parseInt($('img', obj).attr('alt'))){
+			case 0:
+				//show
+				display_json[id] = 1;
+				
+				$('img', obj).attr('src', '{$SKIN}/check_yes.gif').attr('alt', '1');
+			break;
+			
+			case 1:
+				//hide
+				display_json[id] = 0;
+				
+				$('img', obj).attr('src', '{$SKIN}/check_no.gif').attr('alt', '0');
+			break;
+		}
+		
+		$('#display_json').val($.toJSON(display_json));
+	}
+	
+	function delete_menu(obj){
+		//if(confirm('{$P8LANG['confirm_to_delete']}')){
+		p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+			if(r){
+				$.ajax({
+					url: '$this_router-menu_delete',
+					type: 'POST',
+					dataType: 'json',
+					data: {id: obj.id.replace(/[^0-9]/g, '')},
+					cache: false,
+					success: function(json){
+						for(var i in json){
+							$('#menu_'+ json[i]).parent().parent().remove();
+						}
+					}
+				});
+			}
+		});
+		
+		return false;
+	}
+	
+	function dynamic_html(type){
+		//if(confirm('{$P8LANG['confirm_to_do']}')){
+		$("#type").val(type);
+		p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+			if(r){				
+				$("#dynamic_html").submit();
+			}
+		});
+		return false;
+	}
+	
+	$('form input[name^=display_order]').change(function(){
+		this.value = this.value.replace(/[^0-9]/g, '') || 0;
+		if(this.value > 999) this.value = 999;
+		if(this.value < 0) this.value = 0;
+		
+		$('#form').append('<input type="hidden" name="_display_order['+ this.name.replace(/[^0-9]/g, '') +']" value="'+ this.value +'" />');
+		$(this).css({border: '1px solid #ff0000'});
+	});
+	function _category(id,pid){
+		pids = [];
+		$('#form input[id=matrix_gid]').val(id);		
+		$('#form input[id=matrix_pid]').val(pid);
+		pids.push(id);
+		var matrix_dialog = new P8_Dialog({
+			title_text: '{$P8LANG['select_category']}',
+			button: true,
+			width: 700,
+			height: 500,
+			ok: function(){
+				var id = matrix_cs.get_value();
+				var func;
+				var tmp = '';
+				var tmp_url = '';
+				id = id.filter(function (el){
+					return el && el.trim();
+				});			
+				for(var i in id){
+					if(id[i]>0 && i>0){
+						func = '_add_' + $('#form input[id=matrix_pid]').val();
+						if($('#form input[id=matrix_pid]').val() > 0) setTimeout(func+'()', 20);					
+					}
+				}			
+				setTimeout(function(){
+					for(var j in pids){					
+						tmp = matrix_cs.get_by_id(id[j]);
+						if(tmp != 'undefined'){
+							$('#matrix_name_'+pids[j]).val(tmp.name);
+							if(tmp.htmlize == 1){
+								tmp_url = tmp.url;
+								if(menu_mode == 1) tmp_url = tmp_url.replace(domain+'/','');
+								if(menu_mode == 2) tmp_url = tmp_url.replace('/sites/html/','/');
+								$('#matrix_'+pids[j]).val(tmp_url);
+							}else{
+								$('#matrix_'+pids[j]).val('{\$system_url}/item-list-category-'+id[j]+'.html');
+							}
+							$('#dynamic_url_'+pids[j]).val('{\$system_url}/item-list-category-'+id[j]+'.html');
+						}
+					}				
+				}, id.length*50);			
+			},
+			show: function(){
+				matrix_cs.init();
+			}
+		});
+
+		var matrix_cs = new Recursive_Selector({
+			multiple: true,
+			dialog: matrix_dialog,
+			sub_property: 'categories',
+			url: '{$this_system.siteurl}/category-json',
+			value: 0,
+			item_callback: function(cat, item){
+				if(cat.type == 1)
+					item.find('span').addClass('frame_category');
+				
+				if(cat.categories)
+					item.addClass('sub_category');
+			}
+		});	
+		matrix_dialog.show();	
+	}	
+</script>
+</body>
+</html>
+<!--{/php168}-->	

@@ -1,0 +1,17 @@
+<!--{php168}-->
+<!--{php 
+$i = sizeof($CAT['parents']);
+$j = $i>1? $i-1 : 0;
+if($CAT['parents'])
+$stepcat = $category->categories[$CAT['parents'][$j]]['categories'];
+else
+$stepcat = $category->categories[$cid]['categories'];
+}-->
+<ul class="tabs-nav1 row" id="tabs">
+	<!--{foreach $stepcat $v}-->    
+	<li class="col-md-2 col-sm-3 col-xs-12 cid_{$v['id']} <!--{if $cid == $v['id']}-->now<!--{/if}-->">
+		<a href="$v[url]">$v[name]</a>		
+	</li>
+	<!--{/foreach}-->
+</ul>
+<!--{/php168}-->

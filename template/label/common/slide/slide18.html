@@ -1,0 +1,42 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+.focus{$label['id']}{ width: {$swidth}; height: {$sheight}px; overflow:hidden; position:relative;}
+.focus{$label['id']} .hds{ height:15px; overflow:hidden; position:absolute; right:5px; bottom:10px; z-index:1; }
+.focus{$label['id']} .hds ul{ overflow:hidden; zoom:1; float:left;  }
+.focus{$label['id']} .hds ul li{width:9px; height:11px;float:left;margin-left:6px;background: url({$RESOURCE}/skin/label/icon_yq.png) no-repeat -54px 0;cursor: pointer;text-indent: -9999px;}
+.focus{$label['id']} .hds ul li.on{width:12px; height:12px;background-position:-68px 0;} 
+.focus{$label['id']} .bds{ position:relative; height:100%; z-index:0;   }
+.focus{$label['id']} .bds li{ zoom:1; vertical-align:middle;}
+.focus{$label['id']} .bds .pic img{width: {$swidth}; height: {$sheight}px;display:block; }
+.focus{$label['id']} .bds .con{width: 100%; float: left; position: absolute; z-index:1; left: 0; bottom: 0; height:37px; line-height:37px; text-align:left; color: white; }
+.focus{$label['id']} .bds .con .title{position: absolute; z-index: 2; left: 0; top: 0; display: block; padding: 0 20px 0 12px; font-size: 14px; color: white;overflow: hidden;}
+.focus{$label['id']} .bds .con .title a{color: white;}
+.focus{$label['id']} .bds .bg{display: block; height: 37px; line-height: 37px; width: 100%; float: left; position: absolute; z-index: 1; left: 0; bottom: 0; background-color: #000; opacity:0.5 ; filter: alpha(opacity=50); }
+</style>
+<div class="focus{$label['id']}">
+	<div class="hds">
+		<ul>
+			<!--{foreach $list $k $value}-->
+			<li>$k</li>
+			<!--{/foreach}-->
+		</ul>
+	</div>
+	<div class="bds">
+		<ul>
+			<!--{foreach $list $value}-->
+			<li>
+				<div class="pic"><a href="$value[url]" target="_blank" title="$value[full_title]"><img src="$value[frame]" alt="$value[full_title]" /></a></div>
+				<div class="con">
+					<div class="title"><a href="$value[url]" target="_blank" title="$value[full_title]">$value[full_title]</a></div>
+					<div class="bg"></div>
+				</div>
+			</li>
+			<!--{/foreach}-->
+		</ul>
+	</div>
+</div>
+<script type="text/javascript">
+	jQuery(".focus{$label['id']}").slide({titCell:".hds li",mainCell:".bds ul",autoPlay:true});
+</script>
+<!--{/php168}-->

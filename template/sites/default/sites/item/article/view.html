@@ -1,0 +1,104 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link href="{$SKIN}style.css" type="text/css" rel="stylesheet">
+<!--content-->
+<div class="position">
+<a href="{$this_system.domain}">首页</a>
+<!--{foreach $parent_cats $v}-->
+&gt;&gt; <a href="$v[url]">$v[name]</a>
+<!--{/foreach}-->
+&gt;&gt; <a href="$CAT[url]">$CAT[name]</a> &gt;&gt; <a>详细内容</a>
+</div>
+<div class="clear"></div>
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] === undefined ? 1 : (\$_GET['verified'] == 0 ? 0 : 1);
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+
+
+
+<div class="container">
+	<div class="contain_left">
+		<div class="show_box_leftnav  common_mbottom ">
+<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->			
+<div class="sb1_head">
+				<a href="$parent_url">$parent_name</a>
+			</div>
+			<div class="sb1_main">
+				<!--{template $this_module step_category3}-->
+			</div>
+			<div class="sb1_bottom">&nbsp;</div>
+		</div>
+       <div class="show_box_1">
+			<div class="sb1_head">
+				$label[ny2_tongzhi2]
+			</div>
+			<div class="sb1_main">
+				$label[ny2_tongzhi_neirong2]
+			</div>
+		</div>
+		<div class="ad_box" style="margin-top:10px;">
+			$label[ny2_zhuanti_ad1]
+		</div>
+		<div class="ad_box" style="margin-top:10px;">
+				$label[ny2_zhuanti_ad2]
+		</div>
+	</div>
+<div class="contain_right">
+<div class="show_box_2">
+		<!--layout article content-->
+<div class="sb2_head">
+	<div class="layout_txtcontent_position" style="height:23px;background-position:0 -205px;color:#10509d;padding-left:38px;font-size:13px;"> $CAT[name] &gt;&gt; 正文 </div>
+</div>
+<div class="sb2_main layout_txtcontent common_mbottom">
+
+			<div class="layout_txtcontent_title">
+				$data[title]
+			</div>
+			<div class="layout_txtcontent_info">
+				日期：{date('Y-m-d H:i:s', $data['timestamp'])}&nbsp;  发布人：{$data['username']}&nbsp; 浏览量：<span class="item_views">$data[views]</span>
+				<span id="operation" style="display: none; cursor: pointer;color:#0040ff;margin-left:15px;">{$P8LANG['operation']}>></span>
+			</div>
+			
+			<div class="layout_txtcontent_content">
+			<div id="p8_content_show">$data[content]</div>
+			</div>	
+			
+			<div class="layout_txtcontent_list">
+				$pages
+			</div>
+			
+<div class="son_title tr"><span>点击数：$data[views]</span><span>【<a href="javascript:" onClick="jscript:window.external.AddFavorite(document.location.href,document.title);">收藏本页</a>】</span></div>
+<div class="change">
+          <ul>
+            <li><font style="color:red">上一篇：</font><!--{if !empty($prev_item['subject'])}--><a href="$prev_item[url]" title="$prev_item[title]">$prev_item[subject]</a><!--{else}-->没有了<!--{/if}--></li>
+            <li><font style="color:red">下一篇：</font><!--{if !empty($next_item['subject'])}--><a href="$next_item[url]" title="$next_item[title]">$next_item[subject]</a><!--{else}-->没有了<!--{/if}--></li>
+          </ul>
+</div>
+<!--{if !empty($KEYWORD)}-->
+			<div id="" class="morecom_rap common_mtop">
+			<div class="head"><span class="title">更多关于 <font color="red">$KEYWORD</font> 的新闻</span></div>
+				$label[sites_view_kewlist]{'i.title' => $KEYWORD}
+			</div>
+			<!--{/if}-->
+<div class="closepage"><span><a href="{if $this_system->domain}{$this_system.domain}{else}{str_replace('index.php/cms','',$this_system->controller)}{/if}">返回首页</a></span><span><a href="javascript:self.close()" >关闭页面</a></span></div>
+
+</div>
+		<!--layout comment-->
+	
+</div></div></div>
+<!--footer-->
+<script type="text/javascript" src="$this_router-count?id=$data[id]"></script>
+<script type="text/javascript" src="{$RESOURCE}/ueditor/ueditor.parse.min.js"></script>
+<script type="text/javascript">uParse('#p8_content_show', {rootPath: '<!--{php echo P8_ROOT;}-->ueditor/'});</script>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

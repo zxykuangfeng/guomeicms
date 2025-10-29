@@ -1,0 +1,298 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>录取查询平台</title>
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/forms/query/style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+<style>
+#chaxun2{position:relative;background-color:#e6f8ff;}
+#chaxun2 .wrap_out{background:#fff;padding:15px 12px;position:relative;}
+#chaxun2 .container{width:auto;max-width:1000px;}
+.channel_item_input{width:80%;}
+.p8_win_layer { display: none; }
+.p8_mask_layer { position: fixed; width: 100%; height: 100%; z-index: 99998; top: 0px; left: 0px; }
+.p8_win_panel { position: fixed; z-index: 99999; top: 50%; left: 50%; border:1px solid #48AEE0; background:#82D1F8;padding:3px; border-radius: 4px;}
+.p8_win_panel .title-panel { position: absolute; height: 36px; width: 100%; border-radius: 4px 4px 0 0; }
+.p8_win_panel .title {color:#000; font-size:14px; font-family:"宋体", Arial, Times; text-align:left; line-height:120%; background:#fff; }
+.p8_win_panel h3 { font-size: 14px; margin: 0;font-weight:700; }
+.p8_win_panel .close-btn { display: block; text-align: center; vertical-align: middle; position: absolute; width: 36px; height: 36px; line-height: 36px; right: 0px; text-decoration: none; font-size: 24px; color: black; background-color: #DBDBDB; border-radius: 2px; z-index: 1; }
+.p8_win_panel .close-btn:hover { background-color: #ccc; }
+.p8_win_panel .body-panel {background:#fff;padding:15px;}
+.p8_win_panel .content, .p8_win_panel .btns { text-align: center; }
+.p8_win_panel .content { padding: 18px 5px 5px 5px; font-size: 14px; min-height: 44px; line-height: 22px; }
+.p8_win_panel .btns .cancel{width:62px;height:28px; background:url(cancel.jpg) no-repeat; color:#fff; border:none; margin-left:10px; margin-bottom:2px;  cursor:pointer;letter-spacing:1px;}
+.p8_win_panel .btns .ok{border:1px solid #eea236;background:#f0ad4e;color:#fff;width:62px;height:28px; margin-left:10px; margin-bottom:2px;  cursor:pointer}
+@media (max-width: 480px){
+	.channel_item_title.luqu,.channel_item_input{width:100%;}
+	.p8_win_panel{width:280px !important;margin-left:-140px !important;}
+}
+</style>
+</head>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/core/label/label.js"></script>
+<script type="text/javascript">
+var p8_window = new function () {
+	this.width = 494;
+	this.height = 152;
+	this.close = function () {
+        $('.p8_win_layer iframe').remove();
+        $('.p8_win_layer').remove();
+    };
+
+    function messageBox(html,message) {
+        p8_window.close();
+        let jq = $(html);
+        jq.find(".p8_win_panel").height(p8_window.height).width(p8_window.width).css("margin-left", -p8_window.width / 2).css("margin-top", -p8_window.height / 2);
+        //jq.find(".title-panel").height(p8_window.height);
+        jq.find(".title").find(":header").html(P8LANG.system_box_title);
+        jq.find(".body-panel").height(p8_window.height - 30);
+        jq.find(".content").html(message.replace('\r\n', '<br/>'));
+        jq.appendTo('body').show();
+        $(".p8_win_layer .w-btn:first").focus();
+    }
+
+    this.confirm = function (message,selected) {
+        this._close = function (r) {
+            this.close();
+			if ($.isFunction(selected)) selected(r);
+        };
+		let html = '<div class="p8_win_layer"><div class="p8_mask_layer"></div><div class="p8_win_panel"><iframe class="title-panel" frameborder="0" marginheight="0" marginwidth="0" scrolling="no"></iframe><div class="body-panel"><div class="title"><h3></h3></div><p class="content"></p><p class="btns"><button class="ok" tabindex="1" onclick="p8_window._close(true);">确定</button><button class="cancel" onclick="p8_window._close(false);">取消</button></p></div></div></div>';	
+        messageBox(html, message);
+    };
+
+    this.alert = function (message, closed) {
+        this._close = function () {
+            this.close();
+            if ($.isFunction(closed)) closed();
+        };
+		let html = '<div class="p8_win_layer"><div class="p8_mask_layer"></div><div class="p8_win_panel"><iframe class="title-panel" frameborder="0" marginheight="0" marginwidth="0" scrolling="no"></iframe><div class="body-panel"><div class="title"><h3></h3></div><p class="content"></p><p class="btns"><button class="ok" tabindex="1" onclick="p8_window._close();">关闭</button></p></div></div></div>';
+        messageBox(html, message);
+    }
+};
+</script>
+<body id="chaxun2" style="background-image: url({if empty($this_model['CONFIG']['head_logo'])}{$RESOURCE}/skin/default/core/forms/query/bm_bodybg.png{else}{$this_model['CONFIG']['head_logo']}{/if});background-position:center top;background-repeat:no-repeat;background-size: contain;">
+<div class="container">
+	<div class="header">
+		<div class="logo"><img src="{if empty($this_model['CONFIG']['logo'])}{$RESOURCE}/skin/default/core/forms/logo_zs.png{else}{$this_model['CONFIG']['logo']}{/if}"/></div>
+		<div class="forms-label" id="header_t" style="position: absolute;right:0;top:15px;">
+			$label[forms_head_link]
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="wrap_out">
+		<div class="cx_table">
+			<div class="cx_header">
+				<div class="head">
+					<div class="title">{$this_model['CONFIG']['modelname']}</div>
+				</div>
+				<div class="notice_luqu">
+					{$this_model['CONFIG']['summary']}
+				</div>
+			</div>
+			<div class="bm_middle">
+				<div class="tb luqu">
+					<form  name="request" id="form" action="$this_url" method="get" onsubmit="search_item(1);return false;">
+						<table class="formtable">
+							<tr><td class="headerbtn_list" style="border:0;">
+									<!--{foreach $this_model['filterable_fields'] $field $field_data}-->
+									<div class="channel_item">
+										<div class="channel_item_title luqu">{$field_data['alias']}:</div>
+										<div class="channel_item_input luqu"><!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}--></div>
+									</div>
+									<div class="clearfix"></div>
+									<!--{/foreach}-->
+									<!--{if $this_model['CONFIG']['mobile_search_captcha']}-->
+									<div class="channel_item">
+										<div class="channel_item_title luqu">手机号码 :</div>
+										<div class="channel_item_input luqu"><input type="text" class="txt" style="width:180px;border: 1px solid #e1eaf4;" id="checkphone" value="" name="phone" onfocus="if (value =='输入手机号'){value =''}" onblur="if (value ==''){value='输入手机号'}"/> </div>
+									</div>
+									<div class="clearfix"></div>
+									<div class="channel_item">
+										<div class="channel_item_title luqu">手机验证码:</div>
+										<div class="channel_item_input luqu">																									
+											<input type="text" class="txt" style="width:80px;border: 1px solid #e1eaf4;" id="checkcode" value="" name="checkcode" />&nbsp;&nbsp;<span><img id="p8_sendsms" style="height:28px;" src="{$RESOURCE}/images/dtyzm.gif" /></span><span id="sms_msg"></span>
+											<script type="text/javascript">
+												$(document).ready(function(){
+												  $("#p8_sendsms").click(function(){
+													var checkphone = $('#checkphone').val();console.log(checkphone.length);
+													if(checkphone.length == 11){
+														$.ajax({
+															url: '{$this_router}-checksms',
+															type: 'post',
+															dataType: 'json',
+															cache: false,
+															data: ajax_parameters({phone: checkphone}),
+															beforeSend: function(){
+																ajaxing({});
+															},
+															success: function(json){
+																ajaxing({action: 'hide'});
+																if(json=='OK')
+																	p8_window.alert('手机短信发送成功！');
+																else
+																	p8_window.alert('发送失败！'+json);
+															}
+														});
+													}else{
+														p8_window.alert('请输入正确的手机号码！');
+													}
+												  })
+												})
+											</script>												
+										</div>
+									</div>
+									<div class="clearfix"></div>											
+									<!--{/if}-->
+									<!--{if $this_model['CONFIG']['captcha']}-->										
+									<div class="channel_item">
+										<div class="channel_item_title luqu">验证码:</div>
+										<div class="channel_item_input luqu"><input type="text" class="txt" name="captcha" style="border:#e1eaf4 1px solid;width:80px;" /> <span id="captcha"></span><span class="jsregmsg" style="color:#999;font-size:12px;">（点击左框显示验证码 / 点击验证码可更新）</span></div>
+									</div>
+									<script type="text/javascript">
+										captcha($('#captcha'), $('#form input[name="captcha"]'));
+									</script>	
+									<!--{/if}-->
+								</td>
+							</tr>
+						</table>
+						<div class="zhushi">{$this_model['CONFIG']['hint']}</div>
+						<div class="form_submit">
+							<input type="button" class="forms_btn1" value="提交" onclick="search_item(1)">
+							<input type="reset" name="" class="forms_btn1" value="重填" />
+							<input type="hidden" name="mid" value="$mid" />
+							<input type="hidden" name="accurate" value="1" />
+							<input type="hidden" name="ids" value="" />
+							<div class="forms_btn2">$label[luqu_btn]</div>
+						</div>
+					</form>
+				</div>						
+				<div class="notice_luqu" style="display:none;">
+					<p style="text-align:center;font-size:18px;background: #eef7ff none repeat scroll 0 0;border: 1px solid #bed8f3;height:40px;line-height:40px;font-weight:bold;">录取结果</p>
+				</div>
+				<div id="list"></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="footer_info">
+		{$this_model['CONFIG']['copyright']}
+	</div>
+</div>
+</body>
+<script type="text/javascript">
+init_labelshows('header_t');
+var PAGE;
+var p8_window = new function () {
+	this.width = 494;
+	this.height = 152;
+	this.close = function () {
+        $('.p8_win_layer iframe').remove();
+        $('.p8_win_layer').remove();
+    };
+	function messageBox(html,message) {
+        p8_window.close();
+        let jq = $(html);
+        jq.find(".p8_win_panel").height(p8_window.height).width(p8_window.width).css("margin-left", -p8_window.width / 2).css("margin-top", -p8_window.height / 2);
+        //jq.find(".title-panel").height(p8_window.height);
+        jq.find(".title").find(":header").html(P8LANG.system_box_title);
+        jq.find(".body-panel").height(p8_window.height - 30);
+        jq.find(".content").html(message.replace('\r\n', '<br/>'));
+        jq.appendTo('body').show();
+        $(".p8_win_layer .w-btn:first").focus();
+    }
+    this.alert = function (message, closed) {
+        this._close = function () {
+            this.close();
+            if ($.isFunction(closed)) closed();
+        };
+		let html = '<div class="p8_win_layer"><div class="p8_mask_layer"></div><div class="p8_win_panel"><iframe class="title-panel" frameborder="0" marginheight="0" marginwidth="0" scrolling="no"></iframe><div class="body-panel"><div class="title"><h3></h3></div><p class="content"></p><p class="btns"><button class="ok" tabindex="1" onclick="p8_window._close();">关闭</button></p></div></div></div>';
+        messageBox(html, message);
+    }
+};
+function search_item(page){
+	var preg_pass = 1;
+	$("input[name^='field']").each(function(){
+		if($(this).val() == ''){
+			p8_window.alert('所有选项必填或必选！');preg_pass = 0;				
+		}
+	});
+	if(!preg_pass) return false;
+	if($('#checkcode').val() == ''){
+		p8_window.alert('请输入手机验证码！');		
+	}
+	$('#list').empty();
+	$('#pages').empty();
+	$.ajax({
+		url: '$this_url-mid-$mid',
+		data: $('#form').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,		
+		success: function(json){
+			PAGE = page;
+			$('#list').empty();
+			$('#pages').empty();
+			$('#captcha_msg').empty();
+			$('#sms_msg').empty();
+			if(json.message){
+				if(json.type == 'sms') 
+					 p8_window.alert('手机校验码不正确！！');
+				else
+					$('#captcha_msg').html('<b style="color:red">&nbsp;不正确，请刷新！</b>');
+			}else{
+				if(json.list.length){
+					$('.notice_luqu').show();
+					for(var i in json.list){
+						_list_item(json.list[i]);
+					}
+					$('#pages').html(json.pages);												
+					window.scrollTo(0, 0);					
+				}else{				
+					$('#list').append($('<div style="text-align:center;">输入的查询信息有误！</div>'));
+					p8_window.alert('输入的查询信息有误！');
+				}
+			}
+		}
+	});
+}
+
+function _list_item(json){
+	var tr = '<div style="margin:15px auto;width:90%;padding:20px;">'+
+		'<table cellpadding="0" cellspacing="0" class="pop_table">'+
+			'<tr>'+
+				<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+				'<td class="tdL2" style="text-align:center;">$field_data[alias]</td>'+
+				<!--{/foreach}-->
+			'</tr>'+
+			'<tr>'+
+				<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+				'<td class="tdR2" style="text-align:center;">'+(json.{$field}?json.{$field}:'')+'</td>'+
+				<!--{/foreach}-->
+			'</tr>'+
+		'</table>'+
+	'</div>';
+	
+	$('#list').append($(tr));
+}
+$(function(){
+	<!--{if empty($this_model['CONFIG']['parts'])}-->	   
+	$('.pop_table tr:even').addClass('pop_tr');	
+	<!--{/if}-->
+})
+</script>
+<!--{/php168}-->

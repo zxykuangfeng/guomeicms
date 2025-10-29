@@ -1,0 +1,53 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_gg]
+		</div>
+	</div>
+</div>
+<div class="maincon clearfix">
+	<div class="container">
+		<div class="column-location mb20 clearfix">
+			您现在的位置： <a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			>> <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			>> <a href="$CAT[url]">$CAT[name]</a>
+		</div>
+		<div class="row">
+			<div class="col-md-5 col-sm-5 col-xs-12">
+				<div class="depart-img"><img src="{$CAT[frame]}"/></div>		
+			</div>
+			<div class="col-md-7 col-sm-7 col-xs-12">
+				<div class="intro-right">
+		            <div class="intro-title">
+		            	$CAT[name]<span class="more pull-right"><a target="_blank" href="{$CAT[CONFIG][linkurl]}">更多 &gt; </a></span>
+		            </div>
+				    <div class="intro-content">
+			         	{$CAT[CONFIG][summary]}
+			        </div>
+			        <div class="img">
+			          	<a href="https://www.guahao.com/expert/fastorder"><img src="{$SKIN}images/intro1.png"></a>
+			          	<a href="/html/873/"><img src="{$SKIN}images/intro2.png"></a>
+			        </div>
+				</div>
+			</div>
+		</div>
+		<div class="team">
+			<div class="intro-title mb20">
+            	$label[list_zj_tt1]<span class="more pull-right">$label[list_zj_more1]</span>
+            </div>
+            <div class="row">
+            	$label[list_zj_con1]
+            </div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+
+

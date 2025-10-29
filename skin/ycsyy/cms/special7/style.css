@@ -1,0 +1,121 @@
+@charset "utf-8";
+/* 全局样式 */
+html,body,h1,h2,h3,h4,h5,h6,div,dl,dt,dd,ul,ol,li,p,blockquote,pre,hr,figure,table,caption,th,td,form,fieldset,legend,input,select,button,textarea,menu{margin:0;padding:0;}
+header,footer,section,article,aside,nav,hgroup,address,figure,figcaption,menu,details{display:block;}
+table{border-collapse:collapse;border-spacing:0;}
+caption,th{text-align:left;font-weight:normal;}
+html,body,fieldset,img,iframe,abbr{border:0;}
+img{vertical-align: middle;}
+i,cite,em,var,address,dfn{font-style:normal;}
+[hidefocus],summary{outline:0;}
+li{list-style:none;}
+h1,h2,h3,h4,h5,h6,small{font-size:100%;}
+sup,sub{font-size:40%;}
+pre,code,kbd,samp{font-family:inherit;}
+q:before,q:after{content:none;}
+textarea{overflow:auto;resize:none;}
+label,summary{cursor:default;}
+a,button{cursor:pointer;}
+h1,h2,h3,h4,h5,h6,em,strong,b{font-weight:bold;}
+del,ins,u,s,a,a:hover{text-decoration:none;}
+body,textarea,input,button,select,keygen,legend{font:14px/1.8 "微软雅黑",Arial,SimSun,Tahoma,Helvetica,sans-serif;outline:0;}
+body{color:#666;background-color:#fef2e2;}
+a{color:#636363;outline:none;}
+a:hover{color:#345a5b;text-decoration:none;}
+/* 文字样式 */
+.hide-text{font:0/0 a;color:transparent;text-shadow:none;background-color:transparent;border:0;}
+.text-center{text-align:center;}
+.text-left{text-align:left;}
+.text-right{text-align:right;}
+.green{color:#158064;}
+.green:hover{color:#096;}
+/* 按钮 */
+.btn{display:inline-block;border:none;text-align:center;background:#158064;color:#fff;min-height:34px;line-height:34px;padding:0 15px;-webkit-transition:background 0.3s,border 0.3s;transition:background 0.3s,border 0.3s;}
+.btn:hover{background:#009966;color:#fff;}
+.btn.white{background:#fff;color:#666;border:1px solid #ddd;}
+.btn.white:hover{background:#666;color:#fff;border:1px solid #666;}
+.btn.disabled{background:#f1f1f1;border-color:#aaa;color:#aaa;cursor:default;}
+/* 边距 */
+.mt10{margin-top:10px;}
+.mt15{margin-top:15px;}
+.mt20{margin-top:20px;}
+.mt25{margin-top:25px;}
+.mb10{margin-bottom:10px;}
+.mb15{margin-bottom:15px;}
+.mb20{margin-bottom:20px;}
+.mb25{margin-bottom:25px;}
+.ml10{margin-left:10px;}
+.ml15{margin-left:15px;}
+.ml20{margin-left:20px;}
+.ml25{margin-left:25px;}
+.mr10{margin-right:10px;}
+.mr15{margin-right:15px;}
+.pt10{padding-top:10px;}
+.pt15{padding-top:15px;}
+/* 浮动 */
+.fl{float:left!important;}
+.fr{float:right!important;}
+.clearfix{*zoom:1;}
+.clearfix:before,
+.clearfix:after{display:table;content:"";}
+.clearfix:after{clear:both;}
+/*显示形式*/
+.inline{display:inline;}
+.block{display:block;}
+.inline-block{display:inline-block;zoom:1;*display:inline;}
+.hidden{display:none;}
+/*header*/
+.header{position:relative;}
+.header img{width:100%;height:auto;}
+.head-btn{position:absolute;top:50px;right:100px;}
+.head-btn a{color:#c30404 !important;}
+.navbar-main{background-color:#c30404;}
+.navlist{width:100%;}
+.navlist li{width:12.5%;text-align:center;}
+.navbar-nav>li>a {color: #fff !important;font-size:18px;padding-top:18px;padding-bottom:18px;}
+.navbar-nav>li>a:hover,.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover {color: #ae001e !important;background-color:#499ce0;}
+.nav .open>a, .nav .open>a:focus, .nav .open>a:hover{color: #ae001e !important;}
+.navbar-toggle{border-color: #ae001e;margin-top:15px;position:absolute;top:0;right:0;}
+.navbar-toggle .icon-bar {background-color: #ae001e;}
+/*专题专栏*/
+.section{padding:25px 15px;background-color:#fff;}
+.news .hd{height:30px;line-height:30px;border-bottom:1px solid #ae001e;background:url(hdbg.png) left top no-repeat;}
+.news .hd .tit{padding-left:12px;font-size:20px;float:left;color:#fff;font-weight:bold;}
+.news .hd .more{font-size:14px;float:right;color:#000;}
+.news .hd .more a{color:#000;}
+.news .bd{padding:5px 0 0;min-height:100px;overflow:hidden;}
+.sidebox{width:100%;border:1px solid #cccccc;background:#c21d21;padding:50px 0;color:#fff;font-size:24px;margin-bottom:10px;text-align:center;}
+.sidenav li a{width:100%;display:block;border:1px solid #cccccc;background:#e1ab63;padding:21px 0;color:#fff;font-size:16px;margin-bottom:10px;text-align:center;}
+.adpic img{width:100%;height:auto;}
+.box .hd{width:100%;height:40px;}
+.box .hd .pctit{width:80%;height:38px;border-bottom:2px solid #ae001e;background:url(hdbg2.png) left top no-repeat;float:left;font-size:24px;color:#fff;}
+.box .hd .pctit h2{padding-left:15px;width:102px;float:left;font-size:18px;color:#fff;font-weight:normal;height:35px;line-height:35px;}
+.box .hd .more{width:18%;height:38px;border-bottom:2px solid #ffa92e;float:right;text-align:right;}
+.box .hd .more a{display:block;color:#ae001e;margin-top:10px;}
+.box .hd2{width:100%;height:40px;border-bottom:2px solid #ae001e;}
+.box .hd2 h2{float:left;font-size:18px;color:#fff;padding:0 30px 0 15px;font-weight:normal;height:35px;line-height:35px;background:url(hdbg2.png) left top no-repeat;}
+.box .hd2 .more{height:38px;float:right;text-align:right;}
+.box .hd2 .more a{display:block;color:#ae001e;margin-top:10px;}
+.box .bd2{padding:10px 10px;min-height:100px;}
+.picshow .hd .pctit{width:90%;}
+.picshow .hd .more{width:9%;}
+.nrtitle {font-size:24px;color:#cd0603;line-height:40px;margin:20px 0;font-weight: bold;text-align: center;}
+.neirong{font-size:16px;line-height:30px;margin:5%;}
+.neirong img{max-width:100%;height:auto !important;}
+.showtips{text-align:right;}
+/*footer*/
+.copyright{width:100%;background-color:#ae001e;padding:20px 0;text-align:center;}
+.copyright p{font-size:12px;color:#fff;line-height:28px;}
+.copyright a{color:#fff;}
+#page{text-align: center;font-size: 14px;padding:40px 0;}
+#page span{display:inline-block;line-height:31px;padding:0 12px;background:#f3f3f3;color:#333;}
+#page .s2{background:#005555;color:#fff;} 
+#page a{display:inline-block;line-height:31px;padding:0 12px;background:#f3f3f3;color: #333;}
+#page a:hover{color:#fff; background:#005555;}
+@media (max-width: 767px){
+	.navlist li{width:auto;text-align:left;}
+	.navlist li a.on1{background:none;padding:10px 15px;}
+	.navbar-nav .open .dropdown-menu>li>a {color:#fff;}
+	.picshow .hd .pctit{width:82%;}
+	.picshow .hd .more{width:17%;}
+}

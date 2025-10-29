@@ -1,0 +1,97 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<style>
+.box { padding:2px; border:1px solid #cccccc; }
+.head{ background-color:#eeeeee}
+.formtable .title{ color:#FFF}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li class="active"><a href="{$this_url}?plugin=schedul&job=config"><i class="fa fa-cogs"></i>排班配置</a></li>
+						<li><a href="{$this_url}?plugin=schedul"><i class="fa fa-calendar"></i>查看排班</a></li>
+						<li><a href="{$this_url}?plugin=schedul&job=add"><i class="fa fa-check-square-o"></i>增加排班</a></li>
+						<li><a href="{$this_url}?plugin=schedul&job=import"><i class="fa fa-arrow-circle-o-right"></i>批量导入排班</a></li>
+						<li><a href="{$RESOURCE}/plugin.php/schedul-detail" target="_blank"><i class="fa fa-wpforms"></i>排班效果查看</a></li>
+						<li><a href="{$this_url}?plugin=schedul&job=cache"><i class="fa fa-refresh"></i>刷新缓存</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form name="form" id="form" method="post">
+			<table width="100%" border="0" cellspacing="1" cellpadding="3" class="columntable formtable click_changeable">
+				<tr class="title">
+					<td colspan="3" class="title">{$P8LANG['config']}</td>
+				</tr>
+				<tr>
+					<td width="100">部门</td>
+					<td id="department_box"><p>示例：A01</p>
+					<!--{foreach $config['department'] $k $v}-->
+					<!--{if $v['name']}-->
+					<p>编码：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;
+						<input type="text" name="department[code][]" value="{$v[code]}" size="5"/></b>
+					名称：<input name="department[name][]" type="text" value="{$v[name]}"/>					
+					<input name="delete[]" value="{$k}" type="checkbox"/>删除
+					</p>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					<span id="more_department"></span>
+					<input type="button" value="添加部门" onclick="addmore('department')" />
+					<input type="checkbox" name="" value="" style="margin-left:120px" onclick="javascript:$('#department_box input[type=checkbox]').prop('checked',$(this).prop('checked'))"/>全选
+					</td>
+					<td>温馨提醒：部门编码请不要出现中文，编码一旦确定，请不要随意修改或删除</td>
+				</tr>
+				<tr>
+					<td width="100">时段设置</td>
+					<td id="date_time_box"><p>示例：T01</p>
+					<!--{foreach $config['date_time'] $k $v}-->
+					<!--{if $v['name']}-->
+					<p>编码：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;
+						<input type="text" name="date_time[code][]" value="{$v[code]}" size="5"/></b>
+					名称：<input name="date_time[name][]" type="text" value="{$v[name]}"/>					
+					<input name="delete_time[]" value="{$k}" type="checkbox"/>删除
+					</p>
+					<!--{/if}-->
+					<!--{/foreach}-->
+					<span id="more_date_time"></span>
+					<input type="button" value="添加时段" onclick="addmore('date_time')" />
+					<input type="checkbox" name="" value="" style="margin-left:120px" onclick="javascript:$('#date_time_box input[type=checkbox]').prop('checked',$(this).prop('checked'))"/>全选
+					</td>
+					<td>温馨提醒：时段编码请不要出现中文，编码一旦确定，请不要随意修改或删除</td>
+				</tr>				
+				<tr>
+				<td></td><td><input type="hidden" value="config" name="do" />				
+				<input type="submit" value="确定" class="submit_btn" /></td><td></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+
+$('#department_box').sortable({
+    axis:"y",
+    items:"p",
+    handle:"b",
+    containmentType:"parent"
+})
+
+function addmore(kind){
+	$('#more_'+kind).append('<p>编码：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;<input type="text" name="'+kind+'[code][]" value="" size="5"/></b>&nbsp;名称：<input name=\"'+kind+'[name][]\" type=\"text\" /><input type="button" value="移除" onclick="removeItem(this)"/></p>');
+	//$('#department_box').sortable("refresh");
+}
+function removeItem(obj){
+	$(obj).parent().remove();
+}
+
+
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

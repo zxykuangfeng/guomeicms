@@ -1,0 +1,104 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<form name="form" id="searchFrom" action="" method="get">
+			<table class="columntable formtable">
+				<tr class="title fix_head">
+					<td class="title">审核流程列表</td>
+				</tr>
+				<tr>
+					<td align="center">
+						系统模块： <select name="module" id="module" onchange="showsite(this)">
+						<option value="">请选择</option>
+						<option value="cms" {if $module=='cms'}selected{/if}>主站内容系统</option>
+						<option value="sites" {if $module=='sites'}selected{/if}>子站站群系统</option>
+						<option value="forms" {if $module=='forms'}selected{/if}>表单内容系统</option>
+					</select>
+						站点：<select name="postfix" id="postfix">
+						<option value="">请选择</option>
+						<option value="mainstation" {if $rsdb['postfix']=='mainstation'}selected{/if}>主站</option>
+					</select>
+						审核级数：
+						<select name="num">
+							<option value="" >请选择</option>
+							<option value="1" {if $num==1}selected{/if}>一级审核</option>
+							<option value="2" {if $num==2}selected{/if}>二级审核</option>
+							<option value="3" {if $num==3}selected{/if}>三级审核</option>
+							<option value="4" {if $num==4}selected{/if}>四级审核</option>
+							<option value="5" {if $num==5}selected{/if}>五级审核</option>
+						</select>
+						审核人：<input name="verifier" value="$verifier" type="text" class="txt" />
+
+						<input type="hidden" name="act" value="search"/>
+						<input type="submit" value="{$P8LANG['search']}" class="submit"/>
+					</td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table click_changeable" width="100%" style="text-align:center" >
+			<tr bgcolor="#eeeeee" class="title">
+				<td width="5%">编号</td>
+				<td width="5%">模块</td>
+				<td width="5%">站点/表单</td>
+				<td width="9%">标题</td>
+				<td width="9%">一审</td>
+				<td width="9%">二审</td>
+				<td width="9%">三审</td>
+				<td width="9%">四审</td>
+				<td width="9%">终审</td>
+				<td width="9%">自动</td>
+				<td width="9%">操作</td>
+			</tr>
+			<!--{foreach $list $k $v}-->
+			<tr>
+				<td>$v[id]</td>
+				<td>$v[module_name]</td>
+				<td>$v[postfix_name]</td>
+				<td>$v[title]</td>
+				<td>$v[step_one]</td>
+				<td>$v[step_two]</td>
+				<td>$v[step_three]</td>
+				<td>$v[step_four]</td>
+				<td>$v[step_final]</td>
+				<td>$v[step_auto]</td>
+				<td><a href="{$this_router}-update?id={$v['id']}" >编辑</a> /
+					<a href="{$this_router}-delete?id=$v[id]" onclick="javascript:return confirm('确定删除吗？')">删除</a>
+					<a href="###" onclick="setdefault({$v['id']},'{$v['module']}','{$v['module_name2']}','{$v['postfix']}')">批量设置</a></td>
+			</tr>
+			<!--{/foreach}-->
+			<tr>
+				<td colspan="10" class="pages">{$pages}</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+	var SITESS = {$sitesjs}
+	function showsite(obj,POSIFIX){
+		POSIFIX = POSIFIX=='undefined'?'':POSIFIX;
+		if($(obj).val()=='sites'){
+			lists = SITESS;
+		}else{
+			lists = [{"k":"mainstation","v":"主站"}]
+		}
+		console.log(lists)
+		options = '<option value="" >请选择</option>';
+		for (var i in lists){
+			options +='<option value="'+lists[i]['k']+'" '+(lists[i]['k']==POSIFIX?"selected":"" )+'>'+lists[i]['v']+'</option>';
+		}
+		$('#postfix').html(options);
+
+	}
+
+	function setdefault(id,module,namme,postfix){
+		if(!confirm('注意：点击【确认】后，【'+namme+'】所有未配置工作流的栏目将设置为此流程？'))return;
+		$.post("{$this_router}-setdefault",{"id":id,"module":module,"postfix":postfix},function(data){ alert('设置完成,【'+namme+'】所有未配置工作流的栏目已设置为此流程！') })
+	}
+	showsite($('#module'),'{$postfix}')
+</script>
+<!--{/php168}-->

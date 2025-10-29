@@ -1,0 +1,46 @@
+<!--{php168}-->
+<table class="letterth">
+    <tr>
+        <td class="questaskid">受理编号</td>
+        <td class="questitle">标题</td>
+        <td class="quesdate">日期</td>
+ 
+        <td class="quesstatus">办理状态</td>
+    </tr>
+</table>
+<div id="scroll_{$label['id']}" style="height:468px;overflow:hidden">
+	<table width="100%" cellspacing="0" cellpadding="0" class="letterlist" style="margin-bottom:0;">
+		<!--{foreach $list $key $row}-->
+		<tr>
+			<td><div class="taskid_td">$row[number]</div></td>
+			<td><div class="title_td"><a href="$row[url]" title="$row[full_title]" target="_blank">$row[title]</a></div></td>
+			<td><div class="indate_td"><!--{php echo date('Y-m-d',$row['create_time']);}--></div></td>
+
+			<td><div class="status_td"><span style="color:#FFFFFF;padding:3px;background-color:{if $row[status]==3}#0F96E5{elseif $row[status]==2}#FFB90F{elseif $row[status]==4}green{else}red{/if}">{if $row[status]==3}{else}＝{/if}$row[status_name]</span></div></td>
+		</tr>
+		<!--{/foreach}-->
+	</table>
+</div>
+<script type="text/javascript">
+(function(){
+var speed = 200;  
+var this_Scroll = document.getElementById("scroll_{$label['id']}");
+this_Scroll.innerHTML+=this_Scroll.innerHTML;
+var ScrollTimer=0;
+var MyMar = setInterval(Scroll,speed);
+this_Scroll.onmouseover=function(){ clearInterval(MyMar) };
+this_Scroll.onmouseout=function(){ MyMar=setInterval(Scroll,speed) };
+function Scroll(){
+	this_Scroll.scrollTop++;
+	if(parseInt(this_Scroll.scrollTop)%13!=0) {
+		ScrollTimer=setTimeout(Scroll,0);
+	}else{
+		if(parseInt(this_Scroll.scrollTop)>=parseInt(this_Scroll.scrollHeight)/2) {
+			this_Scroll.scrollTop=0;
+		}
+	clearTimeout(ScrollTimer);
+	}
+}
+})()	
+</script>
+<!--{/php168}-->

@@ -1,0 +1,199 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<style type="text/css">
+	.manager_ids li{float:left; display:inline-block; margin-right:30px}
+	.delete_link{color:red; cursor:pointer}
+	.role_span{margin-right:30px;float:left; display:inline-block; width:100px; margin-bottom:10px}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form id="form1" name="form1" method="post" action="$this_url">
+			<table class="columntable formtable hover_table padding_table">
+				<tr class="title">
+					<td colspan="2">审核流程</td>
+				</tr>
+				<tr >
+					<td class="tdL" width="15%">系统模块: </td>
+					<td class="tdR" width="85%">
+						<select name="module" onchange="showsite(this)">
+							<option value="cms" {if $rsdb['module']=='cms'}selected{/if}>主站内容系统</option>
+							<option value="sites" {if $rsdb['module']=='sites'}selected{/if}>子站站群系统</option>
+							<option value="forms" {if $rsdb['module']=='forms'}selected{/if}>表单内容系统</option>
+						</select>
+					</td>
+				</tr>
+				<tr id="sitess" {if $rsdb['module']!='sites'} style="display:none"{/if}>
+				<td class="tdL" width="15%">站 点: </td>
+				<td class="tdR" width="85%">
+					<select name="postfix">
+						<!--{foreach $sitess $alias $site}-->
+						<option value="{$alias}" {if $rsdb['postfix']==$alias}selected{/if}>{$site['sitename']}</option>
+						<!--{/foreach}-->
+					</select>
+				</td>
+				</tr>
+
+				<tr >
+					<td class="tdL" width="15%">标 题: </td>
+					<td class="tdR" width="85%">
+						<input type="text" class="txt" name="title" value="{if !empty($rsdb['title'])}$rsdb[title]{/if}" size="70">
+					</td>
+				</tr>
+				<tr >
+					<td class="tdL" width="15%">描 述: </td>
+					<td class="tdR" width="85%">
+						<input type="text" class="txt" name="desc" value="{if !empty($rsdb['desc'])}$rsdb[desc]{/if}" size="70">
+					</td>
+				</tr>
+				<tr >
+					<td class="tdL" width="15%">审核级数: </td>
+					<td class="tdR" width="85%">
+						<select name="num" onchange="showstep(this)">
+							<option value="1" {if $rsdb['num']==1}selected{/if}>一级审核</option>
+							<option value="2" {if $rsdb['num']==2}selected{/if}>二级审核</option>
+							<option value="3" {if $rsdb['num']==3}selected{/if}>三级审核</option>
+							<option value="4" {if $rsdb['num']==4}selected{/if}>四级审核</option>
+							<option value="5" {if $rsdb['num']==5}selected{/if}>五级审核</option>
+						</select>
+					</td>
+				</tr>
+				<tr bgcolor="#FFFFFF" class="steps" {if $rsdb['num']<2}style="display:none"{/if}>
+				<td class="tdL"> 一审管理员: </td>
+				<td class="tdR">
+
+					<ul id="step_one" class="manager_ids">
+						<!--{foreach $step_one $user}-->
+						<li>{$user['username']}{if $user['name']} | {$user['name']}{/if}<input type="hidden" name="step_one[]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+						<!--{/foreach}-->
+					</ul><input type="button" value="选择管理员" onclick="show_dialog('step_one')"/></td>
+				</tr>
+
+				<tr bgcolor="#FFFFFF" class="steps" {if $rsdb['num']<3}style="display:none"{/if}>
+				<td class="tdL"> 二审管理员: </td>
+				<td class="tdR">
+
+					<ul id="step_two" class="manager_ids">
+						<!--{foreach $step_two $user}-->
+						<li>{$user['username']}{if $user['name']} | {$user['name']}{/if}<input type="hidden" name="step_two[]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+						<!--{/foreach}-->
+					</ul><input type="button" value="选择管理员" onclick="show_dialog('step_two')"/></td>
+				</tr>
+
+				<tr bgcolor="#FFFFFF" class="steps" {if $rsdb['num']<4}style="display:none"{/if}>
+				<td class="tdL"> 三审管理员: </td>
+				<td class="tdR">
+
+					<ul id="step_three" class="manager_ids">
+						<!--{foreach $step_three $user}-->
+						<li>{$user['username']}{if $user['name']} | {$user['name']}{/if}<input type="hidden" name="step_three[]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+						<!--{/foreach}-->
+					</ul><input type="button" value="选择管理员" onclick="show_dialog('step_three')"/></td>
+				</tr>
+
+				<tr bgcolor="#FFFFFF" class="steps" {if $rsdb['num']<5}style="display:none"{/if}>
+				<td class="tdL"> 四审管理员: </td>
+				<td class="tdR">
+
+					<ul id="step_four" class="manager_ids">
+						<!--{foreach $step_four $user}-->
+						<li>{$user['username']}{if $user['name']} | {$user['name']}{/if}<input type="hidden" name="step_four[]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+						<!--{/foreach}-->
+					</ul><input type="button" value="选择管理员" onclick="show_dialog('step_four')"/></td>
+				</tr>
+
+				<tr bgcolor="#FFFFFF">
+					<td class="tdL"> 终审管理员: </td>
+					<td class="tdR">
+
+						<ul id="step_final" class="manager_ids">
+							<!--{foreach $step_final $user}-->
+							<li>{$user['username']}{if $user['name']} | {$user['name']}{/if}<input type="hidden" name="step_final[]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+							<!--{/foreach}-->
+						</ul><input type="button" value="选择管理员" onclick="show_dialog('step_final')"/></td>
+				</tr>
+				<tr bgcolor="#FFFFFF">
+					<td class="tdL"> 自动审核投稿员: </td>
+					<td class="tdR">
+
+						<ul id="step_auto" class="manager_ids">
+							<!--{foreach $step_auto $user}-->
+							<li>{$user['username']}{if $user['name']} | {$user['name']}{/if}<input type="hidden" name="step_auto[]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+							<!--{/foreach}-->
+						</ul><input type="button" value="选择投稿员" onclick="show_dialog('step_auto')"/></td>
+				</tr>
+
+				<tr bgcolor="#FFFFFF" align="center">
+					<td colspan="2" class="tdL">
+						<input type="hidden" name="id" value="{if !empty($id)}$id{/if}">
+						<input type="submit" name="Submit" value="提交">
+					</td>
+				</tr>
+
+			</table>
+		</form>
+	</div>
+</div>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0" cellspacing="1" cellpadding="3" class="tablewidth">
+
+			<tr class="head">
+				<td>帮助说明</td>
+			</tr>
+			<tr bgcolor="#FFFFFF">
+				<td>填写模板,列表模板,你都可以自己做一个有个性的,然后在上面输入他们所在的目录即可调用显示.留空的话.将以默认为标准.</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+
+	function delete_manager(obj){
+		$(obj).parent().remove();
+	}
+	var cutten_item = null;
+	function member_single_select_callback(checked, json){
+		var u_name = '';
+		$('#'+cutten_item).find("input[value="+json.id+"]").parent().remove();
+		if(checked){
+			if (json.name && json.name != 'undefined') u_name = json.name;
+			$('#'+cutten_item).append('<li>'+json.username + (u_name ? ' | '+u_name :'')+'<input type="hidden" name="'+cutten_item+'[]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+		}
+	}
+
+	function showsite(obj){
+		$('#sitess').hide();
+		if($(obj).val()=='sites'){
+			$('#sitess').show();
+		}
+	}
+
+	function show_dialog(item){
+		var dialog = new P8_Dialog({
+			title_text:'选择管理员',
+			width: 700,
+			height: 500,
+			button: true
+		});
+		dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+		dialog.show();
+		cutten_item = item;
+		var ifr = dialog.content.find('iframe');
+		var check_uids = {};
+		$('#'+cutten_item).find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+		ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+	}
+	function showstep(obj){
+		num  = $(obj).val();
+		$('.steps').hide();
+		var i=1;
+		$('.steps').each(function(){
+			if(i<num)$(this).show();
+			i++;
+		})
+
+	}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

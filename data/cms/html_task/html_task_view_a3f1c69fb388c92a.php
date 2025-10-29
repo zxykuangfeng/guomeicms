@@ -1,0 +1,1 @@
+<?php die();?>a:8:{s:7:"threads";i:1;s:5:"times";d:5;s:10:"start_time";d:1659317175.841142;s:4:"time";i:1659317175;s:7:"perpage";i:24;s:5:"where";s:52:" WHERE 1=1  AND cid IN (847,873,874,875,876,877,878)";s:6:"mobile";i:0;s:6:"thread";a:1:{i:1;b:0;}}

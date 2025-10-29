@@ -1,0 +1,484 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+
+<script type="text/javascript" src="{$RESOURCE}/js/autocomplete.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<div class="section">
+	<table class="formtable">
+		<tr>
+			<td class="headerbtn_list">
+				<ul class="sites-top-menu">
+					<li><a href="{$this_system.admin_controller}-main"><i class="fa fa fa-list-ul"></i>全部站点内容</a></li>
+					<li><a href="{$this_system.admin_controller}-main?site=null&verified=3"><i class="fa fa fa-list-ul"></i>全部站点待审核内容</a></li>
+					<li><a href="{$this_system.admin_controller}-list"><i class="fa fa-list"></i>全部站点栏目</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-list" target="_blank"><i class="fa fa-sitemap"></i>站群列表清单</a></li>
+					<li><a href="{$this_system.admin_controller}/item-config" target="_blank"><i class="fa fa-cog"></i>站群内容全局设置</a></li>
+					<li><a href="{$this_system.admin_controller}-index_new" target="_blank"><i class="fa fa-cog"></i>站群子站后台</a></li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<div class="section">
+	<div class="mainbox mainborder">
+		<table class="zq_list" width="100%" style="text-align:left">
+			<tr>
+				<td class="headerbtn_list">
+					<form action="$this_url" method="get" id="request" onsubmit="$('#__').empty();search_category($('#this_site').val());return false;">
+						<div>
+							关键字 <input type="text" class="txt" id="cond" size="15" name="word" value="" />
+							<!--{if count($mysites)>1}-->
+								站点选择 
+								<select name="site" id="this_site" onchange="$('#__').empty();search_category(this.value)">
+								 <option value="">请选择分站</option>
+								<!--{foreach $mysites $site}-->
+								<option value="$site" {if !empty($select_site) && $site==$select_site}selected{/if}>{$allsites[$site]['sitename']}</option>
+								 <!--{/foreach}-->
+								</select>
+							<!--{/if}-->
+							栏目类型 
+							<select name="imp_cid">
+								<option value="0">不限</option>
+								<option value="1">重点栏目</option>
+							</select>
+							<input type="submit" value="{$P8LANG['search']}" class="submit" />
+						</div>
+					</form>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<form action="$this_url?site={$this_system->SITE}" method="post" id="form">
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table" align="center">
+			<tr class="title fix_head list_top">
+				<td width="1%" class="list_top title">&nbsp;</td>
+				<td width="3%" class=" list_top title"><input type="checkbox" onclick="check_all(this, 'id[]', $('#form'));" /></td>
+				<td width="5%" class="list_top title">ID</td>
+				<td width="20%" class="list_top title" title="0" style="text-align:left" onclick="if(this.title == 1){this.title=0;hide_all();$(this).find('span img').attr('src', '{$SKIN}/show.gif');}else{this.title=1;show_all();$(this).find('span img').attr('src', '{$SKIN}/hide.gif');}" style="cursor: pointer;"><span><img src="{$SKIN}/show.gif" /></span>（可展开）{$P8LANG['category_name']}</td>
+				<td width="6%" class="list_top title">{$P8LANG['sites_category_model']}</td>
+				<td width="6%" class="list_top title">{$P8LANG['sites_category_type']}</td>
+				<td width="6%" class="list_top title">{$P8LANG['sites_category_sitename']}</td>
+				<td width="5%" class="list_top title">{$P8LANG['sitealias']}</td>
+				<td width="5%" class="list_top title">{$P8LANG['htmlize']}</td>
+				<td width="5%" class="list_top title">{$P8LANG['sites_category_count']}</td>
+				<td width="5%" class="list_top title">{$P8LANG['sites_category_item_count']}</td>
+				<td width="5%" class="list_top title">{$P8LANG['views']}</td>
+				<td width="5%" class="list_top title">{$P8LANG['sites_category_order']}</td>
+				<td width="*" class="list_top title">{$P8LANG['operation']}</td>
+			</tr>
+			<tbody id="__"></tbody>
+		</table>
+		<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">
+			<tr>
+				<td>
+					<input type="button" value="{$P8LANG['update_cache']}" onclick="_submit('cache')" class="edit_btn" />
+					<input type="button" value="{$P8LANG['sites_category_fix']}" onclick="_submit('fix')" class="edit_btn" />
+					<input type="button" class="edit_btn" value="{$P8LANG['download']}" onclick="_submit('download')">
+					<input type="hidden" name="action" value="" />
+				</td>
+			</tr>
+		</table>
+	</form>
+</div>
+<script type="text/javascript">
+var CATEGORY_JSON = '';
+var CATEGORY_PATH = '';
+var MODEL_JSON = '';
+var CATEGORY_SUMS = '';
+var CATEGORY_CATS = '';
+var allsite_alias = $allsite_alias;
+var sitenames = $sitenames_json;
+
+function _submit(action){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			ajaxing({text:'处理中...'});
+			$('#form input[name=action]').val(action);
+			$('#form').submit();
+		}else{
+			return;
+		}
+	});	
+}
+
+function show_all(){
+	$('#__ tr').each(function(){
+		var tr = $(this).show();
+		
+		if(tr.attr('sub')){
+			tr.attr('title', 1).find('td:eq(3) span').html('<img src="{$SKIN}/hide.gif" />');
+		}
+	});
+}
+
+function hide_all(){
+	$('#__ tr').each(function(){
+		var tr = $(this);
+		
+		if(tr.attr('sub')){
+			tr.attr('title', 0).find('td:eq(3) span').html('<img src="{$SKIN}/show.gif" />');
+		}
+		
+		if(tr.attr('level') != 1) tr.hide().attr('title', 1);
+	});
+}
+
+function ___(json, l, p,index){
+	l = l === undefined ? 0 : l;
+	p = p === undefined ? 0 : p;
+	
+	var j = 0, k = count(json);
+	
+	for(var i in json){
+		
+		var html = '';
+		j++;
+		var c = '';
+		if(l != 0){
+			c += str_repeat('│&nbsp;&nbsp;', l - p) + str_repeat('&nbsp;&nbsp;&nbsp;', p);
+			if(j == k){
+				p++;
+				c += '└';
+			}else{
+				c += '├';
+			}
+		}
+		var sub = json[i].categories ? true : false;
+		var static_enable = {$core->CONFIG[static_enable]} ? true : false;
+		var path = CATEGORY_PATH[json[i].id].join('_');
+		c += (json[i].categories ? '<span style="cursor: pointer;"><img src="{$SKIN}/hide.gif"/></span> ' : '') +
+			'<a href="{$this_system.admin_controller}/item-list?model='+ (json[i].categories ? json[i].model : '') +'&cid='+ json[i].id +'" target="_blank">'+ json[i].name +'</a>'+
+			'<a href="'+ json[i].url +'" target="_blank" title="{$P8LANG['preview']}" style="float:right;margin:0 5px"><img src="{$SKIN}/icon_jt.gif" /></a>'+
+			'<a href="{$STATIC_URL}/s.php/'+ json[i].site +'/item-list-category-'+ json[i].id+'" target="_blank" title="{$P8LANG['preview']}" style="float:right;margin:0 5px"><img src="{$SKIN}/icon_zhu.gif" /></a>';
+		
+		html += 
+		'<tr id="category_'+ json[i].id +'" class="'+((index+1)%2==0?'hover_tr':'')+'" path="path_'+ path +'" title="1"'+ (sub ? ' sub="1"' : '') +' level="'+ (l +1) +'">'+
+			'<td>&nbsp;</td>'+
+			'<td><input type="checkbox" name="id[]" value="'+ json[i].id +'" onclick="_check(\''+ path +'\', this.checked)" /></td>'+
+			'<td>'+ json[i].id +'</td>'+
+			'<td class="c_name" model="'+ json[i].model +'" style="text-align:left">'+ c +'</td>'+
+			'<td><a href="###" onclick="filter_model(\''+ json[i].model +'\')">'+ (json[i].type==3?'none':MODEL_JSON[json[i].model].alias) +'</a></td>'+
+			'<td>'+ (json[i].type == 1 ? '{$P8LANG['sites_category_type_1_s']}' : json[i].type == 2? '{$P8LANG['sites_category_type_2_s']}':json[i].type == 3?'{$P8LANG['sites_category_type_3_s']}':'{$P8LANG['sites_category_type_4_s']}') +'</td>'+
+			'<td>'+ sitenames[json[i].site] +'</td>'+
+			'<td>'+ json[i].site +'</td>'+
+			'<td align="center" class="enables"><img id="cate_'+json[i].id+'" title="'+json[i].htmlize+'" src="{$SKIN}/'+ (json[i].htmlize == 1 ? 'check_yes.gif' : (json[i].htmlize == 2?'check_2.gif':'check_no.gif')) +'"></td>'+
+			'<td align="center"><img id="cates_'+json[i].id+'" title="'+json[i].htmlize+'" src="{$SKIN}/'+ (CATEGORY_CATS.indexOf(json[i].id) != -1 ? 'check_yes.gif' : 'check_no.gif') +'"></td>'+			
+			'<td>'+ json[i].item_count +'</td>'+
+			'<td align="center">'+ CATEGORY_SUMS[json[i].id] +'</td>'+
+			'<td><input type="text" class="txt" name="display_order['+ json[i].id +']" value="'+ json[i].display_order +'" size="4" /></td>'+
+			'<td class="optlist">'+
+				'<a href="{$STATIC_URL}/s.php/'+ json[i].site +'/item-list-category-'+ json[i].id+'" target="_blank" title="主域名动态{$P8LANG['preview']}" class="ys1">预览</a> '+
+				'<a href="'+ json[i].url +'" target="_blank" title="静态页访问地址" class="ys1">子域名</a> '+
+				'<a href="{$this_system.admin_controller}/item-add?site='+json[i].site+'&model='+ json[i].model +'&cid='+ json[i].id +'&type='+ json[i].type +'" target="_blank" title="发布内容" class="ys2">发布内容</a> '+
+				'<a href="{$this_system.admin_controller}/category-update?site='+json[i].site+'&model='+ json[i].model +'&id='+ json[i].id +'" title="{$P8LANG['edit']}" target="_blank" class="ys3">编辑栏目</a> '+
+				'<a href="{$this_system.admin_controller}/category-add?site='+json[i].site+'&parent='+ json[i].id +'&model='+json[i].model+'" title="{$P8LANG['add_sites_sub_category']}" target="_blank" class="ys4">加子栏目</a> '+
+				'<a href="{$STATIC_URL}/s.php/'+ json[i].site +'/item-list-category-'+ json[i].id +'?edit_label=1" target="_blank" title="{$P8LANG['label']}" class="ys4">列表标签</a> '+
+				'<a id="recycle_'+ json[i].id +'" href="javascript:;" onclick="return recycle_category([this.id],\''+ json[i].model +'\');" title="{$P8LANG['recycle']}" class="ys8">删除</a> '+
+			'</td>'+
+		'</tr>';
+		
+		var tr = $(html);
+		$('#__').append(tr);
+		if(sub){
+			___(json[i].categories, l +1, p,index);
+			_toggle(
+				$(tr).find('td:eq(3) span').
+				bind('click', function(){_toggle($(this)); return false;})
+			);
+		}
+	}
+}
+
+function _toggle(span){
+	var id = $(span).parent().parent().attr('id').replace(/[^0-9]/g, '');
+	var path = CATEGORY_PATH[id].join('_');
+	
+	var on = $('#category_'+ id).attr('title') == 0;
+	
+	var keep_close = [];
+	$('tr[path^=path_'+ path +'_]').each(function(){
+		if(on){
+			
+			if($(this).show().attr('title') == 1 && $(this).attr('sub')){
+				keep_close.push(this.id.replace(/[^0-9]/g, ''));
+				$(this).attr('title', 0);
+			}else{
+				$(this).attr('title', 1);
+			}
+			
+		}else{
+			
+			if($(this).hide().attr('title') == 0 && $(this).attr('sub')){
+				//keep close
+				$(this).attr('title', 1);
+			}else{
+				$(this).attr('title', 0);
+			}
+			
+		}
+	});
+	
+	if(on){
+		$(span).parent().parent().attr('title', 1);
+		$(span).html('<img src="{$SKIN}/hide.gif" />');
+	}else{
+		$(span).parent().parent().attr('title', 0);
+		$(span).html('<img src="{$SKIN}/show.gif" />');
+	}
+	
+	for(var i = 0; i < keep_close.length; i++){
+		$('tr[path^=path_'+ CATEGORY_PATH[keep_close[i]].join('_') +'_]').hide().find('span');
+	}
+	return false;
+}
+
+function recycle_category(array,model){
+	//if(confirm('{$P8LANG['sites_category_confirm_to_recycle']}')){
+	p8_window.confirm('{$P8LANG['sites_category_confirm_to_recycle']}', function (r) {
+		if(r){
+			var id = [];
+			$.each(array, function(k, v){
+				id.push(v.replace(/[^0-9]/g, ''));
+			});
+			
+			$.ajax({
+				url: '{$this_system.admin_controller}/category-recycle',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({model: model, id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#recycle_'+ json[i]).parent().parent().remove();
+					}
+				}
+			});
+		}
+	});
+	
+	return false;
+}
+
+function filter_model(m){
+	$('#__ td.c_name[model='+ m +']').attr('style', '');
+	$('#__ td.c_name[model!='+ m +']').attr('style', 'filter: alpha(opacity=40); opacity: 0.4;');
+}
+
+$('form input[name^=display_order]').change(function(){
+	this.value = this.value.replace(/[^0-9]/g, '') || 0;
+	if(this.value > 9999) this.value = 9999;
+	if(this.value < 0) this.value = 0;
+	
+	$('#form').append('<input type="hidden" name="_display_order['+ this.name.replace(/[^0-9]/g, '') +']" value="'+ this.value +'" />');
+	$(this).css({border: '1px solid #ff0000'});
+});
+
+function get_category_by_id(id){
+	var path = clone(CATEGORY_PATH[id]);
+	var root = path.shift();
+	var search = CATEGORY_JSON[root];
+	
+	if(path.length == 0){
+		return search;
+	}
+	for(var i in path){
+		search = search.categories[path[i]];
+	}
+	return search;
+}
+
+function _check(path, checked){
+	$('#form tr[path^=path_'+ path +'_] input[name="id[]"]').prop('checked', checked);
+}
+
+function _find(n, json){
+	var ret = [];
+	for(var i in json){
+		if(json[i].name.indexOf(n) != -1)
+			ret.push(json[i].id);
+		
+		if(json[i].categories){
+			ret = ret.concat(_find(n, json[i].categories));
+		}
+	}
+	
+	return ret;
+}
+
+var auto = new P8_Autocomplete({
+	input: $('#srh'),
+	className: 'autocomplete',
+	trigger: function(){
+		var find = _find(this.keyword, CATEGORY_JSON);
+		
+		if(!find.length) return;
+		//p8_window.alert(find);
+		var json = [];
+		var parents = '';
+		for(var i = 0; i < find.length; i++){
+			var parents = '';
+			for(var j in CATEGORY_PATH[find[i]]){
+				parents += get_category_by_id(CATEGORY_PATH[find[i]][j]).name +' &gt; ';
+			}
+			
+			var cat = get_category_by_id(find[i]);
+			json.push({text: parents, value: cat.id});
+		}
+		
+		this.deploy(json);
+	},
+	callback: function(li){
+		p8_window.alert(li.data('value'));
+		
+		return false;
+	}
+});
+
+
+$('.enables img').click(function(){
+	console.log('tt');
+	alert('ss');
+	var enabled = this.title;
+	var htmlize = 0;
+	var verified = '$verified';
+	if(enabled == 2) htmlize = 20;
+	if(enabled == 20) htmlize = 2;
+	if(enabled == 0) htmlize = 1;
+	
+	$.ajax({
+		url: '$this_router/category-htmlize',
+		type: 'post',
+		dataType: 'json',
+		cache: false,
+		data: {id: this.id.replace(/[^0-9]/g, ''), htmlize: htmlize,verified:verified?1:0},
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			for(var i in json){
+				if(enabled == 1){
+					$('#cate_'+ json[i]).attr('src', '{$SKIN}/check_no.gif').attr('title', 0);				
+				}
+				if(enabled == 2){
+					$('#cate_'+ json[i]).attr('src', '{$SKIN}/check_no.gif').attr('title', 20);				
+				}
+				if(enabled == 20){
+					$('#cate_'+ json[i]).attr('src', '{$SKIN}/check_2.gif').attr('title', 2);				
+				}
+				if(enabled == 0){
+					$('#cate_'+ json[i]).attr('src', '{$SKIN}/check_yes.gif').attr('title', 1);				
+				}
+			}
+			
+		}
+	});
+});
+function search_category(site){
+	if(site){
+		$.ajax({
+			url: '$this_url',
+			data: $('#request').serialize() +'&site='+ site,
+			dataType: 'json',
+			cache: false,
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){				
+				ajaxing({action: 'hide'});
+				CATEGORY_JSON = json.json;
+				CATEGORY_PATH = json.path;
+				MODEL_JSON = json.models;
+				CATEGORY_SUMS = json.sums;
+				CATEGORY_CATS = json.statistic_cats;
+				___(CATEGORY_JSON,0,0,0);
+			}
+		});
+	}else{
+		requestAllItems(0);	
+	}
+}
+function request_item(site,index){
+	var perc = (index * 100 / allsite_alias.length).toFixed(1);
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&site='+ site,
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({text:perc+'%'});
+		},
+		success: function(json){					
+			if(index+1 == allsite_alias.length) ajaxing({action: 'hide'});			
+			CATEGORY_JSON = json.json;
+			CATEGORY_PATH = json.path;
+			MODEL_JSON = json.models;
+			CATEGORY_SUMS = json.sums;
+			CATEGORY_CATS = json.statistic_cats;
+			___(CATEGORY_JSON,0,0,index);
+		}
+	});
+}
+
+var download_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['download']}',
+	width: 800,
+	height: 120,
+	button: true,
+	ok: function(){
+		var model = this.content.find('#setmodel').val();
+		var mindate = this.content.find('#mindate').val();
+		var maxdate = this.content.find('#maxdate').val();
+		var cid = this.content.find('#cid').val();
+		$('#download').append('<input type="hidden" name="model" value="'+ model +'" />');
+		$('#download').append('<input type="hidden" name="mindate" value="'+ mindate +'" />');
+		$('#download').append('<input type="hidden" name="maxdate" value="'+ maxdate +'" />');
+		$('#download').append('<input type="hidden" name="cid" value="'+ cid +'" />');
+		$('#download').attr('method',"post");
+		$('#download').submit();
+	},
+	show: function(){
+		var download_html = '<div style="margin:12px auto 0;text-align:center;"> 分站：<select name="site" id="setsite"><option value="">{$P8LANG[unlimited]}</option>';
+		<!--{foreach $mysites $site}-->
+			download_html += '<option value="$site">{$allsites[$site][sitename]}</option>';
+		<!--{/foreach}-->
+		download_html += '</select>';
+		download_html += ' 模型：<select name="model" id="setmodel">';
+		<!--{foreach $models $name $v}-->
+			download_html += '<option value="$name">$v[alias]</option>';
+		<!--{/foreach}-->
+		download_html += '</select>';
+		download_html += ' 发布时间：<input type="text" name="mindate" id="mindate" size="10" onclick="rcalendar(this);" autocomplete="off" value=""/>-';
+		download_html += '<input type="text" name="maxdate" id="maxdate" size="10" onclick="rcalendar(this);" autocomplete="off" value=""/></div>';
+		
+		this.content.html(download_html);
+	}
+});
+
+function requestAllItems(index) {
+	if (index < allsite_alias.length) {
+	  request_item(allsite_alias[index],index);      
+	  // 设置2秒（1000毫秒）的延时后执行下一个请求
+	  setTimeout(function() {
+		requestAllItems(index + 1);
+	  }, 1000);
+	}
+}
+$(function() {  
+  // 从第一个元素开始递归请求
+  requestAllItems(0);
+});
+</script>
+
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

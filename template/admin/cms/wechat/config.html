@@ -1,0 +1,108 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0" cellspacing="1" cellpadding="3" class="tablewidth">
+			<tr class="head"> 
+			  <td>使用步骤</td>
+			</tr>
+			<tr bgcolor="#FFFFFF"> 
+			  <td><div style="line-height:200%">
+			  <ul>
+				<li>1.登录微信公众平台，在开发->基本配置->IP白名单中，确保网站服务器的IP地址已添加</li>
+				<li>2.在微信公众平台->开发->基本配置->服务器配置中，点击修改配置，将URL设置为：http://你的域名/api/wechat.php，并确保该URL可以外网访问。设置Token及EncodingAESKey，并将消息加密模式设置为“安全模式”（在点击提交之前，先将Token及EncodingAESKey填写并保存在下方的配置信息中，否则会造成提交失败）</li>
+				<li>3.启用服务器配置（开发->基本配置->服务器配置，点击启用）</li>
+				<li>4.打开你手机上的微信，发送关键词：<strong>openid</strong> 至微信公众号，如收到回复，则说明对接配置成功</li>
+				</ul>
+				</div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<form action="$this_url" method="post" name="form1">
+	<div class="mainbox mainborder">
+		<div class="section">
+       <table class="columntable formtable hover_table">
+				<tr>
+					<td colspan="2" class="title">{$P8LANG['wechat_config']}</td>
+			</tr>
+          <tr>
+            <td class="tdL" width="20%">开发者ID(AppID)</td>
+            <td class="tdR"><input class="txt" name="config[appid]" id="appid" type="text" size="50" value="{if !empty($config['appid'])}{$config['appid']}{/if}" /> 
+			在 <span class="point"><a href="https://mp.weixin.qq.com/" target="_blank">微信公众平台</span> ->开发->基本设置中查看</a></td>
+          </tr>
+          <tr>
+            <td class="tdL">开发者密码(AppSecret)</td>
+            <td class="tdR"><input class="txt" name="config[appsecret]" id="appsecret" size="50" type="text" value="{if !empty($config['appsecret'])}{$config['appsecret']}{/if}"/>
+            在 <span class="point"><a href="https://mp.weixin.qq.com/" target="_blank">微信公众平台</span> ->开发->基本设置中查看</a></td>
+          </tr>
+          <tr>
+            <td class="tdL">令牌(Token)</td>
+            <td class="tdR"><input class="txt" name="config[token]" id="token" size="50" type="text" value="{if !empty($config['token'])}{$config['token']}{/if}"/>
+            在 <span class="point"><a href="https://mp.weixin.qq.com/" target="_blank">微信公众平台</span> ->开发->基本设置中查看</a></td>
+          </tr>
+          <tr>
+            <td class="tdL">消息加解密密钥(EncodingAESKey)</td>
+            <td class="tdR"><input class="txt" name="config[aeskey]" id="aeskey" size="50" type="text" value="{if !empty($config['aeskey'])}{$config['aeskey']}{/if}"/>
+            在 <span class="point"><a href="https://mp.weixin.qq.com/" target="_blank">微信公众平台</span> ->开发->基本设置中查看</a></td>
+          </tr>
+		  <tr>
+            <td class="tdL">预览者的openid(openid)</td>
+            <td class="tdR"><input class="txt" name="config[preview_openid]" id="preview_openid" size="50" type="text" value="{if !empty($config['preview_openid'])}{$config['preview_openid']}{/if}"/>
+			发送关键词 openid 至微信公众号返回的ID值</td>
+          </tr>
+			<tr>
+            <td class="tdL">默认开启图文评论</td>
+            <td class="tdR"><input type="radio" name="config[open_comment]" value="1"{if !empty($config['open_comment'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[open_comment]" value="0"{if empty($config['open_comment'])} checked{/if} />{$P8LANG['N']}<br />
+            </td>
+          </tr>
+		  <tr>
+            <td class="tdL">默认是否粉丝才可评论</td>
+            <td class="tdR"><input type="radio" name="config[fans_comment]" value="1"{if !empty($config['fans_comment'])} checked{/if} />粉丝才可评论
+						<input type="radio" name="config[fans_comment]" value="0"{if empty($config['fans_comment'])} checked{/if} />所有人可评论<br />
+            </td>
+          </tr>
+          <tr>
+            <td class="tdL">是否开启站内搜索</td>
+            <td class="tdR"><input type="radio" name="config[search_enabled]" value="1"{if !empty($config['search_enabled'])} checked{/if} />{$P8LANG['Y']}
+						<input type="radio" name="config[search_enabled]" value="0"{if empty($config['search_enabled'])} checked{/if} />{$P8LANG['N']}<br />
+            </td>
+          </tr>          	  
+		  <tr>
+            <td class="tdL">链接显示形式</td>
+            <td class="tdR"><input type="radio" name="config[url_type]" value="1"{if !empty($config['url_type'])} checked{/if} />原始链接
+						<input type="radio" name="config[url_type]" value="0"{if empty($config['url_type'])} checked{/if} />短链接<br />
+            </td>
+          </tr>
+		  <tr>
+            <td class="tdL">搜索结果显示条数</td>
+            <td class="tdR"><input class="txt" name="config[search_num]" id="aeskey" size="3" type="text" value="{if !empty($config['search_num'])}{$config['search_num']}{else}5{/if}"/>
+			<span class="point">建议不超过10条</span>
+            </td>
+          </tr>	
+		  <tr>
+            <td class="tdL">被关注回复</td>
+            <td class="tdR">
+			<textarea cols="50" rows="5" class="textarea" name="config[subscribe_response]">{if !empty($config['subscribe_response'])}{$config['subscribe_response']}{else}欢迎订阅！[亲亲][亲亲]我们将第一时间发送最新资讯！{/if}</textarea>
+			当公众号被关注时，将自动推送给关注者的内容。<span class="point"><a href="{$core.siteurl}/tools/emoji.html" target="_blank">选择Emoji表情代码</a></span>
+			</td>
+          </tr>
+		  <tr>
+            <td class="tdL">默认回复</td>
+            <td class="tdR"><textarea cols="50" rows="5" class="textarea" name="config[default_response]">{if !empty($config['default_response'])}{$config['default_response']}{else}听不懂你在说什么{/if}</textarea>
+			当既没有匹配到关键词，也没有从站内搜索到结果时的回复
+			</td>
+          </tr>
+		  <tr>
+            <td class="tdL"></td>
+            <td class="tdR"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></td>
+          </tr>
+        </table>
+	</div>
+</div>
+</form>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,201 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/iColorPicker.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<link rel="stylesheet" href="{$SKIN}/sites/category_selector.css" type="text/css" />
+<div class="section">
+	<table class="formtable" width="100%">
+		<tr>
+			<td class="headerbtn_list">
+				<ul class="sites-top-menu">
+				
+					<li><a href="{$this_system.admin_controller}/farm-list"><i class="fa fa-cog"></i>站点列表</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-config"><i class="fa fa-cog"></i>本站点设置</a></li>
+					<li><a href="{$this_system.admin_controller}/category-list"><i class="fa fa-cog"></i>栏目管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-menu_list"><i class="fa fa-cog"></i>菜单管理</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-logo"><i class="fa fa-ravelry"></i>站点LOGO</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-acls"><i class="fa fa-user-circle-o"></i>站点授权</a></li>
+					<li><a href="{$this_system.admin_controller}/farm-template"><i class="fa fa-tree"></i>站点模板</a></li>
+					<li><a href="{$this_system.admin_controller}-Visualization" target="_blank"><i class="fa fa-refresh"></i>页面可视化</a></li>
+					<li><a href="{$this_system.admin_controller}-publishing" target="_blank"><i class="fa fa-refresh"></i>站点发布</a></li>
+					<li><a href="javascript:void(0);" onclick="cache_base_sites()"><i class="fa fa-refresh"></i>更新本站缓存 </a></li>
+					<li><a href="javascript:;" onclick="list_to_html('{$alias}')"><i class="fa fa-refresh"></i>静态本站数据</a></li>
+					<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($site_info['ipordomain'])}{$core->CONFIG['url']}/s.php/{$site}{else}{$site_info['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$site_info['sitename']}</a></li>
+				</ul>
+			</td>
+		</tr>
+	</table>
+</div>
+<form action="$this_url?site={$this_system->SITE}" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0" class="mainbox">
+				<tbody>
+					<tr>
+						<td>
+							<ul class="sites-down-menu">
+								<li class="btn-color1"><a href="javascript:void(0);" onclick="window.location.href='{$this_router}-menu_add?site={$this_system->SITE}'"><i class="icon icon-ico44"></i>添加菜单</a></li>
+								<li class="btn-color2"><a href="{$this_system.admin_controller}/farm-menu_list"><i class="icon icon-ico48"></i>菜单列表</a></li>
+							</ul>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table">
+				<tr class="title fix_head">
+					<td width="23%"  class="list_top">{$P8LANG['config']}</td > <td width="35%" class="list_top">参数</td><td width="42%" class="list_top">备注</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_name']}</td>
+					<td class="tdR"><input  type="text" class="txt" name="name" id="name" value="{if !empty($data['name'])}{$data['name']}{/if}" /> </td>
+					<td class="tdR">名称可任意填写</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['url']}</td>
+					<td class="tdR"> 
+					<input  type="text" class="txt" name="url" id="url" size="60" value="{if !empty($data['url'])}{$data['url']}{/if}" /> <input type="button" value="{$P8LANG['select_category']}" onclick="matrix_dialog.show()" />
+					<input  type="hidden" name="dynamic_url" id="dynamic_url" value="{if !empty($data['dynamic_url'])}{$data['dynamic_url']}{/if}" />
+					<br>
+					<div id="show_url"></div>
+					</td>
+					<td class="tdR">{$P8LANG['menu_url_note2']}</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_color']}</td>
+					<td  class="tdR"><input  name="color" type="text" value="{if !empty($data['color'])}{$data['color']}{/if}" id="titlecolor" class="iColorPicker"/> <img src="{$RESOURCE}/images/color_picker.gif" onclick="iColorShow('titlecolor','titlecolor', function(v){ $('#titlecolor').val(v);})" style="cursor: pointer;" /></td>
+					<td class="tdR"></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['parent_menu']}</td>
+					<td class="tdR">
+					<select id="parent" name="parent"  onchange="check_menus(this)">
+								<option value="0" class="_top_option">顶级菜单</option>
+								
+								<!--{foreach $menus $v}-->
+								<option value="{$v['id']}"{if !empty($data['parent']) && $data['parent'] == $v['id']} selected{/if}{if isset($v['menus'])} sub_menu="1"{/if}>{$v['name']}</option>
+								<!--{/foreach}-->
+							</select>
+							
+					</td>
+					<td class="tdR"></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_target']}</td>
+					<td class="tdR">
+					<select name="target">
+								<option value="" selected>{$P8LANG['default']}</option>
+								<option value="_blank"{if !empty($data['target']) && $data['target'] == '_blank'} selected{/if}>{$P8LANG['_blank']}</option>
+								<option value="_top"{if !empty($data['target']) && $data['target'] == '_top'} selected{/if}>{$P8LANG['_top']}</option>
+								<option value="_parent"{if !empty($data['target']) && $data['target'] == '_parent'} selected{/if}>{$P8LANG['_parent']}</option>
+							</select>
+					</td>
+					<td class="tdR"></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_display']}</td>
+					<td class="tdR"><input type="radio" name="display" value="1"{if !isset($data['display']) || !empty($data['display'])} checked{/if} />{$P8LANG['Y']}
+							<input type="radio" name="display" value="0"{if empty($data['display']) && isset($data['display'])} checked{/if} />{$P8LANG['N']}</td>
+					<td class="tdR"></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_display_order']}</td>
+					<td class="tdR"> <input type="number" maxlength="3" min="0" max="999" step="1" class="txt" name="display_order" value="{if !empty($data['display_order'])}{$data['display_order']}{/if}" size="3" /> </td>
+					<td class="tdR"></td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_frame']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="frame" id="frame"  value="{if !empty($data['frame'])}{$data['frame']}{/if}" size="50" />
+						<input type="button" onclick="uploader.choseup();" value="{$P8LANG['upload']}" />
+						<input type="button" id="frame_toggle" onclick="" value="" style="display: none;" />
+						<a href="###" onclick="uploader.image_cut()">[$P8LANG[image_cut]]</a><br />
+						
+						<script type="text/javascript">
+						var uploader;
+						$(function(){
+							uploader = new P8_Upload({
+								element: {
+									src: $('#frame'),
+									attribute: 'value'
+								},
+								param: {
+									return_thumb: true<!--{if !empty($this_model['CONFIG']['frame_thumb_width']) && !empty($this_model['CONFIG']['frame_thumb_height'])}-->,
+									thumb_width: {$this_model['CONFIG']['frame_thumb_width']},
+									thumb_height: {$this_model['CONFIG']['frame_thumb_height']}
+									<!--{/if}-->
+								}
+							});
+						});
+						</script>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['menu_summary']}</td>
+					<td class="tdR">
+						<textarea name="summary" cols="90" rows="5">{if !empty($data['summary'])}{$data['summary']}{/if}</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td colspan="3" class="text-center"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></td>
+				</tr>
+			</table>
+			<input type="hidden" id="id" name="id" value="{if !empty($id)}$id{/if}" />
+		</div>
+	</div>
+</form>
+
+<script type="text/javascript">
+var menu_mode = {$menu_mode};
+var domain = '{$domain}';
+var matrix_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var id = matrix_cs.get_value();
+		var tmp = matrix_cs.get_by_id(id);
+		var tmp_url = '';
+		if(!$('#name').val()) $('#name').val(tmp.name);
+		if(tmp.htmlize == 1){
+			tmp_url = tmp.url;
+			if(menu_mode == 1) tmp_url = tmp_url.replace(domain+'/','');
+			if(menu_mode == 2) tmp_url = tmp_url.replace('/sites/html/','/');
+			$('#url').val(tmp_url);
+		}else{
+			$('#url').val('{\$system_url}/item-list-category-'+id+'.html');	
+		}
+		$('#show_url').html('动态URL：{\$system_url}/item-list-category-'+id+'.html');
+		$('#dynamic_url').val('{\$system_url}/item-list-category-'+id+'.html');	
+	},
+	show: function(){
+		matrix_cs.init();
+	}
+});
+
+var matrix_cs = new Recursive_Selector({
+	dialog: matrix_dialog,
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json',
+	value: 0,
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});	
+function check_menus(obj){
+	if($('#id').val()==$(obj).val()){
+		p8_window.alert('不能以自己为上级菜单');
+		$(obj).val('');
+		return false;
+	}
+
+}
+</script>
+
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,1 @@
+<?php die();?>a:2:{s:10:"department";N;s:4:"type";N;}

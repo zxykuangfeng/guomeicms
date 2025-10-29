@@ -1,0 +1,57 @@
+.category_container{
+	width: 120px;
+	max-height: 220px;
+	float: left;
+	overflow-y: auto;
+	overflow-x: hidden;
+	margin: 2px 5px 0;
+	border:2px solid #2fb5bf;
+	border-radius:4px;
+	box-shadow:1px -2px 2px 1px #2fb5bf;
+	
+}
+
+.category_container li{
+	padding: 2px 4px 2px 2px;
+	width: 100%;
+	cursor: pointer;
+}
+
+.category_container li.selected{
+	background-color: #e2d5d5;
+}
+
+.category_container li span{width: 70px;height: 16px;line-height:16px;display: inline-block;overflow: hidden;}
+
+.category_container li span.frame_category{
+	color: blue;
+}
+
+.category_container li.normal_category{
+	background-color: #cccccc;
+}
+
+.category_container li.multi_selected{
+	background-color: #F1F7FD;
+}
+
+.category_container li.sub_category{
+	background-image: url(arrow.gif);
+	background-repeat: no-repeat;
+	background-position: 95px;
+	color:blue;
+}
+
+/**模板管理**/
+.template_box { background-color:#EEF5FB }
+.template_box .max_title { border-bottom:1px solid #BBB; height:30px; padding-top:5px; padding-left:20px; }
+.template_box .min_title { float:left; color:#067098; font-weight:bold; }
+.template_box .more { float:right; margin-right:20px }
+.template_box .list_template .each_template { width:150px; float:left; text-align:center; margin:10px 20px; }
+.template_box .list_template { border-bottom:1px dashed #bbb; }
+.template_box .list_template .each_template .temp_edit_link { color:#0A0; padding-left:10px; }
+.template_selector { width: 150px; height: 240px;max-height:240px; float: left; overflow-y: auto; overflow-x: hidden; margin: 5px;border:2px solid #2fb5bf;border-radius:4px;box-shadow:1px -2px 2px 1px #2fb5bf; }
+.template_selector li { padding: 2px; width: 100%; cursor: pointer; padding-left: 28px; }
+.template_selector li.dir { background: url(../dir.gif) no-repeat 5px center; }
+.template_selector li.html { background: url(../html.gif) no-repeat 0 center; }
+.template_selector li.selected { background-color: #cccccc; }

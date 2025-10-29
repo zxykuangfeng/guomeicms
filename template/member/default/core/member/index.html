@@ -1,0 +1,584 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>会员中心</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="renderer" content="webkit">
+<link type="text/css" rel="stylesheet" href="{$MEMBERSKIN}/index.css" />
+<link type="text/css" rel="stylesheet" href="{$RESOURCE}/images/dialog.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<script type="text/javascript">var site_tmp = '<!--{php echo $menu_flag ? $siteflag : 'mainstation';}-->';</script>
+<script type="text/javascript" src="{$RESOURCE}/js/member_common.js?rid=<!--{php echo P8_TIME;}-->"></script>
+
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+</head>
+<body class="body" scroll="no">
+
+<script type="text/javascript">
+<!--{template_init_js}-->
+
+if(parent != self){
+	parent.window.location.href = P8CONFIG.U_controller;
+}
+</script>
+<div id="wrapper">
+	<div class="blockleft">
+		<div class="mlogo"><a href="{$core.U_controller}{if $menu_flag && $site}?site={$site}{/if}"><img src="{$MEMBERSKIN}/logo.png" /></a></div>
+		<div class="mindex">
+			<!--{if $menu_flag}-->			
+			<a href="{$core.U_controller}?main_page=/sites/item-my_list{if $site}&site={$site}{/if}">我的首页</a>
+			<!--{else}-->
+			<a href="{$core.U_controller}">我的首页</a>
+			<!--{/if}-->
+		</div>
+		<div id="menu2">	
+		</div>
+	</div>
+	<div class="blockright">
+		<div class="memberhead">
+			<div class="welcome">
+				<h3>欢迎访问会员中心！</h3>
+			</div>
+			<div class="mnav">
+				<ul><!--{if $menu_flag}--><li class="li5"><a href="{$site_domain}" target="_blank">当前站点：{$sitename}</a></li><!--{/if}-->
+					<li class="li7"><a id="btn">消息<span id="new_messages">0</span></a></li>
+					<li class="li1"><a href="{$core.U_controller}/core/member-profile" target="wrapright">{$USERNAME}{if $member_info['name']}（{$member_info['name']}）{/if}</a></li>
+					<li class="li6"><a href="{$core.U_controller}/member-mysites" target="_blank">切换站点</a></li>
+					<li class="li2"><a href="{$core.U_controller}/member-logout" onclick="return ajax_logout()">安全退出</a></li>
+					<li class="li4"><a target="_blank" href="<!--{if $sites_flag || $site}-->{$site_domain}<!--{else}-->{str_replace('index.php','',$core->controller)}<!--{/if}-->">返回首页</a></li>
+				</ul>
+			</div>
+			{if $menu_button}
+            {if $menu_flag}
+			<div class="menu">
+                <div class="dropdown">
+                    <button class="dropbtn">站点管理</button>
+                    <div class="dropdown-content">
+						<!--{if $reflash_index}--><a href="{$core.U_controller}/sites/item-reflash_index?flag=1&site={$siteflag}" target="wrapright">更新首页</a><!--{/if}-->
+                        <a href="{$core.admin_controller}/sites/farm-cacheall?site={$site}" target="_blank">更新缓存</a>
+						<a href="{$label_edit_url}" target="_blank">首页标签</a>
+						<a href="{$core.admin_controller}/sites/category-list?site={$siteflag}" target="_blank">栏目管理</a>
+                        <a href="{$core.admin_controller}/sites/farm-menu_list?site={$siteflag}" target="_blank">菜单管理</a>
+						<a href="{$core.U_controller}/member-mysites" target="_blank">切换站点</a>
+						<a href="{$core.admin_controller}/sites-index_new?site={$siteflag}" target="_blank">管理入口</a>
+                    </div>
+                </div>
+            </div>
+            {else}
+			<div class="menu">
+				<div class="dropdown">
+					<button class="dropbtn">站点管理</button>
+					<div class="dropdown-content">
+						<!--{if $reflash_index}--><a href="{$core.U_controller}/cms/item-reflash_index" target="wrapright">更新首页</a><!--{/if}-->
+						<!--{if $genrate_html}--><a href="{$core.U_controller}/cms/item-genrate_html" target="wrapright">静态首页</a><!--{/if}-->
+						<a href="javascript:;" onclick="do_crontab()">更新频道</a>
+						<a href="{$core.controller}?edit_label=1" target="_blank">首页标签</a>
+                        <a href="{$core.admin_controller}/cms/category-list" target="wrapright">栏目管理</a>
+                        <a href="{$core.admin_controller}/core-navigation_menu_list" target="wrapright">菜单管理</a>
+						<a href="{$core.U_controller}/member-mysites" target="_blank">切换站点</a>
+						<a href="{$core.admin_controller}" target="_blank">管理入口</a>
+					</div>
+				</div>
+			</div>
+			{/if}
+            {/if}
+		</div>
+		<iframe id="wrapright" width="100%" scrolling="auto" marginwidth="0" marginheight="0" src="{if isset($_GET['main_page'])}{$core.U_controller}{$_GET['main_page']}{else}{$this_module.U_controller}-center{/if}" frameborder="0" name="wrapright" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;overflow-x: hidden;"></iframe>
+	</div>
+	<div class="clear"></div>
+</div>
+<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight">
+	<div class="offcanvas-box">
+		
+		<div class="offcanvas-header clearfix">
+			<div class="pull-left"><h5 class="offcanvas-title">信息提醒</h5></div>
+			<div class="offcanvas-dropdown pull-right">
+				<button type="button" id="sign" class="btn btn-sign">标记信息<i class="caret"></i></button>
+				<ul class="dropdown-menu">
+					<li><a href="javascript:void(0);" onclick="mark_message(checked_values('id[]',$('#message')),'read');">信息已读</a></li>
+					<li><a href="javascript:void(0);" onclick="mark_message(checked_values('id[]',$('#message')),'important');">纳入重点</a></li>
+					<li><a href="javascript:void(0);" onclick="mark_message(checked_values('id[]',$('#message')),'in');">取消标记</a></li>
+					<li><a href="javascript:void(0);" onclick="delete_message(checked_values('id[]',$('#message')));">信息删除</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="offcanvas-scroller">
+			<div class="offcanvas-body">
+				<div class="offcanvas-tabs">
+					<ul class="tabs">
+						<li><a href="#tab1" class="tab-link">未读信息</a></li>
+						<li><a href="#tab2" class="tab-link">重要信息</a></li>
+						<li><a href="#tab3" class="tab-link">系统信息</a></li>
+						<li><a href="#tab4" class="tab-link">全部信息</a></li>
+					</ul>
+					<form id="message">
+					<div id="tab1" class="tab-content">
+						<div class="tab-table">
+							<table class="columntable formtable offcanvas-table hover_table" border="0" cellspacing="0" cellpadding="0" style="width:100%;">
+								<tr class="head fix_head">
+									<td style="width: 20px" align="left"><input type="checkbox" onclick="check_all(this, 'id[]', $('#message'));" /></td>
+									<td style="width: 240px">标题</td>
+									<td style="width: 80px">状态</td>
+									<td style="width: 110px;">提醒时间</td>
+								</tr>
+								<tbody id="tab1-list"></tbody>
+							</table>
+						</div>
+					</div>
+
+					<div id="tab2" class="tab-content">
+						<div class="tab-table">
+							<table class="columntable formtable offcanvas-table hover_table" border="0" cellspacing="0" cellpadding="0" style="width:100%;">
+								<tr class="head fix_head">
+									<td style="width: 20px" align="left"><input type="checkbox" onclick="check_all(this, 'id[]', $('#message'));" /></td>
+									<td style="width: 240px">标题</td>
+									<td style="width: 80px">状态</td>
+									<td style="width: 110px;">提醒时间</td>
+								</tr>
+								<tbody id="tab2-list"></tbody>
+							</table>
+						</div>
+					</div>
+
+					<div id="tab3" class="tab-content">
+						<div class="tab-table">
+							<table class="columntable formtable offcanvas-table hover_table" border="0" cellspacing="0" cellpadding="0" style="width:100%;">
+								<tr class="head fix_head">
+									<td style="width: 20px" align="left"><input type="checkbox" onclick="check_all(this, 'id[]', $('#message'));" /></td>
+									<td style="width: 240px">标题</td>
+									<td style="width: 80px">状态</td>
+									<td style="width: 110px;">提醒时间</td>
+								</tr>
+								<tbody id="tab3-list"></tbody>
+							</table>
+						</div>
+					</div>
+					<div id="tab4" class="tab-content">
+						<div class="tab-table">
+							<table class="columntable formtable offcanvas-table hover_table" border="0" cellspacing="0" cellpadding="0" style="width:100%;">
+								<tr class="head fix_head">
+									<td style="width: 20px" align="left"><input type="checkbox" onclick="check_all(this, 'id[]', $('#message'));" /></td>
+									<td style="width: 240px">标题</td>
+									<td style="width: 80px">状态</td>
+									<td style="width: 110px;">提醒时间</td>
+								</tr>
+								<tbody id="tab4-list"></tbody>
+							</table>
+						</div>
+					</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		
+		<div class="offcanvas-footer">
+			<div class="offcanvas-pages">
+				<div id="pages" class="pages center" style="text-align:center;"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+var MENU_JSON = $json[json2];
+var MENU_PATH = $json[path];
+var MENU_DENIED = $denied;
+var ACTION_TAB = '#tab1';
+var ACTION_TYPE = 'new';
+
+var view_dialog = new P8_Dialog({
+	title_text:'查看消息',
+	width: 870,
+	height: 610,
+	button: false
+});
+view_dialog.content.append($('<iframe width="100%" height="450" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+
+function show_message_dialog(id,type){
+	view_dialog.show();
+	var ifr = view_dialog.content.find('iframe');
+	ifr.attr('src', '{$core.U_controller}/message-read?nomenu=1&id='+id+'&type='+type);
+}
+
+function get_menu_by_id(id){
+	var path = clone(MENU_PATH[id]);
+    if(typeof(path)=="undefined")return {};
+	var root = path.shift();
+	
+	var search = get_menu_byid(MENU_JSON,root);
+	
+	if(path.length == 0){
+		return search;  
+	}
+    
+    for(var i in path){
+		search = get_menu_byid(search.menus,path[i]);
+	}
+	
+	return search;
+}
+function get_menu_byid(json,need){
+    for(var i in json){
+        if(json[i].id==need){
+            return json[i];
+        }
+    }
+    return {};
+}
+//function _auto_height(hash){
+	//p8_window.alert(hash);
+	//$('#wrapright').css({height: parseInt(hash.substr(1)) + 20 +'px'});  
+//}
+
+function getMessage(){
+	setTimeout(getMessage,30000);//时间可控                        
+	$.ajax({  
+		url: P8CONFIG.URI['core']['message'].U_controller +'-box',
+		dataType: 'json', 
+		data: ajax_parameters({type:'in'}),
+		cache: false,
+		success: function(json){
+			showMessage(json);
+		}
+	});
+}
+function mark_message(array,mark){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!id.length){
+		p8_window.alert('{$P8LANG[message_select_required]}');
+		return;
+	}
+	p8_window.confirm('{$P8LANG['message_confirm_to_mark']}', function (r) {
+		if(r){
+			$.ajax({
+				url: P8CONFIG.URI['core']['message'].U_controller +'-mark',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({type: mark, id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					p8_window.alert(json.length+'条信息标记成功！');
+					for(var i in json){
+						$('#message_'+ json[i]).remove();
+					}
+				}
+			});
+		}
+	});
+}
+function delete_message(array){
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!id.length){
+		p8_window.alert('{$P8LANG[message_select_required]}');
+		return;
+	}
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: P8CONFIG.URI['core']['message'].U_controller +'-delete',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({type: 'in', id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#message_'+ json[i]).remove();
+					}
+				}
+			});
+		}
+	});
+}
+function request_item(page){
+	var type = ACTION_TYPE ? ACTION_TYPE : 'new';
+	$.ajax({  
+		url: P8CONFIG.URI['core']['message'].U_controller +'-inbox',
+		dataType: 'json', 
+		data: ajax_parameters({type:type,page:page?page:1}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+			$(ACTION_TAB+'-list').empty();
+			$(ACTION_TAB+'-list').append('<tr><td colspan="3" align="center">内容加载中...</td></tr>');
+			$('#pages').empty();
+		},
+		success: function(json){			
+			$(ACTION_TAB+'-list').empty();
+			for(var i in json.list){
+				_list_item(json.list[i],ACTION_TAB+'-list');
+			}
+			$('#pages').html(json.pages);
+			
+			ajaxing({action: 'hide'});
+			
+			window.scrollTo(0, 0);
+		}
+	});
+}
+function _list_item(json,actid){
+	var tr = '<tr id="message_'+json.id+'">'+
+		'<td style="width: 20px" align="left"><input type="checkbox" name="id[]" value="'+json.id+'"/></td>'+
+		'<td style="width: 240px"><div class="name"><a href="javascript:void(0)" onclick="show_message_dialog(\''+json.id+'\',\''+json.type+'\')">'+json.title+'</a></div></td>'+
+		'<td style="width: 80px"><div class="name">'+(json.new == '1'?'<span style="color:red;">未读</span>':'已读')+'</div></td>'+
+		'<td style="width: 110px;"><div class="date" unselectable="on">'+ date('m-d H:i', json.timestamp) +'</div></td>'+
+	'</tr>';		
+	$(actid).append($(tr));
+}
+function do_crontab(id){
+	$.ajax({
+		url:"{$core.U_controller}/cms/item-run",
+		type: 'post',
+		dataType: 'json',
+		cache: false,
+		data: '',
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success:function(json){
+			ajaxing({action: 'hide'});
+			if(json.action == 'done')
+				p8_window.alert('{$P8LANG['done']}');
+			else
+				p8_window.alert('{$P8LANG['fail']}');
+		}
+	 });
+}
+function get_user_info(){
+	_forward = $('#forward').val();
+	if(_forward){
+	//this.location.href=	_forward;
+	}
+	$.ajax({
+		   type:'POST',
+		   url:"{$core.controller}/core/member-mymessage",
+		   data: '?',
+		   dataType: 'json',
+		   success:function(my_mesg){				   
+				  for(i in my_mesg){
+					if(my_mesg[i].show=='1'){
+							$('#message_manager .'+ my_mesg[i].name).parent().show();
+							$('#message_manager .'+ my_mesg[i].name).attr('href',my_mesg[i].link);
+							$('#message_manager .'+ my_mesg[i].name).html(my_mesg[i].count?my_mesg[i].count:0);
+						}
+					}
+					$('#message_manager .credit').html(my_mesg['user'].credit);
+					openManageMessage();
+		 }
+	 });	
+}
+function showMessage(json){
+	if(json.new_count>0){
+		$("#message_from").text(json.username);
+		$("#message_title").text(json.title);
+		$("#message_content").html(json.content);
+		$("#message_inbox_url").attr("href", P8CONFIG.URI['core']['message'].U_controller +'-inbox');     
+		$("#message_read_url").attr("href", json.url);
+		$("#message_find_url").attr("href", json.url); 
+		$("#message_refuse").click( function(){  
+			refuse(json['id'])
+		 });
+		openMessage(); 	
+	}else{
+		closeMessage();  
+	} 
+}  
+
+function closeMessage(){
+	$("#message_remind").slideUp("slow");
+}
+
+function closeManageMessage(){
+	$("#message_manager").slideUp("slow");
+}
+
+function openMessage(){
+	$("#message_remind").slideDown("slow");
+}
+function openManageMessage(){
+	if($('#message_remind').css('display')!='none')
+		$("#message_manager").css('bottom','135px');
+	else
+		$("#message_manager").css('bottom','0px');
+
+	$("#message_manager").slideDown("slow");
+}
+function refuse(id){
+	$.ajax({  
+		url: P8CONFIG.URI['core']['message'].U_controller +'-box',
+		type: 'POST',
+		dataType: 'json', 
+		data: ajax_parameters({type: 'rubbish', id: id}),
+		cache: false,
+		success: function(json){
+			if(id=json['id']&&json['move']=='true'){
+				closeMessage();  
+			}
+		}
+	});
+}
+
+//窗口调整
+window.onresize = function(){
+    var widths = document.body.scrollWidth;
+    var heights = document.documentElement.clientHeight-71;
+	$("#menu2").height(heights);
+	var main_w = $('#wrapper').width()-$(".blockleft").width();
+	$('#wrapright').height(heights);
+};
+
+$(document).ready(function(){
+	var windowHeight = window.innerHeight;
+    var headerHeight = $('.offcanvas-header').outerHeight();
+    var memberhead = $('.memberhead').outerHeight();
+    var footerHeight = $('.offcanvas-footer').outerHeight();
+    var middleHeight = windowHeight - memberhead - headerHeight - footerHeight;
+    var offcanvasHeight = windowHeight - memberhead;
+    $('#offcanvasRight').css('height', offcanvasHeight + 'px');
+    $('.offcanvas-scroller').css('height', middleHeight + 'px');
+    $('#offcanvasRight').css({
+        'right': '-100%',
+        'display': 'none'
+    });
+
+    $('#btn').click(function(e) {
+        $('#offcanvasRight').css({
+            'right': '0',
+            'display': 'block'
+        });
+        //$('body').css('overflow','hidden');
+        e.stopPropagation();
+        // 创建遮罩层并添加到body中
+        var mask = $('<div class="offcanvas-mask"></div>');
+        $('body').append(mask);
+        mask.click(function() {
+            // 点击遮罩层时隐藏offcanvasRight和遮罩层
+            $('#offcanvasRight').css({
+                'right': '-100%',
+                'display': 'none'
+            });
+			$('.dropdown-menu').hide();
+			$('#sign').removeClass('on');
+            $(this).remove(); // 移除遮罩层
+            //$('body').css('overflow','auto');
+        });
+    });
+	$('#sign').click(function(){
+        // 切换popupDiv的显示状态，并根据状态切换active类
+        if ($('.dropdown-menu').is(':hidden')) {
+            $('.dropdown-menu').show();
+            $(this).addClass('on');
+        } else {
+            $('.dropdown-menu').hide();
+            $(this).removeClass('on');
+        }
+    });
+    $('#closeButton').click(function(){
+        $('.dropdown-menu').hide();
+    });
+	$('.tab-link:first').addClass('active');
+    $('.tab-content:first').addClass('active');
+    // 监听标签链接的点击事件
+    $('.tab-link').click(function(e){
+        e.preventDefault(); // 阻止默认的链接行为
+        var target = $(this).attr('href'); // 获取目标标签页的ID
+		ACTION_TAB = target;
+		// 移除所有标签页的激活状态
+        $('.tab-link').removeClass('active');
+        $('.tab-content').removeClass('active');
+
+        // 为当前点击的标签链接和对应的内容添加激活状态
+        $(this).addClass('active');
+        $(target).addClass('active');
+		if(target == '#tab1') ACTION_TYPE = 'new';
+		if(target == '#tab2') ACTION_TYPE = 'important';
+		if(target == '#tab3') ACTION_TYPE = 'public';
+		if(target == '#tab4') ACTION_TYPE = 'all';
+		request_item(1);		
+    });
+	ShowTopMenu(1);
+	
+	$('#topmenu li:first').addClass('over');
+	$('#topmenu li').each(function(index){
+		$(this).click(function(){
+				$('#topmenu li').removeClass();
+				$(this).addClass('over');
+		 })
+	});
+	<!--{if $menu_flag}-->
+	ShowSecMenu(49);
+	<!--{else}-->
+	ShowSecMenu(1);
+	<!--{/if}-->
+	<!--{if !$windows_allow}-->
+	getMessage();
+	setTimeout(get_user_info,1000);
+	<!--{/if}-->	
+	$("#menu2 li").each(function (index) {
+		$(this).click(function(){
+			$('#menu2 li').removeClass('active');
+			$(this).addClass('active');
+		});
+	});
+	$(".blockleft").niceScroll({  
+		cursorcolor:"#CAD3D5",  
+		cursoropacitymax:1,  
+		touchbehavior:false,  
+		cursorwidth:"2px",  
+		cursorborder:"0",  
+		cursorborderradius:"5px"  
+	});
+	window.onresize();
+	request_item(1);
+	$.getJSON(P8CONFIG.URI['core']['member'].controller +'-info_jsonp?callback=?', function(json){
+		if(json.new_messages>0){
+			$('#new_messages').html(json.new_messages);
+		}else{
+			$('#new_messages').html('0');
+		}
+	});
+});
+</script>
+<!--{template $this_module message_box}-->
+<script type="text/javascript">
+<!--{if isset($_GET['site'])}-->
+/*
+$(document).ready(function(){
+
+$('a').each(function(){
+	href = $(this).attr('href');
+	
+	if(typeof(href) != 'undefined'){
+		href += (href.indexOf('?')>-1?'&':'?')+'site=<!--{php echo xss_clear($sites->SITE);}-->';
+		$(this).attr('href',href);
+	}
+
+});
+})
+*/
+<!--{/if}-->
+</script>
+</body>
+</html>
+<!--{/php168}-->

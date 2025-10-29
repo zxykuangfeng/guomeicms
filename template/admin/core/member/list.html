@@ -1,0 +1,480 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+
+<form action="$this_url" method="get" id="request" onsubmit="request_item(1);return false;">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="formtable columntable">
+						<tr>
+							<td align="center" style="border-bottom:0;">
+								<select name="mstatus">
+									<option value="">不限{$P8LANG['member_status']['']}</option>
+									<!--{foreach $this_module->status $status $lang}-->
+									<option value="$status"{if isset($mstatus) && $mstatus === $status} selected{/if}>{$P8LANG['member_status'][$lang]}</option>
+									<!--{/foreach}-->
+									<option value="3"{if isset($mstatus) && $mstatus === 3} selected{/if}>{$P8LANG['member_status_3']}</option>
+									<option value="6"{if isset($mstatus) && $mstatus === 6} selected{/if}>{$P8LANG['member_status_6']}</option>
+									<option value="12"{if isset($mstatus) && $mstatus === 12} selected{/if}>{$P8LANG['member_status_12']}</option>									
+								</select>&nbsp;
+								<select name="dept" id="dept">
+									<option value="">不限部门</option>
+									<!--{foreach $dept_list $code $deptname}-->
+									<option value="$code">{$deptname}</option>
+									<!--{/foreach}-->
+								</select>&nbsp;
+								<!--{foreach $parents $n $p}-->
+								<select onchange="if(this.value) $('input name[parent]').val(this.value); window.location.href = '$this_url?'+$('#request').serialize()+'&parent='+ this.value"">
+									<option value="$p">请选择组织架构</option>
+									<!--{foreach $dept2_list $k $v}-->
+										<!--{if $v['parent'] == $p}-->
+										<!--{php if(isset($parents[$n +1])) unset($list[$k]);}-->
+										<option value="$v[id]"{if isset($parents[$n +1]) && $v['id'] == $parents[$n +1]} selected{/if}>$v[id]: $v[name]</option>
+										<!--{/if}-->
+									<!--{/foreach}-->
+								</select>
+								<!--{/foreach}-->
+								<input type="hidden" name="parent" value="$parent" />
+								<select name="role_gid" id="role_gid" onchange="if(this.value) change_role_group(this.value);">
+									<option value="0">全部角色组</option>
+								</select>&nbsp;
+								
+								<select name="role_id" id="role_id" onchange="if(this.value) request_item(1);">
+									<option value="0">全部角色</option>
+								</select>&nbsp;
+								
+								<select onchange="$('#cond').attr('name', this.value)">
+									<option value="keyword">按关键字</option>
+									<option value="id"{if !empty($id)} selected{/if}>按ID</option>
+									<option value="name"{if !empty($name)} selected{/if}>按中文名</option>
+									<option value="phone"{if !empty($phone)} selected{/if}>按手机号</option>
+								</select>&nbsp;
+								
+								<input type="text" class="txt" id="cond" size="15" 
+								{if strlen($keyword)} name="word" value="$keyword"
+								{elseif strlen($name)} name="name" value="$name"
+								{elseif !empty($id)} name="id" value="{implode(',', $id)}"
+								{else} name="word"
+								{/if}
+								/>&nbsp;
+								<input type="checkbox" name="is_admin" id="is_admin" value="1" /><label for="is_admin">超级管理员</label>
+								
+								<select name="order">
+									<option value="desc">降序</option>
+									<option value="asc">升序</option>
+								</select>
+								
+								
+								<input type="submit" value="搜索" class="submit_btn" onclick="$('input[name=where]', $('#send')).val($('#request').serialize());" />
+								
+								<input type="reset" name="" class="submit_btn" value="重置">
+								<!--{if $IS_FOUNDER || $allow_add}-->
+								<a class="submit_btn action" style="color:#fff;display:inline-block;height:26px;line-height:26px;" href="{$core.admin_controller}/core/member-add">添加会员</a>
+								<!--{/if}-->
+							</td>
+						</tr>
+					</table>
+				</td></tr>
+			</table>
+		</div>
+	</div>
+</form>
+
+<form id="form" action="$this_url" method="post" >
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a class="action" href="{$core.admin_controller}/core/member-add" target="_blank"><i class="icon icon-ico44"></i>新增账号</a></li>
+							<li class="btn-color1"><a href="{$core.admin_controller}/core/member-import" target="_blank"><i class="icon icon-ico44"></i>批量新增账号</a></li>
+							<li class="btn-color3"><a href="javascript:;" onclick="update_member(checked_values('id[]', $('#form')))"><i class="icon icon-ico45"></i>修改账号</a></li>
+							<li class="btn-color2"><a href="javascript:;" onclick="delete_member(checked_values('id[]', $('#form')))"><i class="icon icon-ico46"></i>删除账号</a></li>
+							<li class="btn-color10"><a href="javascript:void(0)" onclick="download_member()"><i class="icon icon-ico47"></i>导出账号</a></li>
+							<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/huiyuan.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 会员教程>></a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable hover_table click_changeable">
+						<tr class="title fix_head">
+							<td width="2%" class="title"><input type="checkbox" name="check_all" onclick="m_check_all(this)" /></td>
+							<td width="3%" align="center" class="title">ID</td>
+							<td width="8%" align="center" class="title">{$P8LANG['username']}</td>
+							<td width="6%" align="center" class="title">中文名(名称)</td>
+							<!--{if empty($_GET['_dialog'])}-->
+							<td width="7%" align="center" class="title">最后登录时间</td>
+							<td width="6%" align="center" class="title">最后登录IP</td>
+							<td width="7%" align="center" class="title">注册时间</td>
+							<!--{/if}-->
+							<td width="5%" align="center" class="title">所属部门</td>
+							<td width="4%" align="center" class="title">手机号码</td>
+							<td width="5%" align="center" class="title">用户权限</td>
+							<td width="4%" align="center" class="title">状态</td>
+							<td width="3%" align="center" class="title">排序</td>
+							<!--{if empty($_GET['_dialog'])}-->
+							<td width="16%" align="center" class="title">操作</td>
+							<!--{/if}-->
+							
+						</tr>
+						
+						<tbody id="list">
+						
+						</tbody>
+					  
+					</table>
+		
+				</td></tr>
+				<tr><td>
+					<table class="formtabletwo columntable">
+						<tr>
+							<td>
+								<div id="pages" align="center" class="pages"></div>
+							</td>
+						</tr>
+					</table>
+					</td></tr>
+			</table>
+
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">			
+				<tr>
+					<td>
+						<a name="op"></a>
+						<a href="javascript:void(0)" onclick="m_check_all(true)">全选</a> /
+						<a href="javascript:void(0)" onclick="m_check_all(false);">反选</a>
+						<!--{if empty($_GET['_dialog'])}-->
+							<!--{if $allow_delete}-->
+							<input type="button" value="批量删除" class="edit_btn" onclick="delete_member(checked_values('id[]'))" />
+							<!--{/if}-->
+							<!--{if $allow_send}-->
+							<input type="button" value="发送邮件" class="edit_btn" onclick="batch_send()" />
+							<!--{/if}-->
+							<!--{if $IS_FOUNDER}-->
+							<input type="submit" value="设置排序" class="edit_btn" onclick="javascript:$('#form').submit()" />
+							<input type="button" value="解锁/审核" class="edit_btn" onclick="verify_item(0)" />
+							<input type="button" value="取消审核" class="edit_btn" onclick="verify_item(1)" />
+							<input type="button" value="锁定用户" class="edit_btn" onclick="verify_item(2)" />
+							<!--{/if}-->
+						<!--{/if}-->
+					</td>	
+				</tr>
+			</table>
+		</div>		
+	</div>
+	<input type="hidden" name="action" value="" />
+	<input type="hidden" name="status" value="1" />
+</form>
+
+<form action="$this_router-batch_send" method="get" id="send" target="_blank">
+	<input type="hidden" name="where" />
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<div class="section-operation">
+			<h3>操作说明：</h3>
+			<div class="operation-text">用户列表就是所有账号，他归属于角色、组织机构等类别。单个用户可以设置个性化的权限，但是他会继承所属角色的权限。</div>
+		</div>
+	</div>
+</div>
+<div class="offside-file-detail right-panel clearfix">
+	<div class="offside-content">
+		<div class="offside-head">
+			<div class="offside-title">添加账号</div>
+			<div class="offside-close"><i class="iconfont icon-close"></i></div>
+		</div>
+		<div class="offside-main">
+			<iframe src="{$core.admin_controller}/core/member-add?nomenu=1" frameborder="0" scrolling="auto" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;"></iframe>
+		</div>
+	</div>
+</div>	
+<script type="text/javascript">
+$(document).ready(function() {
+    // 点击.action类元素时，给.offside-file-detail添加show类
+    $('.action').on('click', function(e) {
+        e.preventDefault(); // 阻止链接默认行为
+        $('.offside-file-detail').addClass('show');
+    });
+	// 点击页面其他区域时，移除.component-file-detail的show类
+    $(document).on('click', function(event) {
+        // 检查点击的元素是否是.action类或者.action的子元素
+        if (!$(event.target).closest('.action').length) {
+            $('.offside-file-detail').removeClass('show');
+        }
+    });
+	$(document).mouseup(function(e) {
+		var offside = $(".offside-file-detail");
+		if (!offside.is(e.target) && offside.has(e.target).length === 0) {
+			offside.removeClass("show");
+		}
+	});
+	// 确保.offside-close点击事件处理器不会冒泡并触发上面的逻辑
+    $('.offside-close').on('click', function(e) {
+        e.stopPropagation(); // 阻止事件冒泡
+        // 移除.show类
+        $('.offside-file-detail').removeClass('show');
+    });
+});
+
+var view_dialog = new P8_Dialog({
+	title_text:'查看用户',
+	width: 680,
+	height: 440,
+	button: true
+});
+view_dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+
+function show_user_dialog(id,role_gid){
+	view_dialog.show();
+	var ifr = view_dialog.content.find('iframe');
+	ifr.attr('src', '{$core.admin_controller}/core/member-view?id='+id+'&role_gid='+role_gid+'&nomenu=1');
+}
+
+var ROLE_GROUP_JSON = $role_group_json,
+	ROLE_JSON = $role_json,
+	status_json = $status_json,
+	checked_ids = {};
+
+function download_member(){
+	var obj=checked_values('id[]');
+	var id = [];
+	$.each(obj, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	$('#form input[name="role_gid"]').attr('value',$('#role_gid').val());
+	$('#form input[name="type"]').attr('value',$('#request input[type="radio"][name="type"][check="true"]').val());
+	$('#form input[name="word"]').attr('value',$('#request input[name="word"]').val());
+	$('#form').attr('action','$this_router-address_list_down');
+	$('#form').submit();
+}
+function verify_item(status){
+	var obj=checked_values('id[]');
+	var id = [];
+	$.each(obj, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(!id.length){
+		p8_window.alert('请选择用户！');
+		return false;
+	}else{
+		$('#form input[name="action"]').val('locked');
+		$('#form input[name="status"]').val(status);
+		$('#form').submit();
+	}
+}
+function update_member(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[member_select]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		$('#member_'+ids[i]).click();
+	}
+}
+function batch_send(){
+	var ids = checked_values('id[]');
+	if(ids.length){
+		$('input[name=where]', $('#send')).val('id='+ ids.join(','));
+	}else{
+		//$('input[name=where]', $('#send')).val($('#request').serialize());
+	}
+	
+	$('#send').attr('action', '$this_router-batch_send').submit();
+}
+
+function request_item(page){
+	$.ajax({
+		url: '$this_url',
+		data: $('#request').serialize() +'&page='+ (page === undefined ? 1 : page),
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			PAGE = page;
+			
+			$('#list').empty();
+			for(var i in json.list){
+				_list_item(json.list[i]);
+			}
+			
+			$('#pages').html(json.pages);
+			
+			ajaxing({action: 'hide'});
+			
+			window.scrollTo(0,0);
+			
+			$('#form input[name=check_all]').prop('checked', false);
+			
+			<!--{if !empty($_GET['_dialog'])}-->
+			$('#form input[name="id[]"]').click(function(){
+				var _this = this;
+				var tr = $(this).parent().parent();
+				
+				var json = {id: this.value, username: tr.find('td:eq(2) a').html(), role: tr.find('td:eq(5)').html()};
+				
+				setTimeout(function(){ parent.member_single_select_callback(_this.checked, json); }, 1);
+			});
+			<!--{/if}-->
+			
+			init_tr($('#form'));
+			
+			var keywords = $.trim($('#request input[name=keyword]').val());
+			if(!keywords.length) return;
+			
+			var keywords = keywords.replace(/[\+\-\*\|\!]/g, '').split(/\s+/);
+			
+			$('.list_item').each(function(){
+				for(var i = 0; i < keywords.length; i++){
+					var html = $(this).find('.item_title').get(0).innerHTML;
+					$(this).find('.item_title').get(0).innerHTML = html.replace(keywords[i], '<font color="red">'+ keywords[i] +'</font>', 'ig');
+				}
+			});
+			
+		}
+	});
+}
+
+function _list_item(json){
+	
+	var update_link = '{if $allow_update}<a href="$this_router-update?id='+ json.id +'&role_gid='+ json.role_gid +'" target="_blank"><span id="member_'+ json.id +'">{$P8LANG['edit']}</span></a> {/if}';
+	var delete_link = '{if $allow_delete}<a href="###" id="delete_'+ json.id +'" onclick="return delete_member([this.id]);" target="_blank">{$P8LANG['delete']}</a> {/if}';
+	var set_core_acl_link = '{if $allow_core_set_acl}<a href="{$core.admin_controller}/core-set_member_acl?user_id='+json.id+'" target="_blank"><font style="color:blue;">{$P8LANG['set_core_acl']}</font></a> {/if}';
+	var set_cms_acl_link = '{if $allow_cms_set_acl}<a href="{$core.admin_controller}/cms-set_member_acl?user_id='+json.id+'" target="_blank"><font style="color:blue;">{$P8LANG['set_cms_acl']}</font></a> {/if}';
+	var set_sites_acl_link = '{if $allow_set_acl}<a href="{$core.admin_controller}/sites-set_member_acl?user_id='+json.id+'" target="_blank"><font style="color:blue;">{$P8LANG['set_sites_acl']}</font></a> {/if}';
+	var copyacl_link = '<a href="{$core.admin_controller}/core/member-copy_acl?username='+json.username+'">{$P8LANG['copy_acl']}</a> ';
+	
+	var tr = 
+	'<tr>'+
+		'<td align="center"><input type="checkbox" name="id[]" value="'+ json.id +'"'+ (checked_ids[json.id] ? ' checked' : '') +' /></td>'+
+		'<td align="center">'+ json.id +'</td>'+
+		'<td><a href="javascript:void(0)" onclick="show_user_dialog('+ json.id +','+json.role_gid+')">'+ json.username +'</a></td>'+
+		'<td align="center">'+ json.name +'</td>'+
+		<!--{if empty($_GET['_dialog'])}-->
+		'<td align="center">'+ (json.last_login != 0 ? date('Y-m-d H:i', json.last_login) : '') +'</td>'+
+		'<td align="center">'+ json.last_login_ip +'</td>'+
+		'<td align="center">'+ date('Y-m-d H:i', json.register_time) +'</td>'+
+		<!--{/if}-->
+		'<td align="center">'+ json.dept +'</td>'+
+		'<td align="center">'+ json.cell_phone +'</td>'+
+		'<td align="center">'+ (ROLE_JSON[json.role_id] ? ROLE_JSON[json.role_id].name : '') +'</td>'+
+		'<td align="center">'+ status_json[json.status] +'</td>'+
+		'<td align="center"><input type="text" class="txt" name="display_order['+ json.id +']" value="'+ json.display_order +'" onchange="change_order(this)" size="4" /></td>'+
+		<!--{if empty($_GET['_dialog'])}-->
+		'<td class="cleartd" align="center">'+set_cms_acl_link + set_core_acl_link + set_sites_acl_link + copyacl_link + update_link  + delete_link +'</td>'+
+		<!--{/if}-->
+	'</tr>';
+	
+	$('#list').append($(tr));
+}
+
+function m_check_all(checked){
+	
+	check_all(checked, 'id[]', $('#form')); init_tr($('#form'));
+	
+	<!--{if !empty($_GET['_dialog'])}-->
+	$('#form input[name="id[]"]').click();
+	<!--{/if}-->
+}
+function change_order(obj){
+
+		obj.value = obj.value.replace(/[^0-9]/g, '') || 0;
+		if(obj.value > 255) obj.value = 255;
+		if(obj.value < 0) obj.value = 0;
+		$('#form').append('<input type="hidden" name="_display_order['+ obj.name.replace(/[^0-9]/g, '') +']" value="'+ obj.value +'" />');
+		$(obj).css({border: '1px solid #ff0000'});
+
+}
+
+$(function(){
+	
+	for(var i in ROLE_GROUP_JSON){
+		$('#role_gid').append($('<option value="'+ ROLE_GROUP_JSON[i].id +'">'+ ROLE_GROUP_JSON[i].name +'</option>'));
+	}
+	<!--{if $role_gid && $role_id}-->
+	change_role_group({$role_gid});
+	$('#role_id').val({$role_id});
+	
+	<!--{/if}-->
+	setTimeout(request_item(1),1000);
+	
+	
+	if(\$_GET['checked_ids']) checked_ids = \$_GET['checked_ids'];
+	
+	if(window.opener){
+		$('#opener_hide').hide();
+		
+		$('#button_bar').append($('<input type="button" value="确定选择" class="edit_btn" />').click(function(){
+			
+			var ids = checked_values('id[]');
+			if(ids.length){
+				window.opener.member_select_callback(ids);
+			}else{
+				window.opener.member_select_callback($('input[name=where]', $('#send')).val());
+			}
+			
+			window.close();
+		}));
+	}
+	
+	
+});
+
+function change_role_group(gid){
+	$('#role_id').attr('length', 1);
+	for(var i in ROLE_JSON){
+		if(ROLE_JSON[i].gid != gid) continue;
+		
+		$('#role_id').append($('<option value="'+ ROLE_JSON[i].id +'">'+ ROLE_JSON[i].name +'</option>'));
+	}
+	
+	request_item(1);
+}
+
+function delete_member(obj){
+	
+	var id = [];
+	$.each(obj, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	if(id.length<1) {
+		p8_window.alert('{$P8LANG[member_select]}');
+		return;
+	}
+	p8_window.confirm('{$P8LANG['confirm_to_delete_member']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({id: id}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					if(json.length == 0) return false;
+					
+					for(var i in json){
+						$('#delete_'+ json[i]).parent().parent().remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});
+	
+	return false;
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

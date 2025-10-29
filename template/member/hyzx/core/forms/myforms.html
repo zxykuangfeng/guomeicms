@@ -1,0 +1,192 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<link type="text/css" rel="stylesheet" href="{$MEMBERSKIN}/intranet/style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<div class="forms-container">
+	<div class="forms-center">
+		<div class="main-title"><span>{if $model_alias}{$model_alias}{else}我填写的表单内容{/if}</span></div>
+		<div class="search-myforms search-manage">
+			<form name="request" id="request" class="search-form" action="$this_url" method="get">				
+				<div class="form-item4">
+					<label class="form-label">表单:</label>
+					<div class="input-block">
+						<select name="mid"onchange="this.form.submit();" class="select">
+							<option value="">所有</option>
+							<!--{foreach $models $k $v}-->
+							<!--{if $v['enabled'] && $v['id'] != "199"}-->
+							<option value="$v[id]" {if isset($mid) && $mid==$v['id']}selected="selected"{/if}>$v[alias]</option>
+							<!--{/if}-->
+							<!--{/foreach}-->
+						</select>
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">提交时间:</label>
+					<div class="input-block">
+						<input type="text" name="mindate" size="10" onclick="rcalendar(this);" value="{if !empty($mindate)}$mindate{/if}" class="input2"/>
+						-
+						<input type="text" name="maxdate" size="10" onclick="rcalendar(this);"  value="{if !empty($maxdate)}$maxdate{/if}" class="input2"/>
+					</div>
+				</div>				
+				<div class="form-item4">
+					<label class="form-label">用户名:</label>
+					<div class="input-block">
+						<input type="text" name="username" size="8" value="{if !empty($username)}$username{/if}" class="input"/> 
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">真实姓名:</label>
+					<div class="input-block">
+						<input type="text" name="name" size="8" value="{if !empty($name)}$name{/if}" class="input"/> 
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">前台显示:</label>
+					<div class="input-block">
+						<select name="display" class="select">
+							<option value="">所有</option>
+							<option value="2" {if $display == 2}selected{/if}>是</option>
+							<option value="1" {if $display == 1}selected{/if}>否</option>
+						</select>
+					</div>
+				</div>
+				<div class="form-item4">
+					<label class="form-label">状态:</label>
+					<div class="input-block">
+						<select name="selectstatus" class="select">
+							<option value="">所有</option>
+							<!--{foreach $status $k $v}-->				
+							<option value="$k" {if isset($selectstatus) && $selectstatus===$k}selected{/if}>$v</option>				
+							<!--{/foreach}-->
+						</select>
+					</div>
+				</div>
+				<!--{if $mid}-->				
+				<!--{foreach $this_model['filterable_fields'] $field $field_data}-->
+				<!--{php $field_data['editable'] = 1;}-->				
+				<div class="form-item4">
+					<label class="form-label">{$field_data['alias']}:</label>
+					<div class="input-block">
+						<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+					</div>
+				</div>
+				<!--{/foreach}-->
+				<!--{/if}-->
+				<div class="clear"></div>
+				<div class="form-item4" style="text-align:center;margin:0 auto;padding:0;width:100%;">
+					<div class="input-block">
+						<input type="submit" class="btn" onclick="request.action='$this_url';request.method='get'" value="查询" />
+						<input type="reset" name="" class="btn btn-reset" value="重置">						
+						<input type="hidden" name="ids" value="" />
+					</div>
+				</div>
+			</form>
+		</div>		
+		<div id="show_myforms" style="">
+			<div class="forms-content">
+				<form name="form" id="form" action="$this_url" method="post">
+				<table width='99%' cellspacing='1' cellpadding='3' class="show_table" style="text-align:center">
+					<tr class="tablehead">
+						<td width="8%">ID</td>
+						<td width="20%" align="center"><a href="$this_url">表单名称</a></td>
+						<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+						<td width="">$field_data[alias]</td>
+						<!--{/foreach}-->
+						<td width="5%">提交者</td>
+						<td width="5%">真实姓名</td>
+						<td width="8%">填写时间</td>
+						<td width="5%">状态</td>
+						<td width="5%">前台显示</td>
+						<td width="*">操作</td>
+					</tr>
+					<!--{foreach $list $key $value}-->
+					<tr id="item_$value[id]">
+						<td>
+							<input type="checkbox" name="id[]" value="$value[id]" />
+							$value[id]</td>
+						<td align="center"><a href="{$this_module.controller}-view?id=$value[id]&mid=$value[mid]" target="_blank"><strong>$value[title]</strong></a></td>
+						<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+						<td>
+							<!--{if !empty($value[$field]) && ($field_data['widget']=='radio' || $field_data['widget']=='select')}-->					
+								<!--{php echo is_array($field_data['data'][$value[$field]]) ? $field_data['data'][$value[$field]][0] : $field_data['data'][$value[$field]];}-->
+							<!--{elseif !empty($value[$field]) && ($field_data['widget']=='checkbox' || $field_data['widget']=='multi_select')}-->
+								<!--{foreach $value[$field] $v}-->
+									{$field_data['data'][$v]}, 
+								<!--{/foreach}-->
+							<!--{elseif isset($value[$field]) && $field_data['widget']=='linkage'}-->
+									<!--{php  $field_value= array_pop($value[$field]);}-->
+										{$field_value}	
+							<!--{else}-->	
+								{$value[$field]}
+							<!--{/if}-->
+							<!--{if !empty($field_data['units'])}-->
+								$field_data[units]
+							<!--{/if}-->
+						</td>
+						<!--{/foreach}-->
+						<td>$value[username]</td>
+						<td>$value[uname]</td>
+						<td>{date('Y-m-d',$value['timestamp'])}</td>
+						<td id="status_$value[id]">
+							<!--{if $value['status']==0}-->
+							<strong>
+							<!--{/if}-->
+							{$status[$value['status']]}
+							<!--{if $value['status']==0}-->
+							</strong>
+							<!--{/if}-->
+						</td>
+						<td align="center" id="verified_$value[id]"><!--{if $value['display']==0}-->是<!--{else}--><strong>否</strong><!--{/if}--></td>			
+						<td class="operation">
+							<a href="$value[url]" target="_blank">查看</a> / 
+							<a href="{$this_module.controller}-update?id=$value[id]&mid=$value[mid]" target="_blank">修改</a> / 							
+							{if $value['status']==9}<!--a href="javascript:void()" onclick="deleteitem($value[id],$value[mid]);return false">删除</a-->{/if}
+						</td>
+					</tr>
+					<!--{/foreach}-->						
+				</table>
+				<table width='99%' cellspacing='1' cellpadding='3' class="formtable columntable hover_table mtop" style="text-align:center">
+					<tr>
+						<td align="center" style="border:0;padding:20px;">									
+							<span class="pages-forms">$pages</span>
+						</td>
+					</tr>
+				</table>
+				</form>				
+			</div>
+			<div class="clear"></div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var MID = $mid;
+function deleteitem(id,mid){
+	if(id==undefined){	
+		if(!check_ids())return;
+	}
+	//if(!confirm('确定要删除？'))return;
+	p8_window.confirm('确定要删除？', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: $('#form').serialize()+'&action=delete&oid='+id+"&mid="+(mid==undefined? MID : mid),
+				beforeSend: function(){
+					//ajaxing({});
+				},
+				success: function(json){
+					//ajaxing({action: 'hide'});
+					for(var i in json){
+						$('#item_'+json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});	
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

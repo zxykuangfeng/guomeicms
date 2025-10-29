@@ -1,0 +1,137 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0" cellspacing="1" cellpadding="3" class="tablewidth">
+			<tr class="head"> 
+			  <td>公众号菜单说明</td>
+			</tr>
+			<tr bgcolor="#FFFFFF"> 
+			  <td><div style="line-height:200%">
+			  <ul>
+			    <li><span style="color:red;">自定义菜单建议使用微信官方平台进行设置，国微官方仅提供辅助。<span></li>
+				<li>1.自定义菜单最多包括3个一级菜单，每个一级菜单最多包含5个二级菜单。</li>
+				<li>2.一级菜单最多4个汉字，二级菜单最多7个汉字，多出来的部分将会以“...”代替。</li>
+				<li>3.创建或删除自定义菜单后，点击“更新菜单到公众号”按钮才会生效。</li>
+				<li>4.菜单的刷新策略是，在用户进入公众号会话页或公众号profile页时，如果发现上一次拉取菜单的请求在5分钟以前，就会拉取一下菜单，如果菜单有更新，就会刷新客户端的菜单。测试时可以尝试取消关注公众账号后再次关注，则可以看到创建后的效果。</li>
+				</ul>
+				</div>
+				</td>
+			</tr>
+		</table>
+
+		<form id="form" action="$this_url" method="post" name="form">
+		<table width="100%" class="columntable formtable hover_table click_changeable">				
+			<tr class="title">
+			<td width="5%" class="title">ID</td>
+			<td width="10%" align="center" class="title">菜单名称</td>
+			<td width="10%" align="center" class="title">类型</td>
+			<td width="20%" align="center" class="title">菜单值</td>
+			<td width="5%" align="center" class="title">排序</td>
+			<td width="20%" align="center" class="title">操作</td>
+		  </tr>
+		<!--{foreach $Menus $menu}-->
+          <tr id="menu_{$menu['id']}">
+		    <td align="center">{$menu['id']}</td>
+			<td align="left"><span style="cursor: pointer;"><img src="{$SKIN}/show.gif" /></span>{$menu['name']}</td>
+            <td align="center">{$menu['type']}</td>
+            <td align="center"><div style="max-width:350px;overflow:hidden" title="{$menu['value']}">{$menu['value']}</div></td>
+           <td align="center">{$menu['list_order']}</td>
+            <td>
+				<a href="$this_url?action=editmenu&pid={$menu['id']}" onclick="return _add_child_menu({$menu['id']})" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">添加子菜单</a>
+				<a href="$this_url?action=editmenu&id={$menu['id']}" onclick="return _edit_menu({$menu[id]})" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">编辑</a>
+				<a href="$this_url?action=deletemenu&id={$menu['id']}" onclick="return delete_menu({$menu[id]})" class="edit_btn btn-success" style="padding-top:2px;padding-bottom:2px;">删除</a>
+			</td>
+          </tr>
+		  <!--{php $i = empty($menu['childs']) ? 0 : count($menu['childs'])-1;}-->
+		  <!--{foreach $menu['childs'] $key $childmenu}-->
+          <tr id="menu_{$childmenu['id']}">
+			<td align="center">{$childmenu['id']}</td>
+			<td align="left">{if $key==$i}│&nbsp;&nbsp;└&nbsp;&nbsp;{else}│&nbsp;&nbsp;├&nbsp;&nbsp;{/if}{$childmenu['name']}</td>
+            <td align="center">{$childmenu['type']}</td>
+            <td align="center"><div style="max-width:350px;overflow:hidden" title="{$childmenu['value']}">{$childmenu['value']}</div></td>
+           <td align="center">{$childmenu['list_order']}</td>
+            <td>
+				<a href="$this_url?action=editmenu&id={$childmenu['id']}" onclick="return _edit_menu({$childmenu[id]})" class="edit_btn" style="padding-top:2px;padding-bottom:2px;">编辑</a>
+				<a href="$this_url?action=deletemenu&id={$childmenu['id']}" onclick="return delete_menu({$childmenu[id]})" class="edit_btn btn-success" style="padding-top:2px;padding-bottom:2px;">删除</a>
+			</td>
+          </tr>
+          <!--{/foreach}-->
+          <!--{/foreach}-->
+          <!--{if empty($Menus)}-->
+          <tr>
+            <td colspan="6" class="text-center">无记录</td>
+          </tr>
+         <!--{/if}-->
+		 <tr>
+			<td colspan="6">
+				<input type="button" onclick="return _edit_menu(0)" class="edit_btn" value="添加菜单" />
+				<input type="button" onclick="return createwxmenu()" class="edit_btn" value="更新菜单到公众号" />
+				<input type="button" onclick="return deletewxmenu()" class="edit_btn btn-success" value="删除公众号所有菜单" />
+			</td>
+		</tr>
+        </table>
+      </form>
+  </div>
+</div>
+<SCRIPT LANGUAGE="JavaScript">
+
+function delete_menu(id){
+	//if(confirm('{$P8LANG['confirm_to_delete']}')){
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_url',
+				type: 'POST',
+				dataType: 'json',
+				data: ajax_parameters({id: id,action:'deletemenu'}),
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){				
+					ajaxing({action: 'hide'});
+					if(json) 
+						$('#menu_'+ json).remove();
+					else
+						p8_window.alert('{$P8LANG['notempty']}');
+				}
+			});
+		}
+	});	
+	return false;
+}
+
+
+var edit_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['reply']}',
+	width: 700,
+	height: 440
+});
+
+function _edit_menu(id){
+	edit_dialog.show();
+	edit_dialog.content.load('{$this_url}?action=editmenu&id='+id);
+	return false;
+}
+
+function _add_child_menu(pid){
+	edit_dialog.show();
+	edit_dialog.content.load('{$this_url}?action=editmenu&pid='+pid);
+	return false;
+}
+
+function createwxmenu(){
+	window.open("{$this_url}?action=createwxmenu");
+}
+
+function deletewxmenu(){
+	window.open("{$this_url}?action=deletewxmenu");
+}
+
+
+
+</SCRIPT>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

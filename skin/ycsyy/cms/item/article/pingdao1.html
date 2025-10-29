@@ -1,0 +1,75 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="container">
+		<div class="fluid">
+			<div class="bigbanner">
+
+$label[bigbanner]
+
+</div>
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="position2">
+			<a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			&gt; <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			&gt; <a href="$CAT[url]">$CAT[name]</a> 
+		</div>
+	</div>
+	<div class="row">
+		<div class="college">
+			<div class="list list1">
+				<div class="cpic">
+					<div class="img"><img src="{$SKIN}images/college_img1.jpg" alt=""></div>
+				</div>
+				<div class="cinfo">
+					<div class="list_in list_in1">
+						<h3 class="title">$label[list_college_tt1]</h3>
+						<h4 class="abbreviated">$label[list_college_en_tt1]</h4>
+						<div class="text">$label[list_college_text1]</div>
+						<div class="cbtn">$label[list_college_btn1]</div>
+						<span class="triangle"></span>
+					</div>
+				</div>
+			</div>
+			<div class="list list2">
+				<div class="cpic">
+					<div class="img"><img src="{$SKIN}images/college_img1.jpg" alt=""></div>
+				</div>
+				<div class="cinfo">
+					<div class="list_in list_in1">
+						<h3 class="title">$label[list_college_tt2]</h3>
+						<h4 class="abbreviated">$label[list_college_en_tt2]</h4>
+						<div class="text">$label[list_college_text2]</div>
+						<div class="cbtn">$label[list_college_btn2]</div>
+						<span class="triangle"></span>
+					</div>
+				</div>
+			</div>
+			<div class="list list3">
+				<div class="cpic">
+					<div class="img"><img src="{$SKIN}images/college_img1.jpg" alt=""></div>
+				</div>
+				<div class="cinfo">
+					<div class="list_in list_in1">
+						<h3 class="title">$label[list_college_tt3]</h3>
+						<h4 class="abbreviated">$label[list_college_en_tt3]</h4>
+						<div class="text">$label[list_college_text3]</div>
+						<div class="cbtn">$label[list_college_btn3]</div>
+						<span class="triangle"></span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+

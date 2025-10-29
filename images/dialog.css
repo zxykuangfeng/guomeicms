@@ -1,0 +1,26 @@
+.php168_dialog { position: absolute; border: 5px solid #8CB8EA; background-color: #ffffff; width: 400px; height: 200px; }
+.php168_dialog .title_bar { padding:12px 15px; background-color: #f7f7f7;border-bottom:1px solid #e5e9eb; cursor: move; }
+.php168_dialog .title { color:#282828;font-size:18px;}
+.php168_dialog .close { float: right; cursor: pointer; width: 18px; height: 18px; background: url(close.gif) no-repeat 0px -18px; }
+.php168_dialog .close  span{ display: none; }
+.php168_dialog .content_container { width: 100%; }
+.php168_dialog .content { padding: 5px; }
+.php168_dialog .chosebar .active{background:#1b7acf;color:#fff;border:1px solid #1b7acf;}
+.php168_dialog .button_bar {text-align:center;clear:both;}
+.php168_dialog .button_bar .cancel{width:89px;height:32px;background:url(cancel_bg.jpg) no-repeat; color:#2c2c2c; border:none;padding:0; margin-left:10px; margin-bottom:2px;  cursor:pointer;letter-spacing:1px;}
+.php168_dialog .button_bar .ok{display:inline-block;border:none;background:url(yes_bg.jpg) no-repeat;color:#2c2c2c;width:89px;height:32px;padding:0; margin-left:10px; margin-bottom:2px;  cursor:pointer}
+.foot_negative { margin-bottom:-5px; }
+/*p8_window*/
+.p8_win_layer { display: none; }
+.p8_mask_layer { position: fixed; width: 100%; height: 100%; z-index: 99998; top: 0px; left: 0px; }
+.p8_win_panel { position: fixed; z-index: 99999; top: 50%; left: 50%; border:1px solid #48AEE0; background:#82D1F8;padding:3px; border-radius: 4px;}
+.p8_win_panel .title-panel { position: absolute; height: 36px; width: 100%; border-radius: 4px 4px 0 0; }
+.p8_win_panel .title {color:#000; font-size:14px; font-family:"宋体", Arial, Times; text-align:left; line-height:120%; background:#fff; }
+.p8_win_panel h3 { font-size: 14px; margin: 0;font-weight:700; }
+.p8_win_panel .close-btn { display: block; text-align: center; vertical-align: middle; position: absolute; width: 36px; height: 36px; line-height: 36px; right: 0px; text-decoration: none; font-size: 24px; color: black; background-color: #DBDBDB; border-radius: 2px; z-index: 1; }
+.p8_win_panel .close-btn:hover { background-color: #ccc; }
+.p8_win_panel .body-panel {background:#fff;padding:15px;}
+.p8_win_panel .content, .p8_win_panel .btns { text-align: center; }
+.p8_win_panel .content { padding: 18px 5px 5px 5px; font-size: 14px; min-height: 44px; line-height: 22px; }
+.p8_win_panel .btns .cancel{width:62px;height:28px; background:url(cancel.jpg) no-repeat; color:#fff; border:none; margin-left:10px; margin-bottom:2px;  cursor:pointer;letter-spacing:1px;}
+.p8_win_panel .btns .ok{border:none;background:url(yes.jpg) no-repeat;color:#fff;width:62px;height:28px; margin-left:10px; margin-bottom:2px;  cursor:pointer}

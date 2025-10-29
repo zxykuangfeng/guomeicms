@@ -1,0 +1,77 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<form action="$this_url" method="POST" onsubmit="check_privileges()">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="acltable">
+							<tr>
+								<td class="title"></td>
+							</tr>
+							<tr>
+								<td class="headerbtn_list">
+									<ul style="background: #D5E9FF;">
+											<!--{if $IS_FOUNDER}-->
+											<li class="{if $SYSTEM == 'core'}active{/if}">
+												<a href="{$core.admin_controller}/core-set_acl?role_id=$role_id"><i class="fa fa-cogs"></i> {$P8LANG['core']}</a>
+											</li>
+											<li class="{if $SYSTEM == 'cms'}active{/if}">
+												<a href="{$core.admin_controller}/cms-set_acl?role_id=$role_id"><i class="fa fa-cogs"></i> 主站系统</a>
+											</li>
+											<!--{/if}-->
+											<li class="{if $SYSTEM == 'sites'}active{/if}">
+												<a href="{$this_system.admin_controller}-set_acl?role_id=$role_id"><i class="fa fa-cogs"></i> 分站系统</a>
+											</li>
+									</ul>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<table class="columntable formtable">
+							<tbody class="privileges">
+								<tr>
+									<td class="tdL role_name">
+										<strong><label for="acl_$module">&nbsp;&nbsp;当前站点：</label></strong>
+										<select name="postfix" id="this_site" onchange="set_site(this)">
+										 <option value="">请选择</option>
+										<!--{foreach $mysites $site}-->
+										<option value="$site" {if !empty($this_system->SITE) && $site==$this_system->SITE}selected{/if}>{$allsites[$site]['sitename']}</option>
+										 <!--{/foreach}-->
+										</select>
+									</td>
+								</tr>
+								<!--{foreach $acls $module $_acl}-->
+								<!--{template $member acl_module_action admin}-->
+								<!--{/foreach}-->								
+							</tbody>						
+						</table>
+					</td>
+				</tr>
+			</table>
+			<table align="center" border="0" cellpadding="0" cellspacing="0" class="buttomtable">
+				<tr><td class="" >
+					<input type="hidden" name="role_id" value="{if !empty($role_id)}$role_id{/if}" />
+					<input type="submit" name="submit" value="确定" class="edit_btn" />
+					<input type="reset" name="rest" value="重置" class="edit_btn"/>
+				</td></tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+function check_privileges(){
+	$('.privileges input[type=checkbox]').each(function(i){
+		if(!this.checked){
+			this.checked = true;
+			this.value = 0;
+		}
+	});
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,186 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+
+<form action="$this_url" method="GET">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">
+			<tr class="title fix_head">
+				<td class="title">广告管理</td>
+			</tr>
+			
+			<tr>
+				<td class="headerbtn_list">
+					<input type="text" class="txt" name="word" value="$keyword" size="40" /> 
+					<!--ID<input type="text" class="txt" name="id" value="$id" size="5" /> -->
+					<input type="submit" class="submit_btn" value="{$P8LANG['search']}" />
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+</form>
+
+<form action="$this_url" method="POST" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="$this_router-add" target="_blank"><i class="icon icon-ico44"></i>新增广告类型</a></li>
+							<li class="btn-color2"><a href="javascript:;" onclick="views_item(checked_values('id[]', $('#form')))"><i class="icon icon-ico5"></i>预览广告</a></li>
+							<li class="btn-color3"><a href="javascript:;" onclick="update_item(checked_values('id[]', $('#form')))"><i class="icon icon-ico45" target="_blank"></i>修改</a></li>
+							<li class="btn-color5"><a href="javascript:;" onclick="_delete()"><i class="icon icon-ico46" target="_blank"></i>删除</a></li>
+							<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/ad.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 操作教程>></a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable hover_table click_changeable">
+			<tr class="title">
+				<td width="3%" align="center" class="title"><input type="checkbox" onclick="check_all(this, 'id[]'); init_tr($('#form'));" /></td>
+				<td width="5%" align="center" class="title">ID</td>
+				<td width="12%" align="center" class="title">广告名称</td>
+				<td width="10%" align="center" class="title">广告类型</td>
+				<td width="9%" align="center" class="title">广告投放位置</td>
+				<td width="4%" align="center" class="title">广告展示数</td>
+				<td width="4%" align="center" class="title">投放数量</td>
+				<td width="22%" align="center" class="title">调用代码</td>
+				<td width="12%" align="center" class="title">时间</td>
+				<td width="*" align="center" class="title">{$P8LANG['operation']}</td>
+			</tr>
+			
+			<!--{foreach $list $value}-->
+			<tr id="ad_$value[id]">
+				<td align="center"><input type="checkbox" name="id[]" value="$value[id]" /></td>
+				<td align="center">{$value['id']}</td>
+				<td align="center" id="name_$value[id]">{$value['name']}</td>
+				<td align="center">{$P8LANG[$value['type']]}</td>
+				<td align="center">{$value['source']}</td>
+				<td align="center">$value[show_count]</td>
+				<td align="center">$value[buy_count]</td>
+				<td align="center"><input type="text" value="$value[invoke]" onclick="show_invoke(this.value)" style="width:80%;" /></td>
+				<td align="center">{date('Y-m-d H:i', $value['timestamp'])}</td>
+				<td align="center">
+					<a href="{$this_module.controller}-preview-id-{$value['id']}" target="_blank"><span id="views_{$value['id']}">预览广告</span></a> / 
+					<a href="$this_router-add_buy?aid={$value['id']}" target="_blank">投放广告</a> / 
+					<a href="$this_router-buy_list?aid={$value['id']}" target="_blank">投放管理</a> / 					
+					<a href="$this_router-update?id={$value['id']}" target="_blank">{$P8LANG['edit']}</a>
+				</td>
+			</tr>
+			<!--{/foreach}-->			
+			</table>
+			<table width="100%" class="columntable formtable">
+			<tr>
+					<td align="center" id="pages" class="pages">
+						$pages
+					</td>
+				</tr>
+			</table>
+			<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">				
+				<tr>
+					<td>
+						<input type="button" value="重新统计投放数" onclick="_submit('statistic')" class="edit_btn" />
+						<input type="button" value="更新广告缓存" onclick="cache()" class="edit_btn" />
+						<input type="button" value="删除" onclick="_delete()" class="edit_btn" />
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+<input type="hidden" name="action" value="" />
+</form>
+
+<script type="text/javascript">
+function update_item(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[item_need_selected]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		window.open("$this_router-update?id="+ids[i],'_blank');
+	}
+}
+function views_item(ids){
+	if(Array.isArray(ids)){
+		if(ids.length<1) {
+			p8_window.alert('{$P8LANG[item_need_selected]}');
+			return;
+		}
+	}
+	for(var i in ids){
+		$('#views_'+ids[i]).click();
+	}
+}
+function cache(){
+	if(!checked_values('id[]', $('#form')).length) check_all(true, 'id[]');
+	ajaxing({text:'处理中...'});
+	$('#form input[name=action]').remove();
+	$('#form').attr('action', '$this_router-cache');
+	$('#form').submit();
+}
+
+function _submit(val){
+	ajaxing({text:'处理中...'});
+	$('#form input[name=action]').val(val);
+	$('#form').submit();
+}
+
+function _delete(){
+	var id = checked_values('id[]');
+	if(id.length<1) {
+		p8_window.alert('{$P8LANG[item_need_selected]}');
+		return;
+	}	
+	//if(!confirm('{$P8LANG['confirm_to_delete']}')) return;
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'post',
+				dataType: 'json',
+				data: {id: id},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#ad_'+ json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});	
+}
+
+var dialog = new P8_Dialog({
+	width: 600,
+	height: 480
+});
+
+function show_invoke(value){
+	dialog.show();
+	var tmp = value.split('|');
+	
+	var s = '';
+	for(var i in tmp){
+		s += html_entities(tmp[i]) +'<hr />';
+	}
+	
+	dialog.content.html(s);
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

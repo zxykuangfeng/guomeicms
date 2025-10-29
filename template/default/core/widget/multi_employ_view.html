@@ -1,0 +1,16 @@
+<!--{php168}-->
+<table width="100%" cellpadding="0" cellspacing="0">
+	<tr>
+		<td align="center">{$P8LANG['employ']['start_end_date']}</td>
+		<td align="center">{$P8LANG['employ']['employer']}</td>										
+		<td align="center">{$P8LANG['employ']['position']}</td>		
+	</tr>
+	<!--{foreach $data[$field] $vv}-->
+	<tr>
+		<td align="center" style="border-top:1px solid #000;">从{$vv['date_attended_from']}<br/>至{$vv['date_attended_to']}</td>
+		<td align="center" style="border-top:1px solid #000;">{$vv['employer']}</td>										
+		<td align="center" style="border-top:1px solid #000;">{$vv['position']}</td>
+	</tr>
+	<!--{/foreach}-->	
+</table>
+<!--{/php168}-->

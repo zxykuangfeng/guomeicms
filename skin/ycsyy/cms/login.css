@@ -1,0 +1,12 @@
+body{background:#e3f5ff;}
+.login{background:url(images/login.png) center top no-repeat;}
+.header{width:1000px;height:170px;margin:0 auto;position:relative;}
+.header .logo{padding: 34px 0 44px 0;text-align: center;}
+.header .show{position:absolute;top:10px;right:10px;}
+.layout{width:1000px;margin:0 auto;background:#ffffff;}
+.layout h3{height:59px;line-height:59px;text-align:center;color:#011c3c;font-size:21px;border-bottom: 1px dashed #dcdcdc;margin-bottom: 20px;}
+.layout .list{padding-bottom:20px;overflow:hidden;}
+.layout .list  li{width:313px;height:60px;line-height:60px;float:left;background:#e5e5e5;margin:0 10px 12px 10px;text-align:center;}
+.footer {padding:30px 0;background: #dce0e0;overflow: hidden;}
+.footinner{width:1000px;margin:0 auto;}
+.copyright{color:#646464;line-height:35px;text-align:center;}

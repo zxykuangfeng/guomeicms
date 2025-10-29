@@ -1,0 +1,465 @@
+<?php
+defined('PHP168_PATH') or die();
+?>
+<?php
+print <<<EOT
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>系统后台管理平台</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="X-Csrf-Token" content="{$CSRF_TOKEN}">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" href="{$RESOURCE}/skin/admin/style.css" type="text/css">
+<link rel="stylesheet" href="{$AWESOME}/skin/default/core/awesome4.7.0/css/font-awesome.min.css" type="text/css">
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core->CONFIG['lang']}.js"></script>
+<script type="text/javascript">
+P8CONFIG.admin_controller = '{$core->admin_controller}';
+var MENU_JSON = $json[json];
+var MENU_JSON2 = $json[json2];
+var MENU_PATH = $json[path];
+var MENU_DENIED = $denied;
+var system_menu_hide_timeout;
+function get_menu_by_id(id){
+var path = clone(MENU_PATH[id]);
+var root = path.shift();
+
+var search = get_menu_byid(MENU_JSON2,root);
+
+if(path.length == 0){
+return search;
+}
+
+for(var i in path){
+search = get_menu_byid(search.menus,path[i]);
+}
+
+return search;
+}
+function get_menu_byid(json,need){
+for(var i in json){
+if(json[i].id==need){
+return json[i];
+}
+}
+return {};
+}
+P8CONFIG.RESOURCE = '$RESOURCE';
+var SYSTEM = '$SYSTEM',
+MODULE = '$MODULE',
+ACTION = '$ACTION',
+LABEL_URL = '$LABEL_URL',
+STATIC_URL = '$STATIC_URL',
+\$this_router = '{$this_router}',
+\$this_url = \$this_router +'-'+ ACTION,
+SKIN = '$SKIN',
+TEMPLATE = '$TEMPLATE';
+mobile_status= '{$core->CONFIG['enable_mobile']}',
+mobile_auto_jump='{$core->CONFIG['mobile_auto_jump']}',
+mobile_url = '{$core->CONFIG['murl']}';
+if(mobile_status=='1' && SYSTEM!='sites'){
+if(browser.versions.android || browser.versions.iPhone || browser.versions.iPad){
+if(mobile_auto_jump=='1' && mobile_url!=P8CONFIG.RESOURCE){
+var this_url = location.href,_pul=P8CONFIG.RESOURCE;
+if(this_url.indexOf(mobile_url)==-1 && this_url.indexOf('s.php')==-1 && this_url.indexOf('u.php')==-1 && this_url.indexOf('admin.php')==-1 && SYSTEM!='sites'){
+if(this_url.indexOf(P8CONFIG.RESOURCE+'/html')!=-1)_pul+='/html';
+if(P8CONFIG.RESOURCE==''){
+this_url = mobile_url.indexOf('http')==-1 ? this_url.mobile_url : mobile_url;
+}else{
+this_url = this_url.replace(_pul, mobile_url);
+}
+location.href = this_url;
+}
+}
+}
+}
+EOT;
+if($SYSTEM=='sites' && defined('P8_SITES')){
+$sitestatus=$core->CONFIG['url']. '/sites/html/'.$this_system->SITE.'/sitestatus.js';
+print <<<EOT
+
+include('$sitestatus'+'?_='+Math.random())
+EOT;
+}
+print <<<EOT
+
+
+</script>
+<script type="text/javascript">
+var cache_action = "{$core->admin_controller}/core-cache";
+var index_html_action = "{$core->admin_controller}/cms-index_to_html";
+var index_html_m_action = "{$core->admin_controller}/cms-index_to_html";
+var item_view_action = "{$core->admin_controller}/cms/item-view_to_html";
+var item_list_action = "{$core->admin_controller}/cms/item-list_to_html";
+var label_action = "{$core->admin_controller}/core/label-cache";
+var category_action = "{$core->admin_controller}/cms/category-cache";
+var special_html = "{$core->admin_controller}/core/special-view_to_html";
+var _obj = new Date(
+EOT;
+echo P8_TIME;
+print <<<EOT
+000);
+var _Y = _obj.getFullYear();
+var _m = _obj.getMonth() +1;
+var _d = _obj.getDate();
+var _H = _obj.getHours();
+var _j = _obj.getDay();
+</script>
+</head>
+<body>
+<div id="container" class="main-container">
+<div class="main-header">
+<div class="header-container">
+<div class="header-left">
+<div class="logo"><a href="{$core->admin_controller}"><img src="
+EOT;
+if(isset($config['logo_core']) && !empty($config['logo_core'])){
+print <<<EOT
+{$config['logo_core']}
+EOT;
+}else{
+print <<<EOT
+{$RESOURCE}/skin/admin/logo.png
+EOT;
+}
+print <<<EOT
+" /></a></div>
+<div class="header-menu">
+<ul class="header-menu-item" id="core_menu">
+EOT;
+$count = 0;
+$__t_foreach = @$admin_menu->top_menus;
+if(!empty($__t_foreach)){
+foreach($__t_foreach as $v){
+if($v['menu_sys'] != 'main') continue;
+$count++;
+if($v['url']){
+if($v['target'] == '_blank'){
+print <<<EOT
+
+<li><a href="{$core->admin_controller}{$v['url']}" target="_blank"><i class="fa {$v['menu_icon']}"></i> {$v['name']}</a></li>
+EOT;
+}else{
+print <<<EOT
+
+<li><a href="{$core->admin_controller}/{$v['url']}" target="main" onclick="javascript:get_menu({$v['id']})"><i class="fa {$v['menu_icon']}"></i> {$v['name']}</a></li>
+EOT;
+}
+}else{
+print <<<EOT
+
+<li onclick="javascript:get_menu({$v['id']})"><span><i class="fa {$v['menu_icon']}"></i> {$v['name']}</span></li>
+EOT;
+}
+}
+}
+
+print <<<EOT
+
+</ul>
+</div>
+</div>
+<div class="header-right">
+<div class="header-message">
+<a href="{$core->U_controller}?main_page=
+EOT;
+echo urlencode('/message-inbox?message_type=new');
+print <<<EOT
+" target="_blank"><i class="fa fa-bell"></i>消息<span id="new_messages">0</span></a>
+</div>
+<div class="header-member">
+<div class="dropdown">
+<a href="{$core->U_controller}?site=mainstation" target="_blank"><img src="{$RESOURCE}/skin/admin/member.png" /></a>
+<ul class="dropdown-menu">
+<div class="login-info">
+<p class="clearfix"><a class="pull-left" href="{$core->U_controller}?site=mainstation" target="_blank">$USERNAME
+EOT;
+if($member_info['name']){
+print <<<EOT
+（{$member_info['name']}）
+EOT;
+}
+print <<<EOT
+ </a>
+<a class="pull-right" href="{$core->admin_controller}/core-logout">退出</a></p>
+<a class="level" href="{$core->U_controller}?site=mainstation" target="_blank">{$core->roles[$core->ROLE]['name']}</a>
+</div>
+</ul>
+</div>
+</div>
+<div class="header-clik">
+<ul class="header-nav">	
+<li class="dropdown topimg">
+<a><img src="{$RESOURCE}/skin/admin/topimg.png" /></a>
+<ul class="dropdown-menu">
+<li><a href="javascript:void(0)" onclick="p8_map_dialog()"><i class="fa fa-angle-right"></i>管理地图</a></li>
+<li><a href="{$core->admin_controller}/core/dbm-db_backup" target="main"><i class="fa fa-angle-right"></i>数据备份</a></li>
+<li><a href="{$core->admin_controller}/core/member-list" target="main"><i class="fa fa-angle-right"></i>用户列表</a></li>
+<li><a href="{$core->admin_controller}/core-base_config" target="main"><i class="fa fa-angle-right"></i>系统设置</a></li>
+<li><a href="{$core->admin_controller}/core/46-list" target="main"><i class="fa fa-angle-right"></i>广告模块</a></li>
+<li><a href="{$core->admin_controller}/core/letter-list" target="main"><i class="fa fa-angle-right"></i>信箱模块</a></li>
+<li><a href="{$core->admin_controller}/core/forms-model" target="main"><i class="fa fa-angle-right"></i>表单模块</a></li>
+<li><a href="{$core->admin_controller}/core-base_html" target="_blank"><i class="fa fa-angle-right"></i>站点实施</a></li>
+</ul>
+</li>
+<li class="dropdown">
+<a><i class="fa fa-refresh"></i>更新网站<i class="fa fa-caret-down"></i></a>
+<ul class="dropdown-menu">
+<li><a href="{$core->admin_controller}/cms-index_to_html" target="_blank"><i class="fa fa-angle-right"></i>静态主站首页</a></li>
+<li><a href="javascript:;" onclick="$('#list_to_html').submit()"><i class="fa fa-angle-right"></i>静态主站栏目</a></li>
+<li><a href="javascript:;" onclick="$('#view_to_html').submit()"><i class="fa fa-angle-right"></i>静态最近内容</a></li>
+<li><a href="javascript:;" onclick="do_cache('base')"><i class="fa fa-angle-right"></i>更新基础缓存</a></li>
+<li><a href="javascript:;" onclick="do_cache('template')"><i class="fa fa-angle-right"></i>更新模板缓存</a></li>
+<li><a href="javascript:;" onclick="do_cache('label')"><i class="fa fa-angle-right"></i>更新标签缓存</a></li>
+<li><a href="javascript:;" onclick="do_cache('all')"><i class="fa fa-angle-right"></i>更新全站缓存</a></li>
+</ul>
+</li>
+<li class="dropdown">
+<a>查看网站<i class="fa fa-caret-down"></i></a>
+<ul class="dropdown-menu">
+<li><a href="{$RESOURCE_VICE}/index.html" target="_blank"><i class="fa fa-angle-right"></i>查看静态首页</a></li>
+<li><a href="
+EOT;
+if($core->controller){
+print <<<EOT
+{$core->controller}
+EOT;
+}else{
+print <<<EOT
+{$STATIC_URL}/index.php
+EOT;
+}
+print <<<EOT
+" target="_blank"><i class="fa fa-angle-right"></i>查看动态首页</a></li>
+<li><a href="
+EOT;
+if($core->controller){
+print <<<EOT
+{$core->controller}
+EOT;
+}else{
+print <<<EOT
+{$STATIC_URL}/index.php
+EOT;
+}
+print <<<EOT
+?edit_label=1" target="_blank" ><i class="fa fa-angle-right"></i>首页可视化</a></li>
+<li><a href="{$RESOURCE}/dl.html" target="_blank"><i class="fa fa-angle-right"></i> 统一登录入口</a></li>
+<li><a href="{$core->U_controller}?site=mainstation" target="_blank"><i class="fa fa-angle-right"></i>主站会员中心</a></li>
+<li><a href="{$core->U_controller}/member-mysites" target="_blank"><i class="fa fa-angle-right"></i>子站会员中心</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="content-main content-top">
+<div class="content-container">
+<div class="content-side sider-menu-container">			
+<ul class="menu-vertical" role="tablist" id="submenu"></ul>
+</div>
+<div class="sider-menu-children-container scrollbar tab-content">
+<div id="tree_inner">
+<div id="TreeMenu_Current_Operation"></div>
+</div>
+</div>
+<div class="content-main">
+<iframe src="{$core->admin_controller}/core-main" name="main" id="main" frameborder="0" scrolling="auto" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;"></iframe>
+</div>
+</div>
+</div>
+</div>
+<form id="list_to_html" action="{$core->admin_controller}/cms/item-list_to_html" method="post" target="_blank"></form>
+<form id="view_to_html" action="{$core->admin_controller}/cms/item-view_to_html" method="post" target="_blank"></form>
+<form id="cache" action="{$core->admin_controller}/core-cache" method="post" target="_blank">
+<input type="hidden" name="type" id="cache_type" value="all" /> 
+</form>
+<script type="text/javascript">
+$(document).ready(function(){
+window.onresize();
+$(function () {
+$(".dropdown").mouseover(function () {
+$(this).addClass("open");
+});
+$(".dropdown").mouseleave(function(){
+$(this).removeClass("open");
+})
+});
+$(".content-side").niceScroll({styler:"fb",cursorcolor:"#429cd8", cursorwidth: '3', cursorborderradius: '10px', background: '#d5dddf', cursorborder: '',cursorfixedheight:70});
+if(self != top){
+parent.window.location.href = '{$core->admin_controller}';
+}
+});
+function do_cache(cache_type){		
+$('#cache_type').val(cache_type);
+$('#cache').submit();
+}
+//一级菜单变换CSS
+core_menu_change_css();
+
+//窗口调整
+window.onresize = function(){
+var userAgent = navigator.userAgent; 
+var isOpera = userAgent.indexOf("Opera") > -1; 
+var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera;
+var widths = document.body.scrollWidth;
+var heights = document.documentElement.clientHeight-108;
+var userAgent = navigator.userAgent;
+var isOpera = userAgent.indexOf("Opera") > -1;
+$(".sider-menu-container").height(heights);
+$(".menu-vertical").height(900);
+var main_w = $('#container').width()-$("#admin_left").width();
+var header_top = document.getElementById("main").offsetTop;	
+if(isIE) heights = heights-50;
+$('#main').height(heights);	
+if(header_top>110){
+if(isIE)
+$('#main').height(heights-header_top+108);
+else
+$('#main').height(heights-header_top+84);
+}
+};
+</script>
+<script type="text/javascript">
+function cache_update(){
+obj = $('#cacheform');
+var selected = obj.children("select");
+switch(selected.val()){
+
+case 'template':
+obj.attr('action',cache_action);
+obj.find('type').attr('type','template');
+obj.submit();
+break;
+
+case 'index': 
+obj.attr('action',cache_action);
+obj.find('type').attr('type','index');
+obj.submit();
+break;
+
+case 'language':
+obj.attr('action',cache_action);
+obj.find('type').attr('type','language');
+obj.submit();
+break;
+
+case 'system_module':
+obj.attr('action',cache_action);
+obj.find('type').attr('type','system_module');
+obj.submit();
+break;
+
+case 'all':
+obj.attr('action',cache_action);
+obj.find('type').attr('type','');
+obj.submit();
+break;
+
+case 'category-cache':
+obj.attr('action',category_action);;
+obj.find('type').attr('type','');
+obj.submit();
+break;
+
+case 'label-cache':
+obj.attr('action',label_action);;
+obj.find('type').attr('type','');
+obj.submit();
+break;
+}
+}
+
+function html_update(obj){
+var selected = $(obj).children("select");
+switch(selected.val()){
+
+case 'index_to_html':
+obj.action = index_html_action;
+obj.type.value = 'index_to_html';
+obj.submit();
+break;
+
+case 'index_to_m_html':
+obj.action = index_html_m_action;
+obj.type.value = 'index_to_m_html';
+obj.submit();
+break;
+
+case 'all_item':
+obj.action = item_view_action;
+obj.type.value = '';
+obj.submit();
+break;
+
+case 'all_item_time':
+obj.action = item_view_action;
+obj.type.value = '';
+$(obj).children("#timer_begin").val(date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y)));
+$(obj).children("#timer_end").val(date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d+1, _Y)));
+obj.submit();
+break;
+
+case 'all_list':
+obj.action = item_list_action;
+obj.type.value = '';
+obj.submit();
+break;
+
+case 'all_list_time':
+obj.action = item_list_action;
+obj.type.value = '';
+$(obj).children("#timer_begin").val(date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y)));
+$(obj).children("#timer_end").val(date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d+1, _Y)));
+obj.submit();
+break;
+
+case 'all_special':
+obj.action = special_html;
+obj.type.value = 'all';
+obj.submit();
+break;
+}
+}
+function p8_map_dialog(){
+ajaxing({});
+var p8_map_dialog = new P8_Dialog({
+title_text: '管理地图',
+button: false,
+width: 900,
+height: 600,
+iframe: true,
+zIndex:10000,
+show: function(){			
+showhtml = '<iframe src="{$core->admin_controller}/core-admin_action_map" frameborder="0" scrolling="auto" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;overflow-x: hidden;"></iframe>';
+this.content.html(showhtml);
+}
+});
+p8_map_dialog.show();
+ajaxing({action: 'hide'});
+}
+$(document).ready(function(){
+$('#core_menu li:first').click();
+if($('#core_menu li:first a'))$('#core_menu li:first a').click();
+$.getJSON(P8CONFIG.URI['core']['member'].controller +'-info_jsonp?callback=?', function(json){
+if(json.new_messages>0){
+$('#new_messages').html(json.new_messages);
+}else{
+$('#new_messages').html('0');
+}
+});
+});
+</script>
+</body>
+</html>
+EOT;
+?>

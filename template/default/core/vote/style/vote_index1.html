@@ -1,0 +1,142 @@
+<!--{php168}-->
+<!--{php
+$i_type = $data['multi'] == 1 ? 'radio' : 'checkbox';
+
+$TITLE = $data['name'] .'_'. $core->CONFIG['site_name'];
+$SEO_KEYWORDS = $data['name'];
+$SEO_DESCRIPTION = $data['content'];
+}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset={$core.CONFIG['page_charset']}" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="renderer" content="webkit">
+<meta name="keywords" content="$SEO_KEYWORDS" />
+<meta name="description" content="$SEO_DESCRIPTION" />
+<title>$TITLE</title>
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/sites/common/css/global.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/vote/index.css" />
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/label/jquery-ui.min.css">
+<!--[if lt IE 9]>
+    <script src="{$RESOURCE}/html5shiv.min.js"></script>
+    <script src="{$RESOURCE}/respond.min.js"></script>
+<![endif]-->
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/jquery.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.SuperSlide.2.1.1.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.iosslider.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.easing-1.3.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+<!--{template_init_js}-->
+</script>
+</head>
+<body>
+<script type="text/javascript">
+var USERNAME = get_username();
+$(document).ready(function(){
+	//**show_edit**//					   
+	init_labelshows('header_t');
+})
+</script>
+<div class="header">
+	<div class="container">
+		<div class="pull-right" id="header_t"></div>
+		<span style="float: right;color:#fff;">&nbsp;|&nbsp;<a href="{if $this_system->domain}{$this_system.domain}{else}{str_replace('index.php/cms','',$this_system->controller)}{/if}">返回首页</a></span>
+		<span id="header_login" style="float: right;"><script type="text/javascript" src="{$core.U_controller}/member-login?style=com&id=header_login"></script></span>
+	</div>
+</div>
+<div class="banner">
+	<img src="{if !empty($data['frame_url'])}$data[frame_url]{else}{$RESOURCE}/skin/default/core/vote/nopic.jpg{/if}"/>
+</div>
+<div class="container">
+	<div class="votes-page1">
+		<div class="votes-head clearfix">
+			<div class="title pull-left">
+				$label[votes_box1_t1]
+			</div>
+			<div class="wenzi pull-right" style="font-size:16px;line-height: 36px;padding-top: 12px;">$label[votes_box1_wz1]</div>
+		</div>
+		<div class="votes-item">
+			$label[votes_box1_c1]
+		</div>
+	</div>
+	<div class="votes-page2 mb25">
+		<div class="votes-head clearfix">
+			<div class="title pull-left">
+				$label[votes_box2_t1]
+			</div>
+			<div class="more pull-right">
+				$label[votes_box2_m1]
+			</div>
+		</div>
+		<div class="votes-form">
+			<form method="post" action="{$this_module.controller}-vote" id="p8_vote_$data[id]">
+
+				<ul class="votes-box row">
+					<!--{foreach $options $v}-->
+					<!--{php
+						$ipercent = intval($percent = $data['votes'] ? round($v['votes']*100/$data['votes'], 1) : 0);
+						$j = ++$i%9;
+					}-->
+					<li class="col-md-2dot4 col-sm-2dot4 col-xs-6">
+						<div class="item">
+							<div class="pic">
+								{if $v['url']}<a href="$v[url]" target="_blank"><img src="$v[frame]"/></a>{else}
+								<img src="$v[frame]"/>{/if}
+							</div>
+							<div class="text">
+								<h3 class="name">{if $v['url']}<a href="$v[url]" target="_blank">$v[name]</a>{else} $v[name]{/if}</h3>
+								<p class="description"><a href="$v[url]" target="_blank">$v[description]</a></p>
+								<div class="vote">
+									<a href="{if $view_voter}$this_router-voter?id=$data[id]&oid=$v[id]{else}###{/if}">$v[votes]票 ($percent%)</a>
+									<input type="$i_type" name="oid[]" value="$v[id]" id="p8_v_o_$data[id]_$v[id]"/> 
+									<label for="p8_v_o_$data[id]_$v[id]">选择</label>
+								</div>
+							</div>
+						</div>
+					</li>
+					<!--{/foreach}-->
+					<li class="clear"></li>
+				</ul>
+				<div class="votes-tip text-center">$label[votes_form_con1]</div>
+				<!--{if $data['captcha']}-->
+				<p class="text-center">
+				<span style="padding-right:5px;">验证码：<font color="red">*</font></span><input type="text"  class="txt"  name="captcha" id="captcha" size="10"/> <span id="captchachr"></span><span class="jsregmsg" style="color:#999;">（鼠标点击左框即可显示验证码 / 鼠标点击验证码可更新）</span>
+				<script type="text/javascript">	captcha($('#captchachr'), $('#p8_vote_{$data['id']} input[name="captcha"]'));</script>
+				</p>
+				<!--{/if}-->
+				<p class="text-center" style="margin:10px"><input type="submit" value="提 交" class="sub-btn"/></p>
+				<p class="pages text-center" id="pages">$pages</p>
+				<input type="hidden" name="id" value="$data[id]" />
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$('#p8_vote_$data[id] input').attr('checked', false);
+</script>
+<div class="footer">
+	<div class="container">
+		<div class="footnav text-center clearfix">
+			$label[votes_foot_nav1]
+		</div>
+		<div class="copyright">
+			<div class="row">
+				<div class="col-md-8 col-md-offset-2 col-sm-8 col-sm-offset-2 col-xs-12">
+					<p>{$core.CONFIG['copyright']}</p>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</body>
+</html>
+<!--{/php168}-->

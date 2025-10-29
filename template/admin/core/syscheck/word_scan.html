@@ -1,0 +1,181 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-filter_link"><i class="fa fa-shield"></i>{$P8LANG[filter_link]}</a></li>						
+						<li><a href="{$core.admin_controller}/core-word_scan"><i class="fa fa-shield"></i>{$P8LANG[word_scan]}</a></li>
+						<li><a href="{$core.admin_controller}/core-word_censor_config"><i class="fa fa-shield"></i>{$P8LANG[word_censor]}</a></li>
+						<li><a href="{$core.admin_controller}/core-word_filter"><i class="fa fa-shield"></i>{$P8LANG[word_filter]}</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-set_lan"><i class="fa fa-shield"></i>{$P8LANG[set_lan]}</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/core-word_scan"><i class="icon icon-ico22"></i>内容扫描体检</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/core-word_scan_config"><i class="icon icon-ico10"></i>内容扫描体检设置</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	
+		<table class="columntable formtable hover_table">
+			<tr class="title fix_head">
+				<td colspan="5" class="title">内容体检扫描</td>
+			</tr>
+			
+			<tr>
+				<td colspan="5" align="center">
+				<form action="$this_url" method="get" id="request">
+					站点
+					<select name="site" id="site">
+						<option value="">不限</option>
+						<!--{foreach $sites $vv}-->
+						<option value="{$vv['alias']}"{if $vv['alias'] == $site} selected{/if}>{$vv['sitename']}</option>
+						<!--{/foreach}-->
+					</select>
+					系统
+					<select name="system" id="system" onchange="select_sys(this.value)">
+						<option value="">不限</option>
+						<!--{foreach $systems $name $v}-->
+						<option value="$name"{if $system == $name} selected{/if}>$v[alias]</option>
+						<!--{/foreach}-->
+					</select>
+					模型
+					<select name="model" id="model">
+						<option value="">不限</option>
+						<!--{foreach $models $name $v}-->
+						<option value="$name"{if $model == $name} selected{/if}>$v[alias]</option>
+						<!--{/foreach}-->
+					</select>
+					关键词
+					<input type="text" class="txt" size = "18" name="word" value="{if !empty($word)}$word{/if}" />
+					<button type="button" class="submit_btn" onclick="link_search();">{$P8LANG['search']}</button>
+					<input type="button" value="一键清空扫描结果" onclick="link_clean()" class="edit_btn" />
+				</form>				
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="$this_url" method="post" id="form">
+		<input type="hidden" name="type" value="recycle" />
+		
+		<table class="columntable formtable hover_table click_changeable">
+			<tr class="title fix_head">
+				<td width="3%" align="center" class="title"><input type="checkbox" name="cl" onclick="check_all(this, 'id[]', $('#form'));init_tr($('#form'));" /></td>
+				<td class="title" align="center" width="20%">标题</td>
+				<td class="title" align="center" width="4%">{$P8LANG['system']}</td>
+				<td class="title" align="center" width="5%">站点</td>
+				<td class="title" align="center" width="3%">关联信息ID</td>				
+				<td class="title" align="center" width="6%">{$P8LANG['username']}</td>
+				<td class="title" align="center" width="6%">{$P8LANG['author']}</td>
+				<td class="title" align="center" width="7%">{$P8LANG['timestamp']}</td>
+				<td class="title" align="center" width="7%">扫描时间</td>				
+				<td class="title" align="center" width="20%">扫描结果</td>
+				<td class="title" align="center" width="*">操作</td>
+			</tr>
+			
+			<!--{foreach $list $v}-->
+			<tr id="word_$v[id]">
+				<td align="center"><input type="checkbox" name="id[]" id="id_{$v[id]}" value="{$v[id]}" /></td>				
+				<td><a href="{$v['view']}" target="_blank">{$v['title']}</a></td>
+				<td align="center">{$v['system']}</td>
+				<td align="center">{$v['site']}</td>
+				<td align="center">{$v['iid']}</td>				
+				<td align="center">{$v['username']}</td>
+				<td align="center">{$v['author']}</td>
+				<td align="center">{$v['create_time']}</td>
+				<td align="center">{$v['timestamp']}</td>				
+				<td style="color:#0c5f97;">{$v['message']}</td>
+				<td align="center">
+					<a href="{$v['view']}" target="_blank"><img src="{$SKIN}/button_see.png" /></a>
+					<a href="javascript:;" onclick="$('#id_{$v[id]}').attr('checked',true);return recycle_recode();"><img src="{$SKIN}/recycle.gif" /></a>
+				</td>		
+			</tr>
+			<!--{/foreach}-->				
+		</table>
+		</form>
+		<table width="100%" class="columntable formtable">
+			<tr>
+				<td align="center" id="pages" class="pages">{$pages}</td>
+			</tr>
+			<tr>
+				<td>
+					<a name="op"></a>
+					<a href="javascript:void(0)" onclick="check_all(true, 'id[]');init_tr($('#form'));">全选</a> /
+					<a href="javascript:void(0)" onclick="check_all(false, 'id[]');init_tr($('#form'));">全不选</a>					
+					<input type="button" value="一键下线" onclick="recycle_recode()" class="edit_btn" />
+					<input type="button" value="重扫描主站" onclick="$('#rebuild').submit();" class="edit_btn" />
+					<input type="button" value="重扫描分站" onclick="$('#rebuild_system').val('sites');$('#rebuild').submit();" class="edit_btn" />
+					<input type="button" value="导出扫描结果" onclick="download_recode()" class="edit_btn" />
+					<input type="button" value="一键清空扫描结果" onclick="link_clean()" class="edit_btn" />					
+				</td>
+			</tr>
+		</table>		
+	</div>
+</div>
+<form action="$this_url" method="post" id="rebuild">
+	<input type="hidden" name="type" value="rebuild" />
+	<input type="hidden" name="system" id="rebuild_system" value="cms" />
+	<input type="hidden" name="incremental" id="incremental" value="0" />
+</form>
+<script type="text/javascript">
+function link_search(){
+	$('#request').attr('method',"get");
+	$('#request').submit();
+}
+function download_recode(){
+	$('#request').append('<input type="hidden" name="type" value="download" />');
+	$('#request').attr('method',"post");
+	$('#request').submit();
+}
+function link_clean(){
+	$('#request').append('<input type="hidden" name="type" value="cleanall" />');
+	$('#request').attr('method',"post");
+	$('#request').submit();
+}
+function recycle_recode(){	
+	p8_window.confirm('确定要下线信息到回收站吗？', function (r) {
+		if(r){
+			ajaxing({text:'处理中...'});
+			$('#form').submit();
+		}else{
+			return;
+		}
+	});
+}
+function select_sys(system){
+	$.ajax({
+	   url:'$this_url',
+	   type: 'post',
+	   dataType: 'json',
+	   data: ajax_parameters({system:system,type:'get_model'}),
+	   cache: false,
+	   success: function(json){
+			$('#model').html('<option value="">不限</option>');
+			var option;
+			for(i in json){
+				option = '<option value="'+json[i].name+'">'+json[i].alias+'</option>';
+				$('#model').append($(option));
+			}
+	   }
+	});	
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

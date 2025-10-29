@@ -1,0 +1,1 @@
+<?php die();?>a:2:{s:9:"top_menus";a:2:{i:0;a:5:{s:2:"id";s:1:"1";s:6:"parent";s:1:"0";s:4:"name";s:12:"会员资料";s:3:"url";s:0:"";s:6:"action";s:14:"member-profile";}i:1;a:5:{s:2:"id";s:1:"2";s:6:"parent";s:1:"0";s:4:"name";s:12:"我的内容";s:3:"url";s:0:"";s:6:"action";s:13:"cms/item-list";}}s:5:"menus";a:2:{i:1;R:3;i:2;R:9;}}

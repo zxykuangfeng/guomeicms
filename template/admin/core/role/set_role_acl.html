@@ -1,0 +1,140 @@
+<!--{php168}-->
+<!--{php
+$acl_url = '';
+if(!empty($acl_system)){
+	$acl_url = $core->admin_controller .'/'. $acl_system;
+	
+	if(!empty($acl_module)){
+		$acl_url = $acl_url .'/'. $acl_module .'-'. $ACTION;
+	}else{
+		$acl_url = $acl_url .'-'. $ACTION;
+	}
+}
+
+if(!empty($acl_url)){
+	$role->get_group_cache();
+}
+}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core/member-set_member_acl?system=cms"><i class="fa fa-cog"></i>主站权限设置</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-attribute_acl"><i class="fa fa-cog"></i>属性权限设置</a></li>
+						<li><a href="{$core.admin_controller}/core/uploader-role_filter"><i class="fa fa-cog"></i>上传权限设置 </a></li>
+						<li><a href="{$core.admin_controller}/core/member-set_member_acl?system=sites"><i class="fa fa-cog"></i>子站权限设置</a></li>
+					</ul>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<form action="" name="form" id="form" method="post">
+<div class="mainbox mainborder">
+	<div class="section">	
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/core/member-set_member_acl?system={$system_alias}"><i class="icon icon-ico12"></i>单个用户{if $system_alias=='sites'}子站{else}主站{/if}权限设置</a></li>
+						<li class="btn-color2"><a href="{$core.admin_controller}/core/role-set_role_acl?system_alias={$system_alias}"><i class="icon icon-ico12"></i>角色{if $system_alias=='sites'}子站{else}主站{/if}权限设置 </a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<table class="columntable formtable hover_table">
+			<tr class="title">
+				<td width="10%" align="center" class="title">ID</td>
+				<td width="17%" align="center" class="title">{$P8LANG['role']}</td>
+				<td width="22%" align="center" class="title">{$P8LANG['role_group']}</td>
+				<td width="32%" align="center" class="title">{$P8LANG['operation']}</td>
+			</tr>
+			<tr><td colspan="4" align="center"><i class="fa fa-street-view"></i><strong> {$P8LANG['system_role']} </strong><i class="fa fa-street-view"></i></td></tr>
+			<!--{foreach $list['system'] $value}-->
+			<tr>
+				<td align="center">{$value['id']}</td>
+				<td align="center"><a href="{$core.admin_controller}/core/member-list?role_gid={$value['gid']}&role_id={$value['id']}">{$value['name']}</a></td>
+				<td align="center">
+					<!--{if !empty($role->groups[$value['gid']])}-->
+					{$role.groups[$value['gid']]['name']}
+					<!--{/if}-->
+				</td>
+				<td align="center">
+					<ul class="operation-nav2">
+					<!--{if $acl_url}-->
+						<li><a href="$acl_url?role_id={$value['id']}{if !empty($postfix)}&postfix=$postfix{/if}{if !empty($add_url)}$add_url{/if}" target="_blank">{$P8LANG['set_acl']}</a></li>
+					<!--{else}-->
+						<li class="dropdown">
+							<a href="{$core.admin_controller}/core-set_acl?role_id={$value['id']}" target="_blank"><font style="font-weight:600;color:blue;">{$P8LANG['set_core_acl']}</font></a> 
+							<ul class="dropdown-menu">
+								<li class="btn-color1"><a href="{$core.admin_controller}/core-set_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>模块权限</a></li>
+								<li class="btn-color2"><a href="{$core.admin_controller}/cms-set_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>主站权限</a></li>
+								<li class="btn-color3"><a href="{$core.admin_controller}/sites-set_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>子站权限</a></li>
+							</ul>
+						/</li> 
+						<li class="dropdown">
+							<a href="{$core.admin_controller}/core-set_admin_acl?role_id={$value['id']}" target="_blank">{$P8LANG['set_core_admin_acl']}</a> 
+							<ul class="dropdown-menu">
+								<li class="btn-color1"><a href="{$core.admin_controller}/core-set_admin_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>模块权限</a></li>
+								<li class="btn-color2"><a href="{$core.admin_controller}/cms-set_admin_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>主站权限</a></li>
+								<li class="btn-color3"><a href="{$core.admin_controller}/sites-set_admin_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>子站权限</a></li>
+							</ul>
+						/ </li>
+						<li><a href="$this_router-copy_acl?id={$value['id']}">{$P8LANG['role_copy_acl']}</a> / </li>
+						<li><a href="$this_router-update?id={$value['id']}">{$P8LANG['edit']}</a> / </li>
+						<li><a href="$this_router-delete?id={$value['id']}" id="role_$value[id]" onclick="return _delete_role(this)">{$P8LANG['delete']}</a></li>
+					<!--{/if}-->
+					</ul>
+				</td>
+				
+				
+				
+				
+			</tr>
+			<!--{/foreach}-->
+			<tr><td colspan="4" align="center"><i class="fa fa-street-view"></i><strong> {$P8LANG['normal_role']} </strong><i class="fa fa-street-view"></i></td></tr>
+			<!--{foreach $list['normal'] $value}-->
+			<tr>
+				<td align="center">{$value['id']}</td>
+				<td align="center"><a href="{$core.admin_controller}/core/member-list?role_gid={$value['gid']}&role_id={$value['id']}">{$value['name']}</a></td>
+				<td align="center">{$role.groups[$value['gid']]['name']}</td>
+				<td align="center">
+					<ul class="operation-nav2">
+					<!--{if $acl_url}-->
+						<li><a href="$acl_url?role_id={$value['id']}{if !empty($postfix)}&postfix=$postfix{/if}{if !empty($add_url)}$add_url{/if}" target="_blank">{$P8LANG['set_acl']}</a></li>
+					<!--{else}-->						
+						<li class="dropdown">
+							<a href="{$core.admin_controller}/core-set_acl?role_id={$value['id']}" target="_blank"><font style="font-weight:600;color:blue;">{$P8LANG['set_core_acl']}</font></a>
+							<ul class="dropdown-menu">
+								<li class="btn-color1"><a href="{$core.admin_controller}/core-set_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>模块权限</a></li>
+								<li class="btn-color2"><a href="{$core.admin_controller}/cms-set_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>主站权限</a></li>
+								<li class="btn-color3"><a href="{$core.admin_controller}/sites-set_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>子站权限</a></li>
+							</ul>
+						 / </li>
+						<li class="dropdown">
+							<a href="{$core.admin_controller}/core-set_admin_acl?role_id={$value['id']}" target="_blank">{$P8LANG['set_core_admin_acl']}</a>
+							<ul class="dropdown-menu">
+								<li class="btn-color1"><a href="{$core.admin_controller}/core-set_admin_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>模块权限</a></li>
+								<li class="btn-color2"><a href="{$core.admin_controller}/cms-set_admin_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>主站权限</a></li>
+								<li class="btn-color3"><a href="{$core.admin_controller}/sites-set_admin_acl?role_id={$value['id']}" target="_blank"><i class="icon icon-ico55"></i>子站权限</a></li>
+							</ul>
+						/ </li>
+						<li><a href="$this_router-copy_acl?id={$value['id']}">{$P8LANG['role_copy_acl']}</a> / </li>
+						<li><a href="$this_router-update?id={$value['id']}">{$P8LANG['edit']}</a> / </li>
+						<li><a href="javascript:;" id="role_$value[id]" onclick="return _delete_role(this)">{$P8LANG['delete']}</a></li>
+					<!--{/if}-->
+					</ul>
+				</td>
+			</tr>
+			<!--{/foreach}-->			
+		</table>		
+	</div>
+</div>
+</form>
+<!--{template $core footer admin}-->
+
+<!--{/php168}-->

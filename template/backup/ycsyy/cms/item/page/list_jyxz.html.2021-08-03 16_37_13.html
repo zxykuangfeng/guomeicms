@@ -1,0 +1,85 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<link rel="stylesheet" type="text/css" href="{$SKIN}jquery.mCustomScrollbar.min.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.mCustomScrollbar.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] !== undefined ? (\$_GET['verified'] == 1 ? 1 : 0) : 1;
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+<!--中间内容部分-->
+<div class="breadbanner delmag">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_gg]
+		</div>
+	</div>
+</div>
+<div class="maincon clearfix">
+	<div class="container">
+		<div class="column-location mb20 clearfix">
+			您现在的位置： <a href="{$core.controller}">首页</a>
+			<!--{foreach $parent_cats $v}-->
+			>> <a href="$v[url]">$v[name]</a>
+			<!--{/foreach}-->
+			>> <a href="$CAT[url]">$CAT[name]</a>
+		</div>
+		<div class="column-title2 clearfix">
+			<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+			$parent[name]
+		</div>
+		<div class="column-nav mb20 clearfix">
+			<!--{template $this_module step_category_jx9}-->
+		</div>
+		<div class="row">
+			<div class="col-md-4 col-sm-4 col-xs-12">
+				<div class="apppage-tbleft">
+					<div class="part1">
+						<div class="inner">
+							<div class="scroll mCustomScrollbar _mCS_1">
+								<!--{template $this_module step_category_jx12}-->
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8 col-sm-8 col-xs-12">
+				<div class="apppage-tbright">
+					<div class="inner" id="right_detail">
+						<div class="scroll mCustomScrollbar _mCS_2 mCS_no_scrollbar">
+							<div class="caption">
+								$CAT[name]<span id="operation" style="display: none; cursor: pointer;color:#0040ff;font-size:16px;float:right;">{$P8LANG['operation']}>></span>
+							</div>
+							<div class="text" deep="8">
+								$data[content]
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+(function($){
+	$(window).load(function(){
+		$("body").mCustomScrollbar({
+			
+		});
+	});
+})(jQuery);
+</script>
+<script type="text/javascript" src="{$STATIC_URL}/search/count.php?id=$data[id]"></script>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+
+

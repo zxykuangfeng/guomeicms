@@ -1,0 +1,101 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<div class="section">
+	<div class="mainbox mainborder">
+		<table class="zq_list" width="100%">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="boxmenu" id="boxmenu">
+					<li class="bm_out"><a href="javascript:void(0);" class="btn-color1" onclick="backup('backup')"><i class="icon icon-ico49"></i>备份数据</a></li>
+					<li  class="bm_out"><a href="javascript:void(0);" class="btn-color1" onclick="backup('restore')"><i class="icon icon-ico1"></i>还原数据</a></li>
+					<li  class="bm_out"><a href="javascript:void(0);" class="btn-color2" onclick="_submit('unlock')"><i class="icon icon-ico46"></i>解除锁定</a></li>
+					<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($site_info['ipordomain'])}{$core->CONFIG['url']}/s.php/{$site}{else}{$site_info['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$site_info['sitename']}</a></li>
+				</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div class="dobox" id="backup">
+	<form action="$this_url" method="post">
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table">
+			<tr class="title fix_head">
+				<td width="23%"  class="list_top">{$P8LANG['config']}</td > <td width="35%" class="list_top">参数</td><td width="42%" class="list_top">备注</td>
+			</tr>
+				<tr>
+					<td>导出编码</td>
+					<td>
+						<input type="text" id="charset" size="10" name="charset" value="" />
+						</td>
+				<td class="tdR">留空为当前字符集，可以导出UTF-8等其它编码</td>
+				</tr>
+				<tr>
+					<td> 每次导出条数</td>
+					<td>
+						<input type="text" size="10" id="rows" name="rows" value="1" />
+						<td class="tdR">条数越多越快</td>
+					</td>
+				</tr>
+			
+				
+				<tr>
+					<td></td>
+					<td>
+						<input type="submit" class="submit_btn" value="备份" />
+						<input type="hidden" name="act" value="backup"/>
+					</td>
+					<td class="tdR"></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+
+	<div class="dobox"  id="restore" style="display:none">
+	<form action="$this_url" method="post" id="form">
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table">
+			<tr class="title fix_head">
+				<td width="23%"  class="list_top">{$P8LANG['config']}</td > <td width="35%" class="list_top">参数</td><td width="42%" class="list_top">备注</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					选择还原点
+				</td>
+				<td><select name="name">
+						<option value="">请选择还原点</option>
+						<!--{foreach $list $value}-->
+						<option value="$value[1]">$value[0]</option>
+						<!--{/foreach}-->
+					</select>
+				</td>
+				<td></td>
+			</tr>
+			
+			<tr>
+					<td></td>
+					<td>
+						<input type="submit" class="submit_btn" value="还原" />
+						<input type="hidden" name="act" value="restore"/>
+					</td>
+					<td class="tdR"></td>
+				</tr>
+		</table>
+	</form>
+	</div>
+</div>
+	
+<script type="text/javascript">
+function _submit(action){
+	ajaxing({});
+	$('#form input[name=act]').val(action);
+	$('#form').get(0).submit();
+}
+
+function backup(ours){
+	$('.dobox').hide();$('#'+ours).show();
+	
+}
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

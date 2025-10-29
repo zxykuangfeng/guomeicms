@@ -1,0 +1,43 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<table width='100%' cellspacing='1' cellpadding='3' class="columntable formtable tablewidth">
+	<tr  class="head"> 
+	  <td colspan="2"> 
+		<div align='center'><b><font color="#FFFFFF">微信用户信息</font></b></div>
+	  </td>
+	</tr>
+	<tr> 
+		<td bgcolor='#FFFFFF' width="25%" align="center">头像</th>
+	   <td bgcolor='#FFFFFF' width="75%"><img src="{$userinfo['headimgurl']}" style="width: 80px;"/></td>
+	 </tr>
+		<tr>
+		  <td bgcolor='#FFFFFF' width="25%" align="center">OpenId</th>
+		  <td bgcolor='#FFFFFF' width="75%">{$userinfo['openid']}</td>
+		</tr>
+		<tr>
+		  <td bgcolor='#FFFFFF' width="25%" align="center">UnionId</th>
+		  <td bgcolor='#FFFFFF' width="75%">{$userinfo['unionid']}</td>
+		</tr>
+		<tr>
+		  <td bgcolor='#FFFFFF' width="25%" align="center">昵称</th>
+		  <td bgcolor='#FFFFFF' width="75%">{$userinfo['nickname']}</td>
+		</tr>
+		<tr>
+		  <td bgcolor='#FFFFFF' width="25%" align="center">性别</th>
+		  <td bgcolor='#FFFFFF' width="75%"><!--{php echo $userinfo['sex']==1 ? '男' : '女';}--></td>
+		</tr>
+		<tr>
+		  <td bgcolor='#FFFFFF' width="25%" align="center">地区</th>
+		  <td bgcolor='#FFFFFF' width="75%">{$userinfo['country']} » {$userinfo['province']} » {$userinfo['city']}</td>
+		</tr>
+		<tr>
+		  <td bgcolor='#FFFFFF' width="25%" align="center">关注公众号时间</th>
+		  <td bgcolor='#FFFFFF' width="75%">{$userinfo['subscribe_time']}</td>
+		</tr>
+		<tr>
+		  <td bgcolor='#FFFFFF' width="25%" align="center">关注渠道</th>
+		  <td bgcolor='#FFFFFF' width="75%">{$userinfo['subscribe_scene']}</td>
+		</tr>
+</table>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,122 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+
+<form action="$this_url" method="GET" id="form1">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core/sms-list_interface"><i class="icon icon-ico13"></i>手机短信接口</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core/sms-test"><i class="icon icon-ico13"></i>手机短信接口测试</a></li>
+							<li class="btn-color3"><a href="{$core.admin_controller}/core/mail-config"><i class="icon icon-ico31"></i>邮件接口</a></li>
+							<li class="btn-color5"><a href="{$core.admin_controller}/core/mail-test"><i class="icon icon-ico31"></i>邮件发送测试</a></li>
+							<li class="btn-color6"><a href="{$core.admin_controller}/core/shortcutsms-list"><i class="icon icon-ico17"></i>快捷回复信息管理</a></li>
+							<li class="btn-color7"><a href="{$core.admin_controller}/core/shortcutsms-add"><i class="icon icon-ico17"></i>添加快捷回复信息</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable">
+						<tr class="title">
+							<td class="title">快捷短信管理</td>
+						</tr>
+					</table>
+				</td></tr>
+			</table>
+		</div>
+	</div>
+</form>
+
+<form action="$this_url" method="POST" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable hover_table click_changeable">
+						<tr class="title">
+						  <td class="title" width="3%"><input type="checkbox" onclick="check_all(this, 'id[]'); init_tr($('#form'));" /></td>
+						  <td width="5%">ID</td>
+						  <td>信息内容</td>
+						  <td>时间</td>
+						  <td>操作</td>
+						</tr>
+						
+						<!--{foreach $list $value}-->
+						<tr id="item_$value[id]">
+							<td><input type="checkbox" name="id[]" value="$value[id]" /></td>
+							<td>$value[id]</td>
+							<td>$value[content]</td>
+							<td>{date('Y-m-d H:i', $value['timestamp'])}</td>
+							<td>
+								<a href="$this_router-update?id=$value[id]">修改</a>
+						  </td>
+						</tr>
+						<!--{/foreach}-->
+						
+					</table>
+				</td></tr>
+				
+				<tr>
+					<td colspan="3">
+						<table width="100%" class="columntable formtable">
+							<tr>
+								<td align="center" id="pages" class="pages">$pages</td>
+							</tr>
+						</table>
+						<table width="100%" border="0" cellpadding="0" cellspacing="0" class="foot_btn">							
+							<tr>
+								<td>
+									<input type="button" value="{$P8LANG['delete']}" class="edit_btn" onclick="delete_item()" />
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+
+<input type="hidden" name="action" value="" />
+</form>
+	
+<script type="text/javascript">
+$(".headerbtn_list li").removeClass();
+$(".headerbtn_list li:nth-child(3)").addClass("active");
+
+function delete_item(){
+	var ids = checked_values('id[]', $('#form'));
+	if(!ids.length) return;
+	//if(!confirm('{$P8LANG['confirm_to_delete']}')) return;
+	p8_window.confirm('{$P8LANG['confirm_to_delete']}', function (r) {
+		if(r){
+			$.ajax({
+				url: '$this_router-delete',
+				type: 'post',
+				dataType: 'json',
+				cache: false,
+				data: ajax_parameters({action: 'delete', id: ids}),
+				beforeSend: function(){
+					ajaxing({});
+				},
+				success: function(json){
+					ajaxing({action: 'hide'});
+					
+					for(var i in json){
+						$('#item_'+ json[i]).remove();
+					}
+				}
+			});
+		}else{
+			return;
+		}
+	});	
+}
+
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

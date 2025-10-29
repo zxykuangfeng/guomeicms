@@ -1,0 +1,287 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="X-Csrf-Token" content="{$CSRF_TOKEN}">
+<meta name="renderer" content="webkit"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,Chrome=1"/>
+<title>{$P8LANG['login']}</title>
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/login.js?rid=<!--{php echo P8_TIME;}-->"></script>
+<style>
+.login-username{margin-top:15px;}
+.login-head{border-bottom: 1px solid #eeeeee;margin-bottom:45px;position: relative;}
+.login-title{font-size:16px;color: #999999;display: inline-block;margin-right: 30px;border-bottom: 2px solid transparent;padding-bottom: 20px;margin-bottom: -1px;cursor: pointer;}
+.login-title.active{color: #282828;border-bottom: 2px solid #282828;font-weight: 500;}
+.login-wechat-title{color: #282828;}
+.login-number{line-height:40px;color: #707070;float:right;}
+.navbar-login>li{width:50%;float:left;}
+.navbar-login>li>a{display:inherit;text-align: center;color: #fff;font-size:14px;border: 1px solid #FFF;border-radius: 50px;padding: 5px 15px;border-color: #008edc;color: #008edc;}
+.navbar-login>li>a.login{margin-right:10px;}
+.navbar-login>li>a.reg{color:#fff;border: 1px solid #008edc;background: #008edc;}
+.login-layer{position:fixed;top: 0;left: 0;width: 100%;height: 100%;z-index:99999;display: none;background: rgba(0, 0, 0, .4);}
+.login-box{position:fixed;background-color: #fff;border-radius:2px;box-shadow: 1px 1px 50px rgba(0, 0, 0, .3);box-shadow: 0 4px 12px rgba(0,0,0,.15);}
+.login-inner{padding:30px 32px;position:relative;}
+.login-switch { width: 53px; height: 53px; position: absolute; right: 10px; top: 10px; cursor: pointer; }
+.login-inner .icon{width: 53px;height: 53px;background: url({$RESOURCE}/images/wx.png) no-repeat;position: relative;}
+.login-inner .icon i { color: #D36F16; font-size: 12px; line-height: 20px; text-indent: 5px; width: 98px; height: 20px; position: absolute; right: 53px; background: url({$RESOURCE}/images/icon-tip.png) no-repeat; }
+.login-inner .icon:hover { opacity: 0.8; }
+.ercodeSignBox{display:none;}
+.ercodeSignBox .swicth-web{background: url({$RESOURCE}/images/web.png) no-repeat;}
+.login-wechat-img{margin: 0 auto 15px;line-height: 0;height: 200px;width: 200px;-webkit-box-pack: center;-ms-flex-pack: center;justify-content: center;-webkit-box-align: center;-ms-flex-align: center;align-items: center;display: -webkit-box;display: -ms-flexbox;display: flex;}
+.login-wechat-img img{width:100%;height:auto;}
+.login-wechat-tip{padding:10px 15px;text-align:center;}
+.login-wechat-tip p{color:#999999;}
+.login-links {color:#999999;text-align:center;margin-top: 56px;}
+.login-links a{color:#999999;}
+.login-links a:hover { color: #282828; }
+.login-input{display: flex;align-items: center;}
+.login-input,.login-submit{margin-bottom:20px;}
+.login-input .txt{width:100%;height: 42px;padding-left: 20px;padding-right: 20px;color: #666666;font-size: 14px;border: 1px solid #dddddd;background: #f4f4f4;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;border-radius: 4px;-webkit-border-radius: 4px;-moz-border-radius: 4px;}
+.login-input .code{width:116px;}
+.login-input .btn-code{color: #bbbbbb;height:42px;padding: 0 14px;margin-left:5px;background: #eeeeee;border: 1px solid #eeeeee;border-radius: 4px;}
+.login-submit .submit{width:100%;height: 42px;padding-left: 20px;padding-right: 20px;color: #666666;font-size: 14px;background: #f4f4f4;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box;}
+.login-option{line-height:14px;}
+.login-reg {display: inline-block;color: #999999;}
+.login-reg a {color: #ff6f06;}
+.login-pwd {color: #999999;float: right;}
+.third-login-box{padding-top:60px;}
+.third-title{ color: #999999;font-size:14px;text-align: center;margin-bottom: 15px;}
+.third-option{text-align:center;}
+.third-option a{width: 42px;height: 42px;margin: 0 10px;display: inline-block;background-color: #dddddd;background-repeat: no-repeat;background-position: center;border-radius: 50%;cursor: pointer;}
+.third-option .qq-login{background-image: url({$RESOURCE}/images/qq.png);}
+.third-option .wechat-login{background-image: url({$RESOURCE}/images/wechat.png);}
+.close-login{position: absolute;right: -40px;top: 0;width: 30px;height: 30px;background-image: url({$RESOURCE}/images/close.png);background-color:rgba(0,0,0,.7);background-repeat: no-repeat;background-position: center;border-radius: 50%}
+</style>
+</head>
+<body>
+<div class="headbar">
+	<div class="header">
+		<div class="logo fl"><img src="{$SKIN}images/logo.png"/></div>
+		<div class="home fr"><a href="{$core.controller}">返回首页</a></div>
+	</div>
+</div>
+<div class="contentbox">
+	<div class="wrapper">
+		<div class="loginbox">
+			<div class="logindiv fr">
+				<div id="login_info" {if !$UID}style="display:none"{/if} >
+					<div class="login-username"><a href="{$core.U_controller}"><font color="#0000ff"><b class="username">{if $UID}{$this_module.username}{/if}</b></font></a>
+					[<a href="{$core.U_controller}"><font color="#FF7F04">会员中心</font></a>] </div>
+					<div>[<a href="{$core.U_controller}/member-logout" onclick="return ajax_logout()">退出登录</a>]</div>
+				</div>
+				<div id="login_link" {if $UID}style="display:none"{/if}>
+					<ul class="nav navbar-nav navbar-right navbar-login">
+						<li><a href="javascript:void(0)" onclick="loginshwo()" class="login">登录</a></li>
+						<li><a href="{$core.controller}/core/member-register" class="reg">注册</a></li>
+					</ul>
+				</div>
+				<div class="login-layer" id="loginbox">
+					<div class="login-box">
+						<div class="login-inner">
+							<form id="loginform" method="post" onsubmit="ajax_login();return false;">
+								<div class="login-switch login-go"><div class="swicth-ercode icon"><i>扫码登录更方便</i></div></div>
+								<div class="login-tabs">
+									<div class="login-head">
+										<div class="login-title login-password active">密码登录</div>
+										<!--{if !empty($this_module->CONFIG['sms_login'])}--><div class="login-title login-mobile">短信登录</div><!--{/if}-->
+									</div>
+									<div class="login-page">
+										<div id="loginFormPwd">
+											<div class="login-input"><input type="text" name="phone" value="" required="" class="txt" id="phone" placeholder="用户名" autocomplete="off"></div>
+											<div class="login-input"><input type="password" class="txt" id="password" name="password" placeholder="密码" autocomplete="off"></div>
+											
+											<!--{if !empty($this_module->CONFIG['login_with_captcha'])}-->
+											<div class="login-input">
+												<input name="captcha" type="text" id="captcha" class="txt" value="验证码" onfocus="if (value =='验证码'){value =''}" onblur="if (value ==''){value='验证码'}" /> <span id="captcham"></span>
+											</div>
+											<script type="text/javascript">
+												captcha($('#captcham'), $('#captcha'));
+											</script>
+											<!--{/if}-->
+											<div class="login-submit">
+												<input type="submit" class="submit" tabindex="3" value="登录"> 
+												<input type="hidden" name="forward" value="$forward"/>
+											</div>
+										</div>
+										<div id="loginFormPhone" style="display: none;">
+											<div class="login-input"><input type="text" name="username" value="" required="" class="txt" id="username" placeholder="号码" autocomplete="off"></div>
+											<div class="login-input">
+												<input type="text" class="txt code" id="code" name="code" placeholder="短信验证码" autocomplete="off">
+												<input id="btnSendCode1" type="button" class="btn-code" value="获取验证码" onclick="sendMessage1()">
+											</div>
+											<div class="login-submit">
+												<input type="submit" class="submit" tabindex="3" value="登录"> 
+												<input type="hidden" name="forward" value="$forward"/>
+											</div>
+										</div>
+									</div>
+									<div style="login-option">
+										<div class="login-reg">
+											 注册即同意<a href="#" target="_blank">《用户协议》</a><a href="#" target="_blank">《隐私协议》</a>
+										</div>
+										<div class="login-pwd"><a href="{$core.controller}/member-getpassword">忘记密码</a></div>
+									</div>
+									<div class="third-login-box">
+										<h5 class="third-title">第三方帐号直接登录</h5>
+										<div class="third-option">
+											<a title="QQ登录" href="javascript:qqLogin();" class="qq-login"></a>
+											<a title="微信登录" href="javascript:wxLogin();" class="wechat-login"></a>
+										</div>
+									</div>
+								</div>
+							</form>
+							<div class="ercodeSignBox">
+								<div class="login-switch login-back"><div class="swicth-web icon"><i>返回密码登录</i></div></div>
+								<div class="login-head">
+									<div class="login-title login-wechat-title">微信二维码登录</div>
+								</div>
+								<div id="drlogin" class="login-wechat-img">
+									$plugin[wechatconnect]
+								</div>
+								<div class="login-info">
+									<div class="login-wechat-tip" id="login-wechat-tip">
+										<p>首次扫码关注将自动注册新账号</p>
+									</div>
+								</div>
+								<div class="login-links">
+									<a href="javascript：void(0);" class="login-back">密码登录</a>
+									&nbsp;|&nbsp;
+									<a href="{$core.controller}/core/member-register" target="_blank">注册新帐号</a>
+								</div>
+							</div>
+						</div>
+						<div onclick="$('#loginbox').hide();" class="close-login"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="footbar">
+	<div class="footer">
+		<div class="copyright">
+			<ul>
+				<li>{$core.CONFIG['copyright']}</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<script language="javascript">
+	function ajax_login(){
+		if($('#loginform input[name=username]').val()==''){p8_window.alert('账号不能为空');return false;}
+		if($('#loginform input[name=password]').val()==''){p8_window.alert('密码不能为空');return false;}
+		<!--{if !empty($this_module->CONFIG['login_with_captcha'])}-->
+		if($('#loginform input[name=captcha]').val()==''){p8_window.alert('验证码不能为空');return false;}
+		<!--{/if}-->
+		$.ajax({
+			   type:'POST',
+			   url:"{$core.U_controller}/member-login",
+			   data:$('#loginform').serialize(),
+			   dataType:'json',
+			   success:function(msg){
+				   if(msg=='no_such_username')p8_window.alert('此用户不存在');
+					if(msg=='user_no_verify')p8_window.alert('此用户还在审核中');
+				   if(msg=='wrong_password')p8_window.alert('帐号或密码错误');
+					if(msg.status=='0'){
+						$('#login_link').hide();
+						$('#loginbox').hide();
+						$('#login_info .username').html(msg.username);
+						if(msg.message){
+							$('#login_info .new_messages').show().html(msg.message);
+							
+						}
+						$('#login_info').show();
+					}
+			   }
+		 })
+	}
+	function ajax_logout(){
+		if(!confirm('确定要退出么？'))return false;
+		$.ajax({
+			   type:'POST',
+			   url:"{$core.U_controller}/member-logout",
+			   success:function(msg){
+					$('#login_link').show();
+					$('#login_info').hide();
+					}
+		 });
+		 return false;
+	}
+	function loginshwo(){
+		$('#loginbox').show();
+		 $('.login-box').css({
+			left: parseInt((get_scrollLeft() + get_document_width() - 400)/2) +'px',
+			top: parseInt(get_scrollTop() + (get_document_height() - 360)/2) +'px',
+			width:'402px',
+			height:'516px'
+		 })
+		
+	}
+	$('.login-mobile').click(function () {
+		$('.login-password').removeClass('active');
+		$('.login-mobile').addClass('active');
+		$('#loginFormPwd').hide();
+		$('#loginFormPhone').show();
+	});
+	  $('.login-password').click(function () {
+		$('.login-mobile').removeClass('active');
+		$('.login-password').addClass('active');
+		$('#loginFormPwd').show();
+		$('#loginFormPhone').hide();
+	});
+	$(".login-go").click(function (e) {
+		e.preventDefault();
+		$("#loginform").hide();
+		$(".ercodeSignBox").show();
+	});
+	$(".login-back").click(function (e) {
+		e.preventDefault();
+		$("#loginform").show();
+		$(".ercodeSignBox").hide();
+	});
+</script>
+<script type="text/javascript">
+$(document).ready(function(){
+	var Referrer = document.referrer;
+	if(Referrer && Referrer.toLowerCase().indexOf('javascript') != -1){
+		p8_window.alert('严正警告！！！您的攻击行为已经被记录在案，我们已保留证据！');
+	};
+	$('#username').focus();	
+	$('#form').validate({
+		rules: {
+			username: {
+				required: true
+			},
+			tmppd: {
+				required: true
+			}
+		},
+		messages: {
+			username: {
+				required: '<font color=red>帐号不能为空</font>'
+			},
+			tmppd: {
+				required: '<font color=red>密码不能为空</font>'
+			}
+		},
+		
+		onkeyup: false
+	});
+});
+$('#username').get(0).focus();
+function showlogin(id){
+	$('#form').hide();
+	$('#drlogin').hide();
+	$('#'+id).show();
+	
+}
+</script>
+</body>
+</html>
+<!--{/php168}-->

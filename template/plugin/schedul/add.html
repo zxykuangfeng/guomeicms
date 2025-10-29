@@ -1,0 +1,150 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<style>
+.box { padding:2px; border:1px solid #cccccc; }
+.head{ background-color:#eeeeee}
+.formtable .title{ color:#FFF}
+#showimgbox{ display:none; width:305px; height:105px; position:absolute;  border:1px solid #cccccc}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="title">{$P8LANG['operation']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$this_url}?plugin=schedul&job=config"><i class="fa fa-cogs"></i>排班配置</a></li>
+						<li><a href="{$this_url}?plugin=schedul"><i class="fa fa-calendar"></i>查看排班</a></li>
+						<li class="active"><a href="{$this_url}?plugin=schedul&job=add"><i class="fa fa-check-square-o"></i>增加排班</a></li>
+						<li><a href="{$this_url}?plugin=schedul&job=import"><i class="fa fa-arrow-circle-o-right"></i>批量导入排班</a></li>
+						<li><a href="{$RESOURCE}/plugin.php/schedul-detail" target="_blank"><i class="fa fa-wpforms"></i>排班效果查看</a></li>
+						<li><a href="{$this_url}?plugin=schedul&job=cache"><i class="fa fa-refresh"></i>刷新缓存</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder" style="display:">
+	<div class="section">
+		<form name="form1" action=""  onsubmit="return check();" method="post">
+			<table class="columntable formtable hover_table click_changeable">
+				<tr class="title">
+					<td class="title">日期</td>
+					<td class="title">时段</td>
+					<td class="title">部门</td>
+					<td class="title">姓名</td>
+					<td class="title">职称/职务</td>
+					<td class="title">电话</td>
+					<td class="title">备注说明</td>
+					<td class="title"></td>
+				</tr>
+				<tbody id="list">
+				<!--{if !empty($row)}-->
+				<tr>
+					<td><input type="text" name="date[]" value="$row[date]" autocomplete="off" onclick="rcalendar(this, 'YYYY-MM-DD')" size="10"/></td>
+					<td>
+						<select name="date_time[]">
+						<!--{foreach $config['date_time'] $v}-->
+						<option value="$v[code]" {if $row['date_time']==$v['code']}selected{/if}>$v[name]</option>
+						<!--{/foreach}--></select>
+					</td>
+					<td>
+						<select name="dcode[]">
+						<!--{foreach $config['department'] $v}-->
+						<option value="$v[code]" {if $row['dcode']==$v['code']}selected{/if}>$v[name]</option>
+						<!--{/foreach}-->
+						</select>
+					</td>
+					<td><input type="text" name="name[]" value="$row[name]"/></td>
+					<td><input type="text" name="level[]" value="$row[level]"/></td>
+					<td><input type="text" name="phone[]" value="$row[phone]"/></td>
+					<td><input type="text" name="event[]" value="$row[event]"/></td>
+					<td><input type="text" name="id" value="$row[id]"/></td>
+				</tr>
+				<!--{else}-->
+				<tr >
+					<td><input type="text" name="date[]" value="" autocomplete="off" onclick="rcalendar(this, 'YYYY-MM-DD')" size="10"/></td>
+					<td>
+						<select name="date_time[]">
+						<option value="">请选择时段</option>
+						<!--{foreach $config['date_time'] $v}-->
+						<option value="$v[code]">$v[name]</option>
+						<!--{/foreach}-->
+						</select>
+					</td>
+					<td>
+						<select name="dcode[]">
+						<option value="">请选择部门</option>
+						<!--{foreach $config['department'] $v}-->
+						<option value="$v[code]">$v[name]</option>
+						<!--{/foreach}-->
+						</select>
+					</td>
+					<td><input type="text" name="name[]" value=""/></td>
+					<td><input type="text" name="level[]" value=""/></td>
+					<td><input type="text" name="phone[]" value=""/></td>
+					<td><input type="text" name="event[]" value=""/></td>
+					<td></td>
+				</tr>
+				<!--{/if}-->
+				</tbody>
+				<tr>
+					<td colspan="7" align="center"><input type="submit" value="确定" class="submit_btn"/></td>
+					<td ><!--{if $job=='add'}--><input type="button" value="增加一个" onclick="add_one()"/><!--{/if}--><input type="hidden" name="do" value="$job"/></td>
+				</tr>
+			</table>
+		</form>
+	</div>
+</div>
+
+<div id="showimgbox"><img src="" id="showimg" width="300" height="100" /></div>
+<script type="text/javascript">
+function add_one(){
+	var config = {$config_json};
+	var depart = config.department;
+	var depart_html = '';
+	for(var i = 0; i < depart.length; i++){
+		depart_html += '<option value=\"'+depart[i].code+'\">'+depart[i].name+'</option>';
+	}
+	var date_time = config.date_time;	
+	var date_time_html = '';
+	for(var i = 0; i < date_time.length; i++){
+		date_time_html += '<option value=\"'+date_time[i].code+'\">'+date_time[i].name+'</option>';
+	}
+	var shtml = '<tr>'+
+			'<td><input type="text" name="date[]" value="" autocomplete="off" onclick="rcalendar(this, \'YYYY-MM-DD\')"  size="10"/></td>>'+
+			'<td>'+
+			'<select name="date_time[]"><option value="">请选择时段</option>'+date_time_html+'</select>'+
+			'</td>'+
+			'<td>'+
+			'<select name="dcode[]"><option value="">请选择部门</option>'+depart_html+'</select>'+
+			'</td>'+						
+			'<td><input type="text" name="name[]"/></td>'+
+			'<td><input type="text" name="level[]"/></td>'+
+			'<td><input type="text" name="phone[]"/></td>'+
+			'<td><input type="text" name="event[]"/></td>'+
+			'<td><input type="button" value="同上" onclick="set_same(this)"/>  <input type="button" value="删除" onclick="$(this).parent().parent().remove()"/></td>>'+
+		'</tr>';
+	$('#list').append(shtml);	
+}
+function set_same(obj){
+	var this_div = $(obj).parent().parent();	
+	var source = this_div.prev();
+	
+	this_div.find('input[type!=button]').each( function(){
+		i = this_div.find('input[type!=button]').index(this);
+		$(this).val(source.find('input[type!=button]').eq(i).val());							   
+	});
+	this_div.find('select').each( function(){
+		i = this_div.find('select').index(this);
+		$(this).val(source.find('select').eq(i).val());							   
+	});
+	return false;
+
+}
+</script>
+<!--{/php168}-->

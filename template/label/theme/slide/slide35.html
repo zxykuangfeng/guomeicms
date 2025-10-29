@@ -1,0 +1,35 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+#carousel3-generic{$label['id']} .carousel-indicators{left:0;right:0;width:100%;margin:0;padding:0 40px;text-align:right;}
+#carousel3-generic{$label['id']} .carousel-inner img{width:100%;height:{$sheight}px;}
+#carousel3-generic{$label['id']} .carousel-indicators li{width:12px;height:12px;display:inline-block;background-color: rgba(255,255,255,.34);margin:10px 10px;border:none;}
+#carousel3-generic{$label['id']} .carousel-indicators .active{width:12px;height:12px;background-color:#fff;}
+@media (max-width: 767px){
+	#carousel3-generic{$label['id']} .carousel-inner img{width:100%;height:auto;}
+}
+</style>
+<div id="carousel3-generic{$label['id']}" class="full-width carousel slide" data-ride="carousel">
+	<!-- Indicators -->
+	<ol class="carousel-indicators">
+		<!--{foreach $list $k $value}-->
+			<li data-target="#carousel3-generic{$label['id']}" data-slide-to="$k" class="pagination"></li>
+		<!--{/foreach}-->
+	</ol>
+	<!-- Wrapper for slides -->
+	<div class="carousel-inner" role="listbox">
+		<!--{foreach $list $value}-->
+		<div class="item">
+			<a href="{$value['url']}" target="_blank">
+				<img src="{$value['frame']}" alt="" class="img-responsive">
+			</a>
+		</div>
+		<!--{/foreach}-->
+	</div>
+</div>
+<script type="text/javascript">
+(function () {
+	$("#carousel3-generic{$label['id']} .carousel-inner .item:first,#carousel3-generic{$label['id']} .carousel-indicators .pagination:first").addClass("active");
+})()
+</script>
+<!--{/php168}-->

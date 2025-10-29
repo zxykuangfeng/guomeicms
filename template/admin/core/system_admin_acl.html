@@ -1,0 +1,69 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<form action="$this_url" method="POST" onsubmit="check_privileges()">
+	<div class="mainbox mainborder">
+		<div class="section" style="margin:0;">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+					<table class="columntable formtable">
+					<tr>
+						<td class="title">设置后台权限</td>
+					</tr>
+					<tr>
+					<td class="headerbtn_list">
+						<ul style="background: #D5E9FF;">
+							<li class="{if $SYSTEM == 'core'}active{/if}">
+								<a href="{$core.admin_controller}/core-set_admin_acl?role_id=$role_id"><i class="fa fa-cogs"></i> {$P8LANG['core']}</a>
+							</li>							
+							<!--{foreach $core->systems $k $v}-->	
+							<li class="{if $SYSTEM == $k}active{/if}">
+								<a href="{$core.admin_controller}/$k-set_admin_acl?role_id=$role_id"><i class="fa fa-cogs"></i> {$v['alias']}</a>
+							</li>
+							<!--{/foreach}-->
+						</ul>
+					</td>
+				</tr>
+				</table>
+				</td></tr>
+				
+				<tr><td>
+				<table class="columntable formtable">
+				<tbody class="privileges">
+				
+				<!--{template $role acl_admin_action admin}-->
+				
+				<!--{foreach $acls $module $_acl}-->
+				<!--{template $role acl_module_admin_action admin}-->
+				<!--{/foreach}-->
+				
+				</tbody>
+				</table>
+				</td>
+			</tr>
+			</table>
+			<table align="center" border="0" cellpadding="0" cellspacing="0" class="columntable formtable">
+				<tr><td class="tdR" align="center">
+					<input type="hidden" name="role_id" value="{if !empty($role_id)}$role_id{/if}" />
+					<input type="submit" value="{$P8LANG['submit']}" class="submit_btn" style="margin-left:5px;margin-top:10px;" />
+					<input type="reset" name="rest" value="重置" class="edit_btn"/>
+				</td></tr>
+			</table>			
+		</div>
+	</div>
+</form>
+
+
+<script type="text/javascript">
+function check_privileges(){
+	$('.privileges input[type=checkbox]').each(function(i){
+		if(!this.checked){
+			this.checked = true;
+			this.value = 0;
+		}
+	});
+}
+</script>
+
+<!--{template $core footer admin}-->
+<!--{/php168}-->

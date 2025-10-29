@@ -1,0 +1,63 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="maincon">
+	<div class="container">
+		<div class="row">
+			<div class="position4">
+				<a href="{$core.controller}">首页</a>
+				<!--{foreach $parent_cats $v}-->
+				&gt; <a href="$v[url]">$v[name]</a>
+				<!--{/foreach}-->
+				&gt; <a href="$CAT[url]">$CAT[name]</a> 
+			</div>
+		</div>
+		<div class="row">
+			<div class="contain-left fl">	
+				<div class="border1">
+					<div class="head2">
+						<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+						<span class="title2">$parent_name</span>
+					</div>	
+					<div class="main2">
+						<!--{template $this_module step_category_jx5}-->
+					</div>
+				</div>
+			</div>
+			<div class="contain-right fr">
+			<!--{if empty($subcategories)}-->
+			<div class="border3">
+				<div class="gov-head4">
+					<div class="bigtitle fl">$CAT[name]</div>
+					<div class="more fr" style="padding:10px 0;">
+						<!--{if $add_enable}--><span class="more"> <a href="{$core.U_controller}/cms/item-add?cid=$cid&model=$CAT[model]" target="_blank">发表</a></span><!--{/if}-->
+					</div>
+				</div>
+				<div class="gov-main4">
+					<!--{php include template($TEMP_OBJ, $CAT['item_template'], 'label');}-->
+					<div class="mtop pages" id="page">{$pages}</div>
+				</div>
+			</div>
+			<!--{else}-->
+			<!--{foreach $subcategories $v}-->
+			<!--{php $i++;}-->
+			<!--{php if($i>5)break;}-->
+			<!--{php $subcat = array($v['id']) + $category->get_children_ids($v['id']);}-->
+			<div class="border3 mbottom">
+				<div class="gov-head4">
+					<span class="bigtitle fl"><a href="$this_url-category-$v[id]">$v[name]</a></span> 
+					<span class="more fr"> <a href="$this_url-category-$v[id]">MORE >></a></span>
+				</div>
+				<div class="gov-main4">
+					$label[CMS子分类内容列表]{'i.cid' => $subcat, 'model' => $MODEL}
+				</div>
+			</div>
+			<!--{/foreach}-->
+			<!--{/if}-->
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

@@ -1,0 +1,106 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<style>
+.markdown-body a:visited {
+    color: #00b7d3;
+}
+.markdown-body a:link {
+    color: #00c1de;
+}
+</style>
+<form action="$this_url" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table class="columntable formtable hover_table">
+				<tr>
+					<td colspan="2" class="title">阿里云短信</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">AccessKey ID：</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[accessKeyId]" value="{if !empty($config['accessKeyId'])}$config[accessKeyId]{/if}" />
+						<a href="https://help.aliyun.com/document_detail/53045.html?spm=5176.doc55322.6.593.aj9nEB&amp;parentId=44282" target="_blank" title=" 点击创建AccessKey"> 点击创建AccessKey</a>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">AccessKey Secret：</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[accessKeySecret]" value="{if !empty($config['accessKeySecret'])}$config[accessKeySecret]{/if}" />
+						<a href="https://ak-console.aliyun.com/?spm=5176.sms-account.101.271.66e3621Mpfzhu#/accesskey" target="_blank" title="点击查看Access Key ID和Access Key Secret" target="_blank">点击查看AccessKey ID和AccessKey Secret</a>
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">短信签名：</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[SignName]" value="{if !empty($config['SignName'])}$config[SignName]{/if}" />
+						<a href="https://help.aliyun.com/document_detail/55327.html?spm=5176.doc55324.6.543.kDzHEo" target="_blank" title="创建短信签名">创建短信签名</a>
+					</td>
+				</tr>
+				
+				<tr>
+					<td class="tdL">短信模版：</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[TemplateCode1]" value="{if !empty($config['TemplateCode1'])}$config[TemplateCode1]{/if}" />
+						<a href="https://help.aliyun.com/document_detail/55330.html?spm=5176.doc55327.6.544.n6Z8cO" target="_blank" title="创建短信模版">创建短信模版</a>
+						<br/>通知示例模板：您的办件事项:\${mtname}已于\${submittime}处理，请及时登录平台查看，特此通知。
+						<br/>\${mtname}为事项名称，\${submittime}为时间，模板中变量名请不要修改！！
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">验证码模版：</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[TemplateCode2]" value="{if !empty($config['TemplateCode2'])}$config[TemplateCode2]{/if}" />
+						<a href="https://help.aliyun.com/document_detail/55330.html?spm=5176.doc55327.6.544.n6Z8cO" target="_blank" title="创建短信模版">创建短信模版</a>
+						<br/>验证码示例模板：尊敬的用户，您的注册会员动态验证码为：\${code}，请勿泄漏于他人！
+						<br/>模板中变量名请不要修改！！
+					</td>
+				</tr>
+				<tr>
+				  <td class="tdL">&nbsp;</td>
+				  <td class="tdR"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+	<input type="hidden" name="interface" value="$interface"/>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr><td>
+				
+				<table class="columntable formtable hover_table">
+				<tr class="title">
+					<td class="title">说明</td>
+				</tr>
+				<tr>
+					<td>
+<div class="markdown-body">
+	  <h2 id="h2--1"><a name="短信使用流程见下图：" class="reference-link"></a><span class="header-link octicon octicon-link"></span>短信使用流程见下图：</h2><p><img src="{$SKIN}/core/sms/alisms.png" alt="短信流程图"></p>
+	<h2 id="h2-u5165u9A7Bu963Fu91CCu4E912"><a name="入驻阿里云" class="reference-link"></a><span class="header-link octicon octicon-link"></span>入驻阿里云</h2><p>1.阿里云注册入口：<a href="https://account.aliyun.com/register/register.htm?spm=5176.1879423.631162.1.AXepAe" target="_blank" title="点击注册页面">点击注册页面</a></p>
+	<p>2.实名认证：<a href="https://account.aliyun.com/login/login.htm?oauth_callback=https%3A%2F%2Faccount.console.aliyun.com%2F#/auth/home&quot;点击进行实名认证&quot;" target="_blank">点击进行实名认证</a></p>
+	<p>实名认证相关帮助链接：①<a href="http://help.aliyun.com/knowledge_detail/10643431.html" target="_blank" title="查看如何选择实名认证方式／实名认证介绍方式集锦">查看如何选择实名认证方式／实名认证介绍方式集锦</a>，②<a href="https://help.aliyun.com/knowledge_detail/37177.html" target="_blank" title="个人客户如何完成实名认证">个人客户如何完成实名认证</a>，③<a href="https://help.aliyun.com/knowledge_detail/37172.html" target="_blank" title="企业如何完成实名认证？">企业如何完成实名认证？</a>，④<a href="http://help.aliyun.com/knowledge_detail/6518349.html" target="_blank" title="事业单位、学校、机关、政府、社会团体如何完成实名认证？">事业单位、学校、机关、政府、社会团体如何完成实名认证？</a>，⑤<a href="http://help.aliyun.com/knowledge_detail/5974065.html" target="_blank" title="实名认证的支付宝与帐号绑定的支付宝的区别？">实名认证的支付宝与帐号绑定的支付宝的区别？</a></p>
+	<p>3.绑定企业支付宝：<a href="https://account.console.aliyun.com/#/bind" title="点击绑定企业支付宝" target="_blank">点击绑定企业支付宝</a></p>
+	<h2 id="h2-u5F00u901Au77EDu4FE1u670Du52A13"><a name="开通短信服务" class="reference-link"></a><span class="header-link octicon octicon-link"></span>开通短信服务</h2><p>1.开通短信服务：<a href="https://dysms.console.aliyun.com/dysms.htm#/" title="点击开通短信服务" target="_blank">点击开通短信服务</a></p>
+	<p>2.进入控制台：<a href="https://dysms.console.aliyun.com/dysms.htm?spm=5176.2020520207.1001.3.5e6de9f4Upbq17#/account" target="_blank" title="点击查看控制台页面" target="_blank">点击查看控制台页面</a></p>
+	<h2 id="h2--accesskey4"><a name="获取AccessKey" class="reference-link"></a><span class="header-link octicon octicon-link"></span>获取AccessKey</h2><p>1创建AccessKey:<a href="https://help.aliyun.com/document_detail/53045.html?spm=5176.doc55322.6.593.aj9nEB&amp;parentId=44282" target="_blank" title=" 点击创建AccessKey"> 点击创建AccessKey</a></p>
+	<p>2.获取AccessKey ID和AccessKey Secret：<a href="https://ak-console.aliyun.com/?spm=5176.sms-account.101.271.66e3621Mpfzhu#/accesskey" title="点击查看Access Key ID和Access Key Secret" target="_blank">点击查看AccessKey ID和AccessKey Secret</a></p>
+	<h2 id="h2-u521Bu5EFAu7B7Eu540Du548Cu6A21u72485"><a name="创建签名和模版" class="reference-link"></a><span class="header-link octicon octicon-link"></span>创建签名和模版</h2><p><img src="{$SKIN}/core/sms/alisms2.png" alt="短信"></p>
+	<p>1.创建签名前查看短信规则和审核规则：<a href="https://help.aliyun.com/document_detail/55322.html?spm=5176.doc55764.6.579.UlcBpe" target="_blank" title="短信业务规则">短信业务规则</a>，<a href="https://help.aliyun.com/document_detail/55324.html?spm=5176.doc55491.6.573.QG9eiy" target="_blank" title="审核规则">审核规则</a></p>
+	<p>2.创建短信签名：点击查看<a href="https://help.aliyun.com/document_detail/55327.html?spm=5176.doc55324.6.543.kDzHEo" target="_blank" title="创建短信签名">创建短信签名</a>；</p>
+	<p>3.创建短信模版：点击查看<a href="https://help.aliyun.com/document_detail/55330.html?spm=5176.doc55327.6.544.n6Z8cO" target="_blank" title="创建短信模版">创建短信模版</a>；</p>
+</div>
+</td>
+				</tr>
+				
+				</table>
+			</td></tr>
+		</table>
+	</div>
+</div>
+
+<!--{template $core footer admin}-->
+
+<!--{/php168}-->

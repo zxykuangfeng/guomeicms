@@ -1,0 +1,281 @@
+<!--{php168}-->
+<!--{if $UID}-->
+<form name="form" id="form" action="{$core.controller}/tender-post" method="post">
+	<table cellspacing="0" cellpadding="0" width="80%" class="tabelzx bidding_table">
+		<tbody>
+			<!--{if empty($get_bidding_info['CONFIG']['parts'])}-->
+			<!--简单布局开始-->
+			<!--{foreach $get_bidding_info['fields'] $field $field_data}-->
+			<!--{php
+				if(!$field_data['editable'] || $field == 'iid') continue;				
+				$__name = '';
+				
+				switch($field_data['widget']){
+				
+				case 'checkbox': case 'multi_select':case 'linkage':
+					$__name = '[]';
+				break;
+				case 'uploader': case 'image_uploader':
+					$__name = '[url]';
+				break;
+				case 'multi_uploader':
+					$__name = '[url][]';
+				break;
+				
+				}									
+			}-->
+			<tr>
+				<td class="tdL">
+					<div class="zxmc xm">{$field_data['alias']}:<!--{if $field_data['not_null']}--><font color="red">*</font><!--{/if}--></div>
+				</td>
+				<td class="tdR">
+					<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+					<!--{if !empty($field_data['units'])}-->
+					$field_data[units]
+					<!--{/if}-->
+					<!--{if !empty($field_data['description'])}-->
+					<span class="description">$field_data[description]</span>
+					<!--{/if}-->
+					<span class="jsregmsg"></span>
+				</td>
+			</tr>
+				<!--{if $field_data['not_null']}-->
+				<script type="text/javascript">
+				$(document).ready(function(){
+					$('#form *[name="field#[$field]$__name"]').rules('add', {
+						required: true,
+						messages: { required: "{$P8LANG['tender_field_required']}"}
+					});
+				});
+				</script>
+				<!--{/if}-->
+				<!--{if $field_data['jsreg']}-->
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$('#form *[name="field#[$field]$__name"]').rules('add', {
+							jsreg: {$field_data['jsreg']},
+							messages: {jsreg:'{$field_data['jsregmsg']}'}
+						});
+					});
+					</script>
+				<!--{/if}-->
+			<!--{/foreach}-->
+			<!--{if $get_bidding_info['CONFIG']['mobile_post_captcha']}-->
+			<tr>
+				<td class="tdL"><div class="zxmc xm">手机验证：</div></td>
+				<td>
+					<input type="text" class="txt2 left" style="width:100px" id="checkphone" size="10" value="" name="phone" onfocus="if (value =='输入手机号'){value =''}" onblur="if (value ==''){value='输入手机号'}"/> <span><img id="p8_sendsms" style="height:25px;" src="{$RESOURCE}/images/dtyzm.gif" /></span><br/>
+					<script type="text/javascript">
+						$(document).ready(function(){
+						  $("#p8_sendsms").click(function(){
+							var checkphone = $('#checkphone').val();			
+							if(checkphone.length == 11){
+								$.ajax({
+									url: '{$this_router}-checksms',
+									type: 'post',
+									dataType: 'json',
+									cache: false,
+									data: ajax_parameters({phone: checkphone}),
+									beforeSend: function(){
+										ajaxing({});
+									},
+									success: function(json){
+										ajaxing({action: 'hide'});
+										if(json=='OK')
+											p8_window.alert('手机短信发送成功！');
+										else
+											p8_window.alert('发送失败！'+json);
+									}
+								});
+							}else{
+								p8_window.alert('请正确输入手机号！');
+							}
+						  })
+						})
+					</script>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL"><div class="zxmc xm">手机验证码：</div></td>
+				<td><input type="text" class="txt2 left" id="checkcode" size="5" value="" name="checkcode"/></td>
+			</tr>
+			<!--{/if}-->
+			<!--{if $get_bidding_info['CONFIG']['captcha']}-->
+			<tr>
+				<td class="tdL">
+					<div class="zxmc xm">验证码：</div>
+				</td>
+				<td><input type="text" name="captcha" style="width:60px;border: 1px solid #eee;" /> <span id="captcha"></span><span class="jsregmsg">（点击左框显示或刷新验证码）</span>
+				<script type="text/javascript">
+				captcha($('#captcha'), $('#form input[name="captcha"]'));
+				</script>									
+				</td>
+			</tr>
+			<!--{/if}-->
+			<!--{else}-->								
+			<!--复杂布局开始-->
+			<!--{foreach $get_bidding_info['CONFIG']['parts'] $pk $pd}-->
+			<tr>
+				<td style="padding:0;">
+					<table width="100%"  cellpadding="0" cellspacing="0" style="padding:0;margin:0;">
+						<tr>
+							<!--{php $tdwidth = 100/$pd['row'].'%'; for($i=1;$i<=$pd['row'];$i++){ $tdid = "$pk-$i";}-->
+							<td id="$pk-$i" width="$tdwidth">
+								<table width="100%" border="0"  cellpadding="5" cellspacing="0" style="padding:0;margin:0;">
+									<!--{foreach $get_bidding_info['parts'][$tdid] $fid $field}-->
+									<!--{php
+										$field_data = $get_bidding_info['fields'][$field];
+										if(!$field_data['editable'] || $field == 'iid') continue;
+										$__name = '';
+										
+										switch($field_data['widget']){
+										
+										case 'checkbox': case 'multi_select':
+											$__name = '[]';
+										break;
+										case 'uploader': case 'image_uploader':
+											$__name = '[url]';
+										break;
+										case 'multi_uploader':
+											$__name = '[url][]';
+										break;
+										
+										}
+									}-->
+									<tr>
+										<td class="tdL">
+											<div class="zxmc xm">
+												{$field_data['alias']}:
+												<!--{if $field_data['not_null']}-->
+												<font color="red">*</font>
+												<!--{/if}-->
+											</div>
+											</td>
+										<td>
+											<!--{php include template($core, 'widget/'. $field_data['widget'], 'default');}-->
+											<!--{if !empty($field_data['units'])}-->
+											$field_data[units]
+											<!--{/if}-->
+											<!--{if !empty($field_data['description'])}-->
+											<span class="description">$field_data[description]</span>
+											<!--{/if}-->
+											<span class="jsregmsg"></span>
+										</td>
+									</tr>
+									
+									<!--{if $field_data['not_null']}-->
+									<script type="text/javascript">
+										$(document).ready(function(){
+											$('#form *[name="field#[$field]$__name"]').rules('add', {
+												required: true,
+												messages: { required: "{$P8LANG['tender_field_required']}"}
+											});
+										});
+										</script>
+									<!--{/if}-->
+									<!--{if $field_data['jsreg']}-->
+									<script type="text/javascript">
+										$(document).ready(function(){
+											$('#form *[name="field#[$field]$__name"]').rules('add', {
+												jsreg: {$field_data['jsreg']},
+												messages: {jsreg:'{$field_data['jsregmsg']}'}
+											});
+										});
+										</script>
+									<!--{/if}-->
+									<!--{/foreach}-->
+								</table>
+							</td>
+							<!--{php }}-->
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<!--{/foreach}-->
+			<!--{if $get_bidding_info['CONFIG']['mobile_post_captcha']}-->
+			<tr>
+				<td>
+					<table>
+						<tr>
+							<td class="tdL"><div class="zxmc xm">手机验证：</div></td>
+							<td>
+								<input type="text" class="txt2 left" style="width:100px" id="checkphone" size="10" value="" name="phone" onfocus="if (value =='输入手机号'){value =''}" onblur="if (value ==''){value='输入手机号'}"/> <span><img id="p8_sendsms" style="height:25px;" src="{$RESOURCE}/images/dtyzm.gif" /></span>
+								<script type="text/javascript">
+									$(document).ready(function(){
+									  $("#p8_sendsms").click(function(){
+										var checkphone = $('#checkphone').val();		
+										if(checkphone.length == 11){
+											if(!(/^1[3456789]\d{9}$/.test(checkphone))){ 
+												p8_window.alert('请正确输入手机号！');
+											}else{
+												$.ajax({
+													url: '{$this_router}-checksms',
+													type: 'post',
+													dataType: 'json',
+													cache: false,
+													data: ajax_parameters({phone:checkphone}),
+													beforeSend: function(){
+														ajaxing({});
+													},
+													success: function(json){
+														ajaxing({action: 'hide'});
+														if(json=='OK')
+															p8_window.alert('手机短信发送成功！');
+														else
+															p8_window.alert('发送失败！'+json);
+													}
+												});
+											}
+										}else{
+											p8_window.alert('请正确输入手机号！');
+										}
+									  })
+									})
+								</script>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL"><div class="zxmc xm">手机校验码：</div></td>
+							<td>
+								<input type="text" class="txt2 left" id="checkcode" size="5" value="" name="checkcode"/><span id="sms_msg">请输入您收到的手机验证码</span>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<!--{/if}-->
+			<!--{if $get_bidding_info['CONFIG']['captcha']}-->
+			<tr>
+				<td>
+					<table>
+						<tr>
+							<td class="tdL">
+								<div class="zxmc xm">验证码：</div>
+							</td>
+							<td><input type="text" name="captcha" style="width:60px;border: 1px solid #eee;" /> <span id="captcha"></span><span class="jsregmsg">（点击左框显示或刷新验证码）</span>
+							<script type="text/javascript">
+								captcha($('#captcha'), $('#form input[name="captcha"]'));
+							</script>
+							</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+			<!--{/if}-->
+			<!--{/if}-->
+		</tbody>
+	</table>
+	<div class="formsbt" style="text-align:center;">
+		<input type="submit" name="" class="formsbtn" value="报 名" />
+		<input type="hidden" name="#field_iid_posted" />
+		<input type="hidden" id="field#[iid]" name="field#[iid]" value="{$id}"  />
+		<input type="hidden" name="mid" value="2" />
+		<input type="hidden" name="attachment_hash" value="{$attachment_hash}" />
+	</div>
+</form>
+<!--{else}-->
+<div class="formsbt" style="text-align:center;">
+<input type="button" onclick="window.location.href = '{$core->U_controller}?forward={$forward}';" class="formsbtn" value="登 录" />
+</div>
+<!--{/if}-->
+<!--{/php168}-->

@@ -1,0 +1,318 @@
+<!--{php168}-->
+<!--{php
+$TITLE = $subject[title];
+}-->
+<!--{template $core header}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/interview/style.css" />
+<style type="text/css">
+.breadnav{border-bottom:2px solid #184849;padding:0 20px 9px 45px;margin-bottom:20px;background: url({$RESOURCE}/skin/default/core/guestbook/arr4.png) 10px 5px no-repeat;}
+.position{font-size:16px;color:#656565;letter-spacing: 5px;}
+.position a{color: #656565;letter-spacing: 1px;padding-right: 5px;}
+.pages{text-align:center;margin:20px 0;}
+.pages a, .pages span {display: inline-block;margin:0px 2px;padding:2px 8px;font-size: 1rem;color: #555;border: 1px solid #d9d9d9;border-radius: 3px;background: #fff;}
+.pages a.on, .pages a.s2, .pages a.on:hover, .pages a.s2:hover{background: #184849;border: 1px solid #184849;color: #fff;}
+.add-inner {   border: 1px solid #EBEBEB;   margin: 0; }
+#breadcrumb {background: url("{$RESOURCE}/skin/default/core/opinion/icon-home.gif") no-repeat scroll 15px center #F4F4F4;line-height: 37px;margin-bottom: 20px;padding-left: 50px;font-size:12px;}
+#breadcrumb a {margin-right: 5px;color: #333333;text-decoration: none;}
+#page_feedback{width:96%;margin:0 auto;overflow:hidden}
+.article-content li {background: url("{$RESOURCE}/skin/default/core/opinion/icon-circle.gif") no-repeat scroll 7px center transparent;background-position: 16px center;height:40px;line-height:34px;padding: 3px 25px 3px 29px;font-size:14px;border-bottom:#cccccc 1px dotted}
+.title-list .title-link {overflow: hidden;text-overflow: ellipsis;white-space: nowrap;display: inline;float: left;text-align: left;color:#333333;text-decoration: none;}
+.title-list .date {float:left;color: #C0C0C0;font-size:12px;margin:0 8px;}
+/**对话框**/
+.php168_dialog { position: absolute; border: 5px solid #8CB8EA; background-color: #ffffff; width: 400px; height: 200px; }
+.php168_dialog .title_bar { padding: 5px; background-color: #f1f7fd; cursor: move; }
+.php168_dialog .title { color:#3A7494;font-weight:bold;}
+.php168_dialog .close { float: right; cursor: pointer; width: 18px; height: 18px; background: url({$RESOURCE}/skin/default/core/close.gif) no-repeat 0px -18px; }
+.php168_dialog .close  span{ display: none; }
+.php168_dialog .content_container { width: 100%; }
+.php168_dialog .content { padding: 5px; }
+.php168_dialog .content table td{padding:4px;}
+.php168_dialog .content .txt{height:28px;line-height:28px;padding:0 5px;border:1px solid #c1c1c1;background: #fff;}
+.php168_dialog .content textarea{border:1px solid #c1c1c1;padding:5px;background: #fff;}
+.php168_dialog .chosebar input{padding:2px 5px;margin:0 6px;}
+.php168_dialog .chosebar .active{border:0;background:url({$RESOURCE}/skin/default/core/active.png) repeat-x;color:#fff;height: 24px;padding-left:7px;padding-right: 7px;}
+.php168_dialog .button_bar { clear: left; }
+.php168_dialog .button_bar .cancel{width:89px;height:32px;background:url({$RESOURCE}/skin/default/core/cancel.jpg) no-repeat; color:#333; border:none; margin:0 5px; margin-bottom:2px;  cursor:pointer;letter-spacing:1px;}
+.php168_dialog .button_bar .ok{display:block;float:left;border:none;background:url({$RESOURCE}/skin/default/core/yes.jpg) no-repeat;color:#333;width:89px;height:32px; margin:0 5px; margin-bottom:2px;  cursor:pointer}
+</style>
+<div class="container">
+	<div class="layout">
+		<div class="breadnav clearfix">
+			<div class="position fl"><a href="{$core.controller}">首页</a>/<a href="{$this_router}-list">在线访谈</a></div>
+		</div>
+		<div class="BAIJBAIS">
+			<div class="row">
+				<div class="col-md-9 col-sm-9 col-xs-12">
+					<div class="ZUOB">
+						<!--主题-->
+						<div class="Btrlt">
+							<div class="head8">
+								<div class="fleft FT5">
+									<div class="FT_Pa">
+										第<font style="font-size:16px;">$subject[id]</font>期
+									</div>
+								</div>
+								<div class="fleft FT4">
+									$subject[title]
+								</div>
+							</div>
+							<div class="Car">
+								<div class="fleft Hdp">
+									<!--{if empty($subject[type])}-->
+									<script type="text/javascript" src="{$RESOURCE}/js/media.js"></script>
+									<script type="text/javascript">
+									showMedia({
+									url: '{$subject[video]}',
+									width: 500,
+									height: 260
+									});
+									</script>
+									<!--{else}-->
+									<img src="{$subject[picture]}" width="500" height="260"/>
+									<!--{/if}-->
+								</div>
+								<div class="fright Rig">
+									<div class="Dbuom">
+										<span>$subject[title]</span><br>
+										<font style="font-weight:bold;color:#4b8785;">内容简介：</font><br/>
+										$subject[summary]
+									</div>
+									<div class="Lin3">
+										<font style="font-weight:bold;color:#4b8785;">主持人：</font>
+										$subject[cname]<br/>
+										<font style="font-weight:bold;color:#4b8785;">开始时间：</font>
+										<!--{php echo date('Y-m-d', $subject[begintime]);}-->
+									</div>
+								</div>
+								<p class="clear"></p>
+							</div>
+						</div>
+						<!--访谈实录-->
+						<div class="Btrlt mtop">
+							<div class="head8">
+								<div class="fleft FT7">
+									<div class="FT_Pa">
+										访谈实录
+									</div>
+								</div>
+								<div class="fright FT4">
+									
+								</div>
+							</div>
+							<div class="Car FT_zi" id="content_container" style="overflow-y:auto; overflow-x:hidden;height:250px;">
+							</div>
+						</div>
+						<div class="mtop">$label[interview_banner]
+						</div>
+						<!--网友留言-->
+						<div class="Btrlt mtop">
+							<div class="head8">
+								<div class="fleft FT7">
+									<div class="FT_Pa">
+										网友留言
+									</div>
+								</div>
+								<div class="fright FT4">
+									
+								</div>
+							</div>
+							<div class="Car FT_zi" id="ask_container" style="overflow-y:auto; overflow-x:hidden;height:250px;">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-3 col-sm-3 col-xs-12">
+					<div class="ZUOC">
+						<!--嘉宾介绍-->
+						<div class="FT_er">
+							<div class="Kuang">
+								<div class="fleft FT7">
+									<div class="FT_Pa">
+										嘉宾介绍
+									</div>
+								</div>
+								<div class="fright Fr">
+								</div>
+							</div>
+							<div>
+								<div class="ft11">
+									<div class="Pren4">
+										<img src="$subject[gpicture]" width="180" height="200"/>
+									</div>
+								</div>
+								<div class="FT_zi" style="color:#999999;">
+									嘉宾：$subject[gname]<br/>
+									嘉宾简介：<br/>
+									$subject[gintroduction]
+								</div>
+							</div>
+						</div>
+						<!--精彩瞬间-->
+						<div class="FT_er mtop">
+							<div class="Kuang">
+								<div class="fleft FT7">
+									<div class="FT_Pa">
+										精彩瞬间
+									</div>
+								</div>
+								<div class="fright Fr">
+								</div>
+							</div>
+							<div id="picture_container">
+							</div>
+						</div>
+						<!--发表留言-->
+						<div class="FT_er mtop">
+							<div class="Kuang">
+								<div class="fleft FT7">
+									<div class="FT_Pa">
+										发表留言
+									</div>
+								</div>
+								<div class="fright Fr">
+								</div>
+							</div>
+							<div style="height:220px;">
+								<div class="ZB10">
+									用户名<input id="username_txt" type="text" value="网友" style="width:100px; margin-left:7px; height:13px;"/> 匿名<input id="send_type" type="checkbox" value="1" onclick="$(this).prev().val('');"/>
+								</div>
+								<div class="ZB10">
+									<textarea cols="27" rows="5" id="ask_textarea"></textarea>
+								</div>
+								<div style="text-align:center;" class="ZB10">
+									<img src="{$SKIN}interview/ft8.gif" style="cursor: pointer;" onclick="addAsk();"/> <img src="{$SKIN}interview/ft9.gif" style="margin-left:10px;cursor: pointer;" onclick="$('#ask_textarea').val('');"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="page">
+			</div>
+		</div>
+		<div class="clear"></div>
+		<div class="Btrlt mtop">
+			<div class="head_inv">
+				<div class="fleft FT8">
+					<div class="FT_inv">
+						$label[interview_title_bottom]
+					</div>
+				</div>
+				<div class="fright FT4">
+								
+				</div>
+			</div>
+			<div class="Car FT_zi">
+				$label[interview_textcon]
+			</div>
+		</div>
+	</div>
+</div>
+<script language="javascript">
+var sid = "{$subject[id]}";
+function getAskList(){
+	setTimeout(getAskList,50000);//时间可控   
+	$.ajax({  
+		url: P8CONFIG.URI.core['interview'].controller+'-list_ask',
+		type: 'POST',
+		dataType: 'json', 
+		data: ajax_parameters({sid:sid}),
+		cache: false,
+		success: function(json){    
+			var str = '';
+			for(var i=0; i<json.length; i++){
+				 str += '<div class="eachvi">'+
+						 '<span style="letter-spacing:2px;"><font color="blue">'+(json[i].username==''? '匿名' : json[i].username)+'</font>：</span>'+
+						 '<span class="timestamp">发表时间:'+date('Y-m-d H:i:s',json[i].posttime)+'</span>'+
+						 '<div class="vicontent">'+json[i].content+'</div>'+
+			  		 '</div>';
+			}
+			$('#ask_container').empty().append(str).animate({scrollTop: $('#ask_container')[0].scrollHeight});
+			
+		}
+	});
+}
+
+function addAsk(){
+	var content = $('#ask_textarea').val();
+	var sendtype = $('#send_type').attr('checked');
+	var username = sendtype ? '' : $('#username_txt').val();
+
+	if(content == '' ||(!sendtype && username == '')) return;
+
+	$.ajax({
+		url: P8CONFIG.URI.core['interview'].controller+'-add_ask', 
+		type: 'POST',
+		dataType: 'json',
+		data: ajax_parameters({sid: sid, username: username, content: content}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide',text: '发表成功！'});
+			
+			$('#ask_textarea').val('');
+			var str = '';
+			 str += '<div class="eachvi">'+
+						 '<span style="letter-spacing:2px;"><font color="blue">'+(username==''? '匿名': username)+'</font>：</span>'+
+						 '<span class="timestamp">发表时间:'+date('Y-m-d H:i:s')+'</span>'+
+						 '<div class="vicontent">'+content+'</div>'+
+			  		 '</div>';
+			
+			$('#ask_container').append(str).animate({scrollTop: $('#ask_container')[0].scrollHeight});
+		}
+	});
+}
+
+function getContentList(){
+	setTimeout(getContentList,20000);//时间可控   
+	$.ajax({  
+		url: P8CONFIG.URI.core['interview'].controller+'-list_content',
+		type: 'POST',
+		dataType: 'json', 
+		data: ajax_parameters({sid:sid}),
+		cache: false,
+		success: function(json){    
+			var str = '';
+			for(var i=0; i<json.length; i++){
+				str += '<div class="eachvi">'+
+					  '<span >'+(json[i].sender == 0 ? '<font color="red">主持人</font>':'<font color="blue">嘉宾</font>')+'：</span>'+
+					  '<span class="timestamp">发表时间:'+date('Y-m-d H:i:s',json[i].posttime)+'</span>'+
+					  '<div class="vicontent">'+json[i].content+'</div>'+
+				  '</div>';
+			}
+			$('#content_container').empty().append(str).animate({scrollTop: $('#content_container')[0].scrollHeight});
+		}
+	});
+}
+
+function getPictureList(){
+	setTimeout(getContentList,20000);//时间可控   
+	$.ajax({  
+		url: P8CONFIG.URI.core['interview'].controller+'-list_picture',
+		type: 'POST',
+		dataType: 'json', 
+		data: ajax_parameters({sid:sid}),
+		cache: false,
+		success: function(json){    
+			var str = '';
+			for(var i=0; i<json.length; i++){
+				str += '<div class="XU">'+
+					  '<div class="fleft"><img src="'+json[i].url+'" width="110" height="70" /></div>'+
+					  '<div class="fright LIGOR">'+json[i].summary+'</div>'+
+				  '</div>';
+			}
+			$('#picture_container').empty().append(str);
+		}
+	});
+}
+
+$(document).ready(function(){
+	getAskList();
+	getContentList();
+	getPictureList();
+});
+</script>
+<!--{template $core footer}-->
+<!-- {/php168} -->

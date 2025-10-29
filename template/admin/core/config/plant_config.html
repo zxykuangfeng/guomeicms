@@ -1,0 +1,184 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $core config/menu_bar admin}-->
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css" />
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<form action="$this_url" method="post" id="form">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core-plant_config"><i class="icon icon-ico26"></i>电子大屏设置</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core-plant" target="_blank"><i class="icon icon-ico25"></i>查看后台电子大屏</a></li>
+							<li class="btn-color3"><a href="{if $this_system->domain}{$this_system.domain}{else}{str_replace('index.php','',$this_system->controller)}{/if}plant.php" target="_blank"><i class="icon icon-ico26"></i>查看前台电子大屏</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+		
+			<table class="columntable formtable hover_table">
+				<tr class="title fix_head">
+					<td colspan="2" class="title">{$P8LANG['base_config']}</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['plant_title']}</td>
+					<td class="tdR">
+						<input type="text" class="txt" name="config[plant][title]" size="38"  value="{if !empty($config[plant]['title'])}{$config[plant]['title']}{else}大数据运维总览图{/if}" />
+						<input type="button" href="javascript:;" class="submit_btn" value="查看数据运维总览图" onclick="window.open('{$STATIC_URL}/plant.php')" />
+					</td>
+				</tr>				
+				<tr>
+					<td class="tdL">{$P8LANG['plant_base_reflash']}</td>
+					<td class="tdR"> <input type="text" class="txt" name="config[plant][base_reflash]" id="base_reflash" size="5"  value="{if !empty($config[plant]['base_reflash'])}{$config[plant]['base_reflash']}{else}1800{/if}" /> 秒
+						<input type="button" value="30分钟" onclick="$('#base_reflash').val(1800)" />
+						<input type="button" value="1小时" onclick="$('#base_reflash').val(3600)" />
+						<input type="button" value="4小时" onclick="$('#base_reflash').val(14400)" />
+						<input type="button" value="24小时" onclick="$('#base_reflash').val(86400)" /> 
+					</td>
+				</tr>
+				<tr>
+					<td class="tdL">{$P8LANG['plant_map_show']}</td>
+					<td class="tdR">
+						<input type="radio" name="config[plant][map_show]" value="1" {if $config['plant']['map_show']}checked {/if} /> 是 
+						<input type="radio" name="config[plant][map_show]" value="0" {if empty($config['plant']['map_show'])}checked {/if} /> 否						
+					</td>
+				</tr>
+				<!--{foreach $blocks $block}-->
+				<tr>
+					<td class="tdL">{$P8LANG['blocks'][$block]}</td>
+					<td class="tdR">
+						是否显示 <input type="radio" name="config[plant][$block][show]" value="1" {if $config['plant'][$block]['show']}checked {/if} /> 是 
+						<input type="radio" name="config[plant][$block][show]" value="0" {if empty($config['plant'][$block]['show'])}checked {/if} /> 否<br>
+						模块标题 <input type="text" class="txt" name="config[plant][$block][title]" size="38"  value="{if !empty($config['plant'][$block]['title'])}{$config['plant'][$block]['title']}{else}大数据运维总览图{/if}" /><br/>						
+						标题类型 
+						<input type="radio" name="config[plant][$block][title_type]" value="1" {if $config['plant'][$block]['title_type'] == '1'}checked {/if} /> 大标题 
+						<input type="radio" name="config[plant][$block][title_type]" value="0" {if empty($config['plant'][$block]['title_type'])}checked {/if} /> 小标题
+						<input type="radio" name="config[plant][$block][title_type]" value="2" {if $config['plant'][$block]['title_type'] == '2'}checked {/if} /> 不显示
+						<br/>
+						<!--{if !in_array($block,array('center_b','right_b'))}-->
+						图表类型 						
+						<select name="config[plant][$block][type]" id="$block">
+							<option value="">请选择</option>
+							<!--{foreach $models $model}-->
+							<option value="$model" {if $config['plant'][$block]['type'] == $model}selected {/if}>{$P8LANG['plant'][$model]}</option>
+							<!--{/foreach}-->
+						</select>&nbsp;<input type="button" onclick="review('$block')" value="图表预览" />
+						<br/>
+						布局方向
+						<input type="radio" name="config[plant][$block][direct]" value="1" {if $config['plant'][$block]['direct']}checked {/if} /> 水平
+						<input type="radio" name="config[plant][$block][direct]" value="0" {if empty($config['plant'][$block]['direct'])}checked {/if} /> 垂直						
+						<br/>
+						图表高度 <input type="text" class="txt" name="config[plant][$block][height]" size="5"  value="{if !empty($config['plant'][$block]['height'])}{$config['plant'][$block]['height']}{else}300{/if}" /> px<br/>
+						刷新频率 <input type="text" id="reflash_{$block}" class="txt" name="config[plant][$block][reflash]" size="5"  value="{if !empty($config['plant'][$block]['reflash'])}{$config['plant'][$block]['reflash']}{else}300{/if}" /> 秒 						
+						<input type="button" value="30分钟" onclick="$('#reflash_{$block}').val(1800)" />
+						<input type="button" value="1小时" onclick="$('#reflash_{$block}').val(3600)" />
+						<input type="button" value="4小时" onclick="$('#reflash_{$block}').val(14400)" />
+						<input type="button" value="24小时" onclick="$('#reflash_{$block}').val(86400)" /> 
+						各模块请尽量使用不同的刷新频率
+						<br/>
+						<!--{if $config['plant'][$block]['type']}-->
+						调用URL：{$STATIC_URL}/api/plant/{$config['plant'][$block]['type']}.php?direct={if $config['plant'][$block]['direct']}1{else}0{/if} 
+						<a style="color:blue;" href="{$STATIC_URL}/api/plant/{$config['plant'][$block]['type']}.php?direct={if $config['plant'][$block]['direct']}1{else}0{/if}" target="_blank">预览图表</a>
+						<!--{/if}-->
+						<!--{/if}-->
+						</td>						
+				</tr>
+				<!--{/foreach}-->
+				<tr>
+					<td class="tdL">指定栏目(不选则不限)</td>
+					<td class="tdR">
+						<input type="text" class="txt" id="option_category" name="config[plant][category]" value="{if !empty($config['plant']['category'])}<!--{php if(is_array($config['plant']['category']))$config['plant']['category'] = implode(',', $config['plant']['category']);echo $config['plant']['category'];}-->{/if}" onchange="category_path(this.value.split(','))" />
+						<input type="button" value="选择栏目" onclick="dialog.show()" />
+						<div id="category_path"></div>
+						<input type="hidden" id="categories" />
+					</td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<div style="text-align:center;">
+							<input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+function review(obj){
+	var tpl = $('#'+obj).val();
+	var direct = $("#form input[name='config[plant]["+obj+"][direct]']:checked").val();
+	var url = '{$STATIC_URL}/api/plant/'+tpl+'.php?direct='+(direct>0?1:0);
+	if(tpl) window.open(url);
+}
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 300,
+	ok: function(){
+		var values = cs.get_value();
+		$('#form input[name="config[plant][category]"]').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$core.controller}/cms/category-json',
+	values: $('#form input[name="config[plant][category]"]').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

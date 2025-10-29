@@ -1,0 +1,122 @@
+<?php $FILES = @include './data/charsetize.php';?>
+<div class="content">
+	<form action="" id="form1" name="form1" onsubmit="return varify()" method="POST">
+		<div class="h">
+			<strong>数据库设置</strong>
+			<table width="100%" border="0" >
+				<tr>
+					<td width="19%">数据库类型</td>
+					<td width="81%">
+						<select name="db_type" id="dbtype" onchange="change_db(this)">
+						<option value="mysql" selected="selected">MySql</option>
+						<option value="dm">达梦数据库</option>
+						<option value="kdb">人大金仓数据库</option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td width="19%">数据库服务器</td>
+					<td width="81%">
+						<input type="text" name="db_host" value="localhost" id="db_host" />
+						（一般不需修改，非本地测试由空间商提供）
+					</td>
+				</tr>
+				<tr>
+					<td>服务端口</td>
+					<td>
+						<input type="text" name="db_port" id="db_port"  value="3306" id="db_port" />
+						（一般情况为3306）
+					</td>
+				</tr>
+				<tr>
+					<td>数据库帐号</td>
+					<td>
+						<input type="text" name="db_user" value="" id="db_user"/>
+						（请根据设定填入）
+					</td>
+				</tr>
+				<tr>
+					<td>数据库账号密码</td>
+					<td>
+						<input type="text" name="db_password" value="" id="db_password" />
+						（请根据设定填入）
+					</td>
+				</tr>
+				<tr>
+					<td>数据库名</td>
+					<td>
+						<input type="text" name="db_name" value="" id="db_name" />
+						（非本地测试由空间商提供）
+					</td>
+				</tr>
+				<tr>
+					<td ></td>
+					<td id="msg"></td>
+				</tr>
+			</table>
+		</div>
+		<div class="form">
+			<input type="hidden" name="page_charset" value="utf-8" />
+			<input type="hidden" name="mysql_connect_type" value="mysql" />
+			<input type="hidden" name="core_table_prefix" value="" />
+			<input type="hidden" name="table_prefix" value="p8_" />
+			<input type="hidden" name="db_charset" id="charset" value="<?php echo isset($FILES['./#.php']) ? 'gbk' : 'utf8';?>" />
+			<input type="button" name="upstep" value="上一步" onclick="javascript:history.go(-1)" class="submit_btn"> <input type="submit" id="submit" name="Submit" value="下一步" class="submit_btn"> <input type="hidden" name="step" value="step2" />
+		</div>
+	</form>
+</div>
+<script type="text/javascript">
+function change_db(obj){
+	dbtype = $(obj).val();
+	if(dbtype=='dm'){
+		$('#db_port').val(5236);
+		$('#db_name').parent().parent().hide();
+
+	}else if(dbtype=='kdb'){
+		$('#db_port').val(54321);
+		$('#db_name').parent().parent().show();
+	}else{
+		$('#db_port').val(3306)
+		$('#db_name').parent().parent().show();
+	}
+}
+function varify(){
+		var success=false;
+		var dbtype= $('#dbtype').val();console.log(dbtype);
+		var host= $('#db_host').val();
+		var port=$('#db_port').val();
+        if(dbtype=='dm' && host=='dm')port='';
+		var user=$('#db_user').val();
+		var pawd=$('#db_password').val();
+		var name=$('#db_name').val();
+		var charset=$('#charset').val();
+		$('font').remove();
+		var h=u=n=true;
+		if(user==''){$('#db_user').after('<font color=red>帐号不能为空</font>');u=false;}
+		if(name=='' && dbtype=='mysql'){$('#db_name').after('<font color=red>数据库不能为空</font>');n=false;}
+		
+		if(host==''){$('#db_host').after('<font color=red>数据库主机不能为空</font>');h=false;}
+		if(h && u && n){
+			$.ajax({
+				type:'POST',
+				async:false,
+				url: 'install/check.php',
+				data:'job=db&host='+host+'&port='+port+'&user='+user+'&pawd='+pawd+'&name='+name+'&charset='+charset+'&dbtype='+dbtype,
+				success:function(msg){
+					if(msg!=='true'){
+						if(msg=='nolink')_msg='<font color=red>不能连接数据库服务器,帐号或密码错误</font>';
+						if(msg=='nocreate')_msg='<font color=red>不能创建数据库</font>';
+						if(msg=='charset')_msg='<font color=red>不支持的字符集</font>';
+						if(msg=='nodb')_msg='<font color=red>数据库不存在</font>';
+						else _msg='<font color=red>='+msg+'</font>';
+						$('#msg').html(_msg);
+					}else{
+						success=true;
+					}
+				}
+			})
+		}
+		return success;
+}
+
+</script>

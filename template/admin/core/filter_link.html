@@ -1,0 +1,130 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-filter_link"><i class="fa fa-shield"></i>风险外链扫描</a></li>
+						<li><a href="{$core.admin_controller}/core-word_scan"><i class="fa fa-shield"></i>内容扫描体检</a></li>
+						<li><a href="{$core.admin_controller}/core-word_censor_config"><i class="fa fa-shield"></i>大数据内容扫描体检</a></li>
+						<li><a href="{$core.admin_controller}/core-word_scan_config"><i class="fa fa-shield"></i>内容敏感词</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-set_lan"><i class="fa fa-shield"></i>超年限内容限定访问</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table">
+			<tr class="title fix_head">
+				<td colspan="5" class="title">外部资源或链接搜索</td>
+			</tr>
+			
+			<tr>
+				<td colspan="5" align="center">
+				<form action="$this_url" method="get" id="request">
+					站点
+					<select name="site" id="site">
+						<option value="">不限</option>
+						<!--{foreach $sites $vv}-->
+						<option value="{$vv['alias']}"{if $vv['alias'] == $site} selected{/if}>{$vv['sitename']}</option>
+						<!--{/foreach}-->
+					</select>
+					系统
+					<select name="system" id="system" onchange="select_sys(this.value)">
+						<option value="">不限</option>
+						<!--{foreach $systems $name $v}-->
+						<option value="$name"{if $system == $name} selected{/if}>$v[alias]</option>
+						<!--{/foreach}-->
+					</select>
+					模型
+					<select name="model" id="model">
+						<option value="">不限</option>
+						<!--{foreach $models $name $v}-->
+						<option value="$name"{if $model == $name} selected{/if}>$v[alias]</option>
+						<!--{/foreach}-->
+					</select>
+					<input type="text" class="txt" size = "38" name="word" value="{if !empty($word)}$word{/if}" />
+					<button type="button" class="submit_btn"/ onclick="link_search();">{$P8LANG['search']}</button>
+				</form>				
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table click_changeable">
+			<tr class="title">
+				<td class="title" width="6%">ID</td>
+				<td class="title" width="9%">{$P8LANG['system']}</td>
+				<!--td class="title" width="8%">{$P8LANG['module']}</td-->
+				<td class="title" width="10%">站点</td>
+				<!--td class="title" width="8%">模型</td-->
+				<td class="title" width="32%">关联信息</td>
+				<td class="title" width="42%">外部资源或链接</td>
+			</tr>
+			
+			<!--{foreach $list $v}-->
+			<tr id="word_$v[id]">
+				<td align="center">{$v[id]}</td>
+				<td align="center">{$v['system']}</td>
+				<td align="center">{$v['site']}</td>
+				<td>{$v['view']} <a href="{$v['view']}" style="float:right;" target="_blank"><img src="{$SKIN}/button_see.png" /></a></td>
+				<td>{$v['link']}</td>				
+			</tr>
+			<!--{/foreach}-->				
+		</table>
+		<table width="100%" class="columntable formtable">
+			<tr>
+				<td align="center" id="pages" class="pages">{$pages}</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="button" value="重建主站外部资源或链接" onclick="$('#rebuild').submit();" class="edit_btn" />
+					<input type="button" value="重建分站外部资源或链接" onclick="$('#rebuild_system').val('sites');$('#rebuild').submit();" class="edit_btn" />
+					<input type="button" value="一键导出外链扫描" onclick="download_recode()" class="edit_btn" />
+				</td>
+			</tr>
+		</table>		
+	</div>
+</div>
+<form action="$this_url" method="post" id="rebuild">
+	<input type="hidden" name="type" id="rebuild_type" value="rebuild" />
+	<input type="hidden" name="system" id="rebuild_system" value="cms" />	
+</form>
+<script type="text/javascript">
+function link_search(){
+	$('#request').attr('method',"get");
+	$('#request').submit();
+}
+function download_recode(){
+	$('#request').append('<input type="hidden" name="type" value="download" />');
+	$('#request').attr('method',"post");
+	$('#request').submit();
+}
+function select_sys(system){
+	$.ajax({
+	   url:'$this_url',
+	   type: 'post',
+	   dataType: 'json',
+	   data: ajax_parameters({system:system,type:'get_model'}),
+	   cache: false,
+	   success: function(json){
+			$('#model').html('<option value="">不限</option>');
+			var option;
+			for(i in json){
+				option = '<option value="'+json[i].name+'">'+json[i].alias+'</option>';
+				$('#model').append($(option));
+			}
+	   }
+	});	
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

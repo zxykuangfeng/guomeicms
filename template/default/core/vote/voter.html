@@ -1,0 +1,47 @@
+<!--{php168}-->
+<!--{php
+
+$TITLE = $data['name'] .'_'. $core->CONFIG['site_name'];
+$SEO_KEYWORDS = $data['name'];
+$SEO_DESCRIPTION = $data['content'];
+}-->
+<!--{template $core header}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/vote/style.css" />
+<div class="container">
+	<div class="layout">
+		<div class="vote_form mb20">
+			<form method="post" action="{$this_module.controller}-vote" id="p8_vote_$data[id]">
+				<div class="vote-wrap">
+					<div class="vote_head_1 clearfix">
+						<span class="fleft vote_head_icon1">$data[name] 选项 {$data['options'][$oid]['name']} 的投票者</span>
+						<div class="fright" id="border"><nobr><b>票数:</b><span id="hot_value">{$data['options'][$oid]['votes']}</span></nobr></div>
+					</div>
+
+					<div id="vote_main">
+						<div class="title f16px">
+							$data[name]
+						</div>
+						<div class="content pages">
+							<ul class="vote_list">
+							<!--{foreach $list $value}-->
+								<li><span>投票人：$value[username]</span><span>投票时间：<!--{php echo date('m-d H:s', $value['timestamp']);}--> </span><span>投票ip：$value[last_login_ip] $value[shenfenzheng] $value[cell_phone]</span></li>
+							<!--{/foreach}-->
+							</ul>			
+							$pages
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div class="vote_form">
+			<form method="post" action="">
+				<p><input type="hidden" name="id" value="$id" /></p>
+				<p><input type="hidden" name="oid" value="$oid" /></p>
+				<p><input type="hidden" name="token" value="{$token}" /></p>
+				<p class="text-center"><input type="submit" name="submit" class="vote_btn" value="导出数据" /></p>
+			</form>
+		</div>
+	</div>
+</div>
+<!--{template $core footer}-->
+<!--{/php168}-->

@@ -1,0 +1,377 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable" width="100%">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$core.admin_controller}/core-cache"><i class="fa fa-refresh"></i>一键更新网站缓存</a></li>
+						<li><a href="{$core.admin_controller}/core-cache" target="_blank"><i class="fa fa-wpforms"></i>更新全站缓存</a></li>
+					</ul>
+				</td>
+			</tr>
+			
+		</table>
+	</div>
+</div>
+<form action="{$core.admin_controller}/core-cache" method="POST" id="cache">
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="sites-down-menu">
+						<li class="btn-color1"><a href="{$core.admin_controller}/core-cache"><i class="icon icon-ico44"></i>更新网站缓存</a></li>
+						<li class="btn-color5"><input type="submit" value="解除缓存锁定" onclick="this.form.type.value='unlock'" class="cache-btn" /></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	
+		<table class="columntable formtable" width="100%" >
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['update_cache']}</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list" align="center" style="border-bottom:0;">
+					<p><input type="text" value="更新本站所有缓存" onclick="cache_site('{$this_system->SITE}')" class="cache_btn cache_one" /></p>
+					<p><input type="text" value="静态本站所有数据" onclick="list_to_html('{$this_system->SITE}')" class="cache_btn cache_one" /><p>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable" width="100%">
+			<tr class="title fix_head">
+				<td class="title">{$P8LANG['update_cache']}</td>
+			</tr>
+			
+			<tr>
+				<td class="headerbtn_list" align="center" style="border-bottom:0;">
+					<p><input type="text" value="一键通用更新" class="cache_btn2" onclick="site_reflash('{$this_system->SITE}')" size="30"/> </p>
+					<p><input type="text" value="静态本站首页" class="cache_btn2" onclick="html_index()" /></p> 
+					<p><input type="text" value="静态近30天内容" class="cache_btn2" onclick="view_to_html(30)" size="30"/><span class="ab_c">{$P8LANG['cache_note_2']}</span></p>
+					<p><input type="text" value="静态本站栏目" class="cache_btn2" onclick="list_only_html()" size="30"/> </p>
+					<p><input type="button" value="更新所有子站缓存" class="cache_btn2" onclick="cache_base_sites()" /></p>
+					<input type="hidden" name="type" id="cache_type" value="all" />
+				   <input type="hidden" id="this_site" value="{$this_system->SITE}" /> 
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+</form>
+<form action="" method="post" id="reflash" target="__reflash_statistic__">
+	<input type="hidden" name="type" value="rebuild" id="reflash_type" />
+	<input type="hidden" name="system" value="sites" />	
+	<input type="hidden" name="site" value="{$this_system->SITE}" />	
+</form>
+<iframe style="display: none;" name="__reflash_statistic__"></iframe>
+<form action="$this_router-list?site={$this_system->SITE}" method="post" id="form">
+<input type="hidden" name="action" value="" />
+</form>
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend style="font-size:14px;">列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+
+<fieldset class="field" id="shower2">
+	<legend style="font-size:14px;">内容页</legend>
+	<iframe name="shower2" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+
+<form id="list_to_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<form id="view_to_html" action="{$this_system.admin_controller}/item-view_to_html" method="post" target="shower2"></form>
+<form id="list_only_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+
+<script type="text/javascript">
+var url = window.location.href;
+function cache_base_sites(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					p8_window.alert({text:'缓存中…'});
+				},
+				success: function(msg){
+					p8_window.alert({text:'操作成功！',action: 'hide'});
+				}
+			});
+		}else{
+			return false;
+		}
+	});	
+}
+function site_reflash(site){
+	//更新标签缓存  更新魔板缓存   静态首页   静态最近10天的内容
+	var cache_data = ['template','label'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'更新中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			//静态首页
+			html_index();
+			//静态最近10天的内容
+			view_to_html(10);
+			html_dialog.hide();
+			p8_window.alert('操作成功');
+		}
+	});	
+}
+
+function list_to_html(site){
+	$('#list_to_html').empty();
+	$('#view_to_html').empty();	
+	var pages = 0;
+	var items = -1;
+	
+	$('#list_to_html').append($('<input type="hidden" name="pages" value="'+ pages +'" />'));
+	$('#list_to_html').submit();	
+	html_dialog.show();	
+	$('#view_to_html').append($('<input type="hidden" name="items" value="'+ items +'" />'));
+	$('#view_to_html').submit();
+	if(!site) return false;
+	$.ajax({
+			url:'{$this_system.admin_controller}-index_to_html',
+			type: 'post',
+			dataType: 'json',
+			data: ajax_parameters({site:site}),
+			cache: false,
+			beforeSend: function(){
+				ajaxing({'text':'处理中…'});
+			},
+			success: function(msg){
+				ajaxing({action: 'hide'});
+				if(msg==-1){
+			   		p8_window.alert('此站没有绑定域名，不可静态首页');
+				}else{
+					p8_window.alert('静态成功！');
+				}
+		   }
+	});
+}
+var html_dialog = new P8_Dialog({
+	width: 700,
+	height: 500,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+function list_only_html(){
+	$('#list_only_html').empty();
+	$('#list_only_html').append($('<input type="hidden" name="pages" value="0" />'));
+	$('#list_only_html').submit();	
+	html_dialog.show();	
+	$('#list_only_html').empty();
+}
+
+function view_to_html(time){
+	$('#view_to_html').empty();
+	if(time){
+		var _obj = new Date(<!--{php echo P8_TIME;}-->000);
+		var _Y = _obj.getFullYear();
+		var _m = _obj.getMonth() +1;
+		var _d = _obj.getDate();
+		var _H = _obj.getHours();
+		var _j = _obj.getDay();
+		var time1 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d -30, _Y));
+		var time2 = date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time1 +'" />'));
+		$('#view_to_html').append($('<input type="hidden" name="time_range[]" value="'+ time2 +'" />'));
+	}
+	$('#view_to_html').submit();
+	html_dialog.show();
+}
+var verify_item_id = [];
+var verify_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['verify']}',
+	width: 500,
+	height: 240,
+	button: true,
+	ok: function(){
+		var value = this.content.find('input[name=value]:checked').val();
+		var reason = this.content.find('textarea').val();
+		
+		$.ajax({
+			url: '{$this_system->admin_controller}/item-verify',
+			type: 'POST',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: verify_item_id, value: value, verified: 0, push_back_reason: reason}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				if(json.length){									 
+					p8_window.alert(lang_array(P8LANG.sites.item.you_verified, [json.length]));
+					window.location.reload();
+				}else{
+					p8_window.alert('{$P8LANG['fail']}');
+				}
+			}
+		});
+	},
+	show: function(){
+		this.content.html(verify_html);
+		
+		this.content.find('input[type=radio]').click(function(){
+			this.value == '-99' && this.checked ? $(this).parent().parent().find('div').show() : $(this).parent().parent().find('div').hide();
+		});
+	}
+});
+var verify_html = '';
+<!--{foreach $item->CONFIG['verify_acl'] $status $v}-->
+	<!--{if in_array($status,array(-99,1,0,88))}-->
+	verify_html += '<span><input type="radio" id="verify$status" name="value" value="$status" /><label for="verify$status">$v[name]</label> </span>';
+	<!--{/if}-->
+<!--{/foreach}-->
+verify_html += '<fieldset><legend style="font-size:14px;border:0;margin-bottom:5px;">{$P8LANG['sites_item']['verify']['reason']}</legend><textarea rows="5" cols="60"></textarea></fieldset>';
+
+function cache_site(site){
+	var cache_data = ['farm','template','label','manu','model','category','menu_custom'];
+	$.ajax({
+		url: '{$this_system.admin_controller}/farm-cacheall',
+		type: 'POST',
+		dataType: 'json',
+		data: {cache:cache_data,site:site},
+		beforeSend: function(){
+			ajaxing({'text':'处理中…'});
+		},
+		success: function(){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});
+}
+function html_index(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_router}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   beforeSend: function(){
+				ajaxing({'text':'静态中…'});
+		   },
+		   success: function(msg){
+				ajaxing({action: 'hide'});
+			   if(msg==-1)
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				else{
+					p8_window.alert('操作成功！');
+					window.open(msg);
+				}
+		   }
+	})
+	
+}
+
+function set_site(obj){
+
+	sites_main_src = main.window.location.href;
+	sites_main_src=sites_main_src.replace(/[&?]site=\w*/,'');
+	$('#main').attr('src',sites_main_src+((sites_main_src.indexOf('?')>-1)?'&':'?')+'site='+$(obj).val());
+}
+
+function open_site(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/s.php/'+thisSite);
+}
+
+function open_acl(){
+	thisSite = $('#this_site').val();
+	window.location.href = '{$this_system.admin_controller}/farm-acl?alias='+thisSite;
+}
+
+function open_ucenter(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/u.php?site='+thisSite);
+}
+
+function cache_all(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->admin_controller}/sites/farm-cacheall?site='+thisSite,'main');
+}
+function do_cache(type){
+	$.ajax({
+		url:'{$this_system.admin_controller}/farm-cacheall',
+		type: 'post',
+		dataType: 'json',
+		data:ajax_parameters({cache: [type]}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({text:'缓存中…'});
+		},
+		success: function(msg){
+			ajaxing({action: 'hide'});
+			p8_window.alert('操作成功');
+		}
+	});	
+}
+function cache_all_site(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){			
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({action: 'hide'});
+					p8_window.alert('操作成功');
+				}
+			});			
+		}else{
+			return false;
+		}
+	});
+}
+
+
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 400,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+
+
+	function do_cache(cache_type){		
+		$('#cache_type').val(cache_type);
+		//ajaxing({'text':'缓存中…'});
+		$('#cache').submit();	
+	}
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

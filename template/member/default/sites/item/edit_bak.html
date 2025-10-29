@@ -1,0 +1,806 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/iColorPicker.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<link rel="stylesheet" href="{$SKIN}category_selector.css" type="text/css" />
+<style type ="text/css">
+.columntable td{border:none; border-bottom:1px solid #EFEFEF;padding-top:8px;padding-bottom:8px}
+.columntable .tdL{font-weight:bold}
+</style>
+<script type="text/javascript">
+var form_submit;
+
+window.onbeforeunload = function(){
+	P8_Upload.del(form_submit);
+};
+
+$(document).ready(function(){
+	member_labelshows('header_t');
+	$('#form').validate({
+		rules: {
+			<!--{if $ACTION == 'add' || $ACTION == 'update'}-->
+			title: {
+				required: true,
+				maxlength: 80
+			},
+			
+			summary: {
+				maxlength: 250
+			},
+			
+			cid: {
+				required: true
+			},
+			<!--{if !empty($this_module->CONFIG['source_required'])}-->
+			source: {
+				required: true,
+			},
+			<!--{/if}-->
+			<!--{if !empty($this_module->CONFIG['author_required'])}-->
+			author: {
+				required: true,
+			},
+			<!--{/if}-->
+			html_view_url_rule: {
+				required: false,
+				maxlength: 80
+			}
+			<!--{/if}-->
+		},
+		
+		messages: {
+			<!--{if $ACTION == 'add' || $ACTION == 'update'}-->
+			title: {
+				required: '{$P8LANG['sites_item']['title_required']}',
+				maxlength: '{$P8LANG['sites_item']['title_oversize']}'
+			},
+			
+			summary: {
+				maxlength: '{$P8LANG['sites_item']['summary_oversize']}'
+			},
+			
+			cid: {
+				required: '{$P8LANG['sites_item']['category_required']}'
+			},
+			<!--{if !empty($this_module->CONFIG['source_required'])}-->
+			source: {
+				required: '{$P8LANG['sites_item']['field_required']}'
+			},
+			<!--{/if}-->
+			<!--{if !empty($this_module->CONFIG['author_required'])}-->
+			author: {
+				required: '{$P8LANG['sites_item']['field_required']}'
+			},
+			<!--{/if}-->
+			html_view_url_rule: {
+				maxlength: '{$P8LANG['sites_item']['html_view_url_rule_oversize']}'
+			}
+			<!--{/if}-->
+		},
+		
+		errorPlacement: function(error, element) {
+			if(element.parent().prop('tagName').toLowerCase() == 'td')
+				error.wrap('<div></div>').appendTo(element.parent().prev());
+			else
+				error.wrap('<div></div>').appendTo(element.parent().parent().prev());
+		},
+		wrapper: 'div',
+		ignore: "" ,
+		submitHandler: function(){
+			form_submit = true;
+			
+			$('#form').get(0).submit();
+		},
+		
+		onkeyup: false
+	});
+});
+</script>
+<div class="modelbody">
+	<div class="modelhead">
+		<div class="head">
+			<div class="mleft">
+				<ul>
+					<li>欢迎进入内容发布界面！</li>
+					<li>$label[content_course]</li>
+				</ul>
+			</div>
+			<div class="mright">
+				<div class="muser" id="header_t">
+					<span id="header_login" style="float:left;">	
+						<script type="text/javascript" src="{$core.U_controller}/core/member-login?style=com&id=header_login"></script>
+					</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modelpack">
+		<div class="modelbor">
+			<div class="nav">
+				内容 &gt; 发布内容
+			</div>
+			<form action="$this_url?site={$this_system.SITE}" method="post" id="form">
+				<div id="tab_1" class="tab_box mtop10" style="border:1px solid #DEDEDE; padding:3px">
+					<div style="background-color:#F9F9F9; height:20px;padding:10px 0 0 10px; font-size:16px;color:#12459C; font-weight:bold"><!--{if $ACTION=='add'}-->发表新文章<!--{else}-->修改文章<span style="font-size:12px; margin-left:10px;color:red;font-weight:normal">(修改文章需重新审核)</span><!--{/if}--></div>
+					<div class="main">
+						<div class="content">
+							<table class="formtable columntable "  width="100%">
+								<tbody>
+									<!--{if $ACTION == 'add' || $ACTION == 'update'}-->
+									<tr>
+										<td class="tdL" width="12%">{$P8LANG['sites_item']['category']} <font color="red">*</font></td>
+										<td class="tdR" width="88%">
+											<span id="cids"></span>
+											<input type="button" onclick="dialog.show()" value="选择" class="browse_btn"/>
+											<input type="hidden" name="cid" value="{if isset($data['cid'])}$data[cid]{/if}" />
+											<input type="hidden" id="cid" value="{if isset($data['cid'])}$data[cid]{/if}"/>
+										</td>
+									</tr>
+									
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['title']} <font color="red">*</font></td>
+										<td class="tdR"> <input type="text" name="title" class="txt ruler" value="{if !empty($data['title'])}{$data['title']}{/if}" size="50" /> &nbsp;
+											{$P8LANG['sites_item']['title_color']}: <input type="text"  name="title_color" size="7" id="titlecolor" class="iColorPicker" value="{if !empty($data['title_color'])}$data[title_color]{/if}" onclick="iColorShow('titlecolor','titlecolor', function(v){ $('#titlecolor').val(v);})" autocomplete="off" />&nbsp;
+											<input type="checkbox" name="postdb[fonttype]" value="1" id="fonttype" {if !empty($data['fonttype'])}checked{/if}><label for="fonttype">{$P8LANG['sites_item']['title_bold']}</label>&nbsp;
+											<input type="checkbox" name="config[allow_ip][enabled]" id="allow_ip_2" value="2" {if !empty($config['allow_ip']['enabled']) && $config['allow_ip']['enabled']==2} checked{/if} /><label for="allow_ip_2">限局域网访问</label>&nbsp;
+											<input type="checkbox" name="html" id="html_view" value="1" {if $this_module->CONFIG['htmlize']} checked{/if} /><label for="html_view">静态化内容</label>
+										</td>
+									</tr>
+									
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['author']} <!--{if !empty($this_module->CONFIG['author_required'])}--><font color="red">*</font><!--{/if}--></td>
+										<td class="tdR"> <input type="text" name="author" class="txt" value="{if !empty($data['author'])}{$data['author']}{/if}" size="20" /> 
+										
+										{$P8LANG['sites_item']['editer']}:<input type="text" class="txt" name="editer" id="editer" value="{if !empty($data['editer'])}$data[editer]{/if}"/>
+										<!--{if $allow_create_time}-->
+										{$P8LANG['sites_item']['create_time']}:
+										<input type="text" name="timestamp" class="txt" value="{if isset($data['timestamp'])}<!--{php echo date('Y-m-d H:i:s',$data['timestamp']);}-->{/if}" autocomplete="off" onclick="rcalendar(this, 'full')" />
+										<!--{/if}-->
+										</td>
+									</tr>
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['source']} <!--{if !empty($this_module->CONFIG['source_required'])}--><font color="red">*</font><!--{/if}--></td>
+										<td class="tdR">
+											<input type="text" class="txt" name="source" id="source" value="{if !empty($data['source'])}{$data['source']}{/if}" size="60" />
+											<input type="button" value="{$P8LANG['sites_item']['source_hint']}" onclick="$('#source').val('xxx|http://')" />								
+											<select onchange="$('#source').val(this.value);">
+												<option value="">快捷选择出处</option>
+												<!--{foreach $item_config['source'] $source_setter}-->
+												<option value="{$source_setter['name']}{if $source_setter['url']}|{$source_setter['url']}{/if}">{$source_setter['name']}</option>
+												<!--{/foreach}-->									
+											</select>
+										</td>
+									</tr>
+
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['frame']}</td>
+										<td class="tdR">
+											<input type="text" class="txt" name="frame" id="frame"  value="{if !empty($data['frame'])}{$data['frame']}{/if}" size="50" />
+											<input type="button" onclick="imgdialog.choseup();" value="{$P8LANG['upload']}" />
+											<input type="button" id="frame_toggle" onclick="" value="" style="display: none;" />
+											<input type="text" name="thumb_width" id="thumb_width" size="3" onblur="chang_w_h()" value="{if !empty($this_model['CONFIG']['frame_thumb_width'])}{$this_model['CONFIG']['frame_thumb_width']}{else}{if $thumb_width}{$thumb_width}{else}100{/if}{/if}" /> X <input type="text" name="thumb_height" id="thumb_height" size="3" onblur="chang_w_h()" value="{if !empty($this_model['CONFIG']['frame_thumb_height'])}{$this_model['CONFIG']['frame_thumb_height']}{else}{if $thumb_height}{$thumb_height}{else}100{/if}{/if}" />
+											(先设定再点击上传) <a href="###" onclick="imgdialog.image_cut()">[$P8LANG[image_cut]]</a> <a href="###" onclick="if($('#frame').val()) window.open($('#frame').val());">[$P8LANG[preview]]</a><br />
+											<script type="text/javascript">								
+											var frame_thumb_width = "{$this_model['CONFIG']['frame_thumb_width']}";
+											var frame_thumb_height = "{$this_model['CONFIG']['frame_thumb_height']}";
+											var imgdialog = new P8_Upload({
+												element: {
+													src: $('#frame'),
+													attribute: 'value'
+												},
+												param: {
+													return_thumb: true,
+													thumb_width: $("#thumb_width").val() ? parseInt($("#thumb_width").val()) : (frame_thumb_width ? parseInt(frame_thumb_width) : 0),
+													thumb_height: $("#thumb_height").val() ? parseInt($("#thumb_height").val()) : (frame_thumb_height ? parseInt(frame_thumb_height) : 0)
+												}
+											});
+											function chang_w_h(){
+												imgdialog = new P8_Upload({
+													element: {
+														src: $('#frame'),
+														attribute: 'value'
+													},
+													param: {
+														return_thumb: true,
+														thumb_width: $("#thumb_width").val() ? parseInt($("#thumb_width").val()) : (frame_thumb_width ? parseInt(frame_thumb_width) : 0),
+														thumb_height: $("#thumb_height").val() ? parseInt($("#thumb_height").val()) : (frame_thumb_height ? parseInt(frame_thumb_height) : 0)
+													}
+												});
+											}
+											</script>
+										</td>
+									</tr>
+									
+									<!--{if $allow_attribute}-->
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['attribute']['']}</td>
+										<td class="tdR">
+											<!--{foreach $this_module->attributes $aid $v}-->
+												<!--{if $aid>=10}-->
+													<!--{if $ACTION != 'add' && isset($data['attributes'][$aid])}-->
+													<input type="hidden" id="attribute_$aid" name="attribute[$aid]" value="$aid" {if isset($data['attributes'][$aid])} checked{/if} />
+													<!--{/if}-->
+												<!--{else}-->
+												<input type="checkbox" id="attribute_$aid" name="attribute[$aid]" value="$aid" {if isset($data['attributes'][$aid])} checked{/if} /><span title="{if !empty($attributes[$aid])}{$attributes[$aid]['last_setter']} 于 {date('Y-m-d H:i', $attributes[$aid]['timestamp'])}设置{/if}"><label for="attribute_$aid">{$P8LANG['sites_item']['attribute'][$aid]}</label></span>&nbsp;
+												<!--{/if}-->
+											<!--{/foreach}-->
+										</td>
+									</tr>
+									<!--{/if}-->
+									<!--{if $allow_level}-->
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['level']}</td>
+										<td class="tdR">
+											<div class="slider-info" style="float:left;width:308px;">
+													时效：<input type="text" class="txt" style="width:140px;" name="level_time" value="{if isset($data['level_date']) && $data['level_date']}$data[level_date]{else}不选则永久有效{/if}" onfocus="if (value =='不选则永久有效'){value =''}" onblur="if (value ==''){value='不选则永久有效'}" autocomplete="off" onclick="rcalendar(this, 'full')" />	
+													<select id="level" onchange="set_levels(this.value)">
+													<option value="">快捷设置权重值</option>
+													<!--{foreach $P8LANG['sites_item']['level_rank'] $k=>$v}-->
+													<!--{if $k}-->
+													<option value="{$k}" {if $data['level']==$k}selected{/if}>设置为：第{$v}名</option>
+													<!--{else}-->
+													<option value="{$k}" {if $data['level']==$k}selected{/if}>设置为：{$v}</option>
+													<!--{/if}-->
+													<!--{/foreach}-->
+												</select>
+											</div>
+											<div class="col-sm-12 input-group" style="float:left;width:440px;">								
+												<div class="slider-info" style="width:140px;float:left;">
+													权重值: <span class="slider-info" id="sort-min-amount">{if !empty($data['level'])}$data[level]{/if}</span>（选项优先）
+													<input name="level" id="sort-name" value="{if !empty($data['level'])}$data[level]{/if}" type="hidden">
+												</div>
+												<div id="sort" class="ui-slider ui-slider-horizontal ui-widget ui-widget-content ui-corner-all" aria-disabled="false" style="width:300px;float:left;margin-top:10px;">
+													<div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-min" style="width: <!--{php echo !empty($data['level'])?$data[level]/2.55:0;}-->%;"></div>
+													<a class="ui-slider-handle ui-state-default ui-corner-all" href="#" style="left: <!--{php echo !empty($data['level'])?$data['level']/2.55:0;}-->%;"></a>
+													<div class="ui-slider-range ui-widget-header ui-corner-all ui-slider-range-min" style="width: <!--{php echo !empty($data['level'])?$data['level']/2.55:0;}-->%;"></div>
+												</div>
+												<script type="text/javascript">										
+													$(function() {
+														$("#sort").slider({
+															range: "min",value: {if !empty($data['level'])}$data[level]{else}0{/if},
+															min: 0,
+															max: 250,
+															step:1,
+															slide: function (event, ui) {
+																$("#sort-min-amount").text("" + ui.value);
+																$("#sort-name").val(ui.value);
+															}
+														});
+														$("#sort-min-amount").text("" + $("#sort").slider("value"));										
+													});										
+												</script>
+												<span class="tablewarnings"></span>
+											</div>
+										</td>
+									</tr>
+									<!--{/if}-->
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['summary']}</td>
+										<td class="tdR">
+											<textarea name="summary" class="txt" style="height:82px;" cols="90" rows="5">{if !empty($data['summary'])}{$data['summary']}{/if}</textarea>								
+										</td>
+									</tr>
+									<!--{if $allow_set_views}-->
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['views']}</td>
+										<td class="tdR">
+											<input type="text" name="views" id="views" class="txt" value="{if !empty($data['views'])}$data[views]{/if}"/>
+										</td>
+									</tr>
+									<!--{/if}-->
+									<!--{if $allow_filter_word}-->
+									<tr>
+										<td class="tdL">{$P8LANG['filter_word_enable']}</td>
+										<td class="tdR">
+											<input type="checkbox" name="filter_word_enable" id="filter_word_enable" value="1" /><label for="filter_word_enable">忽略不检测</label>
+										</td>
+									</tr>
+									<!--{/if}-->
+									<!--{if $allow_content_censor}-->
+									<tr>
+										<td class="tdL">{$P8LANG['content_censor_enabled']}</td>
+										<td class="tdR">
+											<input type="checkbox" name="content_censor_enabled" id="content_censor_enabled" {if $allow_censor_default}checked="true"{/if} value="1" /><label for="content_censor_enabled">忽略不检测</label>
+										</td>
+									</tr>
+									<!--{/if}-->
+									<tr>
+										<td colspan="2" class="text-center" align="center"><a href="javascript:void(0)" onclick="showmorebox()"><span id="more_text">&#8744; 更多选项 &#8744;</span></a></td>
+									</tr>
+								</tbody>
+								
+								<tbody id="morechose" style="display:none">									
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['sub_title']}</td>
+										<td class="tdR">
+											<input type="text" class="txt" name="sub_title"  value="{if !empty($data['sub_title'])}{$data['sub_title']}{/if}" size="60" />
+											<input type="button" value="{$P8LANG['sites_item']['sub_title_hint']}" onclick="$(this).prev().val('xxx|http://')" />
+										</td>
+									</tr>
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['verify_frame']}</td>
+										<td class="tdR">
+											<input type="text" class="txt" name="verify_frame" id="verify_frame"  value="{if !empty($data['verify_frame'])}{$data['verify_frame']}{/if}" size="50" />
+											<input type="button" onclick="verify_frame_uploader.choseup();" value="{$P8LANG['upload']}" />
+											<input type="button" id="verify_frame_toggle" onclick="" value="" style="display: none;" />								
+											<script type="text/javascript">
+											var verify_frame_uploader;
+											$(function(){
+												verify_frame_uploader = new P8_Upload({
+													element: {
+														src: $('#verify_frame'),
+														attribute: 'value'
+													},
+													param: {
+														return_thumb: true<!--{if !empty($this_model['CONFIG']['frame_thumb_width']) && !empty($this_model['CONFIG']['frame_thumb_height'])}-->,
+														thumb_width: {$this_model['CONFIG']['frame_thumb_width']},
+														thumb_height: {$this_model['CONFIG']['frame_thumb_height']}
+														<!--{/if}-->
+													}
+												});
+											});
+											</script>
+										</td>
+									</tr>							
+									<!--{if $this_model['CONFIG']['allow_custom']}-->
+									<tr>
+										<td class="tdL">{$P8LANG['custom_name']}</td>
+										<td class="tdR">
+											<table class="formtable columntable"  width="100%">
+												<!--{foreach $custom $custom_item}-->
+												<!--{php $custom_enable = $custom_item.'_enabled';}-->
+												<!--{if $this_model['CONFIG'][$custom_enable]}-->
+												<tr>
+													<td class="tdL"><!--{if $this_model[CONFIG][$custom_item]}-->{$this_model['CONFIG'][$custom_item]}<!--{else}-->{$P8LANG[$custom_item]}<!--{/if}--></td>
+													<td class="tdR">
+														<input type="text" name="{$custom_item}" size="60" class="txt" id="{$custom_item}" value="{if !empty($data[$custom_item])}$data[$custom_item]{/if}"/>
+													</td>
+												</tr>
+												<!--{/if}-->
+												<!--{/foreach}-->
+											</table>
+										</td>
+									</tr>
+									<!--{/if}-->
+									<tr>
+										<td class="tdL">{$P8LANG['template']}</td>
+										<td class="tdR">
+											<input type="text" class="txt" name="template" id="template" value="{if !empty($data['template'])}$data[template]{/if}" size="30" />
+											<input type="button" value="{$P8LANG['select_template']}" onclick="template_dialog.show();" />
+										</td>
+									</tr>
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['authority_viewer']}</td>
+										<td class="tdR">
+										 <ul id="authority_viewer" class="manager_ids">
+										<!--{foreach $authority_viewer $user}-->
+										<li>{$user['username']}<input type="hidden" name="config[authority_viewer][]" value="{$user['id']}"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>
+										<!--{/foreach}-->
+										</ul><input type="button" value="{$P8LANG['sites_item']['authority_select']}" onclick="show_role_dialog()"/>
+										<br>功能状态：{if $authority_enable}开启{else}关闭{/if}
+										</td>						
+									</tr>
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['authority']}</td>
+										<td class="tdR">
+											<input type="checkbox" name="authority[]" value="0" id="authority0" {if in_array('0',$authority)}checked="checked"{/if} />
+											<label for="authority0">不限</label>
+											<!--{foreach $core->roles $yid $v}-->
+											<!--{if $v['gid'] != 1}-->
+											<input type="checkbox" name="authority[]" id="authority{$yid}" value="{$yid}" {if in_array($yid,$authority)}checked="checked"{/if} />
+											<label for="authority{$yid}">{$v['name']}</label>
+											<!--{/if}-->
+											<!--{/foreach}-->
+											<span class="help">全选和不选都表示不限制</span>
+											<br>功能状态：{if $authority_enable}开启{else}关闭{/if}
+										</td>
+									</tr>
+									<script type="text/javascript">							
+										function delete_manager(obj){
+											$(obj).parent().remove();	
+										}
+										function member_single_select_callback(checked, json){
+											$('#authority_viewer').find("input[value="+json.id+"]").parent().remove();
+											if(checked)	$('#authority_viewer').append('<li>'+json.username+'<input type="hidden" name="config[authority_viewer][]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+										}
+										var role_dialog = new P8_Dialog({
+											title_text:'选择查看人',
+											width: 550,
+											height: 420,
+											button: true
+										});
+										role_dialog.content.append($('<iframe width="100%" height="360" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+
+										function show_role_dialog(){
+											role_dialog.show();
+											var ifr = role_dialog.content.find('iframe');
+											var check_uids = {};
+											$('#authority_viewer').find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+											ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+										}
+									</script>
+								</tbody>
+								<!--{/if}-->
+								
+								<tbody>
+									<!--{foreach $this_fields $field $field_data}-->
+									<tr>
+										<td class="tdL">{$field_data['alias']} <!--{if $field_data['not_null']}--><font color="red">*</font><!--{/if}--></td>
+										<td class="tdR"><div>
+											<!--{php 
+												$__name = '';
+												include template($core, 'widget/'. $field_data['widget'], 'default');
+												
+												switch($field_data['widget']){
+												
+												case 'checkbox': case 'multi_select':
+													$__name = '[]';
+												break;
+												case 'uploader': case 'image_uploader':
+													$__name = '[url]';
+												break;
+												case 'multi_uploader':
+													$__name = '[url][]';
+												break;
+												
+												}
+											}-->
+											<!--{if !empty($field_data['description'])}--> <span class="help">$field_data[description]</span><!--{/if}-->
+											</div>
+										</td>
+									</tr>
+									<!--{if $field_data['not_null']}-->
+									<script type="text/javascript">
+									$(document).ready(function(){
+										$('#form *[name="field#[$field]$__name"]').rules('add', {
+											required: function(){ return !$('#url').val().length && true},
+											messages: { required: '{$P8LANG['sites_item']['field_required']}'}
+										});
+									});
+									</script>
+									<!--{/if}-->
+									<!--{/foreach}-->
+									<tr>
+										<td class="tdL">{$P8LANG['sites_item']['url']}</td>
+										<td class="tdR">
+											<input type="text" name="url" id="url" class="txt" size="55"  value="{if !empty($data['url'])}$data[url]{/if}" />
+											<span id="url_holder"></span>{$P8LANG['sites_item']['url_note']}
+											<script type="text/javascript">
+											$(function(){
+												var field_url = new P8_Upload({
+													element: {
+														src: $("#url"),
+														attribute: 'value'
+													},
+													callback: function(json){},
+													param: {}
+												});
+
+												$('<input type="button" value="{$P8LANG['upload']}" />').click(function(){
+													field_url.choseup();
+												}).appendTo($('#url_holder'));
+											});
+											</script>									
+										</td>
+									</tr>
+									<tr>
+										<td class="tdL">&nbsp;</td>
+										<td class="tdR"> <input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/> </td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<input type="hidden" name="model" value="$MODEL" />
+				<input type="hidden" name="verified" value="{if isset($verified)}$verified{/if}" />
+				<input type="hidden" name="action" value="$ACTION" />
+				<input type="hidden" name="id" value="{if !empty($data['id'])}{$data['id']}{/if}" />
+				<input type="hidden" name="iid" value="{if !empty($data['iid'])}{$data['iid']}{/if}" />
+				<input type="hidden" name="attachment_hash" value="<!--{php echo $attachment_hash = unique_id(16);}-->" />
+			</form>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var attachment_hash = '$attachment_hash';
+
+<!--{if $ACTION == 'add' || $ACTION == 'update'}-->
+var P8_ROOT = '$P8_ROOT';
+var template_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_template']}',
+	button: true,
+	width: 700,
+	height: 350,
+	ok: function(){
+		$('#template').val(template_selector.value);
+	},
+	show: function(){
+		template_selector.init();
+	}
+});
+template_dialog.content.height(300);
+
+var template_selector = new Template_Selector({
+	base_dir: '{$this_system.name}/{$this_system.site['template']}/{$this_system.name}/item/',
+	template_dir: '{if !empty($data['model'])}$data[model]{/if}',
+	selected: '{if !empty($data['template'])}$data[template]{/if}',
+	dialog: template_dialog
+});
+
+function Template_Selector(options){
+
+this.dialog = options.dialog;
+
+this.base_dir = options.base_dir || '';
+this.selected = options.selected || '';
+this.template_dir = options.template_dir || 'template/';
+this.last_ul = null;
+this.last_dir = null;
+this.last_file = null;
+this.value = '';
+
+this.menu_bar = $('<div>\
+	<input type="button" value="'+ P8LANG.refresh +'" class="refresh" />\
+</div>').appendTo(this.dialog.content);
+this.content = $('<div></div>').appendTo(this.dialog.content);
+this.previewer = $('<div style="position: absolute; z-index: 200001;"><img src="" onerror="this.src=\'{$RESOURCE}/skin/admin/nopic.jpg\'" /></div>').hide().appendTo(document.body);
+
+this.inited = false;
+this.init_data = [];
+
+var _this = this;
+
+$('.refresh', this.menu_bar).click(function(){
+	_this.refresh();
+});
+
+this.fetch = function(select, dir){
+	
+	if(select === null){
+		dir = '';
+	}
+	
+	if(this.last_dir == dir) return;
+	
+	$(select).nextAll('ul').remove();
+	
+	$.ajax({
+		url: P8CONFIG.U_controller +'/member-template_json?base_dir='+ encodeURIComponent(this.base_dir) +'&dir='+ encodeURIComponent(dir),
+		dataType: 'json',
+		cache: false,
+		async: false,
+		beforeSend: function(){
+			ajaxing({zIndex: _this.dialog.zIndex +1});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			
+			var ul = $('<ul class="template_selector"></ul>');
+			
+			var init_length = _this.init_data.length;
+			var last_dir = _this.init_data.shift();
+			
+			for(var i = 0; i < json.length; i++){
+				var name = basename(json[i].name.replace(/\/$/, ''));
+				var li = $('<li title="'+ name +'">'+ name +'</li>');
+				ul.append(li);
+				
+				li.data('data', json[i].name);
+				li.data('type', json[i].type);
+				li.addClass(json[i].type == 'dir' ? 'dir' : 'html');
+				if(!_this.inited && _this.selected == json[i].name){
+					li.addClass('selected');
+					_this.last_file = json[i].name;
+				}
+				
+				if(json[i].type == 'file'){
+					li.mouseover(function(){
+						var position = $(this).offset();
+						_this.previewer.show().
+						css({
+							left: $(this).width() + position.left +'px',
+							top: position.top +'px'
+						}).
+						find('img').attr('src', P8_ROOT + _this.template_dir + _this.base_dir + $(this).data('data') +'.jpg');
+					}).mouseout(function(){
+						_this.previewer.hide();
+					});
+					
+					if(_this.inited && _this.selected == name){
+						li.addClass('selected');
+					}
+				}else{
+					if(!_this.inited && last_dir == name){
+						li.addClass('selected');
+					}
+				}
+				
+				li.click(function(){
+					var type = $(this).data('type');
+					var data = $(this).data('data');
+					
+					if(type == 'dir'){
+						_this.fetch($(this).parent(), data);
+						_this.last_dir = data;
+						_this.last_ul = li.parent();
+						_this.last_file = null;
+					}else{
+						_this.value = data;
+						$(this).parent().nextAll('ul').find('.selected').removeClass('selected');
+						_this.last_file = data;
+					}
+					
+					$(this).parent().find('.selected').removeClass('selected');
+					$(this).addClass('selected');
+				});
+				
+				
+			}
+			
+			_this.last_dir = dir;
+			
+			_this.content.append(ul);
+			
+			if(init_length){
+				_this.last_ul = ul;
+				_this.fetch(ul, dir +'/'+ last_dir);
+			}else{
+				_this.inited = true;
+			}
+		}
+	});
+};
+
+this.refresh = function(){
+	if(this.last_ul === null){
+		this.content.find('ul').remove();
+	}
+	
+	var last_dir = this.last_dir;
+	this.last_dir = null;
+	this.fetch(this.last_ul, last_dir);
+};
+
+this.init = function(){
+	
+	if(this.inited) return;
+	
+	this.init_data = this.selected.split('/');
+	this.init_data.pop();
+	
+	this.fetch(null, '');
+	
+};
+
+}
+
+var my_addible_category = $my_addible_category;
+
+var dialog = new P8_Dialog({
+	title_text: '请选择栏目',
+	button: true,
+	width: 600,
+	height: 300,
+	ok: function(){
+		var id = cs.get_value();
+		var selected_cat = cs.get_by_id(id);
+		if(selected_cat.type == 1){
+			p8_window.alert('你选了一个不可发内容的大分类，请重新选择！');
+			return false;
+		}
+		$('#form input[name=cid]').val(id);
+		category_path(id);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+
+var cs = new Recursive_Selector({
+	input: $('#cid'),
+	dialog: dialog,
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json?site={$this_system.SITE}',
+	value: $('#form input[name=cid]').val(),
+	filter: function(cat){
+		if(!my_addible_category || my_addible_category[0] || my_addible_category[cat.id]){
+			return true;
+		}
+	},
+	item_callback: function(cat, item){
+		if(cat.model != '$MODEL' && $.inArray('$MODEL',cat.models) == -1)
+			item.css({display:'none',opacity: '0.3', alpha: '(opacity=30)'});
+		
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	change: function(select){
+		var cat = cs.get_by_id(select.data('value'));
+		if(cat.model == 'page' && !cat.categories){
+			ajaxing({'text':'正在转向中……'});
+			window.location.href="{$this_router}-add?model="+cat.model+"&cid="+cat.id+"&type="+cat.type;
+		}else{
+			if(cat.model != '$MODEL' && !cat.categories){
+				p8_window.alert('你选了一个非本模型的分类');
+				return false;
+			}
+		}
+		
+	}
+});
+
+function set_levels(level){
+	$("#sort-min-amount").text(level);
+	$("#sort-name").val(level);
+	$("#sort").slider({
+		range: "min",value: level,
+		min: 0,
+		max: 250,
+		step:1,
+		slide: function (event, ui) {
+			$("#sort-name").val(level);
+		}
+	});
+}
+
+function category_path(cid){
+	if(cid == 0){
+		$('#cids').html('');
+		return;
+	}
+	
+	var tmp = cs.get_by_id(cid);
+	var htmlize = tmp.htmlize;
+	var html = '';
+	
+	while(true){
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+		
+		tmp = cs.get_by_id(tmp.parent);
+	}
+	
+	$('#cids').html(html);
+
+	 $('#htmlz').attr('checked',htmlize==undefined?false:true);
+
+	  
+}
+<!--{/if}-->
+
+
+$(function(){
+	<!--{if $ACTION == 'add'}-->
+	$('#form input[name=title]').focus();
+	<!--{/if}-->
+	
+	<!--{if $ACTION == 'add' || $ACTION == 'update'}-->
+	cs.init();
+	<!--{/if}-->
+});
+
+function showmorebox(){
+	var stype = $("#morechose").css('display');
+	if(stype == 'none' ){
+		$("#morechose:hidden").show();
+		$("#more_text").html('&#8743; 更多选项 &#8743;');
+	}else{
+		$("#morechose").hide();
+		$("#more_text").html('&#8744; 更多选项 &#8744;');
+	}
+}
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

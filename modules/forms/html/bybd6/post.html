@@ -1,0 +1,197 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>成绩查询平台</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link rel="stylesheet" type="text/css" href="/skin/label/label.css" />
+<script type="text/javascript" src="/js/rcalendar.js"></script>
+<link rel="stylesheet" type="text/css" href="/skin/default/core/forms/style_model.css" />
+<link rel="Shortcut Icon" href="favicon.ico">
+<script type="text/javascript" src="/js/config.js"></script>
+<script type="text/javascript" src="/js/util.js"></script>
+<script type="text/javascript" src="/js/lang/core/zh-cn.js"></script>
+<script type="text/javascript">
+P8CONFIG.RESOURCE = '';
+var SYSTEM = 'core',
+MODULE = 'forms',
+ACTION = 'post',
+LABEL_URL = '/index.php/forms-post?',
+$this_router = P8CONFIG.URI[SYSTEM][MODULE].controller,
+$this_url = $this_router +'-'+ ACTION,
+SKIN = '/skin/ycsyy/core/',
+TEMPLATE = 'ycsyy';
+mobile_status= '0',
+mobile_auto_jump='0',
+mobile_url = '';
+if(mobile_status=='1' && SYSTEM!='sites'){
+if(browser.versions.android || browser.versions.iPhone || browser.versions.iPad){
+if(mobile_auto_jump=='1' && mobile_url!=P8CONFIG.RESOURCE){
+var this_url = location.href,_pul=P8CONFIG.RESOURCE;
+if(this_url.indexOf(mobile_url)==-1 && this_url.indexOf('s.php')==-1 && this_url.indexOf('u.php')==-1 && this_url.indexOf('admin.php')==-1 && SYSTEM!='sites'){
+if(this_url.indexOf(P8CONFIG.RESOURCE+'/html')!=-1)_pul+='/html';
+if(P8CONFIG.RESOURCE==''){
+this_url = mobile_url.indexOf('http')==-1 ? this_url.mobile_url : mobile_url;
+}else{
+this_url = this_url.replace(_pul, mobile_url);
+}
+location.href = this_url;
+}
+}
+}
+}
+</script>
+</head>
+<body>
+<script type="text/javascript" src="/js/jq_validator.js"></script>
+<script type="text/javascript" src="/js/upload.js"></script>
+<script type="text/javascript" src="/js/core/label/label.js"></script>
+<script type="text/javascript">
+var MODEL = '';
+var attachment_hash = 'c6eff1b34db8501e';
+var form_submit = false;
+
+window.onbeforeunload = function(){
+P8_Upload.del(form_submit);
+};
+$(function(){
+
+$.validator.addMethod('jsreg',function(value, element, params){
+return this.optional(element) || params.test(value);
+});
+
+$('#form').validate({
+rules: { },
+messages: { },
+
+errorPlacement: function(error, element) {
+element.siblings(".jsregmsg").html(error);	
+},
+submitHandler: function(form){
+form_submit = true;		
+form.submit();
+},		
+onkeyup: false
+});
+
+});
+</script>
+<div class="forms">
+<div class="formshd">
+<img onError="this.src='/images/nopic.jpg'" src="/attachment/core/forms/2023_05/19_20/fee10721aeb59314.png">成绩查询平台
+<div class="show-forms" id="header_t"></div>
+</div>
+<div class="formsbd">
+<div class="formsbox">
+<div class="formsitem">
+<div class="formstable">
+<form name="form" id="form" action="/index.php/forms-post" method="post">
+<table width="100%" cellpadding="0" cellspacing="0" class="pop_table">
+<!--简单布局开始-->
+<tr>
+<td class="tdL" valign="top">姓名:
+<font color="red">*</font>
+</td>
+<td class="tdR"><input type="hidden" name="#field_cpmc_posted" />
+<input type="text"  class="txt textinput" id="field#[cpmc]" name="field#[cpmc]" value="" style="border:1px solid #e1eaf4" /> 
+<span class="description">请输入考生姓名</span>
+<span class="jsregmsg"></span>
+</td>
+</tr>
+<script type="text/javascript">
+$(document).ready(function(){
+$('#form *[name="field#[cpmc]"]').rules('add', {
+required: true,
+messages: { required: "此项必填"}
+});
+});
+</script>
+<tr>
+<td class="tdL" valign="top">身份证号:
+<font color="red">*</font>
+</td>
+<td class="tdR"><input type="hidden" name="#field_sfzh_posted" />
+<input type="text"  class="txt textinput" id="field#[sfzh]" name="field#[sfzh]" value=""  /> 
+<span class="jsregmsg"></span>
+</td>
+</tr>
+<script type="text/javascript">
+$(document).ready(function(){
+$('#form *[name="field#[sfzh]"]').rules('add', {
+required: true,
+messages: { required: "此项必填"}
+});
+});
+</script>
+<tr>
+<td class="tdL" valign="top">准考证号:
+<font color="red">*</font>
+</td>
+<td class="tdR"><input type="hidden" name="#field_tibaoren_posted" />
+<input type="text"  class="txt textinput" id="field#[tibaoren]" name="field#[tibaoren]" value="" style="border:1px solid #e1eaf4" /> 
+<span class="description">请填入准考证号</span>
+<span class="jsregmsg"></span>
+</td>
+</tr>
+<script type="text/javascript">
+$(document).ready(function(){
+$('#form *[name="field#[tibaoren]"]').rules('add', {
+required: true,
+messages: { required: "此项必填"}
+});
+});
+</script>
+<tr>
+<td class="tdL" valign="top">成绩:
+<font color="red">*</font>
+</td>
+<td class="tdR"><input type="hidden" name="#field_yuefen_posted" />
+<input type="text"  class="txt textinput" id="field#[yuefen]" name="field#[yuefen]" value=""  /> 
+<span class="jsregmsg"></span>
+</td>
+</tr>
+<script type="text/javascript">
+$(document).ready(function(){
+$('#form *[name="field#[yuefen]"]').rules('add', {
+required: true,
+messages: { required: "此项必填"}
+});
+});
+</script>
+<tr>
+<td class="tdL" valign="top">备注:
+</td>
+<td class="tdR"><input type="hidden" name="#field_beizhu_posted"  />
+<textarea name="field#[beizhu]" id="field#[beizhu]" class="txtar" cols="70" rows="6"></textarea>
+<span class="description">如有备注，请填写</span>
+<span class="jsregmsg"></span>
+</td>
+</tr>
+</table>
+<div class="button">
+<input type="submit" name="" class="submit_btn" value="提 交" />
+<input type="reset" name="" class="reset_btn" value="取 消" />
+<input type="hidden" name="mid" value="69" />
+<input type="hidden" name="id" value="Array" />
+<input type="hidden" name="attachment_hash" value="c6eff1b34db8501e" />
+</div>
+</form>
+</div>
+</div>
+</div>
+</div>
+<div class="forms-copyright">
+
+</div>
+</div>
+<script type="text/javascript">
+init_labelshows('header_t');
+</script>
+<script type="text/javascript">
+$(function(){	   
+$('.pop_table tr:even').addClass('pop_tr');	
+})
+</script>
+</body>
+</html>

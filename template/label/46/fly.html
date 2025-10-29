@@ -1,0 +1,44 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<body>
+<div class="flying_adv" id="flying_{$data['id']}" style="width:{$data['width']}px;height:<!--{php echo count($data['data'])*$data['height'] + 8*(count($data['data'])-1);}-->px;position: absolute;overflow:hidden;z-index:9999">
+<!--{foreach $data['data'] $mkey $_mdata_}-->
+<a href="{$_mdata_['url']}" target="_blank"><img width="{$data['width']}" height="{$data['height']}" src="{$_mdata_['media']}" title="{$_mdata_['name']}" alt="{$_mdata_['name']}" border="0" /></a>
+<!--{if count($data['data'])>1 && $mkey != count($data['data'])}--><div style="height:8px;clear:both;"></div><!--{/if}-->
+<!--{/foreach}-->
+<span style="top:2px;right:2px;cursor:pointer;position: absolute;width: 18px; height: 18px; background: url($RESOURCE/images/close.gif) no-repeat 0 -18px;" onclick="$('#flying_{$data['id']}').hide();"></span>
+</div>
+<script type="text/javascript">
+(function(){
+	var height_{$data['id']} = $(window).height(); 
+	var width_{$data['id']} = $(window).width();
+	var randheight = Math.random() < 0.5 ? -30*Math.ceil(Math.random()*10) : 30*Math.ceil(Math.random()*10);
+	var Hoffset_{$data['id']} = $('#flying_{$data['id']}').height(); 
+	var Woffset_{$data['id']} = $('#flying_{$data['id']}').width(); 
+	var xPos_{$data['id']} = (width_{$data['id']}-Woffset_{$data['id']})/2 + randheight; 
+	var yPos_{$data['id']} = (height_{$data['id']}-Hoffset_{$data['id']})/2 - randheight; 
+	var step_{$data['id']} = 1; 
+	var delay_{$data['id']} = Math.ceil(25+Math.random()*10*(Math.random() < 0.5?-1:1));
+	var yon_{$data['id']} = 0;
+	var xon_{$data['id']} = 0;
+	var pause_{$data['id']} = true; 
+	var interval_{$data['id']}; 
+	var interval_{$data['id']} = setInterval(changePos_{$data['id']}, delay_{$data['id']});
+	$('#flying_{$data['id']}').hover(function(){ clearInterval(interval_{$data['id']}); },function(){ interval_{$data['id']} = setInterval(changePos_{$data['id']}, delay_{$data['id']});});
+	function changePos_{$data['id']}() {
+		$('#flying_{$data['id']}').css({left:xPos_{$data['id']}+$(window).scrollLeft(),top:yPos_{$data['id']}+$(window).scrollTop()});																																																								
+		if (yon_{$data['id']}) {yPos_{$data['id']} = yPos_{$data['id']} + step_{$data['id']}; } 
+		else {yPos_{$data['id']} = yPos_{$data['id']} - step_{$data['id']}; } 
+		if (yPos_{$data['id']} < 0) { yon_{$data['id']} = 1;yPos_{$data['id']} = 0; } 
+		if (yPos_{$data['id']} >= (height_{$data['id']} - Hoffset_{$data['id']})) { yon_{$data['id']} = 0;yPos_{$data['id']} = (height_{$data['id']} - Hoffset_{$data['id']});}																																																																	
+		if (xon_{$data['id']}) {xPos_{$data['id']} = xPos_{$data['id']} + step_{$data['id']}; } 
+		else {xPos_{$data['id']} = xPos_{$data['id']} - step_{$data['id']}; } 
+		if (xPos_{$data['id']} < 0) { xon_{$data['id']} = 1;xPos_{$data['id']} = 0; } 
+		if (xPos_{$data['id']} >= (width_{$data['id']} - Woffset_{$data['id']}-20)) { xon_{$data['id']} = 0;xPos_{$data['id']} = (width_{$data['id']} - Woffset_{$data['id']}-20); }
+	}
+})()
+</script>
+</body>
+</html>
+<!--{/php168}-->

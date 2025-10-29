@@ -1,0 +1,26 @@
+<!--{php168}-->
+<!--{php $first=array_shift($list);$first_title=p8_cutstr($first['full_title'], $label['option']['top_title_length'],'');}-->
+<div class="interviewup">
+<div class="ph">
+<a href="$first[url]" target="_blank"><img width="106" height="117" alt="$first[full_title]" onError="this.src='$RESOURCE/images/nopic.jpg'" src="{if empty($first['frame'])}{$RESOURCE}/images/nopic.jpg{else}$first[frame]{/if}"  border="0" /></a>
+<a href="$first[url]" target="_blank">人物访谈</a>
+</div>
+<div class="dt">
+<p>访谈时间:</p>
+<p style="color:#ff3636"><a href="$first[url]" target="_blank"><!--{php echo date('Y-m-d',$first['begintime']);}--></a></p>
+<p>访谈嘉宾:</p>
+<p style="color:#ff3636"><a href="$first[url]" target="_blank">$first[gname]</a></p>
+<p>访谈形式:</p>
+<p style="color:#ff3636">全程视频直播</p>
+<p style="color:#ff3636"><a href="$first[url]" target="_blank">[留言]</a>&nbsp;<a href="$first[url]" target="_blank">[视频]</a>&nbsp;<a href="$first[url]" target="_blank">[直播室]</a></p>
+</div>
+</div>
+<div class="interviewdw">
+<ul>
+<!--{foreach $list $value}-->
+<li><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></li>
+<!--{/foreach}-->
+</ul>
+</div>
+<div class="clear"></div>
+<!--{/php168}-->

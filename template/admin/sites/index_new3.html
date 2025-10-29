@@ -1,0 +1,701 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="X-Csrf-Token" content="{$CSRF_TOKEN}">
+<meta name="renderer" content="webkit">
+<title>分站系统后台管理平台</title>
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$AWESOME}/skin/default/core/awesome4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" >
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap-switch.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap-select.css" type="text/css"  rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$_SKIN}/style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap-switch.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap-select.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+P8CONFIG.admin_controller = '{$core.admin_controller}';
+var P8_ROOT = '$P8_ROOT';
+
+<!--{template_init_js}-->
+</script>
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+</head>
+<body>
+<div id="container" class="sites-container">
+	<div class="main-header">
+		<div class="header-container">
+			<div class="header-left">
+				<div class="logo"><a href="{$this_system.admin_controller}-index_new"><img src="{if isset($config['logo_sites']) && !empty($config['logo_sites'])}{$config['logo_sites']}{else}{$_SKIN}/logo2.png{/if}" /></a></div>
+				<div class="header-menu">
+					<ul class="header-menu-item" id="core_menu">
+						<li class=""><a href="{$this_system.admin_controller}-index_new"><i class="fa fa-laptop"></i> 桌 面</a></li>
+						<!--{php $count = 0;}-->
+						<!--{foreach $admin_menu->top_menus $v}-->
+						<!--{php if($v['menu_sys'] == 'main') continue;}-->
+						<!--{php $count++;}-->
+							<!--{if $v['url']}-->
+								<!--{if $v['target'] == '_blank'}-->
+									<li><a href="{$core.admin_controller}{$v['url']}" target="_blank"><i class="fa {$v['menu_icon']}"></i> {$v['name']}</a></li>
+								<!--{else}-->
+									<li><a href="{$this_system.admin_controller}-index?frame=/{$v['url']}"><i class="fa {$v['menu_icon']}"></i> {$v['name']}</a></li>
+								<!--{/if}-->
+							<!--{else}-->
+								<li onclick="javascript:get_menu({$v['id']})"><span><i class="fa {$v['menu_icon']}"></i> {$v['name']}</span></li>
+							<!--{/if}-->
+						<!--{/foreach}-->
+					</ul>
+				</div>
+			</div>
+			<div class="header-right">
+				<div class="header-message">
+					<a href="javascript:void(0);" onclick="window.open('{$core.U_controller}?site='+$('#this_site').val()+'&main_page={urlencode('/message-inbox?message_type=new')}')"><i class="fa fa-bell"></i>消息<span>{$member_info[new_messages]}</span></a>
+				</div>
+				<div class="header-member">
+					<div class="dropdown">
+						<a href="{$core.U_controller}/member-mysites" target="_blank"><img src="{$RESOURCE}/skin/admin/member.png" /></a>
+						<ul class="dropdown-menu">
+							<div class="login-info">
+								<p class="clearfix"><a class="pull-left" href="{$core.U_controller}/member-mysites" target="_blank">$USERNAME{if $member_info['name']}（{$member_info['name']}）{/if} </a>
+								<a class="pull-right" href="{$core.admin_controller}/core-logout">退出</a></p>
+								<a class="level" href="{$core.U_controller}/member-mysites" target="_blank">{$core.roles[$core.ROLE]['name']}</a>
+							</div>
+						</ul>
+					</div>
+				</div>
+				<div class="header-clik">
+					<ul class="header-nav">	
+						<li>
+							<!--{if count($mysites)>1}-->
+							<select name="site" id="this_site" class="selectpicker" data-width="auto" onchange="set_site(this)">
+								<option value="">请选择</option>
+								<!--{foreach $mysites $site}-->
+								<option value="$site" {if !empty($this_system->SITE) && $site==$this_system->SITE}selected{/if}>{$allsites[$site]['sitename']}</option>
+								<!--{/foreach}-->
+							</select>
+							<!--{else}--> 
+							<input type="hidden" id="this_site" value="{$this_system->SITE}" />
+							<!--{/if}-->
+						</li>
+						<li class="dropdown topimg">
+							<a><img src="{$RESOURCE}/skin/admin/topimg.png" /></a>
+							<ul class="dropdown-menu">
+								<li><a href="#"><i class="fa fa-angle-right"></i>数据备份</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>用户列表</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>系统设置</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>广告模块</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>信箱模块</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>表单模块</a></li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a><i class="icon icon-nav8"></i>快捷入口</a>
+							<ul class="dropdown-menu">
+								<li><a href="{$core.admin_controller}/cms-index_to_html" target="_blank"><i class="fa fa-angle-right"></i>静态主站首页</a></li>
+								<li><a href="javascript:;" onclick="$('#list_to_html').submit()"><i class="fa fa-angle-right"></i>静态主站栏目</a></li>
+								<li><a href="javascript:;" onclick="$('#view_to_html').submit()"><i class="fa fa-angle-right"></i>静态最近内容</a></li>
+								<li><a href="javascript:;" onclick="do_cache('base')"><i class="fa fa-angle-right"></i>更新基础缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('template')"><i class="fa fa-angle-right"></i>更新模板缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('label')"><i class="fa fa-angle-right"></i>更新标签缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('all')"><i class="fa fa-angle-right"></i>更新全站缓存</a></li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="javascript:;" onclick="open_site()"><i class="icon icon-nav9"></i>网站首页</a>
+							<ul class="dropdown-menu">
+								<li><a href="{$RESOURCE}" target="_blank"><i class="fa fa-angle-right"></i>网站静态首页</a></li>
+								<li><a href="{if $core->controller}{$core.controller}{else}{$STATIC_URL}/index.php{/if}" target="_blank"><i class="fa fa-angle-right"></i>网站动态首页</a></li>
+								<li><a href="javascript:;" onclick="show_edit_label()"><i class="fa fa-angle-right"></i>首页可视化</a></li>
+								<li><a href="{$RESOURCE}/dl.html" target="_blank"><i class="fa fa-angle-right"></i> 统一登录入口</a></li>
+								<li><a href="{$core.U_controller}?site=mainstation" target="_blank"><i class="fa fa-angle-right"></i>主站会员中心</a></li>
+								<li><a href="{$core.U_controller}/member-mysites" target="_blank"><i class="fa fa-angle-right"></i>子站会员中心</a></li>
+								<li><a href="{$RESOURCE}" target="_blank"><i class="fa fa-angle-right"></i>返回主站首页</a></li>
+								<li><a href="{$core.admin_controller}" target="_blank"><i class="fa fa-angle-right"></i>返回主站后台</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="content-main content-top">
+		<div class="content-container content-container-bg">
+			<div class="content-side sider-menu-left sider-menu-container">			
+				<div class="current-sites">
+					<div class="current-sites-nav">
+						<!--{if count($mysites)>1}-->
+						<select name="site" id="this_site" class="select" onchange="set_site(this)">
+							<option value="">请选择</option>
+							<!--{foreach $mysites $site}-->
+							<option value="$site" {if !empty($this_system->SITE) && $site==$this_system->SITE}selected{/if}>{$allsites[$site]['sitename']}</option>
+							<!--{/foreach}-->
+						</select>
+						<!--{else}--> 
+						<input type="hidden" id="this_site" value="{$this_system->SITE}" />
+						<!--{/if}-->
+					</div>
+				</div>
+				<div class="sites-info">
+					<ul id="sites-info-tab" class="nav nav-info">
+						<li class="active"><a href="#survey" data-toggle="pill">基本概况</a></li>
+						<li><a href="#service" data-toggle="pill">站点账号</a></li>
+						<li><a href="#problem" data-toggle="pill">常见问题</a></li>
+					</ul>
+					<div id="myTabContent" class="tab-content">
+						<div class="tab-pane active fade in" id="survey">
+							<ul class="info-list clearfix">
+								<li><span>站点名称：{$site_info['sitename']}</span></li>
+								<li><span>创建时间：<!--{php echo date('Y-m-d', $site_info['timestamp']);}--></span></li>
+								<li><span>模版编号：{if $templates[$site_info['template']]['name']}{$templates[$site_info['template']]['name']}{else}{$site_info['template']}{/if}</span></li>
+								<li><span>站点别名：{$site_info['alias']}</span></li>
+								<li><span><a href="<!--{if empty($site_info['ipordomain'])}-->{$core->CONFIG['url']}/s.php/{$site_info['alias']}/<!--{else}-->{$site_info['domain']}<!--{/if}-->" target="_blank">访问域名>></a></span><span class="alias"><a href="{$core->CONFIG['url']}/s.php/{$site_info['alias']}/" target="_blank">访问动态>></a></span></li>
+							</ul>
+						</div>
+						<div class="tab-pane fade" id="service">
+							<div class="sites-left-box">
+								<div class="sites-left-head">
+									<div class="title"><span class="arrow"></span>站点账号</div>
+									<span class="caret"></span>
+								</div>
+								<div class="sites-left-main">
+									<div class="sites-account">
+										<table class="table">
+											<!--{foreach $managers $member_}-->
+											<tr>
+												<td class="name">{$member_['username']} {$member_['name']}</td>
+												<td class="tel">{$member_['cell_phone']}</td>
+												<td class="style">站点管理员</td>
+											</tr>
+											<!--{/foreach}-->
+											<!--{foreach $roles $member_}-->
+											<tr>
+												<td class="name">{$member_['username']} {$member_['name']}</td>
+												<td class="tel">{$member_['cell_phone']}</td>
+												<td class="style">投稿角色</td>
+											</tr>
+											<!--{/foreach}-->
+											<!--{foreach $poster $member_}-->
+											<tr>
+												<td class="name">{$member_['username']} {$member_['name']}</td>
+												<td class="tel">{$member_['cell_phone']}</td>
+												<td class="style">投稿人</td>
+											</tr>
+											<!--{/foreach}-->
+										</table>
+									</div>
+								</div>
+							</div>
+							<div class="sites-left-box">
+								<div class="sites-left-head">
+									<div class="title"><span class="arrow"></span>最新登录</div>
+								</div>
+								
+								<div class="sites-left-main">
+									<ul class="sites-login clearfix">
+										<li class="col-md-4 col-sm-4">
+											<i class="icon icon-user"></i>
+											<p>{if $last_login_info['name']}{$last_login_info['name']}{else}{$last_login_info['username']}{/if}</p>
+										</li>
+										<li class="col-md-4 col-sm-4">
+											<i class="icon icon-ip"></i>
+											<p>{$last_login_info['last_login_ip']}</p>
+										</li>
+										<li class="col-md-4 col-sm-4">
+											<i class="icon icon-time"></i>
+											<p><!--{php echo $last_login_info['last_login'] ? date('Y-m-d', $last_login_info['last_login']) : '';}--></p>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+						<div class="tab-pane fade" id="problem">
+							<ul class="sites-tab-list">
+								<!--{foreach $listdb5 $val}-->
+								<li><a href="$val[url]" target="_blank" alert="left">{$val['title']}</a></li>
+								<!--{/foreach}-->
+							</ul>
+						</div>
+					</div>
+				</div>
+				<div class="sites-left-box">
+					<div class="sites-left-head">
+						<div class="title"><span class="arrow"></span>站点状态</div>
+					</div>
+					<div class="sites-left-main">
+						<input type="hidden" id="site_status" value="{if $site_info['status']}0{else}1{/if}" />
+						<ul class="sites-state clearfix">
+							<li class="col-md-6 col-sm-6 sites-btn_status">
+								<div class="sites-state-btn">
+									<input type="radio" name="status" {if $site_info['status']}checked{/if} data-radio-all-off="true" data-size="mini" class="switch-radio2">
+								</div>	
+								{if $site_info['status']}开启{else}关闭{/if}
+							</li>
+							<li class="col-md-6 col-sm-6 sites-btn_status">
+								<div class="sites-state-btn">
+									<input type="radio" name="status" id="switch_sites" {if !$site_info['status']}checked{/if} data-radio-all-off="true" data-size="mini" class="switch-radio2">
+								</div>
+								一键{if $site_info['status']}关闭{else}开启{/if}站点
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="sites-left-box">
+					<div class="sites-left-head">
+						<div class="title"><span class="arrow"></span>访问统计</div>
+					</div>
+					<div class="sites-left-main">
+						<ul class="sites-statistics clearfix">
+							<li class="col-md-6 col-sm-6">
+								<span class="blue">1200</span>
+								本月访问
+							</li>
+							<li class="col-md-6 col-sm-6">
+								<span class="green">39</span>
+								今日访问
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class="sites-left-box">
+					<div class="sites-left-head">
+						<div class="title"><span class="arrow"></span>站点公告</div>
+					</div>
+					<div class="sites-left-main">
+						<ul class="sites-notice clearfix">
+							<!--{foreach $listdb6 $val}-->
+							<li><a href="$val[url]" target="_blank" alert="left">{$val['title']}</a></li>
+							<!--{/foreach}-->
+						</ul>
+					</div>
+				</div>
+				<div class="sites-contact">
+					<ul class="sites-contact-list clearfix">
+						<li class="col-md-6 col-sm-6">
+							<a href="#"><i class="icon-course"></i>站群服务教程</a>
+						</li>
+						<li class="col-md-6 col-sm-6">
+							<a href="#"><i class="icon-follow"></i>关注国微原厂</a>
+						</li>
+					</ul>
+				</div>
+			</div>
+			<div class="content-main">
+				<div class="content-main-inner">
+					<div class="sites-top clearfix">
+						<ul class="nav navbar-nav sites-nav" id="sites-nav">
+							<li class="dropdown">
+								<a href="{$this_system.admin_controller}/item-list" target="main"><span><img src="{$_SKIN}/images/nav1.png"/></span>内容发布</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$this_system.admin_controller}/item-add" target="main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list" target="main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$this_system.admin_controller}/item-clone_log" target="main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$this_system.admin_controller}/item-report" target="main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list_to_html" target="main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-set_lan" target="main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="{$this_system.admin_controller}/item-list" target="main"><span><img src="{$_SKIN}/images/nav2.png"/></span>内容管理</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$this_system.admin_controller}/item-add" target="main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list" target="main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$this_system.admin_controller}/item-clone_log" target="main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$this_system.admin_controller}/item-report" target="main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list_to_html" target="main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-set_lan" target="main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="{$this_system.admin_controller}/item-list" target="main"><span><img src="{$_SKIN}/images/nav3.png"/></span>可视化管理</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$this_system.admin_controller}/item-add" target="main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list" target="main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$this_system.admin_controller}/item-clone_log" target="main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$this_system.admin_controller}/item-report" target="main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list_to_html" target="main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-set_lan" target="main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+							<!--{if $site_list || $mysites}-->
+							<li class="dropdown">
+								<a href="{$this_system.admin_controller}/farm-list" target="main" class="m1"><span><img src="{$_SKIN}/images/nav4.png"/></span>更新站点</a>
+								<ul class="dropdown-menu">
+									<!--{if $site_create}--><li><a href="{$this_system.admin_controller}/farm-add" target="main"><span class="arrow"></span>创建一个分站</a></li><!--{/if}-->
+									<li><a href="{$this_system.admin_controller}/farm-list" target="main"><span class="arrow"></span>所有管理分站</a></li>
+									<li><a href="{$this_system.admin_controller}-main" target="main"><span class="arrow"></span>所有站群内容</a></li>
+									<li><a href="{$this_system.admin_controller}-list" target="main"><span class="arrow"></span>所有栏目列表</a></li>
+									<li><a href="{$this_system.admin_controller}/item-config" target="main"><span class="arrow"></span>子站全局设置</a></li>					
+									<!--{if $model_list}--><li><a href="{$this_system.admin_controller}/model-list" target="main"><span class="arrow"></span>系统模型管理</a></li><!--{/if}-->
+									<!--{if $site_recycle}--><li><a href="{$this_system.admin_controller}/farm-list_recycle" target="main"><span class="arrow"></span>恢复误删分站</a></li><!--{/if}-->
+									<li><a href="javascript:;" onclick="cache_all_site();" target="main" ><span class="arrow"></span>更新站群缓存</a></li>					
+								</ul>
+							</li>
+							<!--{/if}-->
+							<li class="dropdown">
+								<a href="{$this_system.admin_controller}/item-list" target="main"><span><img src="{$_SKIN}/images/nav5.png"/></span>会员中心</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$this_system.admin_controller}/item-add" target="main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list" target="main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$this_system.admin_controller}/item-clone_log" target="main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$this_system.admin_controller}/item-report" target="main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list_to_html" target="main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-set_lan" target="main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+							<li class="dropdown">
+								<a href="{$this_system.admin_controller}/item-list" target="main"><span><img src="{$_SKIN}/images/nav6.png"/></span>资源管理员</a>
+								<ul class="dropdown-menu">
+									<li><a href="{$this_system.admin_controller}/item-add" target="main"><span class="arrow"></span>添加内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list" target="main"><span class="arrow"></span>内容列表</a></li>
+									<li><a href="{$this_system.admin_controller}/item-clone_log" target="main"><span class="arrow"></span>签发日志</a></li>
+									<li><a href="{$this_system.admin_controller}/item-report" target="main"><span class="arrow"></span>统计预警</a></li>
+									<li><a href="{$this_system.admin_controller}/item-list_to_html" target="main"><span class="arrow"></span>静态内容</a></li>
+									<li><a href="{$this_system.admin_controller}/item-set_lan" target="main"><span class="arrow"></span>限局域网访问</a></li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+					<div class="sites-news">
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">最新审核内容</div>
+										<div class="more pull-right"><a href="{$this_system.admin_controller}/item-list" target="_blank">更多>></a></div>
+									</div>
+									<div class="sites-news-main">
+										<ul class="sites-news-list">
+											<!--{foreach $listdb2 $val}-->
+											<li><a href="$val[url]" target="_blank" alert="left">{$val['title']}</a></li>
+											<!--{/foreach}-->
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">待审核内容</div>
+										<div class="more pull-right"><a href="{$this_system.admin_controller}/item-list?verified=0" target="_blank">更多>></a></div>
+									</div>
+									<div class="sites-news-main">
+										<ul class="sites-news-list">
+											<!--{foreach $listdb $val}-->
+											<li><a href="$val[url]" target="_blank" alert="left">{$val['title']}</a></li>
+											<!--{/foreach}-->
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-12 col-sm-12 col-xs-12">
+								<div class="sites-news-box media">
+									<div class="sites-news-head2 pull-left">
+										<div class="title">统计数据</div>
+									</div>
+									<div class="sites-news-main2 media-body">
+										<ul class="sites-data">
+											<li><span class="data data-icon1">0</span>内容敏感词<a href="#">点击更新</a></li>
+											<li><span class="data data-icon2">10</span>大数据内容敏感词<a href="#">点击更新</a></li>
+											<li><span class="data data-icon3">20</span>外链扫描<a href="#">点击更新</a></li>
+											<li><span class="data data-icon4">30</span>死链接扫描<a href="#">点击更新</a></li>
+											<li><span class="data data-icon5">100</span>本月推送数据<a href="#">点击更新</a></li>
+											<li><span class="data data-icon6">10</span>登录次数<a href="#">点击更新</a></li>
+											<li><span class="data data-icon7">1</span>统计预警<a href="#">点击更新</a></li>
+										</ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">通知内容</div>
+										<div class="more pull-right"><a href="{$core.U_controller}/notify-list" target="_blank">更多>></a></div>
+									</div>
+									<div class="sites-news-main">
+										<ul class="sites-news-list">
+											<!--{foreach $listdb3 $val}-->
+											<li><a href="$val[url]" target="_blank" alert="left">{$val['title']}</a></li>
+											<!--{/foreach}-->
+										</ul>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">站内短消息</div>
+										<div class="more pull-right"><a href="{$core.U_controller}/message-inbox" target="_blank">更多>></a></div>
+									</div>
+									<div class="sites-news-main">
+										<ul class="sites-news-list">
+											<!--{foreach $listdb4 $val}-->
+											<li><a href="$val[url]" target="_blank" alert="left">{$val['title']}</a></li>
+											<!--{/foreach}--></ul>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">快捷栏目</div>
+									</div>
+									<div class="sites-news-main3">
+										<ul class="sites-links row">
+											<!--{php $i=9;}-->
+											<!--{foreach $custom_menu $k $v}-->
+											<!--{php if(!$v['display'])continue;}-->
+											<!--{php $i++;}-->
+												<li class="col-md-3 col-sm-3"><a href="$v[url]" target="$v[target]" ><i class="icon icon-nav$i"></i>$v[name]</a></li>												
+											<!--{/foreach}-->
+										</ul>
+									</div>                                               
+								</div>
+							</div>
+							<div class="col-md-6 col-sm-6 col-xs-6">
+								<div class="sites-news-box">
+									<div class="sites-news-head clearfix">
+										<div class="title pull-left">快捷入口</div>
+									</div>
+									<div class="sites-news-main3">
+										<ul class="sites-links row">
+											<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav10"></i>数据备份</a></li>
+											<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav11"></i>内容静态</a></li>
+											<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav12"></i>数据备份</a></li>
+											<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav13"></i>数据备份</a></li>
+											<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav14"></i>数据备份</a></li>
+											<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav15"></i>数据备份</a></li>
+											<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav16"></i>数据备份</a></li>
+											<li class="col-md-3 col-sm-3"><a href="#" target="_blank" ><i class="icon icon-nav17"></i>数据备份</a></li>
+										</ul>
+									</div>                                               
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script language="JavaScript">
+var url = window.location.href;
+index = url.indexOf("flag");
+if(index !=-1) html_index();
+function show_edit_label(){
+	var thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+
+$("input[name='status']").bootstrapSwitch({
+	onSwitchChange: function (event, state) {		
+		if(state != $('#site_status').val()){
+			p8_window.confirm('$P8LANG[site_status_change]', function (r) {
+				if(r){
+					var thisSite = $('#this_site').val();
+					$.ajax({
+						url:'{$this_system.admin_controller}/farm-open',
+						type: 'post',
+						dataType: 'json',
+						data:{alias: [thisSite],is_open:$('#site_status').val()},
+						cache: false,
+						beforeSend: function(){
+							ajaxing({text:'操作中...',});
+						},
+						success: function(msg){
+							ajaxing({text:'操作完成',action: 'hide'});
+							window.location.reload();
+						}
+					});
+					return false;
+				}else{
+					return;
+				}
+			});
+		}
+	}
+});
+
+function html_index(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_router}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   success: function(msg){
+			   if(msg==-1)
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	})
+	
+}
+
+function set_site(obj){
+
+	sites_main_src = window.location.href;
+	sites_main_src=sites_main_src.replace(/[&?]site=\w*/,'');
+	var url = sites_main_src+((sites_main_src.indexOf('?')>-1)?'&':'?')+'site='+$(obj).val();
+	console.log(url);
+	$('#sites_main').attr('src',url);
+	window.location.href = url;
+}
+
+function open_site(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/s.php/'+thisSite);
+}
+
+function open_acl(){
+	thisSite = $('#this_site').val();
+	window.location.href = '{$this_system.admin_controller}/farm-acl?alias='+thisSite;
+}
+
+function open_ucenter(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/u.php?site='+thisSite);
+}
+
+function cache_all(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->admin_controller}/sites/farm-cacheall?site='+thisSite,'sites_main');
+}
+function cache_category(){
+	$.ajax({
+		url:'{$this_system.admin_controller}/farm-cacheall',
+		type: 'post',
+		dataType: 'json',
+		data:ajax_parameters({cache: ['category']}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({text:'缓存中…'});
+		},
+		success: function(msg){
+			ajaxing({text:'操作成功！',action: 'hide'});
+		}
+	});	
+}
+function cache_all_site(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){			
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({text:'操作成功！',action: 'hide'});
+				}
+			});			
+		}else{
+			return false;
+		}
+	});
+}
+function list_only_html(){
+	$('#list_only_html').empty();
+	$('#list_only_html').append($('<input type="hidden" name="pages" value="0" />'));
+	$('#list_only_html').submit();	
+	html_dialog.show();	
+	$('#list_only_html').empty();
+}
+
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 400,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+
+$(document).ready(function(){
+	$("input[type=\"checkbox\"], input[type=\"radio\"]").not("[data-switch-no-init]").bootstrapSwitch();
+    $("[data-switch-get]").on("click", function() {
+      var type;
+      type = $(this).data("switch-get");
+      return alert($("#switch-" + type).bootstrapSwitch(type));
+    });
+	$('#menu_td .sec_menu').each(function(i){
+		$(this).parent().hover(
+			function(){ $(this).find('.sec_menu').show(); },
+			function(){ $(this).find('.sec_menu').hide(); }
+		)
+	});
+	$(".content-side").niceScroll({styler:"fb",cursorcolor:"#429cd8", cursorwidth: '3', cursorborderradius: '10px', background: '#d5dddf', cursorborder: '',cursorfixedheight:70});
+	$(".sites-account").niceScroll({cursorcolor:"#71a6d7", cursorwidth: '9', cursorborderradius: '0', background: '#448aca', cursorborder: '',autohidemode:false,cursorfixedheight:40});
+	$(function () {
+	  $(".dropdown").mouseover(function () {
+		$(this).addClass("open");
+	  });
+	  $(".dropdown").mouseleave(function(){
+		$(this).removeClass("open");
+	  })
+	});
+})
+
+$(document).ready(function(){
+	$('#system li').mouseover(function(){
+		clearTimeout(system_menu_hide_timeout);
+		$('#system li dl').show();
+	});
+	$('#system li').mouseout(function(){
+		system_menu_hide_timeout = setTimeout(function(){ $('#system li dl').hide();}, 200);
+	});
+	$('#system_list').
+	mouseover(function(){
+		clearTimeout(system_menu_hide_timeout);
+	});
+
+	window.onresize();
+	
+	if(self != top){
+		parent.window.location.href = '{$core.admin_controller}';
+	}
+});
+
+//一级菜单变换CSS
+core_menu_change_css();
+
+//窗口调整
+window.onresize = function(){
+    var widths = document.body.scrollWidth;
+    var heights = document.documentElement.clientHeight-100;
+	$('#sites_main').height(heights);
+};
+
+</script>
+</body>
+</html>
+<!--{/php168}-->

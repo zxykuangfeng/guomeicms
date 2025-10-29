@@ -1,0 +1,74 @@
+<!--{php168}-->
+<style type="text/css">
+.sliderbox-responsive{position:relative;}
+.sliderbox-responsive:before{content:"";display:block;width:100%;height:1px;background-color:#fff;position:absolute;top:42px;left:0;}
+.title3-responsive{$label['id']} .slider-item{padding:0 10px;}
+.title3-responsive{$label['id']} .slider-item h3{color:#fff;text-align:center;margin-top:0;margin-bottom:20px;position:relative;}
+.title3-responsive{$label['id']} .slider-item h3:before{content:"";display:block;width:21px;height:21px;background-color:#fff;border-radius:50%;border:5px solid #b4b8c0;position:absolute;top:32px;left:50%;margin-left:-10px;}
+.title3-responsive{$label['id']} .slider-item h3 a{display:block;white-space: nowrap;overflow: hidden;text-overflow: ellipsis;}
+.title3-responsive{$label['id']} .slider-item .h1{padding-top:50px}
+.title3-responsive{$label['id']} .slider-item .h2{padding-bottom:30px;}
+.title3-responsive{$label['id']} .slider-item .h1:before{top:12px;}
+.title3-responsive{$label['id']} .slider-item .h2:before{top:32px;}
+.title3-responsive{$label['id']} .slider-item h3 a{color:#fff;font-size:15px;}
+.title3-responsive{$label['id']} .slider-item p{color:#fff;font-size:15px;text-align:center;margin-bottom:0;}
+.title3-responsive{$label['id']} .slick-dots{display:none !important;}
+</style>
+<div class="sliderbox-responsive">
+	<div class="container">
+		<div class="slider title3-responsive{$label['id']}">
+			<!--{foreach $list $value}-->
+			<!--{php $i ++;}-->
+			<!--{if $i%2 == 0}-->
+			<div class="slider-item">
+		   		<h3 class="h2"><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></h3>
+		   		<p class="d2"><!--{php echo date('Y年m月d日', $value['timestamp']);}--></p>
+			</div>
+			<!--{else}-->
+			<div class="slider-item">
+		   		<p class="d1"><!--{php echo date('Y年m月d日', $value['timestamp']);}--></p>
+		   		<h3 class="h1"><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></h3>
+			</div>
+			<!--{/if}-->
+			<!--{/foreach}-->
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(".title3-responsive{$label['id']}").slick({
+	autoplay:true,
+    autoplaySpeed:6000,
+	dots: false,
+	arrows:false,
+	infinite: true,
+	speed: 300,
+	slidesToShow: 3,
+	slidesToScroll: 1,
+	responsive: [
+		{
+			breakpoint: 1024,
+			settings: {
+			slidesToShow: 3,
+			slidesToScroll: 1,
+			infinite: true,
+			dots: true
+		  }
+		},
+		{
+			breakpoint: 600,
+			settings: {
+			slidesToShow: 2,
+			slidesToScroll: 1
+		  }
+		},
+		{
+			breakpoint: 480,
+			settings: {
+			slidesToShow: 1,
+			slidesToScroll: 1
+		 }
+	   }
+	]
+});
+</script>
+<!--{/php168}-->

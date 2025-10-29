@@ -1,0 +1,196 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul>
+						<li><a href="{$core.admin_controller}/core-filter_link"><i class="fa fa-shield"></i>{$P8LANG[filter_link]}</a></li>					
+						<li><a href="{$core.admin_controller}/core-word_scan"><i class="fa fa-shield"></i>{$P8LANG[word_scan]}</a></li>
+						<li><a href="{$core.admin_controller}/core-word_censor_config"><i class="fa fa-shield"></i>{$P8LANG[word_censor]}</a></li>		
+						<li><a href="{$core.admin_controller}/core-word_filter"><i class="fa fa-shield"></i>{$P8LANG[word_filter]}</a></li>
+						<li><a href="{$core.admin_controller}/cms/item-set_lan"><i class="fa fa-shield"></i>{$P8LANG[set_lan]}</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<form action="$this_url" method="post">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0" >
+			<tr><td>
+				<table class="columntable formtable">
+					<tr class="title fix_head">
+						<td colspan="2" class="title">{$P8LANG['config']}</td>
+					</tr>
+					<tr>
+						<td class="tdL">上传附件可信</td>
+						<td class="tdR">
+							<input name="config[filter_link_exe]" type="checkbox" value="1" {if isset($config['filter_link_exe']) && $config['filter_link_exe']=='1'}checked{/if} />启用
+							启用则后缀为：<!--{foreach $filter $exe}--><span>{$exe}&nbsp;</span>&nbsp;<!--{/foreach}-->的资源或链接识别为非风险项。<a class="edit_btn" href="{$core.admin_controller}/core/uploader-config">设置后缀</a>
+						</td>
+					</tr>
+					<tr id="filter">
+						<td class="tdL">可信域名</td>
+						<td class="tdR">外链属于以下设置可信域名的，则不认为是风险项。<br/>
+							<div id="data_copy" style="display: none;">
+								可信域名 <input type="text" class="txt" name="" size="30" />
+								<input type="button" value="{$P8LANG['delete']}" />
+							</div>
+							<input type="button" value="添加可信域名" onclick="_copy_data()" />
+							<script type="text/javascript">
+							function _copy_data(link){
+								var copy = $('#data_copy').clone().show().attr('id', '');
+								
+								$('input:eq(0)', copy).attr('name', 'config[link_filter][]').val(link === undefined ? '' : link);								
+								copy.find('input[type=button]').
+								attr('onclick', '').
+								click(function(){
+									$(this).parent().remove();
+								});								
+								$('#filter div:last').after(copy);
+							}							
+							$(document).ready(function(){
+								<!--{foreach $link_filter $link}-->
+								_copy_data('$link');
+								<!--{/foreach}-->
+							});
+							</script>							
+						</td>						
+					</tr>
+					<tr>
+						<td class="tdL">&nbsp;</td>
+						<td class="tdR">
+							<input type="hidden" name="type" value="config" />
+							<input type="submit" value="{$P8LANG['config']}" class="submit_btn"/>
+						</td>						
+					</tr>
+				</table>
+			</td>
+		</tr>
+	</table>
+	</form>
+	</div>
+</div>
+<form action="$this_url" method="get" id="request">
+<div class="mainbox mainborder">
+	<div class="section" style="text-align:center;">
+		站点
+		<select name="site" id="site">
+			<option value="">不限</option>
+			<!--{foreach $sites $vv}-->
+			<option value="{$vv['alias']}"{if $vv['alias'] == $site} selected{/if}>{$vv['sitename']}</option>
+			<!--{/foreach}-->
+		</select>
+		系统
+		<select name="system" id="system" onchange="select_sys(this.value)">
+			<option value="">不限</option>
+			<!--{foreach $systems $name $v}-->
+			<option value="$name"{if $system == $name} selected{/if}>$v[alias]</option>
+			<!--{/foreach}-->
+		</select>
+		模型
+		<select name="model" id="model">
+			<option value="">不限</option>
+			<!--{foreach $models $name $v}-->
+			<option value="$name"{if $model == $name} selected{/if}>$v[alias]</option>
+			<!--{/foreach}-->
+		</select>
+		是否死链
+		<select name="conn">
+			<option value="">不限</option>
+			<option value="1" {if $conn} selected{/if}>正常链接</option>
+			<option value="-1" {if $conn<0} selected{/if}>死链接</option>
+		</select>
+		关键词
+		<input type="text" class="txt" size = "18" name="word" value="{if !empty($word)}$word{/if}" />
+		<button type="button" class="submit_btn" onclick="link_search();">{$P8LANG['search']}</button>
+		<button type="button" class="submit_btn" onclick="link_clean();">一键清空扫描结果</button>
+	</div>
+</div>
+</form>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="columntable formtable hover_table click_changeable">
+			<tr class="title">
+				<td class="title" align="center" width="6%">ID</td>
+				<td class="title" align="center" width="9%">{$P8LANG['system']}</td>
+				<!--td class="title" width="8%">{$P8LANG['module']}</td-->
+				<td class="title" align="center" width="10%">站点</td>
+				<!--td class="title" width="8%">模型</td-->
+				<td class="title" align="center" width="8%">栏目ID</td>
+				<td class="title" align="center" width="30%">关联信息</td>
+				<td class="title" align="center" width="30%">外部资源或链接</td>
+				<td class="title" align="center" width="8%">是否死链</td>
+			</tr>
+			
+			<!--{foreach $list $v}-->
+			<tr id="word_$v[id]">
+				<td align="center">{$v[id]}</td>
+				<td align="center">{$v['system']}</td>
+				<td align="center">{$v['site']}</td>
+				<td align="center">{$v['cid']}</td>
+				<td>{$v['view']} <a href="{$v['view']}" style="float:right;" target="_blank"><img src="{$SKIN}/button_see.png" /></a></td>
+				<td><div style="max-width:100%;display:block;">{$v['link']}</div></td>
+				<td align="center"><img src="{$SKIN}/{if $v['conn']}check_yes.gif{else}check_no.gif{/if}"></td>
+			</tr>
+			<!--{/foreach}-->				
+		</table>
+		<table width="100%" class="columntable formtable">
+			<tr>
+				<td align="center" id="pages" class="pages">{$pages}</td>
+			</tr>
+			<tr>
+				<td>
+					<input type="button" value="重建主站外部资源或链接" onclick="$('#rebuild').submit();" class="edit_btn" />
+					<input type="button" value="重建分站外部资源或链接" onclick="$('#rebuild_system').val('sites');$('#rebuild').submit();" class="edit_btn" />
+					<input type="button" value="一键导出外链扫描" onclick="download_recode()" class="edit_btn" />
+					<input type="button" value="一键清空扫描结果" onclick="link_clean()" class="edit_btn" />
+				</td>
+			</tr>
+		</table>		
+	</div>
+</div>
+<form action="$this_url" method="post" id="rebuild">
+	<input type="hidden" name="type" id="rebuild_type" value="rebuild" />
+	<input type="hidden" name="system" id="rebuild_system" value="cms" />	
+</form>
+<script type="text/javascript">
+function link_search(){
+	$('#request').attr('method',"get");
+	$('#request').submit();
+}
+function link_clean(){
+	$('#request').append('<input type="hidden" name="type" value="cleanall" />');
+	$('#request').attr('method',"post");
+	$('#request').submit();
+}
+
+function download_recode(){
+	$('#request').append('<input type="hidden" name="type" value="download" />');
+	$('#request').attr('method',"post");
+	$('#request').submit();
+}
+function select_sys(system){
+	$.ajax({
+	   url:'$this_url',
+	   type: 'post',
+	   dataType: 'json',
+	   data: ajax_parameters({system:system,type:'get_model'}),
+	   cache: false,
+	   success: function(json){
+			$('#model').html('<option value="">不限</option>');
+			var option;
+			for(i in json){
+				option = '<option value="'+json[i].name+'">'+json[i].alias+'</option>';
+				$('#model').append($(option));
+			}
+	   }
+	});	
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

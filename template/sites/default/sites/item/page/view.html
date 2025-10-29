@@ -1,0 +1,66 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link href="{$SKIN}style.css" type="text/css" rel="stylesheet">
+<!--content-->
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] === undefined ? 1 : (\$_GET['verified'] == 0 ? 0 : 1);
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+<div class="position common_mtop">
+<a href="{$this_system.domain}">首页</a>
+<!--{foreach $parent_cats $v}-->
+&gt;&gt; <a href="$v[url]">$v[name]</a>
+<!--{/foreach}-->
+&gt;&gt; <a href="$data[url]">$data[title]</a> 
+</div>
+<div class="clear"></div>
+
+<div class="container">
+	<div class="contain_left">
+		<div class="show_box_leftnav  common_mbottom ">
+<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->			
+<div class="sb1_head">
+				<a href="$parent_url">$parent_name</a>
+			</div>
+			<div class="sb1_main">
+				<ul class="menu_list_1">
+                	<!--{foreach $root_cates $v}-->
+                    <li><a href="$v[url]">$v[name]</a></li>
+					 <!--{/foreach}-->
+                  </ul>
+			</div>
+			<div class="sb1_bottom">&nbsp;</div>
+		</div>
+		<div class="ad_box common_mtop">
+				$label[cms_left_box_content_3]
+		</div>
+				<div class="ad_box common_mtop">
+				$label[cms_left_box_content_9]
+		</div>
+	</div>
+<div class="contain_right">
+<div class="show_box_2">
+		<!--layout article content-->
+<div class="sb2_head">
+	<div class="layout_txtcontent_position" style="background-position:0 -205px;padding-left:40px;font-size:14px;font-weight:bold;">$data[title]
+	<span style="float:right;margin-right:10px;cursor: pointer; color: rgb(0, 64, 255); margin-left: 15px;display:none;" id="operation">操作&gt;&gt;</span>
+	<!--{if $add_enable}--><span class="more"><a href="{$core.RESOURCE}/u.php/sites/item-add?model=page&cid=$cid" target="_blank">发表</a></span><!--{/if}-->
+	</div>
+</div>
+<div class="sb2_main layout_txtcontent common_mbottom">
+			<div class="layout_txtcontent_content">
+			<div id="p8_content_show">$data[content]</div>
+			</div>
+</div>
+</div></div></div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

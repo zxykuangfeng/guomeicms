@@ -1,0 +1,124 @@
+<!--{php168}-->
+<!--{template $LABEL header admin}-->
+<link rel="stylesheet" href="{$SKIN}/cms/category_selector.css" type="text/css">
+
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript">
+_order_by_offset = -1;
+
+var label_type = 'module_data';
+var action = '$action';
+var field_json = <!--{if !empty($field_json)}-->$field_json<!--{else}-->{}<!--{/if}-->;
+var _system;
+var _module;
+var _lang = {
+	copy_label_template_hint: '{$P8LANG['copy_label_template_hint']}',
+	done: '{$P8LANG['done']}',
+	fail: '{$P8LANG['fail']}'
+};
+</script>
+<form action="$this_url?action=$action" id="form" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr>
+					<td>
+						<table class="columntable formtable ">
+							<tr>
+								<td class="title">{$P8LANG['label_scope']} 标签类型：<span style="color:blue;font-weight:700;">【核心 > {$P8LANG[$this_module->name]}】</span></td>
+							</tr>
+							<tr>
+								<td>
+									<div id="tabs"  class="tab_box mtop">
+										<div class="head">
+											<span><a>基本设置</a></span> <span><a>其它设置</a></span><font color="red" id="message" style="visibility:hidden;">内容不能为空,或格式不正确!</font>
+										</div>
+										<div class="main">
+											<div class="content">
+												<table width="100%" class="hover_table">
+													<tr>
+														<td class="tdL">请选择显示的分类：</td>
+														<td class="tdR">
+														{foreach $list_sort $sort}
+														<input type="checkbox" name="option[display_content][]" value="{$sort['fid']}" id="display_{$sort['fid']}" {if in_array($sort['fid'],$display_content)}checked{/if}/><label for="display_{$sort['fid']}">{$sort['name']}</label>
+														{/foreach}
+														<a href="$this_router-link" class="edit_btn">链接管理</a>
+														<a href="$this_router-sort" class="edit_btn">链接分类管理</a>
+													</tr>
+													<tr>
+														<td class="tdL">{$P8LANG['label_template']}</td>
+														<td class="tdR">
+														<input type="text" class="txt" name="option[template]" id="template" value="{if !empty($option['template'])}$option[template]{else}friendlink/friendlink{/if}" /> 
+														<input type="button" value="选择模板.." onclick="template_dialog.show()" /><input type="button" class="usethistpl" value="编辑此模板" onclick="useThisTpl()" >(想自己进一步修改可用此功能)<br />
+														<img style="max-height:300px; max-width:500px;display:block; border:1px solid #ff0000; padding:2px; " id="templateshowimg" src="{$RESOURCE}/images/nopic.jpg" onerror="this.src='{$RESOURCE}/images/nopic.jpg'"  />
+													
+														<script type="text/javascript">
+														$(document).ready(function(){
+															$('#templateshowimg').attr('src',function(){
+																return P8CONFIG.RESOURCE +'/{$core.CONFIG['template_dir']}label/'+$('#template').val()+'.jpg';
+															});
+														});
+														
+														</script>
+														
+														</td>
+													</tr>
+													<tr>
+														<td class="tdL">模板代码 <span class="help">一般为空，保证自己掌握了标签模板规则才可编辑，否则页面会报错</span></td>
+														<td class="tdR">
+															<textarea name="option[tplcode]" id="tplcode" style="display:{if !empty($option['tplcode'])}{else}none{/if}" rows="15" cols="100" wrap=off>{if !empty($option['tplcode'])}{$option['tplcode']}{/if}</textarea>
+															<input type="button" value="标签模板语法检测" class="submit_btn" onclick="checktpl(1)" />
+														</td>														
+													</tr>													
+												</table>
+											</div>											
+											<div class="content">
+												<!--{template $LABEL other_set admin}-->
+											</div>
+										</div>										
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td align="center"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/>
+							</td>
+							</tr>
+							<tr>
+								<td>
+									<input type="button" value="{$P8LANG['explain_sql']}" class="submit_btn" onclick="explain_sql()" />
+									<input type="button" value="{$P8LANG['preview']}" class="submit_btn" onclick="preview()" />
+								</td>
+							</tr>
+							<tr>
+								<td id="explain"></td>
+							</tr>				
+						</table>
+					</td>
+				</tr>							
+			</table>
+		</div>
+	</div>
+	
+</form>
+<script type="text/javascript">
+MoveTabs("tabs",0);
+function valid_add_time(time, obj){
+	var time1 = $('#timestamp1').val();
+	var time2 = $('#timestamp2').val();
+	
+	if(time2 && time1 >= time2){
+		$(obj).val('');
+	}
+}
+$(document).ready(function(){	
+	for(var i in field_json){
+		if(field_json[i].filterable == 1){
+			$('#_field').append($('<option value="'+ i +'">'+ field_json[i].alias +'</option>'));
+		}
+	}
+	
+	//cs.init();
+});
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

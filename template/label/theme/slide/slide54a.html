@@ -1,0 +1,54 @@
+<!--{php168}-->
+<!--{php $swidth = strpos($swidth, '%')!==false?$swidth:$swidth.'px';}-->
+<style type="text/css">
+.sliderbox{$label['id']}{width:100%;position:relative;height:100%;overflow:hidden;}
+.sliderbox{$label['id']} .slick-list{height:100%;}
+.sliderbox{$label['id']} .slick-track{height:100%;}
+.sliderbox{$label['id']} .slick-slide>div{height:100%;}
+.sliderbox{$label['id']} .frame{height:100%;}
+.sliderbox{$label['id']} .child{height:100%;position:relative;overflow:hidden;}
+.sliderbox{$label['id']} .slick-slide .image{width:100%;height:100%;position:relative;overflow:hidden;}
+.sliderbox{$label['id']} .slick-slide .item,.sliderbox{$label['id']} .slick-slide .item img{width:100%;height:100%;display:block;}
+.sliderbox{$label['id']} .slick-slide .image:before{content:"";position:absolute;left:0;bottom:0;right:0;height:80px;background:linear-gradient(to top,rgba(9,27,64,0.7),rgba(0,0,0,0));}
+.sliderbox{$label['id']} .number{position: absolute;right:100px;bottom:50px;color: #fff;text-align: center;line-height:1;}
+.sliderbox{$label['id']} .number li{width:auto;height:auto;margin:0 10px;cursor: pointer;vertical-align: middle;display:inline-block;}
+.sliderbox{$label['id']} .number li.slick-active{font-size:26px;}
+.sliderbox{$label['id']} .number li:after{content:"";border-top:1px solid #fff;display: inline-block;vertical-align: middle;width:0px;margin-left:5px;transition:all 0.5s ease-out 0s;}
+.sliderbox{$label['id']} .number li.slick-active:after{width:60px;}
+@media (max-width: 767px){
+    .sliderbox{$label['id']},.sliderbox{$label['id']} .frame,.slick-slide .item img{width:100%;height:auto;}
+    .sliderbox{$label['id']} .number{display:none;}
+}
+</style>
+<div class="sliderbox{$label['id']}">
+	<div class="slider frame">
+		<!--{foreach $list $value}-->
+		<div class="child">
+			<div class="image">
+				<a class="item" href="$value[url]" target="_blank" title="$value[full_title]">
+                    <img src="$value[frame]" alt="$value[full_title]" >
+                </a>
+			</div>
+		</div>
+		<!--{/foreach}-->
+	</div>
+	<div class="number"></div>
+</div>
+<script type="text/javascript" src="{$RESOURCE}/js/slick.min.js"></script>
+<script type="text/javascript">
+$(".sliderbox{$label['id']} .frame").slick({
+    autoplay:true,
+    autoplaySpeed:6000,
+    pauseOnDotsHover:true,
+    pauseOnFocus:false,
+    speed:600,
+    arrows:false,
+    dots:true,
+    appendDots:".sliderbox{$label['id']} .number",
+    pauseOnHover:false,
+    customPaging: function(slider, i) {  
+        return i + 1;
+    },
+});
+</script>
+<!--{/php168}-->

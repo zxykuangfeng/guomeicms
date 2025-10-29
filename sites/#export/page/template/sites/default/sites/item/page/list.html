@@ -1,0 +1,58 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/alonepage/style.css" />
+<div class="list_nave">
+	<a href="{$this_system.url}">首页</a>&nbsp;&gt;&nbsp;
+	<!--{foreach $parent_cats $v}-->
+	<a href="$v[url]">$v[name]</a>&nbsp;&gt;&nbsp;
+	<!--{/foreach}-->
+	<a href="$CAT[url]">$CAT[name]</a>
+</div>
+<div class="clear"></div>
+<div class="container common_mtop">
+	<div class="contain_left">
+		<div class="show_box_1">
+			<div class="sb1_head">
+				$label[let_menu_title]
+			</div>
+			<div class="sb1_main" id='leftbox' style="height:270px">
+				<ul class="menu_list_1">
+                	<!--{foreach $root_cates $v}-->
+                    <li><a href="$v[url]">$v[name]</a></li>
+					 <!--{/foreach}-->
+                  </ul>
+			</div>
+			<div class="clear"></div>
+			
+		</div>
+			<div class="common_mtop">
+				$label[独立页左边广告1]
+			</div>
+			<div class="clear"></div>
+			<div class="common_mtop">
+				$label[独立页左边广告2]
+			</div>
+			<div class="clear"></div>
+			<div class="common_mtop">
+				$label[独立页左边广告3]
+			</div>
+	</div>
+	<div class="contain_right">	
+
+		<div class="show_box_2">
+			<div class="sb2_head">
+				<h2 class="title_icon_4" style="font-size: 14px;">$data[title]</h2>
+				<span class="more" id="editcontent"></span>
+			</div>
+			<div class="sb2_main" id='rightbox'>
+				$data[content]
+			<div class="clear"></div>
+			</div>
+		</div>
+	</div>
+
+</div>	
+
+<!--{template $this_system footer}-->
+<!--{/php168}-->

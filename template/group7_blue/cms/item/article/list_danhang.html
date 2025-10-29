@@ -1,0 +1,54 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner">
+	$label[fenzhan-banner]
+</div>
+<div class="section">
+	<div class="container">
+		<div class="breadcrumbbox">
+			<ol class="breadcrumb">
+				<li><a href="{$this_system->controller}"><i class="fa fa-home"></i>首页</a></li>
+				<li>/</li>
+				<!--{foreach $parent_cats $v}-->
+				<li><a href="$v[url]"><i class="fa fa-caret-right"></i>$v[name]</a></li>
+				<li>/</li>
+				<!--{/foreach}-->
+				<li class="active"><i class="fa fa-caret-right"></i>$CAT[name]</li>
+			</ol>
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+			<div class="xt-box">
+				<div class="xt-tit clearfix">
+					<h3>$label[list_xt_xs_tit1]</h3>
+				</div>
+				<div class="xt-con">
+					<div class="row">$label[list_xt_xs_con1]</div>
+				</div>
+			</div>
+			<div class="xt-box">
+				<div class="xt-tit clearfix">
+					<h3>$label[list_xt_xs_tit2]</h3>
+				</div>
+				<div class="xt-con">
+					<div class="row">$label[list_xt_xs_con2]</div>
+				</div>
+			</div>
+			<div class="xt-box mbt20">
+				<div class="xt-tit clearfix">
+					<h3>$label[list_xt_xs_tit4]</h3>
+				</div>
+				<div class="xt-con">
+					<div class="row">$label[list_xt_xs_con4]</div>
+				</div>
+			</div>
+		</div>	
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+
+

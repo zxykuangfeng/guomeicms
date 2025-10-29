@@ -1,0 +1,19 @@
+<!--{php168}-->
+<div class="label_theme_pic_com_ul9">
+	<!--{foreach $list $value}-->
+	<div class="item">
+		<div class="container relative">
+			<div class="date hidden-xs">
+				<span class="d"><!--{php echo date('d', $value['timestamp']);}--></span>
+				<span class="y"><!--{php echo date('Y-m', $value['timestamp']);}--></span>
+			</div>
+			<div class="text2">
+				<h3><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></h3>
+				<p class="source">来源：$value[source]</p>
+				<p class="summary">$value[summary]...</p>
+			</div>
+		</div>
+	</div>
+	<!--{/foreach}-->
+</div>
+<!--{/php168}-->

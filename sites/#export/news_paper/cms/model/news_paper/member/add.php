@@ -1,0 +1,37 @@
+<?php
+/**
+* 添加内容
+**/
+defined('PHP168_PATH') or die();
+
+if(REQUEST_METHOD == 'GET'){
+	
+/**
+* your code
+**/
+	include template($this_module, 'edit');
+	
+}else if(REQUEST_METHOD == 'POST'){
+	
+	//如果魔法引号开启strip掉
+	$_POST = p8_stripslashes2($_POST);
+	$models = $this_system->get_models();
+	$model = isset($_POST['model']) ? xss_clear($_POST['model']) : '';
+	if($model && !array_key_exists($model,$models)){
+		message('fail');
+	}
+	$this_controller->add($_POST) or message('fail');
+/**
+* your code
+**/
+	message(
+		array(
+			array('cms_to_edit', $core->U_controller .'/'. $SYSTEM .'/item-update?id='.$id.'&model='.$model.'&verified='.$_POST['verify']),
+			array('cms_to_list', $core->U_controller .'/'. $SYSTEM .'/item-my_list?cid='.$_POST['cid'].'&model='.$model),
+			array('cms_to_view', $this_module->controller .'-view-id-'.$id.'?verified='.$_POST['verify'], '_blank'),
+			array('cms_to_add', $core->U_controller .'/'. $SYSTEM .'/item-add?cid='.$_POST['cid'].'&model='.$model)
+		),
+		$core->U_controller .'/'. $SYSTEM .'/item-add?cid='.$_POST['cid'].'&model='.$model,
+		10000
+	);
+}

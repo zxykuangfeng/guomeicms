@@ -1,0 +1,291 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style type="text/css">
+body, html{overflow:inherit;}
+</style>
+<div class="section">
+	<form action="$this_url" method="post" id="form">
+		<table width="100%" cellspacing="0" cellpadding="0" class="zq_list hover_table">
+			<tr class="title fix_head">
+				<td width="23%"  class="list_top">{$P8LANG['config']}</td > <td width="35%" class="list_top">参数</td><td width="42%" class="list_top">备注</td>
+			</tr>
+			<tr>
+				<td class="tdL">模型名称</td>
+				<td class="tdR"> 
+				<!--{if !empty($data['name'])}-->
+				{$data['alias']}
+				<input type="hidden" id="alias" name="name" value="{if !empty($data['name'])}$data[name]{/if}" />
+				<!--{else}-->
+				<input type="text" class="txt" name="name" value="{if !empty($data['name'])}$data[name]{/if}" />  
+				<!--{/if}-->
+				</td>
+				<td class="tdR">请添加模型名称,只能以英文数字及_组成,必须以字母开头，提交后不得修改</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['sites_model_alias']}</td>
+				<td class="tdR"> <input type="text" class="txt" name="alias" value="{if !empty($data['alias'])}$data[alias]{/if}" /> </td>
+				<td class="tdR">请添加模型别名，名称可任意填写</td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">{$P8LANG['sites_model_enabled']}</td>
+				<td class="tdR"><input name="enabled" value="1" type="radio" {if !empty($data['enabled'])}checked{/if}/>启用 
+				<input name="enabled" value="0" type="radio" {if empty($data['enabled'])}checked{/if}/>关闭</td>
+				<td class="tdR"></td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['sites_model_prev&next_item']}</td>
+				<td class="tdR"><input name="config[prev&next_item]" value="1" type="radio" {if !empty($config['prev&next_item'])}checked{/if}/>启用 
+				<input name="config[prev&next_item]" value="0" type="radio" {if empty($config['prev&next_item'])}checked{/if}/>关闭</td>
+				<td class="tdR"></td>
+			</tr>
+			<tr>
+				<td class="tdL">本模型布局</td>
+				<td class="tdR">
+				<span id="parts">
+				<!--{foreach $config[parts] $key $val}-->
+					<p>标题 <input type="text" class="pname" name="config[parts][$key][name]" value="$val[name]"> 列 <input type="text" onkeyup="check_row(this)" size="5" name="config[parts][$key][row]" value="$val[row]"/> 排序 <input type="text" size="5" name="config[parts][$key][order]"  value="$val[order]"/> <input type="checkbox" name="config[parts][$key][hide]" id="parts_{$key}" value="1" {if $val['hide']}checked="checked"{/if}/> <label for="parts_{$key}">隐藏</label> <input type="button" value="删除" class="submit_btn" onclick="remove_status(this)" /></p>
+				<!--{/foreach}-->
+				</span>	
+					<input type="button" class="submit_btn" onclick="add_part()" value="增加"/>
+					<script type="text/javascript">
+						function add_part(){
+							var rand = Math.random().toString().substr(3,5);
+							$('#parts').append('<p>标题 <input type="text" name="config[parts]['+rand+'][name]" value=""> 列 <input onkeyup="check_row(this)" type="text" size="5" name="config[parts]['+rand+'][row]" value="1"/> 排序 <input type="text" size="5" name="config[parts]['+rand+'][order]"> <input type="checkbox" name="config[parts]['+rand+'][hide]" value="1"/> <label for="parts_'+rand+'">隐藏</label> <input type="button" class="submit_btn" value="删除" onclick="remove_status(this)" /></p>');
+						}
+						function remove_status(obj){
+							$(obj).parent().remove();
+						}
+					</script>
+				</td>
+				<td class="tdR">用于错综复杂的布局，如分几部分几列</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_enable']}</td>
+				<td class="tdR">
+					<input type="radio" onclick="showmorebox(1);" name="config[allow_custom]" value="1"{if !empty($data['config']['allow_custom'])} checked{/if} />{$P8LANG['Y']}
+					<input type="radio" onclick="showmorebox(0);" name="config[allow_custom]" value="0"{if empty($data['config']['allow_custom'])} checked{/if} />{$P8LANG['N']}				
+				</td>
+				<td class="tdR">预留的10个字段将在显示在添加或编辑内容界面的“其它设置”选项</td>
+			</tr>
+			<tbody id="allow_custom" style="display:{if empty($data['config']['allow_custom'])}none{/if}">
+			<tr>
+				<td colspan="3"> 预留字段设置（特供使用标签调用“主站内容模块”时使用，列表和内容页面中不能使用）</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_a']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_a]" size="30" value="{if isset($data['config']['custom_a'])}{$data['config']['custom_a']}{else}{$P8LANG['custom_a']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_a_enabled]" value="1"{if !empty($data['config']['custom_a_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">显示方法与标题title类似，标签和列表为\$value[custom_a]，内容页通常为\$data[custom_a]，具体写法与模板有关</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_b']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_b]" size="30" value="{if isset($data['config']['custom_b'])}{$data['config']['custom_b']}{else}{$P8LANG['custom_b']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_b_enabled]" value="1"{if !empty($data['config']['custom_b_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">参考同上</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_c']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_c]" size="30" value="{if isset($data['config']['custom_c'])}{$data['config']['custom_c']}{else}{$P8LANG['custom_c']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_c_enabled]" value="1"{if !empty($data['config']['custom_c_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">参考同上</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_d']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_d]" size="30" value="{if isset($data['config']['custom_d'])}{$data['config']['custom_d']}{else}{$P8LANG['custom_d']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_d_enabled]" value="1"{if !empty($data['config']['custom_d_enabled'])} checked{/if} /> {$P8LANG['enabled']}</td>
+				<td class="tdR">参考同上</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_e']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_e]" size="30" value="{if isset($data['config']['custom_e'])}{$data['config']['custom_e']}{else}{$P8LANG['custom_e']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_e_enabled]" value="1"{if !empty($data['config']['custom_e_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">参考同上</td>
+			</tr>
+			<tr>
+				<td colspan="3">{$P8LANG['custom_content_note']}</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_f']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_f]" size="30" value="{if isset($data['config']['custom_f'])}{$data['config']['custom_f']}{else}{$P8LANG['custom_f']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_f_enabled]" value="1"{if !empty($data['config']['custom_f_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">显示方法与标题title类似，通常为\$data[custom_f]，具体写法与模板有关</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_g']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_g]" size="30" value="{if isset($data['config']['custom_g'])}{$data['config']['custom_g']}{else}{$P8LANG['custom_g']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_g_enabled]" value="1"{if !empty($data['config']['custom_g_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">参考同上</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_h']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_h]" size="30" value="{if isset($data['config']['custom_h'])}{$data['config']['custom_h']}{else}{$P8LANG['custom_h']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_h_enabled]" value="1"{if !empty($data['config']['custom_h_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">参考同上</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_i']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_i]" size="30" value="{if isset($data['config']['custom_i'])}{$data['config']['custom_i']}{else}{$P8LANG['custom_i']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_i_enabled]" value="1"{if !empty($data['config']['custom_i_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">参考同上</td>
+			</tr>
+			<tr>
+				<td class="tdL">{$P8LANG['custom_j']}</td>
+				<td class="tdR"><input type="text" class="txt" name="config[custom_j]" size="30" value="{if isset($data['config']['custom_j'])}{$data['config']['custom_j']}{else}{$P8LANG['custom_j']}{/if}" />
+				<input type="checkbox" title="{$P8LANG['enabled']}" name="config[custom_j_enabled]" value="1"{if !empty($data['config']['custom_j_enabled'])} checked{/if} /> {$P8LANG['enabled']}
+				</td>
+				<td class="tdR">参考同上</td>
+			</tr>
+			</tbody>
+			<tr>
+				<td class="tdL">{$P8LANG['sites_model_admin_edit_template']}</td>
+				<td class="tdR">
+					<input type="text" class="txt" name="config[admin_edit_template]"  value="{if !empty($data['config']['admin_edit_template'])}{$data['config']['admin_edit_template']}{/if}" />
+					<input type="button" value="$P8LANG[select_template]" onclick="admin_edit_dialog.show()" />
+				</td>
+				<td class="tdR"></td>
+			</tr>
+			
+			<tr>
+				<td class="tdL">{$P8LANG['sites_model_member_edit_template']}</td>
+				<td class="tdR">
+					<input type="text" class="txt" name="config[member_edit_template]"  value="{if !empty($data['config']['member_edit_template'])}{$data['config']['member_edit_template']}{/if}" />
+					<input type="button" value="$P8LANG[select_template]" onclick="member_edit_dialog.show()" />
+				</td>
+				<td class="tdR"></td>
+			</tr>
+			<tr>
+				<td class="tdL">封面缩略图宽高</td>
+				<td class="tdR">
+					<input type="text" class="txt" name="config[frame_thumb_width]" value="{if !empty($config['frame_thumb_width'])}{$config['frame_thumb_width']}{/if}" size="4" /> X
+					<input type="text" class="txt" name="config[frame_thumb_height]" value="{if !empty($config['frame_thumb_height'])}{$config['frame_thumb_height']}{/if}" size="4" />
+				</td>
+				<td class="tdR"></td>
+			</tr>
+
+			<tr>
+				<td class="tdL">内容缩略图宽高</td>
+				<td class="tdR">
+					<input type="text" class="txt" name="config[content_thumb_width]" value="{if !empty($config['content_thumb_width'])}{$config['content_thumb_width']}{/if}" size="4" /> X
+					<input type="text" class="txt" name="config[content_thumb_height]" value="{if !empty($config['content_thumb_height'])}{$config['content_thumb_height']}{/if}" size="4" />
+				</td>
+				<td class="tdR"></td>
+			</tr>
+			<tr>
+				<td colspan="3" class="text-center"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></td>
+			</tr>
+		</table>
+		<input type="hidden" name="id" value="{if !empty($id)}$id{/if}" />
+	</form>
+</div>
+<script type="text/javascript">
+
+$.validator.addMethod('valid_model', function(value, element){
+	return /^[a-zA-Z]/.test(value) && !/[^0-9a-zA-Z_]/.test(value);
+});
+
+
+$('#form').validate({
+	rules: {
+		name: {
+			required: true<!--{if $ACTION == 'add'}-->,
+			maxlength: 30,
+			valid_model: true,
+			remote: function(){
+				
+				return {
+					url: '$this_router-check_name',
+					cache: false,
+					type: 'post',
+					beforeSend: function(){
+						ajaxing({});
+					},
+					complete: function(){
+						ajaxing({action: 'hide'});
+					}
+				}
+			}
+			<!--{/if}-->
+		},
+		
+		alias: {
+			required: true
+		}
+	},
+	
+	messages: {
+		<!--{if $ACTION == 'add'}-->
+		name: {
+			required: '{$P8LANG['sites_model_name_can_not_be_empty']}',
+			maxlength: '{$P8LANG['sites_model_name_oversize']}',
+			valid_model: '{$P8LANG['sites_model_name_invalid']}',
+			remote: '{$P8LANG['sites_model_name_duplicate']}'
+		},<!--{/if}-->
+		alias: {
+			required: '{$P8LANG['sites_model_alias_required']}'
+		}
+	},
+	
+	errorPlacement: function(error, element) {
+		error.wrap('<div></div>').appendTo(element.parent().prev());
+	},
+	wrapper: 'div',
+	
+	onkeyup: false
+});
+
+var admin_edit_dialog = new P8_Dialog({
+	title_text: '$P8LANG[select_template]',
+	width: 700,
+	height: 300,
+	button: true,
+	ok: function(){
+		$('#form input[name="config[admin_edit_template]"]').val(admin_template_selector.value);
+	},
+	show: function(){
+		admin_template_selector.init();
+	}
+});
+var admin_template_selector = new Template_Selector({
+	base_dir: 'admin/{$SYSTEM}/item/',
+	selected: $('#form input[name="config[admin_edit_template]"]').val(),
+	dialog: admin_edit_dialog
+});
+
+
+var member_edit_dialog = new P8_Dialog({
+	title_text: '$P8LANG[select_template]',
+	width: 700,
+	height: 300,
+	button: true,
+	ok: function(){
+		$('#form input[name="config[member_edit_template]"]').val(member_template_selector.value);
+	},
+	show: function(){
+		member_template_selector.init();
+	}
+});
+var member_template_selector = new Template_Selector({
+	base_dir: '{$core.CONFIG['member_template']}/{$SYSTEM}/item/',
+	selected: $('#form input[name="config[member_edit_template]"]').val(),
+	dialog: member_edit_dialog
+});
+$('input[name=name]').get(0).focus();
+function showmorebox(f){
+	if(f == '1' )
+		$("#allow_custom:hidden").show();		
+	else
+		$("#allow_custom").hide();
+}
+</script>
+
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

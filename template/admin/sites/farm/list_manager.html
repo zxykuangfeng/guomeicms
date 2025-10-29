@@ -1,0 +1,171 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable" width="100%">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$this_system.admin_controller}-recovery"><i class="fa fa-cog"></i>系统巡检</a></li>
+						<li><a href="{$this_system.admin_controller}/category-html_manager"><i class="fa fa-cog"></i>栏目静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}/farm-list_manager"><i class="fa fa-cog"></i>菜单静态化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-visualization"><i class="fa fa-cog"></i>页面可视化管理</a></li>
+						<li><a href="{$this_system.admin_controller}-publishing"><i class="fa fa-cog"></i>站点发布管理</a></li>
+						<li style="float:right;background:#367fc1;border-radius:4px;height:30px;line-height:30px;"><a href="{if empty($site_info['ipordomain'])}{$core->CONFIG['url']}/s.php/{$site}{else}{$site_info['domain']}{/if}" style="color:#fff;border:none;box-shadow:none;height:30px;line-height:30px;" target="_blank"><i class="fa fa-map-marker"></i>当前站点：{$site_info['sitename']}</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="formtable zq_list hover_table" align="center">	
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">操作流程</td>
+			</tr>
+			<tr>
+				<td class="tdL">应用场景说明</td>
+				<td class="tdR">
+					1、网站静态化访问的时候，不仅栏目和内容需要静态化，菜单地址也需要同步静态化才可以。<br>
+					2、操作一键静态化的时候，看看是否有空白或正确，有问题的需要手工补全。一般的地址是 ：域名/xxx/xxx的形式才是正确的。<br>
+					3、注意批量快速添加菜单的方式，点击右边的批量添加按钮。单独一个子菜单需要点击【新增菜单】按钮。<br>
+					4、如果菜单导航重新设置静态化链接了，栏目静态需要重新操作一遍。<br>
+					5、查看效果时候，需要清理浏览器访问记录，再快速刷新两下当前页面即可。<br>
+				</td>
+			</tr>					
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="zq_list hover_table" align="center">
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">完整操作流程（初次设置操作或需完整的操作）</td>
+			</tr>
+			<tbody>
+			
+			<tr>
+				<td class="tdL">步骤1：进入菜单管理界面</td>
+				<td class="tdR">
+					<input type="submit" value="进入菜单管理入口" class="cache_btn2" onclick="do_cache('html_init')" size="30"/>此界面可以添加菜单、静态菜单等										
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤2：确定栏目是否先静态好了</td>
+				<td class="tdR">
+					<input type="submit" value="进入网站静态查看入口" class="cache_btn2" onclick="do_cache('label')" size="30"/> 查看是否静态过了，如果没有可以此处重新操作一遍
+
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤3：一键操作菜单静态教程</td>
+				<td class="tdR">
+					<input type="submit" value="一键操作菜单静态教程" class="cache_btn2" onclick="do_cache('label')" size="30"/> 注意操作后，是否空白，需要仔细检
+
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤4：添加和管理菜单教程</td>
+				<td class="tdR">
+					<input type="submit" value="快捷添加和管理菜单教程" class="cache_btn2" onclick="do_cache('label')" size="30"/> 有非常快捷的菜单添加方式
+
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤5：重新静态本站点</td>
+				<td class="tdR">
+					<input type="submit" value="重新静态本站点教程" class="cache_btn2" onclick="do_cache('label')" size="30"/> 处理完菜单后，需要重新静态本站点
+
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">步骤6：清理浏览器缓存查看效果</td>
+				<td class="tdR">
+					<input type="submit" value="查看效果教程" class="cache_btn2" onclick="do_cache('label')" size="30"/> 浏览器有缓存，有时候看不到效果
+
+				</td>
+			</tr>								
+			</tbody>
+
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+	function do_cache(cache_type){		
+		$('#cache_type').val(cache_type);
+		ajaxing({'text':'处理中…'});
+		$('#cache').submit();	
+	}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var values = cs.get_value();
+		$('#option_category').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$this_system.controller}/category-json',
+	values: $('#option_category').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

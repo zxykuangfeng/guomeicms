@@ -1,0 +1,42 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<div class="mainbox mainborder" style="margin: 0 auto;background: #fff;border: 1px solid #EFEFEF;box-sizing: border-box;">
+	<div class="section" style="margin:0;">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr><td>
+			<table class="columntable formtable">
+			<tr>
+				<td class="title">管理地图</td>
+			</tr>
+			<tr>
+				<td class="headerbtn_list">
+					<ul style="background: #D5E9FF;">
+						<li class="{if $SYSTEM == 'core'}active{/if}">
+							<a href="{$core.admin_controller}/core-admin_action_map?role_id=$role_id"><i class="fa fa-cogs"></i> {$P8LANG['core']}</a>
+						</li>						
+						<!--{foreach $core->systems $k $v}-->	
+						<li class="{if $SYSTEM == $k}active{/if}">
+							<a href="{$core.admin_controller}/$k-admin_action_map?role_id=$role_id"><i class="fa fa-cogs"></i> {$v['alias']}</a>
+						</li>
+						<!--{/foreach}-->
+					</ul>
+				</td>
+			</tr>
+			</table>
+			</td></tr>
+			
+			<tr><td>
+			<table class="columntable formtable">
+			<tbody class="privileges">				
+			<!--{template $role acl_admin_action_map admin}-->
+			<!--{foreach $acls $module $_acl}-->
+			<!--{template $role acl_module_admin_action_map admin}-->
+			<!--{/foreach}-->				
+			</tbody>
+			</table>
+			</td></tr>
+		</table>		
+	</div>
+</div>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

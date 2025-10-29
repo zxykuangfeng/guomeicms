@@ -1,0 +1,9 @@
+<!--{php168}-->
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+<!--{foreach $list $value}-->
+	<tr id="v_$value[id]">
+		<td style="text-align:left;"><span class="label_datatime" style="color:#656668;font-size:14px;"><!--{php echo date('Y-m-d', $value['timestamp']);}--></span><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a><td>
+	</tr>
+<!--{/foreach}-->
+</table>
+<!--{/php168}-->

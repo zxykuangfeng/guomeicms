@@ -1,0 +1,15 @@
+<!--{php168}-->
+<iframe id="_auto_height" src="about:blank" style="display: none;"></iframe>
+<script type="text/javascript" src="{$core.url}/api/crontab.php"></script>
+<script language="JavaScript" type="text/JavaScript">
+$(function(){
+	$.ajaxSetup({
+		headers: {
+			'X-Csrf-Token': $('meta[name="X-Csrf-Token"]').attr('content')
+		}
+	});
+});
+</script>
+</body>
+</html>
+<!--{/php168}-->

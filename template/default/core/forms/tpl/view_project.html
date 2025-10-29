@@ -1,0 +1,105 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/forms/style.css" />
+<div class="container">
+	<div class="white">
+		<div class="xmhead">
+			<div class="title">
+				项目推介
+			</div>
+			<div class="position nav">你的位置：<a href="{$this_system.url}">首页</a> &gt; <a href="$this_router-list-mid-$this_model[id]">$this_model[alias]</a>&nbsp;&gt;&nbsp;正文</div>
+		</div>
+		<div class="govMain">
+			<div class="casebox">
+				<div class="contxt">
+					<table cellspacing="0" cellpadding="0" width="100%" class="tabelCont2">
+						<tbody>
+							<tr>
+								<th scope="row">项目名称</th>
+								<td colspan="3">$data[name]</td>
+								<th scope="row">项目编号</th>
+								<td colspan="1">$data[bianhao]</td>
+							</tr>
+							<tr>
+								<th scope="row">产业类别</th>
+								<td colspan="3">{$this_model['fields'][leibie]['data'][$data['leibie']]}</td>
+								<td align="center" colspan="2" rowspan="3">
+									<img src="{$RESOURCE}/skin/default/core/forms/xmk.jpg" width="270" height="140">
+								</td>
+							</tr>						
+							<tr>
+								<th scope="row">项目所在地</th>
+								<td colspan="3"><!--{php $sid = 0;}-->
+								<!--{foreach $data[sudi] $k $item}-->{if $sid} > {/if}{$item}<!--{php $sid++;}--><!--{/foreach}--></td>
+							</tr>
+							<tr>
+								<th scope="row">投资总额</th>
+								<td colspan="3">$data[touzhi]</td>							
+							</tr>
+							<tr>
+								<th scope="row">项目情况</th>
+								<td colspan="5">
+									$data[beizhu]
+								</td>
+							</tr>				
+							<tr>
+								<th scope="row">联系单位</th>
+								<td colspan="5">$data[lxdw]</td>
+							</tr>
+							<tr>
+								<th scope="row">发布时间 </th>
+								<td colspan="5">{date('Y-m-d',$data['timestamp'])}</td>
+							</tr>					   
+						</tbody>
+					</table>
+					<div class="clear"></div>
+				</div>
+			</div>
+			<div class="zxbox">
+				<div class="title">
+					项目咨询
+				</div>
+				<div class="zxtxt">
+					<form name="form" id="form" action="{$core.controller}/forms-post?cid=&mid=54" method="post">
+						<table cellspacing="0" cellpadding="0" width="100%" class="tabelzx">
+							<tbody>
+								<tr>
+									<td><div class="zxmc xm">姓名：</div></td>
+									<td><input type="hidden" name="#field_name_posted" />
+									<input type="text"  class="txt" id="field#[name]" name="field#[name]" value=""  />
+									</td>
+									<td><div class="zxmc dh">电话：</div></td>
+									<td><input type="hidden" name="#field_telephone_posted" />
+									<input type="text"  class="txt" id="field#[telephone]" name="field#[telephone]" value=""  />
+								</td>
+								</tr>
+								<tr>
+									<td><div class="zxmc wb">留言：</div></td>
+									<td colspan="3">
+										<input type="hidden" name="#field_content_posted"  />
+										<textarea name="field#[content]" id="field#[content]" class="txtar" cols="70" rows="5" ></textarea>
+									</td>
+								</tr>	
+							</tbody>
+						</table>
+						<div class="formsbt">
+							<input type="submit" name="" class="formsbtn" value="提 交" />
+							<input type="hidden" name="#field_iid_posted" />
+							<input type="hidden" id="field#[iid]" name="field#[iid]" value="{$id}"  />
+							<input type="hidden" name="mid" value="54" />
+							<input type="hidden" name="attachment_hash" value="{$attachment_hash}" />
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+var message = new Message();
+</script>
+<!--{if $manage}-->
+<!--{template $this_module manage}-->
+<!--{/if}-->
+<!--{template $this_system footer}-->
+<!--{/php168}-->

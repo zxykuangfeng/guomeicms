@@ -1,0 +1,53 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<!--中间内容部分-->
+<div class="breadbanner">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_daohan_con9]
+		</div>
+		<div class="container">
+			<div class="banner_title  kx_btit">
+				<h2>$CAT[name]</h2>
+			</div>
+		</div>
+	</div>
+	<div class="container kx_item">
+		<div class="kx_list_nav container">
+			<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+			<div class="main1">
+				<!--{template $this_module step_category_jx3}-->
+			</div>
+		</div>
+	</div>
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="contain-kx">
+			<div class="kx-head">
+				<div class="position fl">
+						当前位置：
+					<a href="{$core.controller}">首页</a>
+					<!--{foreach $parent_cats $v}-->
+					&gt; <a href="$v[url]">$v[name]</a>
+					<!--{/foreach}-->
+					&gt; <a href="$CAT[url]">$CAT[name]</a>
+				</div>
+				<div class="more fr" style="padding:10px 0;">
+					<!--{if $add_enable}--><span class="more"> <a href="{$core.U_controller}/cms/item-add?cid=$cid&model=$CAT[model]" target="_blank">发表</a></span><!--{/if}-->
+				</div>
+			</div>
+			<div class="gov-main">
+				<div  class="content">
+					<!--{php include template($TEMP_OBJ, $CAT['item_template'], 'label');}-->
+						<div class="mtop pages" id="page">{$pages}</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!--{template $this_system footer}-->
+<!--{/php168}-->
+
+

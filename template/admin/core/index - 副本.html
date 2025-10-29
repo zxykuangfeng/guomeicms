@@ -1,0 +1,282 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<title>系统后台管理平台</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="X-Csrf-Token" content="{$CSRF_TOKEN}">
+<meta name="renderer" content="webkit">
+<link rel="stylesheet" href="{$RESOURCE}/skin/admin/style.css" type="text/css">
+<link rel="stylesheet" href="{$AWESOME}/skin/default/core/awesome4.7.0/css/font-awesome.min.css" type="text/css">
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/template.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<script type="text/javascript">
+P8CONFIG.admin_controller = '{$core.admin_controller}';
+var MENU_JSON = $json[json];
+var MENU_JSON2 = $json[json2];
+var MENU_PATH = $json[path];
+var MENU_DENIED = $denied;
+var system_menu_hide_timeout;
+function get_menu_by_id(id){
+	var path = clone(MENU_PATH[id]);
+	var root = path.shift();
+	
+	var search = get_menu_byid(MENU_JSON2,root);
+	
+	if(path.length == 0){
+		return search;
+	}
+	
+	for(var i in path){
+		search = get_menu_byid(search.menus,path[i]);
+	}
+	
+	return search;
+}
+function get_menu_byid(json,need){
+    for(var i in json){
+        if(json[i].id==need){
+            return json[i];
+        }
+    }
+    return {};
+}
+<!--{template_init_js}-->
+</script>
+<script type="text/javascript">
+var cache_action = "{$core.admin_controller}/core-cache";
+var index_html_action = "{$core.admin_controller}/cms-index_to_html";
+var index_html_m_action = "{$core.admin_controller}/cms-index_to_html";
+var item_view_action = "{$core.admin_controller}/cms/item-view_to_html";
+var item_list_action = "{$core.admin_controller}/cms/item-list_to_html";
+var label_action = "{$core.admin_controller}/core/label-cache";
+var category_action = "{$core.admin_controller}/cms/category-cache";
+var special_html = "{$core.admin_controller}/core/special-view_to_html";
+var _obj = new Date(<!--{php echo P8_TIME;}-->000);
+var _Y = _obj.getFullYear();
+var _m = _obj.getMonth() +1;
+var _d = _obj.getDate();
+var _H = _obj.getHours();
+var _j = _obj.getDay();
+</script>
+</head>
+<body>
+<div id="container" class="main-container">
+	<div class="main-header">
+		<div class="header-container">
+			<div class="header-left">
+				<div class="logo"><a href="{$core.admin_controller}"><img src="{if isset($config['logo_core']) && !empty($config['logo_core'])}{$config['logo_core']}{else}{$RESOURCE}/skin/admin/logo.png{/if}" /></a></div>
+				<div class="header-menu">
+					<ul class="header-menu-item" id="core_menu">
+						<!--{php $count = 0;}-->
+						<!--{foreach $admin_menu->top_menus $v}-->
+						<!--{php $count++;}-->
+							<!--{if $v['url']}-->
+								<!--{if $v['target'] == '_blank'}-->
+									<li><a href="{$core.admin_controller}{$v['url']}" target="_blank">{if $count==1}<i class="fa fa-desktop"></i> {/if}{$v['name']}</a></li>
+								<!--{else}-->
+									<li><a href="{$core.admin_controller}/{$v['url']}" target="main" onclick="javascript:get_menu({$v['id']})">{if $count==1}<i class="fa fa-desktop"></i> {/if}{$v['name']}</a></li>
+								<!--{/if}-->
+							<!--{else}-->
+								<li onclick="javascript:get_menu({$v['id']})"><span>{if $count==1}<i class="fa fa-desktop"></i> {/if}{$v['name']}</span></li>
+							<!--{/if}-->
+						<!--{/foreach}-->
+					</ul>
+				</div>
+			</div>
+			<div class="header-right">
+				<div class="header-member">
+					<a href="{$core.U_controller}?site=mainstation" target="_blank"><img src="{$RESOURCE}/skin/admin/member.png" /></a>
+					<h3><a href="{$core.U_controller}?site=mainstation" target="_blank">$USERNAME{if $member_info['name']}（{$member_info['name']}）{/if}</a></h3>
+					<p>{$core.roles[$core.ROLE]['name']} <a href="{$core.admin_controller}/core-logout">安全退出</a></p>
+				</div>
+				<ul class="header-clik">
+					<li class="topimg"><a href="{if $core->controller}{$core.controller}{else}{$STATIC_URL}/index.php{/if}?edit_label=1" target="_blank" ><img src="{$RESOURCE}/skin/admin/topimg.png" />首页标签</a></li>
+					<li><a href="{if $core->controller}{$core.controller}{else}{$STATIC_URL}/index.php{/if}" target="_blank"><i class="fa fa-home"></i> 网站首页</a></li>	
+				</ul>
+			</div>
+		</div>
+	</div>
+	<div class="content-main content-top">
+		<div class="content-container">
+			<div class="content-side sider-menu-container">			
+				<ul class="menu-vertical" role="tablist" id="submenu"></ul>
+			</div>
+			<div class="content-side sider-menu-children-container tab-content">
+    			<div id="tree_inner">
+					<div id="TreeMenu_Current_Operation"></div>
+				</div>
+			</div>
+			<div class="content-main">
+				<iframe src="{$core.admin_controller}/core-main" name="main" id="main" frameborder="0" scrolling="auto" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;"></iframe>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript">
+$(document).ready(function(){
+	window.onresize();
+	$(".content-side").niceScroll({styler:"fb",cursorcolor:"#429cd8", cursorwidth: '3', cursorborderradius: '10px', background: '#d5dddf', cursorborder: '',cursorfixedheight:70});
+	if(self != top){
+		parent.window.location.href = '{$core.admin_controller}';
+	}
+});
+
+//一级菜单变换CSS
+core_menu_change_css();
+
+//窗口调整
+window.onresize = function(){
+	var userAgent = navigator.userAgent; 
+    var isOpera = userAgent.indexOf("Opera") > -1; 
+    var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1 && !isOpera;
+    var widths = document.body.scrollWidth;
+    var heights = document.documentElement.clientHeight-109;
+	var userAgent = navigator.userAgent;
+	var isOpera = userAgent.indexOf("Opera") > -1;
+	$("#admin_left").height(heights);
+	$("#tree_box").height(1228);
+	var main_w = $('#container').width()-$("#admin_left").width();
+	var header_top = document.getElementById("main").offsetTop;	
+	if(isIE) heights = heights-50;
+   	$('#main').height(heights);	
+	if(header_top>110){
+		if(isIE)
+			$('#main').height(heights-header_top+109);
+		else
+			$('#main').height(heights-header_top+84);
+	}
+};
+</script>
+<script type="text/javascript">
+	function cache_update(){
+	obj = $('#cacheform');
+		var selected = obj.children("select");
+		switch(selected.val()){
+
+			case 'template':
+				obj.attr('action',cache_action);
+				obj.find('type').attr('type','template');
+				obj.submit();
+			break;
+
+			case 'index': 
+				obj.attr('action',cache_action);
+				obj.find('type').attr('type','index');
+				obj.submit();
+			break;
+
+			case 'language':
+				obj.attr('action',cache_action);
+				obj.find('type').attr('type','language');
+				obj.submit();
+			break;
+
+			case 'system_module':
+				obj.attr('action',cache_action);
+				obj.find('type').attr('type','system_module');
+				obj.submit();
+			break;
+
+			case 'all':
+				obj.attr('action',cache_action);
+				obj.find('type').attr('type','');
+				obj.submit();
+			break;
+
+			case 'category-cache':
+				obj.attr('action',category_action);;
+				obj.find('type').attr('type','');
+				obj.submit();
+			break;
+
+			case 'label-cache':
+				obj.attr('action',label_action);;
+				obj.find('type').attr('type','');
+				obj.submit();
+			break;
+		}
+	}
+
+	function html_update(obj){
+		var selected = $(obj).children("select");
+		switch(selected.val()){
+
+			case 'index_to_html':
+				obj.action = index_html_action;
+				obj.type.value = 'index_to_html';
+				obj.submit();
+			break;
+			
+			case 'index_to_m_html':
+				obj.action = index_html_m_action;
+				obj.type.value = 'index_to_m_html';
+				obj.submit();
+			break;
+
+			case 'all_item':
+				obj.action = item_view_action;
+				obj.type.value = '';
+				obj.submit();
+			break;
+
+			case 'all_item_time':
+				obj.action = item_view_action;
+				obj.type.value = '';
+				$(obj).children("#timer_begin").val(date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y)));
+				$(obj).children("#timer_end").val(date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d+1, _Y)));
+				obj.submit();
+			break;
+
+			case 'all_list':
+				obj.action = item_list_action;
+				obj.type.value = '';
+				obj.submit();
+			break;
+
+			case 'all_list_time':
+				obj.action = item_list_action;
+				obj.type.value = '';
+				$(obj).children("#timer_begin").val(date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d, _Y)));
+				$(obj).children("#timer_end").val(date('Y-m-d H:i:s', mktime(0, 0, 0, _m, _d+1, _Y)));
+				obj.submit();
+			break;
+			
+			case 'all_special':
+				obj.action = special_html;
+				obj.type.value = 'all';
+				obj.submit();
+			break;
+		}
+	}
+	function p8_map_dialog(){
+		ajaxing({});
+		var p8_map_dialog = new P8_Dialog({
+			title_text: '管理地图',
+			button: false,
+			width: 900,
+			height: 600,
+			iframe: true,
+			zIndex:10000,
+			show: function(){			
+				showhtml = '<iframe src="{$core.admin_controller}/core-admin_action_map" frameborder="0" scrolling="auto" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;overflow-x: hidden;"></iframe>';
+				this.content.html(showhtml);
+			}
+		});
+		p8_map_dialog.show();
+		ajaxing({action: 'hide'});
+	}
+$(document).ready(function(){
+	$('#core_menu li:first').click();
+});
+</script>
+</body>
+</html>
+<!--{/php168}-->

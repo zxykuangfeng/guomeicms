@@ -1,0 +1,20 @@
+CREATE TABLE `p8_` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `uid` int (10) NOT NULL DEFAULT 0,
+  `openid` varchar(30) NOT NULL DEFAULT '',
+  `unionid` varchar(30) NOT NULL DEFAULT '',
+  `username` varchar(30) NOT NULL DEFAULT '',
+  `nickname` varchar(30) NOT NULL DEFAULT '',
+  `sex` tinyint(1) NOT NULL DEFAULT 0,
+  `city` varchar(30) NOT NULL DEFAULT '',
+  `province` varchar(30) NOT NULL DEFAULT '',
+  `country` varchar(30) NOT NULL DEFAULT '',
+  `headimgurl` varchar(200) NOT NULL DEFAULT '',
+  `subscribe` tinyint(1) NOT NULL DEFAULT 0,
+  `subscribe_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `subscribe_scene` varchar(20) NOT NULL DEFAULT '',
+  `created_at` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `updated_at` timestamp NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `openid` (`openid`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3;

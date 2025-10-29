@@ -1,0 +1,214 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<link rel="stylesheet" href="{$SKIN}category_selector.css" type="text/css" />
+<style type="text/css">
+.mtab{min-height: 500px;}
+</style>
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="list_box">
+			<div class="head" id="boxhead">
+				<span id="verified" $class[1]><a href="{$this_url}?verified=1">已审核</a></span>
+				<span id="unverified" $class[0]><a href="{$this_url}?verified=0">待审核</a></span>
+				<span $class[99]><a href="{$this_url}?verified=-99">审核未通过</a></span>
+				<span $class[88]><a href="{$this_url}?verified=88">{$P8LANG['cms_item']['recycle']}</a></span>
+				<a class="sendmsg_link_bg" href="$this_router-add">发布文章</a>
+				<div class="search" style="width:auto;">
+					<form action="$this_url" method="get" id="request">
+						<div id="cids"></div>
+						<input type="hidden" name="cid" id="cid" value="{$cid}"/>
+						<input type="button" value="按分类筛选" onclick="dialog.show()" />						
+						<input type="hidden" name="verified" value="{$verified}" />
+						<select onchange="$('#cond').attr('name', this.value);">
+							<option value="keyword">{$P8LANG['cms_item']['search_by_keyword']}</option>
+							<option value="id"{if !empty($id)} selected{/if}>{$P8LANG['cms_item']['search_by_id']}</option>
+							<option value="username"{if !empty($username)} selected{/if}>按作者</option>
+							<option value="verifier">按审核人</option>
+						</select>
+						<input type="text" class="txt" id="cond" size="8" {if !empty($keyword)} name="word" value="$keyword"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{elseif !empty($username)}name="username" value="$username"{else} name="word"{/if} />
+						<input type="submit" value="{$P8LANG['search']}" />
+					</form>
+				</div>		
+				<div class="course"><a href="{$RESOURCE}/attachment/jiaocheng/zhuzhanfabu.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 发布教程>></a></div>
+			</div>
+		</div>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+			<tr class="head">
+				<td>ID</td>
+				<td>标题</td>
+				<td>栏目</td>
+				<td>发布时间</td>
+				<td>审核人</td>
+				<td>状态</td>
+				<td>操作</td>
+			</tr>
+			
+			<!--{foreach $list $k $v}-->
+			<tr id="v_$v[id]"><td>$v[id]</td>
+				<td class="al">
+					<p><a href="$v[url]" title="{if $v['verified']!=0 && $v['push_back_reason']}原因:{$v[push_back_reason]}{/if}" target="_blank">$v[title]</a>{if $v['verified']!=0 && $v['push_back_reason']}<img src="{$SKIN}../fk.gif" class="tips" style="margin-left: 10px;margin-bottom: -4px;"/>{/if}</p>
+					<div class="layer layer-$v[id]">
+						<div class="layer-title" style="cursor: move;">原因</div>
+						<div id="layerDemoauto" class="layer-content">
+							<div style="padding:20px 20px;">{$v[push_back_reason]}</div>
+						</div>
+						<span class="layer-setwin"><a class="layer-close" href="javascript:;">X</a></span>
+					</div>
+				</td>
+				<td>
+					<a href="{$this_url}?cid=$v[cid]" >{$category.categories[$v['cid']]['name']}</a>
+				</td>
+				<td>{date('Y-m-d', $v['timestamp'])}</td>
+				<td>{if $v['verifier']}$v[verifier]{/if}{if $v['verifier_name'] && $member_info[$v['verifier_name']]}({$member_info[$v[verifier_name]]}){/if}</td>
+				<td><span title="{if $v['verified']!=0 && $v['push_back_reason']}原因:{$v[push_back_reason]}{/if}">
+					<!--{if $v['verified'] == 1}-->
+						<b>已终审</b>
+					<!--{elseif $v['verified'] == -99}-->
+						被退稿
+					<!--{elseif $v['verified'] == 66}-->
+						<b>已终审待发布</b>
+					<!--{else}-->
+						{$P8LANG['cms_item']['verify'][$v['verified']]}
+					<!--{/if}-->
+					</span>
+				</td>
+				<td>
+					<a href="$v[url]" target="_blank">查看</a> / 
+					<!--{if !empty($this_module->CONFIG['verify_frame_editable']) &&  !empty($this_module->CONFIG['verify_frame_show'])}-->
+					<a href="$this_router-view_frame-id-$v[id]{if $verified != 1}?verified=0{/if}" target="_blank">审核图</a> / 
+					<!--{/if}-->
+					<a href="$this_router-update?model=$v[model]&id=$v[id]&verified=$verified" target="_blank">修改</a> / 
+					<!--{if $verified<2}-->
+					<a href="$this_router-addon?model=$v[model]&iid=$v[id]&verified=$verified" target="_blank">追加</a> / 
+					<!--{/if}-->
+					<!--{if $verified != 1}--><a href="javascript:;" onclick="delete_item($v[id]);return false;">删除</a><!--{/if}-->
+				</td>
+			</tr>
+			<script type="text/javascript">
+				$("#v_$v[id] .tips").click(function(){
+					$(".layer-$v[id]").show();
+				});
+				//点击关闭按钮
+				$(".layer-setwin").click(function(){
+					$(".layer-$v[id]").hide();
+				})
+			</script>
+			<!--{/foreach}-->
+			
+			<tr>
+				<td align="center" colspan="7" class="pages">
+					$pages
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+function request_item(page){
+	$.ajax({
+		url: '{$this_url}',
+		type: 'GET',
+		dataType: 'html',
+		data: '',
+		cache: false,
+		success: function(json){
+			window.open("{$this_url}?cid={$cid}&verified={$verified}&username={$username}&verifier={$verifier}&page="+page+"&word={$word}","_self");
+		}
+	});
+}
+var dialog = new P8_Dialog({
+	title_text: '请选择栏目',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var id = cs.get_value();
+		$('#request input[name=cid]').val(id);
+		category_path(id);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+
+var cs = new Recursive_Selector({
+	input: $('#cid'),
+	dialog: dialog,
+	sub_property: 'categories',
+	url: '{$this_system.controller}/category-json',
+	value: $('#request input[name=cid]').val(),
+	filter: function(cat){
+		return true;		
+	},
+	item_callback: function(cat, item){		
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	change: function(select){
+		var cat = cs.get_by_id(select.data('value'));
+	}
+});
+function category_path(cid){
+	if(cid == 0){
+		$('#cids').html('');
+		return;
+	}
+	
+	var tmp = cs.get_by_id(cid);
+	var html = '';
+	
+	while(true){
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+		
+		tmp = cs.get_by_id(tmp.parent);
+	}
+	
+	$('#cids').html(html);
+}
+function delete_item(id){	
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){
+			var verified=$verified;
+			$.ajax({
+				type:'POST',
+				url	: '{$this_router}-delete',
+				dataType: 'json',
+				data :ajax_parameters({id: id,verified:verified}),
+				beforeSend: function(){
+							ajaxing({});
+						},
+				success:function(json){
+					ajaxing({action: 'hide'});
+					if(json == 'no_category_privilege'){p8_window.alert('你没进行对当前分类操作的权限');return false}
+					
+					if(json){
+						p8_window.alert('{$P8LANG['done']},ID:'+json);
+						for(var i in json){
+								$('#v_'+ json[i]).remove();
+							}
+					}
+					else{ p8_window.alert('{$P8LANG['fail']}');}
+				}
+			});
+		}else{
+			return false;
+		}
+	});
+}
+$(function(){
+	<!--{if $cid}-->
+	cs.init();
+	<!--{/if}-->
+});
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

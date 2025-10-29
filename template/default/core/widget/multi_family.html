@@ -1,0 +1,51 @@
+<!--{php168}-->
+<input type="hidden" name="#field_{$field}_posted" />
+<table width="100%" cellpadding="0" cellspacing="0" id="tab_{$field}">
+	<tr>
+		<td align="center" style="background:#fafafa;">{$P8LANG['family']['members']['name']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['family']['name']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['family']['phone']}</td>										
+		<td align="center" style="background:#fafafa;">{$P8LANG['family']['email']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['family']['employer']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['family']['position']}</td>
+		<td align="center" style="background:#fafafa;">{$P8LANG['action']}</td>
+	</tr>
+	<tbody id="{$field}_holder"></tbody>
+</table>
+<div id="p8_form_btn_{$field}"><input type="button" value="{$P8LANG['add']}" /></div>
+<script type="text/javascript">
+$(function(){	
+	function {$field}_copy(members,name,phone,email,employer,position){
+		var tr = $('<tr><td align="center"></td><td align="center"></td><td align="center"></td><td align="center"></td><td align="center"></td><td align="center"></td><td align="center"></td></tr>');
+		var members_select = '<select name="field#[$field][members][]"><option value=""> '+P8LANG['plase_select']+' </option>';
+		<!--{foreach $P8LANG['family']['members'] $widget_key $widget_member}-->
+			<!--{if $widget_key != 'name'}-->
+			members_select += '<option value="{$widget_member}">{$widget_member}</option>';
+			<!--{/if}-->
+		<!--{/foreach}-->
+		members_select += '</select>';
+		$(members_select).val(members === undefined ? '' : members).appendTo(tr.find('td:eq(0)'));		
+		$('<input class="txt" type="text" name="field#[$field][name][]" size="10" />').val(name === undefined ? '' : name).appendTo(tr.find('td:eq(1)'));
+		$('<input class="txt" type="text" name="field#[$field][phone][]" size="10" />').val(phone === undefined ? '' : phone).appendTo(tr.find('td:eq(2)'));
+		$('<input class="txt" type="text" name="field#[$field][email][]" size="10" />').val(email === undefined ? '' : email).appendTo(tr.find('td:eq(3)'));
+		$('<input class="txt" type="text" name="field#[$field][employer][]" size="10" />').val(employer === undefined ? '' : employer).appendTo(tr.find('td:eq(4)'));
+		$('<input class="txt" type="text" name="field#[$field][position][]" size="10" />').val(position === undefined ? '' : position).appendTo(tr.find('td:eq(5)'));		
+		$('<input type="button" class="up_botton" value="'+ P8LANG['delete'] +'" />').click(function(){
+			$(this).parent().parent().remove();
+		}).appendTo(tr.find('td:eq(6)'));
+		$('#{$field}_holder').append($(tr));
+	}	
+	$('#p8_form_btn_{$field} input').click(function(){
+		{$field}_copy();
+	});
+	
+	<!--{foreach $data[$field] $vv}-->
+		{$field}_copy('$vv[members]', '$vv[name]', '$vv[phone]', '$vv[email]', '$vv[employer]', '$vv[position]');
+	<!--{/foreach}-->
+	<!--{foreachelse}-->
+		{$field}_copy();
+		{$field}_copy();
+	<!--{/foreachelse}-->
+});
+</script>
+<!--{/php168}-->

@@ -1,0 +1,295 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<form action="$this_router-$ACTION" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table width="100%" border="0"  class="mainbox">
+				<tr>
+					<td>
+						<ul class="boxmenu">
+							<li class="btn-color1"><a href="{$core.admin_controller}/core-base_config"><i class="icon icon-ico10"></i>{$P8LANG['base_config']}</a></li>
+							<li class="btn-color14"><a href="{$core.admin_controller}/core-global_config"><i class="icon icon-ico11"></i>{$P8LANG['total_config']}</a></li>
+							<li class="btn-color2"><a href="{$core.admin_controller}/core-reg_config"><i class="icon icon-ico12"></i>{$P8LANG['reg_config']}</a></li>
+							<li class="btn-color9"><a href="{$core.admin_controller}/core/member-set"><i class="icon icon-ico12"></i>{$P8LANG['member_config']}</a></li>
+							<li class="btn-color15"><a href="{$core.admin_controller}/core-mobile_config"><i class="icon icon-ico13"></i>{$P8LANG['mobile_config']}</a></li>
+						</ul>
+					</td>
+				</tr>
+			</table>
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable hover_table">
+						<tr class="title fix_head">
+							<td colspan="2" class="title">会员模块设置</td>
+						</tr>
+						<tr>
+							<td class="tdL">登录允许失败次数(全局)</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="config[admin_login_false]" size="5"  value="{if !empty($config['admin_login_false'])}{$config['admin_login_false']}{else}0{/if}" />
+								<span class="help">0即不限，前后台通用配置项</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">登录失败账号锁定时间(全局)</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="config[admin_login_false_lock]" size="5"  value="{if !empty($config['admin_login_false_lock'])}{$config['admin_login_false_lock']}{else}0{/if}" /> 分钟
+								<span class="help">0即不限，前后台通用配置项，登录失败次数达到最大时账号的锁定时间</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">前台登录时检测密码强度</td>
+							<td class="tdR">
+								<input name="config[checkpwlevel]" type="radio" value="1" {if !empty($config['checkpwlevel'])} checked{/if}/> 开启
+								<input name="config[checkpwlevel]" type="radio" value="0" {if empty($config['checkpwlevel'])} checked{/if}/> 关闭
+								<span class="help">用户登录会员中心时，当强度不足时强制转向密码修改页面</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">前台登陆开启验证码</td>
+							<td class="tdR">
+								<input name="config[login_with_captcha]" type="radio" value="1" {if !empty($config['login_with_captcha'])} checked{/if}/> 开启
+								<input name="config[login_with_captcha]" type="radio" value="0" {if empty($config['login_with_captcha'])} checked{/if}/> 关闭  
+								<span class="help">用户登录会员中心时，是否开启验证码</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">会员中心允许会员上传头像</td>
+							<td class="tdR">
+								<input name="config[icon_allow]" type="radio" value="1" {if !empty($config['icon_allow'])} checked{/if}/> 开启  <input name="config[icon_allow]" type="radio" value="0" {if empty($config['icon_allow'])} checked{/if}/> 关闭   
+							</td>
+						</tr>						
+						<tr>
+							<td class="tdL">前台登陆时转向</td>
+							<td class="tdR">
+								<input onclick="showmorebox(0)" name="config[login_forward]" type="radio" value="1" {if $config['login_forward']==1} checked{/if}/> 转到会员中心  <input onclick="showmorebox(0)" name="config[login_forward]" type="radio" value="0" {if empty($config['login_forward'])} checked{/if}/> 从哪来回哪去(推荐) <input name="config[login_forward]" onclick="showmorebox(2)" type="radio" value="2" {if $config['login_forward']==2} checked{/if}/> 转向指定地址  
+							</td>
+						</tr>
+						<tbody id="morechose" style="display:{if !empty($config['login_turn_url'])}{else}none{/if}">	
+						<tr>
+							<td class="tdL">前台登陆转向URL</td>
+							<td class="tdR">
+								<input type="text" class="txt" name="config[login_turn_url]" size="60"  value="{if !empty($config['login_turn_url'])}{$config['login_turn_url']}{/if}" /> 
+							</td>
+						</tr>
+						</tbody>						
+						<tr>
+							<td class="tdL">非超管添加会员时允许角色</td>
+							<td class="tdR">
+								<!--{foreach $roles $value}-->
+								<input type="checkbox" name="config[allow_role][]" value="{$value['id']}" id="role_{$value['id']}"{if in_array($value['id'],$config['allow_role'])} checked{/if} /><label for="role_{$value['id']}">{$value['name']}</label>
+								<!--{/foreach}-->								
+							<span class="help">不选和全选都表示全部允许，超级管理员不受此限制</span>
+							</td>
+						</tr>
+                        <tr>
+							<td class="tdL">需要强制修改密码的角色及天数</td>
+							<td class="tdR">
+								<!--{foreach $roles $value}-->
+								<input type="checkbox" name="config[admin_change_password_role][]" value="{$value['id']}" id="admin_change_password_role{$value['id']}"{if in_array($value['id'],$config['admin_change_password_role'])} checked{/if} /><label for="admin_change_password_role{$value['id']}">{$value['name']}</label>
+								<!--{/foreach}-->		
+                                 <br/>
+								<input type="txt" class="txt" name="config[admin_change_password_day]" size="5" value="{$config['admin_change_password_day']}" id="admin_change_password_day"/> 天							
+								<span class="help">不填表示不限制，填了后超过时间会有提示</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">前台使用手机动态验证码登录</td>
+							<td class="tdR">
+								<input name="config[sms_login]" type="radio" value="1" {if !empty($config['sms_login'])} checked{/if}/> 开启
+								<input name="config[sms_login]" type="radio" value="0" {if empty($config['sms_login'])} checked{/if}/> 关闭
+								<a href="{$core.admin_controller}/core/sms-list_interface" target="_blank" style="color:blue">手机短信接口设置</a>
+								<span class="help">开启时，需要开启手机短信接口</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">手机动态验证码登录时效</td>
+							<td class="tdR">
+								<input type="txt" class="txt" name="config[sms_timeout]" size="5" value="{if $config['sms_timeout']}{$config['sms_timeout']}{else}10{/if}" id="sms_timeout"/> 分钟							
+							<span class="help">手机动态验证码，默认10分钟有效</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">前台使用微信扫码登录</td>
+							<td class="tdR">
+								<input name="config[wechat_login]" type="radio" value="1" {if !empty($config['wechat_login'])} checked{/if}/> 开启
+								<input name="config[wechat_login]" type="radio" value="0" {if empty($config['wechat_login'])} checked{/if}/> 关闭
+								<a href="{$core.admin_controller}/core-plugin?plugin=wechatconnect" target="_blank" style="color:blue">微信扫码设置</a>
+								<span class="help">开启时，需要开启微信扫码接口</span>
+							</td>
+						</tr>
+						<tr>
+							<td class="tdL">前台是否开启重置密码功能</td>
+							<td class="tdR">
+							   <input name="config[question_enabled]" type="radio" value="1" onclick="$('#register_ask_tr').show()" {if !empty($config['question_enabled'])} checked{/if}/> 开启 <input name="config[question_enabled]" type="radio" onclick="$('#register_ask_tr').hide()" value="0" {if empty($config['question_enabled'])} checked{/if}/> 不开启
+							</td>
+						</tr>
+						<tbody id="register_ask_tr" style="display:none"> 
+						<tr>
+							<td class="tdL">用户验证密码问题</td>
+							<td class="tdR">
+								<div id="data_copy" style="display: none;">
+									排序：<input  type="text" class="txt" name="" size="3" />
+									问题：<input  type="text" class="txt" name="" size="38" /><br />
+								</div>
+								<script type="text/javascript">
+								function _copy_data(order,question){
+									var copy = $('#data_copy').clone().show().attr('id', '');				
+									$('input:eq(0)', copy).attr('name', 'config[questions]['+order+'][order]').val(order);
+									$('input:eq(1)', copy).attr('name', 'config[questions]['+order+'][question]').val(question);
+									$('#register_ask_tr div:last').after(copy);
+								}
+								
+								$(document).ready(function(){
+									<!--{if !empty($config['question_enabled'])}-->
+									$('#register_ask_tr').show();
+									<!--{else}-->
+									$('#register_ask_tr').hide();
+									<!--{/if}-->								
+									<!--{foreach $questions $order $question}-->
+									_copy_data('$order','$question');
+									<!--{/foreach}-->									
+								});
+								</script>
+							</td>
+						</tr>
+						</tbody>
+						<tbody id="more_option" style="display:none"> 
+		
+						<tr>
+							<td class="tdL">充值绩效类型<p class="help">用户充值后获得的绩效形式</p></td>
+							<td class="tdR">
+								<select name="config[recharge][credit_type]">
+								<!--{foreach $core->credits $id $v}-->
+								<option value="$id"{if !empty($config['recharge']['credit_type']) && $config['recharge']['credit_type'] == $id} selected{/if}>$v[name]</option>
+								<!--{/foreach}-->
+								</select>
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">充值金额与绩效转化<p class="help">用户充值时，可以快捷选择的默认充值套餐</p></td>
+							<td class="tdR" id="recharge_q">
+								<div id="clone" style="display: none;">
+									金额 <input type="text" value="" size="5" /> 元,&nbsp; 
+									 可获取 <input type="text" value="" size="5" /> 个当前绩效&nbsp;&nbsp;
+									<input type="button" value="{$P8LANG['delete']}" />
+								</div>
+								<p class="mtop" >
+								<input type="button" value="{$P8LANG['add']}" onclick="_copy()" />
+								</p>
+								<script type="text/javascript">
+								function _copy(money, credit){
+									var copy = $('#clone').clone().show().attr('id', '');
+									
+									copy.find('input[type=text]:eq(0)').
+									attr('name', 'config[recharge][quantity][money][]').val(money === undefined ? '' : money);
+									
+									copy.find('input[type=text]:eq(1)').
+									attr('name', 'config[recharge][quantity][credit][]').val(credit === undefined ? '' : credit);
+									
+									copy.find('input[type=button]').click(function(){
+										$(this).parent().remove();
+									});
+									
+									$('#recharge_q div:last').after(copy);
+								}
+								
+								$(document).ready(function(){
+									<!--{if !empty($config['recharge']['quantity'])}-->
+									<!--{foreach $config['recharge']['quantity'] $money $credit}-->
+									_copy($money, $credit);
+									<!--{/foreach}-->
+									<!--{/if}-->
+								});
+								</script>
+							</td>
+						</tr>
+						
+						<tr>
+							<td class="tdL">会员升级</td>
+							<td class="tdR" id="buy_role">
+								<div id="buy_role_clone" style="display: none;">
+								选择付费角色: <select>
+								<!--{foreach $core->roles $id $v}-->
+									<option value="$id">$v[name]</option>
+								<!--{/foreach}-->
+								</select>
+								支付金额: 
+								<input type="text" time="30" value="" size="6" />/1月
+								<input type="text" time="90" value="" size="6" />/3月
+								<input type="text" time="180" value="" size="6" />/6月
+								<input type="text" time="365" value="" size="6" />/1年
+								<input type="button" value="{$P8LANG['delete']}" />
+								</div>
+								<p>
+								<input type="button" value="{$P8LANG['add']}" onclick="_copy_buy_role()" />
+								</p>
+								<script type="text/javascript">
+								function _copy_buy_role(role_id, m1, m3, m6, y1){
+									var copy = $('#buy_role_clone').clone(true).show().attr('id', '');
+									
+									if(role_id !== undefined)
+										copy.find('select').val(role_id);
+									
+									copy.find('select').change(function(){
+										var val = $(this).val();
+										if(val){
+											$(this).attr('name', 'config[buy_role]['+ val +']').
+												parent().find('input[type=text]').attr('name', function(){ return 'config[buy_role]['+ val +']['+ $(this).attr('time') +']'});
+										}else{
+											$(this).attr('name', '').
+												parent().find('input[type=text]').attr('name', '');
+										}
+									}).change();
+									
+									copy.find('input[type=text]:eq(0)').val(m1 === undefined ? '' : m1);
+									copy.find('input[type=text]:eq(1)').val(m3 === undefined ? '' : m3);
+									copy.find('input[type=text]:eq(2)').val(m6 === undefined ? '' : m6);
+									copy.find('input[type=text]:eq(3)').val(y1 === undefined ? '' : y1);
+									
+									copy.find('input[type=button]').click(function(){ $(this).parent().remove();});
+									copy.insertAfter($('#buy_role div:last'));
+								}
+								
+								$(function(){
+									<!--{foreach $config['buy_role'] $role_id $v}-->
+									_copy_buy_role($role_id, '$v[30]', '$v[90]', '$v[180]', '$v[365]');
+									<!--{/foreach}-->
+								});
+								</script>
+							</td>
+						</tr>
+						<tr>
+							 <td colspan="2" style="text-align:center"><a href="javascript:;" onclick="javascript:$('#more_option').css('display','none');$('#more_but').show()">收起更多</a></td>
+						</tr>
+						</tbody>
+						<tbody>
+						<tr id="more_but">
+							<td colspan="2" style="text-align:center"><a href="javascript:;" onclick="javascript:$('#more_option').css('display','');$(this).parent().parent().hide()">更多选项....</a></td>
+						</tr>
+						</tbody>
+						<tr>
+							<td colspan="2">
+								<div style="text-align:center;"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></div>
+							</td>
+						</tr>
+					  
+					</table>
+					  </td>
+				  </tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+
+function showmorebox(flag){
+	if(flag==2)
+		$("#morechose").show();
+	else
+		$("#morechose").hide();
+}
+showmorebox(<!--{php echo $config['login_forward']==2?2:0;}-->);
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

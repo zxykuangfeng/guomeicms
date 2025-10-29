@@ -1,0 +1,681 @@
+<!--{php168}-->
+<!--{template $core panel_header}-->
+<!--{template $this_module header}-->
+<script type="text/javascript" src="{$RESOURCE}/js/recursive_selector.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/sites/item/admin.js"></script>
+<link rel="stylesheet" href="{$SKIN}category_selector.css" type="text/css" />
+<style type="text/css">
+.mtab{min-height: 500px;}
+</style>
+<div class="mainfluid">
+	<div class="mtab">
+		<div class="toptitle">
+			【我发布的内容】
+		</div>
+		<div class="list_box mtop10">
+			<div class="head" id="boxhead">
+				<span id="verified" $class[1]><a href="$this_router-my_list?verified=1&site={$this_system.SITE}">已审核的文章</a></span>
+				<span id="verified2" $class[2]><a href="$this_router-my_list?verified=2&site={$this_system.SITE}">已初审的文章</a></span>
+				<span id="unverified" $class[0]><a href="$this_router-my_list?verified=0&site={$this_system.SITE}">待审核的文章</a></span>
+				<span $class[99]><a href="$this_router-my_list?verified=-99&site={$this_system.SITE}">审核未通过的文章</a></span>
+				<span $class[77]><a href="$this_router-my_list?verified=77&site={$this_system.SITE}">草稿箱</a></span>
+				<span $class[88]><a href="$this_router-my_list?verified=88&site={$this_system.SITE}">回收站</a></span>
+				<span><a href="{$core.U_controller}/sites/stop-list?sc=c&mypu=1&site={$this_system.SITE}">数据推送状态</a></span>
+                <a class="sendmsg_link_bg" href="$this_router-add?site={$this_system.SITE}">发布文章</a>
+				<div class="search">
+					<form action="$this_url" method="get" id="request">						
+						<div id="cids"></div>
+						<input type="hidden" name="cid" id="cid" value="{$cid}"/>
+						<input type="button" value="按分类筛选" onclick="dialog.show()"/>
+						<select onchange="$('#cond').attr('name', this.value);">
+							<option value="keyword">{$P8LANG['sites_item']['search_by_keyword']}</option>
+							<option value="id"{if !empty($id)} selected{/if}>{$P8LANG['sites_item']['search_by_id']}</option>
+							<option value="username"{if !empty($username)} selected{/if}>按作者</option>
+							<option value="verifier">按审核人</option>
+						</select>
+						<input type="text" class="txt" id="cond" size="8" {if !empty($keyword)} name="word" value="$keyword"{elseif !empty($id)}name="id" value="{implode(',', $id)}"{elseif !empty($username)}name="username" value="$username"{else} name="word"{/if} />
+						<input type="hidden" name="verified" value="{$verified}" />
+						<input type="submit" class="edit_btn" value="{$P8LANG['search']}" />
+					</form>
+				</div>
+				<div class="course"><a href="{$RESOURCE}/attachment/jiaocheng/zizhanfabu.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon"> 发布教程>></a></div>
+			</div>
+		</div>
+		<form action="" method="post" id="form">
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="hover_table list_table">
+			<tr class="head">
+				<td>ID</td>
+				<td>标题</td>
+				<td>栏目</td>
+				<td>站点名称</td>
+				<td>发布时间</td>
+				<td>审核人</td>
+				<td>状态</td>
+				<td>操作</td>
+			</tr>
+			
+			<!--{foreach $list $k $v}-->
+			<tr id="v_$v[id]">
+				<td><input type="checkbox" name="id[]" value="{$v[id]}" />
+					<input type="hidden" id="my_cluster_push_cid_{$v[id]}" value="{$v[cluster_push_cid]}" />
+					$v[id]
+				</td>
+				<td class="al">
+					<p><a href="$v[url]" title="{if $v['verified']!=0 && $v['push_back_reason']}原因:{$v[push_back_reason]}{/if}" target="_blank">$v[title]</a>{if $v['verified']!=0 && $v['push_back_reason']}<img src="{$SKIN}../fk.gif" class="tips" style="margin-left: 10px;margin-bottom: -4px;"/>{/if}</p>
+					<!--{foreach $v['attributes'] $attr}-->
+					<font color="red">
+					<!--{if $attr == '10' && isset($push_info[$v['id']]) && $push_info[$v['id']]['to'] == 'cms'}-->
+					{$attributes[30]}
+					<!--{elseif $attr == '10' && isset($push_info[$v['id']]) && $push_info[$v['id']]['to'] == 'sites'}-->
+					{$attributes[31]}
+					<!--{else}-->
+					{$attributes[$attr]}
+					<!--{/if}-->				
+					<!--{if $attr == '10' && isset($push_info[$v['id']]) && $push_info[$v['id']]['status'] ==-99}-->被退稿<!--{/if}-->			
+					<!--{if $attr == '10' && isset($push_info[$v['id']]) && $push_info[$v['id']]['status']==1}-->(终审)<!--{/if}-->
+					<!--{if $attr == '10' && isset($push_info[$v['id']]) && $push_info[$v['id']]['status']==2}-->(初审)<!--{/if}-->			
+					<!--{if $attr == '10' && isset($push_info[$v['id']]) && $push_info[$v['id']]['status']==88}-->(回收站)<!--{/if}-->
+					<!--{if $attr == '10' && isset($push_info[$v['id']]) && $push_info[$v['id']]['status']==0}-->(待审)<!--{/if}-->					
+					</font> 
+					<!--{/foreach}-->
+					<!--{if $v['lan_access_only']}--><font color="red">{$P8LANG[local_area_network]}</font><!--{/if}-->
+					<div class="layer layer-$v[id]">
+						<div class="layer-title" style="cursor: move;">原因</div>
+						<div id="layerDemoauto" class="layer-content">
+							<div style="padding:20px 20px;">{$v[push_back_reason]}</div>
+						</div>
+						<span class="layer-setwin"><a class="layer-close" href="javascript:;">X</a></span>
+					</div>
+				</td>
+				<td>
+					<a href="{$this_url}?cid=$v[cid]&site={$this_system.SITE}" >{$category.categories[$v['cid']]['name']}</a>
+				</td>
+				<td><a href="{$site_domain}" style="color:blue;" target="_blank">{$sitename}>></a></td>
+				<td><span title="{date('Y-m-d H:i:s', $v['timestamp'])}">{date('Y-m-d', $v['timestamp'])}</span></td>
+				<td>{if $v['verifier']}$v[verifier]{/if}{if $v['verifier_name'] && $member_info[$v['verifier_name']]}({$member_info[$v[verifier_name]]}){/if}</td>
+				<td><span title="{if $v['verified']!=0 && $v['push_back_reason']}原因:{$v[push_back_reason]}{/if}">
+					<!--{if $v['verified'] == 1}-->
+						<b>已终审</b>
+					<!--{elseif $v['verified'] == 2}-->
+						<b>已初审</b>				
+					<!--{elseif $v['verified'] == -99}-->
+						退稿
+					<!--{elseif $v['verified'] == 77}-->
+						草稿箱
+					<!--{elseif $v['verified'] == 88}-->
+						回收站
+					<!--{else}-->
+						未审
+					<!--{/if}-->
+					</span>
+				</td>
+				<td>
+					<ul class="operation-nav">
+					<li><a href="$v[url]" target="_blank">查看</a> / </li>
+					<!--{if !empty($this_module->CONFIG['verify_frame_editable']) && !empty($this_module->CONFIG['verify_frame_show'])}-->
+						<li><a href="$this_router-view_frame-id-$v[id]?verified=$verified&site={$this_system.SITE}" target="_blank">审核图</a> / </li>
+					<!--{/if}-->
+					<!--{if $verified == 1 && ($allow_cluster_push || $allow_sites_push_sites || $allow_clone)}-->
+					<li>
+						<a href="javascript:void(0)">推送</a> 
+						<ul class="dropdown-menu">
+							<!--{if $allow_cluster_push}--><li class="btn-color1"><a href="javascript:void(0)" onclick="check_all(false, 'id[]');$('#v_$v[id] input[type=checkbox]').prop('checked', true);_push_item([{$v[id]}], 1)" class="ys2"><i class="icon icon-ico55"></i>{$P8LANG[push_item_to_cms]}</a></li><!--{/if}-->
+							<!--{if $allow_sites_push_sites}--><li class="btn-color2"><a href="javascript:void(0)" onclick="check_all(false, 'id[]');$('#v_$v[id] input[type=checkbox]').prop('checked', true);_push_to_site([{$v[id]}], 1)" class="ys2"><i class="icon icon-ico55"></i>{$P8LANG[push_item_to_sites]}</a></li><!--{/if}-->
+							<!--{if $allow_clone}--><li class="btn-color2"><a href="javascript:void(0)" onclick="clone_item(['{$v[id]}'], verified)" class="ys2"><i class="icon icon-ico55"></i>{$P8LANG[clone_item_to_category]}</a></li><!--{/if}-->								
+						</ul>/	
+					</li>
+					<!--{/if}-->
+					<li><a href="$this_router-update?model=$v[model]&id=$v[id]&verified=$verified&site={$this_system.SITE}" target="_blank">修改</a> / </li>
+					<li><a href="javascript:void(0)" onclick="delete_item($v[id]);">删除</a></li>					
+				</td>
+			</tr>
+			<script type="text/javascript">
+				$("#v_$v[id] .tips").click(function(){
+					$(".layer-$v[id]").show();
+				});
+				//点击关闭按钮
+				$(".layer-setwin").click(function(){
+					$(".layer-$v[id]").hide();
+				})
+			</script>
+			<!--{/foreach}-->
+			
+			<tr>
+				<td align="center" colspan="8" class="pages">
+					$pages
+				</td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+var move_item_id = [],
+	clone_item_id = [],
+	verify_item_id = [],
+	verified = 1,
+	MODEL = '',
+	send_time_types = 0,
+	SITE_HTML = '',
+	PAGE;
+var dialog = new P8_Dialog({
+	title_text: '请选择栏目',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		var id = cs.get_value();
+		var selected_cat = cs.get_by_id(id);
+		$('#request input[name=cid]').val(id);
+		category_path(id);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+
+var cs = new Recursive_Selector({
+	input: $('#cid'),
+	dialog: dialog,
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json?site={$this_system.SITE}',
+	value: $('#request input[name=cid]').val(),
+	filter: function(cat){
+		return true;
+	},
+	item_callback: function(cat, item){		
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	change: function(select){
+		var cat = cs.get_by_id(select.data('value'));		
+	}
+});
+
+function category_path(cid){
+	if(cid == 0){
+		$('#cids').html('');
+		return;
+	}	
+	var tmp = cs.get_by_id(cid);
+	var htmlize = tmp.htmlize;
+	var html = '';
+	
+	while(true){
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+		
+		tmp = cs.get_by_id(tmp.parent);
+	}	
+	$('#cids').html(html);  
+}
+function request_item(page){
+	$.ajax({
+		url: '{$this_url}',
+		type: 'GET',
+		dataType: 'html',
+		data: '',
+		cache: false,
+		success: function(json){
+			window.open("{$this_url}?cid={$cid}&verified={$verified}&username={$username}&verifier={$verifier}&page="+page+"&word={$word}","_self");
+		}
+	});
+}
+
+var rrr=false
+var matrix_dialog = new P8_Dialog({
+	title_text: '选择母站对接栏目',
+	button: true,
+	width: 800,
+	height: 525,
+	ok: function(){
+		var cid = matrix_cs.get_value();
+        var send_time_type = $('input[name=send_time_type]:checked',this.content).val();
+        var send_time = $('input[name=send_time]',this.content).val();
+		push_item(push_items, cid, send_time_type, send_time);
+	},
+	show: function(){
+		matrix_cs.init();
+        if(!rrr)
+        this.content.append('<div>发布时间：<label><input type="radio" name="send_time_type" value="0" checked>原始发布时间</label> <label><input type="radio" name="send_time_type" value="1">当前时间</label> <label><input type="radio" name="send_time_type" value="2">设置时间</label>:<input type="text" name="send_time" value="'+date('Y-m-d H:i:s')+'" autocomplete="off" onclick="rcalendar(this, \'full\')"/></div>');
+        rrr=true;
+	}
+});
+var push_addible_category = $push_addible_category;
+var matrix_cs = new Recursive_Selector({
+	input: $('#parent'),
+	dialog: matrix_dialog,
+	sub_property: 'categories',
+	url: '{$cms_system.controller}/category-json',
+	value: $('#form input[name=matrix]').val(),
+	init_callback: function(){
+		matrix_parent_path(this.get_value());
+	},
+	filter: function(cat){
+		if(!push_addible_category || (push_addible_category.length == 1 && push_addible_category[0] == 1) || push_addible_category[cat.id]){
+			return true;
+		}
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+function _push_item(){
+	var array = checked_values('id[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length) {
+		p8_window.alert('{$P8LANG[sites_item_select]}');
+		return;
+	}
+	
+	push_items = id;
+	
+	matrix_dialog.show();
+}
+function matrix_parent_path(cid){
+	if(cid == 0){
+		$('#matrix_cid').html('');
+		return;
+	}
+	
+	var tmp = matrix_cs.get_by_id(cid);
+	var html = '';
+	
+	while(true){
+        if(typeof tmp == 'undefined')break;;
+		html = tmp.name +' &gt; '+ html;
+		if(tmp.parent == 0) break;
+		
+		tmp = matrix_cs.get_by_id(tmp.parent);
+	}
+	
+	$('#matrix_cid').html(html);
+}
+
+
+var site_name = '{$this_system->SITE}';
+var s_push_items = [];
+var s_CATEGORY_JSON = {};
+var s_CATEGORY_PATH = {};
+var s_CATEGORY_requested = false;
+var push_cs_site;
+var push_sites_dialog = new P8_Dialog({
+	title_text: '选择子站',
+	button: true,
+	width: 800,
+	height: 525,
+	ok: function(){
+		var cid = push_cs_site.get_value();
+		var push_site = this.content.find('select').val();
+		var send_time_type = $('input[name=send_time_type]:checked',this.content).val();
+        var send_time = $('input[name=send_time]',this.content).val();
+		push_cms_to_sites(s_push_items, cid, push_site, send_time_type, send_time);
+	}
+});
+
+
+
+function _push_item_site(){
+	var array = checked_values('id[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length){
+		p8_window.alert('{$P8LANG[sites_item_select]}');
+		return;
+	}
+	
+	s_push_items = id;
+	
+	push_sites_dialog.show();
+	
+	if(s_CATEGORY_requested) return;
+	
+	$.ajax({
+		url: '$this_router-sites_push',
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});
+			
+			s_CATEGORY_JSON = json.json;
+			s_CATEGORY_PATH = json.path;
+			
+			s_CATEGORY_requested = true;
+			
+			push_cs_site = new Recursive_Selector({
+				json: s_CATEGORY_JSON,
+				path: s_CATEGORY_PATH,
+				input: null,
+				sub_property: 'categories',
+				item_callback: function(cat, item){
+					if(cat.categories)
+						item.addClass('sub_category');
+				},
+				dialog: push_sites_dialog
+			});
+			
+			push_cs_site.init();
+			
+			sites = json.sites;
+			siteshtml = '';
+			for(var i  in sites){
+				if(sites[i].alias != site_name)	siteshtml+='<option value="'+sites[i].alias+'">'+sites[i].sitename+'</option>';
+			}
+			push_sites_dialog.content.append('<p style="height:250px;width:110px;padding-left:5px; float:right">发布时间设置<br/><br/><label><input type="radio" name="send_time_type" value="0" checked>原发布时间</label><br/><br/> <label><input type="radio" name="send_time_type" value="1">当前时间</label> <br/><br/><label><input type="radio" name="send_time_type" value="2">设置时间</label>:<br/><input type="text" name="send_time" style="width:100px" value="'+date('Y-m-d H:i:s')+'" autocomplete="off" onclick="rcalendar(this, \'full\')"/></p>');
+			push_sites_dialog.content.append('<select name="sites" style="height:250px; float:right" multiple>'+siteshtml+'</select>');
+
+		},
+	});
+}
+
+var selected_site = '$selected_site';
+var matrix_sites = null;
+var push_to_sites_dialog = new P8_Dialog({
+	title_text: '推送数据',
+	button: true,
+	width: 800,
+	height: 525,
+	ok: function(){
+		var cid = matrix_sites.get_value();
+		var push_site = this.content.find('select').val();
+		var send_time_type = $('input[name=send_time_type]:checked',this.content).val();
+        var send_time = $('input[name=send_time]',this.content).val();
+		sites_push_sites(s_push_items, cid, push_site, send_time_type, send_time);
+	},
+	show:function(){
+		this.content.html('<span id="select_plase">请选择分站</span>');
+	}
+});
+
+
+matrix_sites = new Recursive_Selector({
+	input: null,
+	dialog: push_to_sites_dialog,
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json?newsite='+selected_site,
+	value: 0,
+	init_callback: function(){
+		matrix_parent_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1)
+			item.find('span').addClass('frame_category');
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	change: function(select){
+		var cat = matrix_sites.get_by_id(select.data('value'));
+		
+		if(MODEL && cat.model != MODEL && !cat.categories) p8_window.alert('你选了一个非本模型的分类');
+	}
+});
+
+function _push_to_site(){
+	var array = checked_values('id[]', $('#form'));
+	var id = [];
+	$.each(array, function(k, v){
+		id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!id.length){
+		p8_window.alert('{$P8LANG[sites_item_select]}');
+		return;
+	}
+	
+	s_push_items = id;
+	
+	push_to_sites_dialog.show();
+
+	$.ajax({
+		url: '$this_router-sites_push',
+		dataType: 'json',
+		cache: false,
+		beforeSend: function(){
+			ajaxing({});
+		},
+		success: function(json){
+			ajaxing({action: 'hide'});			
+			sites = json.sites;
+			SITE_HTML = '<option value="">请选择分站</option>';	
+			var sites_alias = '';
+			var sites_index = 0;
+			for(var i  in sites){
+				if(sites[i].alias != site_name){
+					SITE_HTML+='<option value="'+sites[i].alias+'">'+sites[i].sitename+'</option>';
+					if(sites_index == 0) sites_alias = sites[i].alias;
+					sites_index++;
+				}
+			}
+			if(sites_alias) {
+				selected_site = sites_alias;
+				matrix_sites.init();				
+			}			
+			
+			SITE_HTML ='<select name="sites" style="height:360px;width:130px; float:right;border:1px solid #dcdcdc;" multiple onchange="show_site_category(this.value)">'+SITE_HTML+'</select>';
+			push_to_sites_dialog.content.append('<p style="height:250px;width:110px;padding-left:5px; float:right">发布时间设置<br/><br/><label><input type="radio" name="send_time_type" id="type_0" onclick="change_send_time_type(0)" value="0" checked>原发布时间</label><br/><br/> <label><input type="radio" name="send_time_type" id="type_1" onclick="change_send_time_type(1)" value="1">当前时间</label> <br/><br/><label><input type="radio" name="send_time_type" id="type_2" onclick="change_send_time_type(2)" value="2">设置时间</label>:<br/><input type="text" name="send_time" style="width:100px" value="'+date('Y-m-d H:i:s')+'" autocomplete="off" onclick="rcalendar(this, \'full\')"/></p>');
+			push_to_sites_dialog.content.append(SITE_HTML);
+			if(sites_alias){
+				$("select[name='sites']").find("option[value='"+selected_site+"']").attr("selected",true);
+				var select_plase = $('#select_plase').html();
+				if(select_plase != undefined) show_site_category(sites_alias);
+			}
+		},
+	});
+}
+//读子站栏目
+
+function show_site_category(site){
+	var scrollTop = $("select[name='sites']").scrollTop();
+	if(!site) return false;
+	ajaxing({});
+	matrix_sites = new Recursive_Selector({
+		input: null,
+		dialog: push_to_sites_dialog,
+		sub_property: 'categories',
+		url: '{$this_system.siteurl}/category-json?newsite='+site,
+		value: 0,
+		init_callback: function(){
+			matrix_parent_path(this.get_value());
+		},
+		item_callback: function(cat, item){
+			if(cat.type == 1)
+				item.find('span').addClass('frame_category');
+			
+			if(cat.categories)
+				item.addClass('sub_category');
+		},
+	});
+	matrix_sites.init();
+	ajaxing({action: 'hide'});
+	push_to_sites_dialog.content.append('<p style="height:250px;width:110px;padding-left:5px; float:right">发布时间设置<br/><br/><label><input type="radio" name="send_time_type" id="type_0" onclick="change_send_time_type(0)" value="0" checked>原发布时间</label><br/><br/> <label><input type="radio" name="send_time_type" id="type_1" onclick="change_send_time_type(1)" value="1">当前时间</label> <br/><br/><label><input type="radio" name="send_time_type" id="type_2" onclick="change_send_time_type(2)" value="2">设置时间</label>:<br/><input type="text" name="send_time" style="width:100px" value="'+date('Y-m-d H:i:s')+'" autocomplete="off" onclick="rcalendar(this, \'full\')"/></p>');
+	push_to_sites_dialog.content.append(SITE_HTML);	
+	$("select[name='sites']").scrollTop(scrollTop);
+	$("select[name='sites']").find("option[value='"+site+"']").attr("selected",true);
+	$("#type_"+send_time_types).attr("checked",true);	
+}
+function change_send_time_type(type){
+	send_time_types = type;
+}
+
+function delete_item(id){
+p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+	if(r){
+		var verified=$verified;
+		$.ajax({
+			type:'POST',
+			url	: '{$this_router}-delete?&site={$this_system.SITE}',
+			dataType: 'json',
+			data :ajax_parameters({id: id,verified:verified}),
+			beforeSend: function(){
+						ajaxing({});
+					},
+			success:function(json){
+				ajaxing({action: 'hide'});
+				if(json == 'no_category_privilege'){p8_window.alert('你没进行对当前分类操作的权限');return false}
+				
+				if(json){
+					p8_window.alert('{$P8LANG['done']},ID:'+json);
+					for(var i in json){
+							$('#v_'+ json[i]).remove();
+						}
+				}
+				else{ p8_window.alert('{$P8LANG['fail']}');}
+			}
+		});
+	}else{
+		return;
+	}
+	});
+}
+<!--{if $allow_clone}-->
+
+var clone_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['clone']}',
+	button: true,
+	width: 800,
+	height: 525,
+	show: function(){
+		clone_cs.init();
+	},
+	ok: function(){
+		
+		var cid = clone_cs.get_value();
+		if(!cid) return false;
+		$('#clone_cid').val(cid.join(','));
+	}
+});
+var clone_dialog_main = new P8_Dialog({
+	title_text: '{$P8LANG['sites_item']['clone']}',
+	button: true,
+	width: 360,
+	height: 200,
+	show: function(){
+		this.content.html('选择栏目：<input id="clone_cid" type="text" class="txt" value="" readonly/> <input type="button" value="选择" class="edit_btn" onclick="clone_dialog.show()"/><br/><br/>签发时间：<input type="radio" name="clone_type" value="1" checked>设置时间 :<input type="text" class="txt" style="width:130px;font-size:12px;" id="clone_time" value="'+date('Y-m-d H:i:s')+'" autocomplete="off" onclick="rcalendar(this, \'full\')"/><br/><span style="padding-left:60px"> <input type="radio" name="clone_type" value="0">原始发布时间</span>');
+	},
+	ok: function(){
+		
+		var cid = clone_cs.get_value();
+		if(!cid) return false;
+		
+		var cat = clone_cs.get_by_id(cid);
+		
+		$.ajax({
+			url: '$this_router-clone',
+			type: 'post',
+			dataType: 'json',
+			cache: false,
+			data: ajax_parameters({id: clone_item_id, cid: cid.join(','),clone_time:$('#clone_time').val(), verified: verified === undefined ? 1 : verified,clone_type:$('input[type=radio][name=clone_type]:checked').val()}),
+			beforeSend: function(){
+				ajaxing({});
+			},
+			success: function(json){
+				ajaxing({action: 'hide'});
+				if(json.message){
+					//if(!confirm(json.message)) return;
+					p8_window.confirm(json.message, function (r) {
+						if(r){
+							$.ajax({
+								url: '$this_router-clone',
+								type: 'post',
+								dataType: 'json',
+								cache: false,
+								data: ajax_parameters({filter_word_enable:true,id: clone_item_id, cid: cid.join(','),clone_time:$('#clone_time').val(), verified: verified === undefined ? 1 : verified,clone_type:$('input[type=radio][name=clone_type]:checked').val()}),
+								beforeSend: function(){
+									ajaxing({});
+								},
+								success: function(json){
+									ajaxing({action: 'hide'});
+									p8_window.alert('{$P8LANG['done']}');
+									request_item(PAGE);
+								}
+							});
+						}else{
+							return;
+						}
+					});
+				}else{
+					p8_window.alert('{$P8LANG['done']}');
+				}
+				request_item(PAGE);
+			}
+		});
+	}
+	
+});
+var clone_cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#clone_cid'),
+	dialog: clone_dialog,
+	sub_property: 'categories',
+	url: '{$this_system.siteurl}/category-json',
+	item_callback: function(cat, item){
+		if(MODEL && cat.model != '$MODEL')
+			item.css({opacity: '0.3', alpha: '(opacity=30)'});
+		
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	},
+	change: function(select){
+		var cat = cs.get_by_id(select.data('value'));
+		
+		if(MODEL && cat.model != MODEL && !cat.categories) p8_window.alert('你选了一个非本模型的分类');
+	}
+});
+
+function clone_item(array){
+	clone_item_id = [];
+	$.each(array, function(k, v){
+		clone_item_id.push(v.replace(/[^0-9]/g, ''));
+	});
+	
+	if(!clone_item_id.length){
+		p8_window.alert('{$P8LANG[sites_item_select]}');
+		return;
+	}
+	
+	clone_dialog_main.show();
+}
+<!--{/if}-->
+$(function(){
+	<!--{if $cid}-->
+	cs.init();
+	<!--{/if}-->
+});
+var show_dialog = new P8_Dialog({
+	title_text: '{$P8LANG['post_alert']}',
+	width: 600,
+	height: {$message_height}
+});
+<!--{if $message && $show_message}-->
+	show_dialog.show();
+	show_dialog.content.html('{$show_message}');
+<!--{/if}-->
+</script>
+<!--{template $core panel_footer}-->
+<!--{/php168}-->

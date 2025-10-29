@@ -1,0 +1,64 @@
+<!--{php168}-->
+<!--{template $this_system header}-->
+<link rel="stylesheet" type="text/css" href="{$SKIN}style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/$SYSTEM/item/item.js"></script>
+<script type="text/javascript">
+var item_id = $data[id],
+	model = '$data[model]',
+	item_cid = $data[cid],
+	verified = \$_GET['verified'] === undefined ? 1 : (\$_GET['verified'] == 0 ? 0 : 1);
+
+$(function(){
+	if(get_cookie('IS_ADMIN') == 1){
+		item_operation($('#operation').show());
+	}
+});
+</script>
+<div class="breadbanner">
+	$label[fenzhan-banner]
+</div>
+<div class="maincon">
+	<div class="container">
+		<div class="row">
+			<div class="contain-left fl col-lg-3 col-md-3 col-sm-3 hidden-xs">	
+				<div class="border1">
+					<div class="head1">
+						<!--{php $parent = end($parent_cats);$parent_name = $parent ? $parent[name]:$CAT[name];$parent_url = $parent ? $parent[url] : $CAT[url];}-->
+						<span class="title1">$parent_name</span>
+					</div>	
+					<div class="main1">
+						<!--{template $this_module step_category_jx3}-->
+					</div>
+				</div>
+			</div>
+			<div class="contain-right fr col-lg-9 col-md-9 col-sm-9 col-xs-12">
+				<div class="border1">
+					<div class="gov-head3">
+						<div class="bigtitle">$data[title]</div>
+						<div class="position3 pull-right">
+							当前位置：<a href="{$this_system->controller}">首页</a>&gt; <a href="$data[url]">$data[title]</a> 
+						</div>
+					</div>
+					<div class="gov-intro">
+						<div class="intro-pic">
+							$label[list_gaiyao_pic]
+						</div>
+						<div class="operation_btn">
+							<span id="operation" style="display: none; cursor: pointer;color:#0040ff;float:right;">{$P8LANG['operation']}>></span>
+						</div>
+						<div class="intro-con">
+							$data[content]
+						</div>
+						<div class="xxnr">$pages</div>
+						<div class="closepage"><span><a href="{if $this_system->domain}{$this_system.domain}{else}{str_replace('index.php/cms','',$this_system->controller)}{/if}">返回首页</a></span><span><a href="javascript:self.close()" >关闭页面</a></span></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type="text/javascript" src="$this_router-count?id=$data[id]"></script>
+<script type="text/javascript" src="{$RESOURCE}/ueditor/ueditor.parse.min.js"></script>
+<script type="text/javascript">uParse('#p8_content_show', {rootPath: '<!--{php echo P8_ROOT;}-->ueditor/'});</script>
+<!--{template $this_system footer}-->
+<!--{/php168}-->

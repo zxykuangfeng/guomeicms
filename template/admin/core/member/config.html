@@ -1,0 +1,67 @@
+<!--{php168}-->
+<!--{template $this_module header admin}-->
+<form action="$this_router-$ACTION" method="post">
+	<div class="mainbox mainborder">
+		<div class="section">
+			<div class="section-operation">
+				<h3>操作说明：</h3>
+				<div class="operation-text">岗位编码只能用英文+数字，比如“A01”,且不能和其他岗位编码重复；岗位编码不要出现中文且不要随意修改。右边的“名称”就填写岗位名称。</div>
+			</div>
+		</div>
+	</div>
+	<div class="mainbox mainborder">
+		<div class="section">
+			<table border="0" width="100%" cellpadding="0" cellspacing="0">
+				<tr><td>
+					<table class="columntable formtable hover_table">
+						<tr class="title fix_head">
+							<td colspan="2" class="title">会员岗位配置</td>
+						</tr>
+						<tr>
+							<td class="tdL">岗位配置</td>
+							<td class="tdR" id="dept_box">
+							<!--{foreach $config['dept'] $k $v}-->
+							<!--{if $v['name']}-->
+							<p>编码：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;
+								<input type="text" name="dept[code][]" value="{$v[code]}" size="5"/></b>
+							名称：<input name="dept[name][]" type="text" value="{$v[name]}"/>					
+							<input name="delete[]" value="{$k}" type="checkbox"/>删除
+							</p>
+							<!--{/if}-->
+							<!--{/foreach}-->
+							<span id="more_dept"></span>
+							<input type="button" value="添加岗位" onclick="addmore('dept')" />
+							<input type="checkbox" name="" value="" style="margin-left:120px" onclick="javascript:$('#dept_box input[type=checkbox]').prop('checked',$(this).prop('checked'))"/>全选
+							<br>编码请不要出现中文，编码一旦确定，请不要随意修改或删除
+							</td>
+						</tr>						
+						<tr>
+							<td colspan="2">
+								<div style="text-align:center;"><input type="submit" value="{$P8LANG['submit']}" class="submit_btn"/></div>
+							</td>
+						</tr>
+					  
+					</table>
+					  </td>
+				  </tr>
+			</table>
+		</div>
+	</div>
+</form>
+<script type="text/javascript">
+$('#dept_box').sortable({
+    axis:"y",
+    items:"p",
+    handle:"b",
+    containmentType:"parent"
+})
+
+function addmore(kind){
+	$('#more_'+kind).append('<p>编码：<b style="cursor: move; background: url({$RESOURCE}/images/draggable.png) no-repeat 0px -20px;">&nbsp;&nbsp;<input type="text" name="'+kind+'[code][]" value="" size="5"/></b>&nbsp;名称：<input name=\"'+kind+'[name][]\" type=\"text\" /><input type="button" value="移除" onclick="removeItem(this)"/></p>');
+}
+function removeItem(obj){
+	$(obj).parent().remove();
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->

@@ -1,0 +1,62 @@
+<?php
+//后台管理语言包
+
+return array(
+	
+	'sites_item_html_unwritable' => '你的目录 ({$1}) 不可写，请确定你的目录可写。',
+	'sites_item_spidering' => '正在采集',
+	'sites_item_spider_done' => '采集完成',
+	'sites_item_allow_comment' => '是否开启评论功能',
+	'sites_item_comment_verify' => '评论是否需要审核',
+	'sites_item_comment_per_page' => '评论每页显示的条数',
+	'sites_item_comment_view_per_page' => '内容页显示的评论条数',
+	'sites_item_allow_mood' => '是否开启心情功能',
+	'sites_item_allow_verify' => '已终审内容允许修改',
+	'sites_item_allow_verify_note' => '有审核权限则有修改权限',
+	'sites_item_allow_member' => '是否内容页显示作者信息', 
+	'sites_item_allow_member_note' => '默认不使用，需在内容页显示作者信息时使用，调用变量数组：$member_info',
+	'sites_show_dept' => '是否在子站首页显示部门统计', 
+	'sites_show_dept_note' => '默认不使用，需在子站首页显示时使用，调用变量数组：$detp_all (不限)、$detp_year (今年以来) 、$detp_month (近30天)',
+	'no_sites_category_to_html' => '没有栏目要静态化',
+	'no_sites_item_to_html' => '没有内容要静态化',
+	
+	'ad_cache_init' => '初始化广告缓存',
+	'ad_cache_process' => '正在生成广告缓存 {$1} / {$2}',
+	'ad_invoke_note' => '以上几种调用方式任选一种，可放在HTML标签或模板中，前两种是无统计的【直链】链接类型使用，非特效标签推荐使用iframe方式调用。不会影响网页的打开速度。',
+	'ad_type_text' => '文字广告',
+	'ad_type_image' => '图片广告',
+	'ad_type_flash' => 'FLASH广告',
+	'ad_type_scroll' => '滚动/对联广告',
+	'ad_type_diy' => '自定义',
+	'ad_type_effect' => '幻灯片/特效广告',
+	'ad_type_fly' => '漂浮广告',
+	'ad_type_windows' => '弹窗广告',
+	
+	'_module_config_admin_log' => '模块配置',
+	'_module_verify_acl_admin_log' => '分级审核设置',
+	'_module_verify_admin_log' => '审核内容',
+	'_module_add_admin_log' => '添加内容',
+	'_module_update_admin_log' => '修改内容',
+	'_module_list_order_admin_log' => '置顶/沉底 内容',
+	'_module_attribute_admin_log' => '设置内容属性',
+	'_module_delete_admin_log' => '删除内容',
+	'_module_move_admin_log' => '移动内容',
+	'_module_comment_admin_log' => '评论管理',
+	'_module_label_admin_log' => '操作标签',
+	'_module_mood_admin_log' => '表情管理',
+	'_module_set_acl_admin_log' => '设置权限',
+	'_module_list_to_html_admin_log' => '生成栏目页',
+	'_module_view_to_html_admin_log' => '生成内容页',
+	'_module_tag_admin_log' => 'Tag(标签)管理',
+	'_module_set_member_acl_admin_log' => '设置前台权限',
+	
+	'_module_addon_admin_log' => '追加内容',
+	'_module_update_addon_admin_log' => '修改追加内容',
+	'_module_delete_addon_admin_log' => '删除追加内容',
+	'_module_clone_admin_log' => '复制内容',
+	
+	'_module_cluster_push_admin_log' => '推送数据到主站',
+	'_module_sites_push_admin_log' => '推送数据到分站',
+	'_module_sites_push_sites_admin_log' => '分站间直推数据',
+	
+);

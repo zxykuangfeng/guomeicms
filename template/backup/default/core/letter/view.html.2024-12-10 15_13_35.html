@@ -1,0 +1,139 @@
+<!--{php168}-->
+<!--{template $core header}-->
+<link rel="stylesheet" type="text/css" href="{$RESOURCE}/skin/default/core/letter/style.css" />
+<div class="breadbanner mb20">
+	<div class="fluid">
+		<div class="bigbanner">
+			$label[bigbanner_letter_gg]
+		</div>
+	</div>
+</div>
+<div class="container">
+	<div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12">
+			<!--startprint1-->
+			<!--打印内容开始-->
+			<div class="layout">
+				<div class="maincon clearfix">
+				  <div class="boxouter">
+				  <h1 style="text-align:center">信件内容详情</h1>
+				  <h1 style="text-align:center"></h1>
+				  <div class="table_hd"><div class="fl b">编号:<span>{$data['number']}</span>
+				  <!--{if $manager}-->&nbsp;&nbsp;查询码:<span>{$data['code']}</span><!--{/if}-->
+				  </div>
+				  <div class="fl m">$label[letter_vt2]</div><div class="fr b">申请日期:<span><!--{php echo date('Y-m-d',$data['create_time']);}--></span></div></div>
+				  <table class="mailtb" width="100%" cellspacing="0" cellpadding="0" border="1" style="border-collapse: collapse;border:1px solid #000;">
+					<tr>
+					  <td width="20%" class="grey b center">姓名</td>
+					  <td width="30%" class="red">{$data['username']}</td>
+					  <td width="20%" class="grey b center">性别</td>
+					  <td width="30%" class="red">{if $data['gender']==1}男{else}女{/if}</td>
+					</tr>
+					<tr>
+					  <td width="20%" class="grey b center">年龄</td>
+					  <td width="30%" class="red">{$data['age']}</td>
+					  <td width="20%" class="grey b center">邮编</td>
+					  <td width="30%" class="red">{$data['email']}</td>
+					</tr>
+					<tr>
+					  <td width="20%" class="grey b center">身份</td>
+					  <td width="30%" class="red">{$data['profession']}</td>
+					  <td width="20%" class="grey b center">问题类别</td>
+					  <td width="30%" class="red">{$cates['type'][$data['type']]['name']}</td>
+					</tr>
+					<tr>
+						<td class="grey b center">联系地址</td>
+						<td class="red">{$data['address']}</td>
+						<td class="grey b center">申请人IP</td>
+						<td class="red">{if $IS_FOUNDER}{$data['p8_ip']}{/if}</td>
+					</tr>
+					 <tr>
+					  <td class="grey b center">主题</td>
+					  <td colspan="3" class="red">{$data['title']}</td>
+					</tr>
+					<tr>
+					  <td class="grey b center">内容</td>
+					  <td colspan="3" class="fonty">
+					  <span lang="zh-cn" xml:lang="zh-cn">{$data['data'][0]['content']}</span></td>
+					</tr>
+					<!--{if !empty($data['data'][0]['attachment'])}-->
+					<tr>
+					  <td class="grey b center">附件</td>
+					  <td colspan="3" class="red"><a href="{$data['data'][0]['attachment']}" target="_blank">{$data['data'][0]['attachment_name']}</a></td>
+					</tr>
+					 <!--{/if}-->
+				  </table>
+				  <div class="clear"></div>
+				  <div class="rlink">处理结果</div>
+				  <table class="mailtb" width="100%" cellspacing="0" cellpadding="0" border="1" style="border-collapse: collapse;border:1px solid #000;">
+					<tr>
+					  <td class="grey b center">受理部门</td>
+					  <td class=" red">{if !empty($data['solve_department'])}{$cates['department'][$data['solve_department']]['name']}{/if}</td>
+					 
+					<!--{if $data['finish_name']}-->
+					  <td class="grey b center">受理人</td>
+					  <td class="red">{$data['solve_name']}</td>
+					</tr>
+					
+					<tr>
+					  <td class="grey b center">领导审核</td>
+					  <td class="red">{$data['finish_name']}</td>
+					<!--{/if}-->
+					  <td class="grey b center">计划完成时间</td>
+					  <td class="red"><!--{php if($data['finish_time'])echo date('Y-m-d',$data['finish_time']);}--></td>
+					</tr>
+					
+
+					<tr>
+					  <td class="grey b center">处理进度</td>
+					  <td class="red">{$P8LANG['status_'.$data['status']]}</td>
+					  <td class="grey b center">完成时间</td>
+					  <td class="red"><!--{php if($data['data'][0]['reply_time'])echo date('Y-m-d',$data['data'][0]['reply_time']);}--></td>
+					</tr>
+					
+					<tr>
+					  <td class="grey b center">答复内容</td>
+					  <td colspan="3" class="fonty"> <span lang="zh-cn" xml:lang="zh-cn">{if !empty($data['data'][0]['reply'])}{$data['data'][0]['reply']}{/if}</span></td>
+					 </tr>
+				  </table>
+				  <div class="clear"></div>
+				<!--打印内容结束-->
+				<!--endprint1-->
+				  <p style="text-align:right; margin:30px 0 20px 0">
+				  【<a href="{$this_router}-post">发布</a>】 
+				  <!--{if $manager}-->
+				  <script type="text/javascript">
+				  var message = new Message();
+				  </script>
+				  【<a href="{$this_router}-reply?id={$data['id']}">处理</a>】 
+				  【<a href="javascript:;" onclick="message.send($data[uid])"><img src="{$RESOURCE}/images/qyfa.gif" border="0" align="top"/></a>】 
+				  <!--{if $delletter}-->【<a  href="{$this_url}?act=del&id={$data['id']}" onclick="javascript:if(!confirm('确定要删？'))return false;">删除</a>】<!--{/if}-->
+				  <!--{/if}-->
+				  【<a href="javascript:;" onclick="javascript:preview(1)">打印</a>】 
+				  【<a href="javascript:;"  onclick="window.close()">关闭</a>】 
+				  </p>
+				  </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script language="javascript">
+	function preview(oper)
+		{
+		if (oper < 10){
+			bdhtml=window.document.body.innerHTML;
+			sprnstr="<!--startprint"+oper+"-->";
+			eprnstr="<!--endprint"+oper+"-->";
+			prnhtml=bdhtml.substring(bdhtml.indexOf(sprnstr)+18);
+			prnhtml=prnhtml.substring(0,prnhtml.indexOf(eprnstr));
+			window.document.body.innerHTML=prnhtml;
+			window.print();
+			window.document.body.innerHTML=bdhtml;
+		} else {
+			window.print();
+		}
+	}
+</script>
+<!--{template $core footer}-->
+<!--{/php168}-->

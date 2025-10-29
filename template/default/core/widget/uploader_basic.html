@@ -1,0 +1,28 @@
+<!--{php168}-->
+<input type="hidden" name="#field_{$field}_posted" />
+{$P8LANG['attlink']} <input type="text" class="txt" name="field#[$field]" id="field_{$field}" value="{if isset($data[$field])}{$data[$field]}{/if}" />
+<span id="{$field}_holder"></span>
+<script type="text/javascript">
+$(function(){
+	var {$field}_uploader = new P8_Upload({
+		element: {
+			src: $("#field_{$field}"),
+			attribute: 'value'
+		},
+		callback: function(json){},
+		param: {
+			width:800,
+			height:430
+			<!--{if isset($field_data['CONFIG']['thumb_width']) && isset($field_data['CONFIG']['thumb_height'])}-->
+			,thumb_width: {$field_data['CONFIG']['thumb_width']},
+			thumb_height: {$field_data['CONFIG']['thumb_height']}
+			<!--{/if}-->
+		}
+	});
+
+	$('<input type="button" value="{$P8LANG['upload']}" />').click(function(){
+		{$field}_uploader.uploader();
+	}).appendTo($('#{$field}_holder'));
+});
+</script>
+<!--{/php168}-->

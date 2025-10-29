@@ -1,0 +1,20 @@
+<!--{php168}-->
+<div class="label_theme_pic_com_ul9">
+	<!--{foreach $list $value}-->
+	<div class="item">
+		<div class="container relative">
+			<div class="date hidden-xs">
+				<span class="d"><!--{php echo date('d', $value['timestamp']);}--></span>
+				<span class="y"><!--{php echo date('Y-m', $value['timestamp']);}--></span>
+			</div>
+			<div class="pic"><a href="$value[url]" target="_blank" title="$value[full_title]"><img width="300" height="190" class="coverImg" alt="$value[full_title]" onError="this.src='$RESOURCE/images/nopic.jpg'" src="{if empty($value['frame'])}{$RESOURCE}/images/nopic.jpg{else}$value[frame]{/if}" /></a></div>
+			<div class="text">
+				<h3><a href="$value[url]" target="_blank" title="$value[full_title]">$value[title]</a></h3>
+				<p class="source">来源：$value[source]</p>
+				<p class="summary">$value[summary]...</p>
+			</div>
+		</div>
+	</div>
+	<!--{/foreach}-->
+</div>
+<!--{/php168}-->

@@ -1,0 +1,30 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{if empty($_GET['nomenu'])}-->
+<div class="mainbox mainborder">
+	<div class="section">
+		<table border="0" width="100%" cellpadding="0" cellspacing="0">
+			<tr><td>
+				<table class="formtable">
+					<tr><td class="headerbtn_list">
+						<ul>
+							<li><a href="{$core.admin_controller}/core/member-list"><i class="fa fa-user"></i>会员管理</a></li>
+							<!--{if $IS_FOUNDER}-->
+							<li><a href="{$core.admin_controller}/core/role-list"><i class="fa fa-user-md"></i>角色管理</a></li>
+							<li><a href="{$core.admin_controller}/core/role-list_group"><i class="fa fa-users"></i>角色组管理</a></li>
+							<!--{/if}-->
+							<li><a href="{$core.admin_controller}/core/member-config"><i class="fa fa-cog"></i>岗位管理</a></li>
+							<li><a href="{$core.admin_controller}/core/member-dept"><i class="fa fa-bar-chart"></i>组织架构管理</a></li>
+							<li><a href="{$core.admin_controller}/core/member-set"><i class="fa fa-sign-in"></i>会员配置</a></li>
+							<li><a href="$this_router-cache"><i class="fa fa-refresh"></i>更新用户缓存</a></li>
+						</ul>
+					</td>
+					</tr>
+				</table>
+				
+			</td></tr>
+		</table>
+	</div>
+</div>
+<!--{/if}-->
+<!--{/php168}-->

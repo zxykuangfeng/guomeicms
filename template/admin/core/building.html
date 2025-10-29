@@ -1,0 +1,204 @@
+<!--{php168}-->
+<!--{template $this_system header admin}-->
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table class="formtable">
+			<tr>
+				<td class="headerbtn_list">
+					<ul class="sites-top-menu">
+						<li><a href="{$core.admin_controller}/sites-recovery"><i class="fa fa-cog"></i>系统巡检</a></li>
+						<li><a href="{$core.admin_controller}/sites-html_manager"><i class="fa fa-cog"></i>栏目静态化管理</a></li>
+						<li><a href="{$core.admin_controller}/sites/farm-list_manager"><i class="fa fa-cog"></i>菜单静态化管理</a></li>
+						<li><a href="{$core.admin_controller}/sites-visualization"><i class="fa fa-cog"></i>页面可视化管理</a></li>
+						<li><a href="{$core.admin_controller}/sites-publishing"><i class="fa fa-cog"></i>站点发布管理</a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="columntable formtable hover_table" align="center">	
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">操作流程</td>
+			</tr>
+			<tr>
+				<td class="tdL">应用场景说明</td>
+				<td class="tdR">
+					1、当网站基本建立好后，正式发布一个站点，需要有一个完整的过程和几个环节。<br>
+					2、需要先在服务器绑定域名（）。<br>
+					3、当需要新增一个菜单或栏目的情况。<br>
+					4、当一篇内容设置仅限局域网访问的时候。<br>
+					5、当需要上传视频的时候。<br>
+				</td>
+			</tr>					
+		</table>
+	</div>
+</div>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" cellspacing="0" cellpadding="0"  class="columntable formtable hover_table" align="center">
+			<tr class="title fix_head">
+				<td colspan="2" class="list_top" style="text-align:left;padding:0 15px;">完整操作流程：</td>
+			</tr>
+			<tbody>
+			
+			<tr>
+				<td class="tdL">操作1-1：如果是域名形式进行本站点访问 </td>
+				<td class="tdR">
+					<a class="btn btn-primary btn-lg openbtn" href="{$RESOURCE}/attachment/jiaocheng/yumingbangding.pdf" target="_blank">
+						<i class="icon icon-ico60"></i>域名绑定教程
+					</a>分为绑定域名和不绑定域名的形式。<a href="{$RESOURCE}/attachment/jiaocheng/yumingbangding.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/yumingbangding.mp4" class="blue" target="_blank">视频教程>>  </a>	
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">操作1-2：如果是目录形式进行本站点访问</td>
+				<td class="tdR">
+					<a class="btn btn-primary btn-lg openbtn" href="{$RESOURCE}/attachment/jiaocheng/mulubangding.pdf" target="_blank">
+						<i class="icon icon-ico60"></i>目录绑定教程
+					</a>分为（主站域名/sites/html/xx子站）和（主站域名//xx子站）两种形式。<a href="{$RESOURCE}/attachment/jiaocheng/mulubangding.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/mulubangding.mp4" class="blue" target="_blank">视频教程>>  </a>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">操作2：网站后台进行域名或目录的设置 </td>
+				<td class="tdR"> 
+					<a class="btn btn-primary btn-lg openbtn" href="{$RESOURCE}/attachment/jiaocheng/yumingyumulu.pdf" target="_blank">
+						<i class="icon icon-ico60"></i>站点后台域名与目录设置
+					</a>每个子站都需要设置后才有效果。<a href="{$RESOURCE}/attachment/jiaocheng/yumingyumulu.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/yumingyumulu.mp4" class="blue" target="_blank">视频教程>>  </a>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="tdL">操作3：栏目需要静态化才能发布 </td>
+				<td class="tdR">
+					<a class="btn btn-primary btn-lg openbtn" href="{$core.admin_controller}/cms/category-list" target="_blank">
+						<i class="icon icon-ico60"></i>栏目静态化操作
+					</a>网站发布前，都要静态化所有才能查看。<a href="{$RESOURCE}/attachment/jiaocheng/zhuzhanlanmujingtai.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/zhuzhanlanmujingtai.mp4" class="blue" target="_blank">视频教程>>  </a>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="tdL">操作4：菜单需要变为静态化才能发布 </td>
+				<td class="tdR">
+					<a class="btn btn-primary btn-lg openbtn" href="{$core.admin_controller}/core-navigation_menu_list" target="_blank">
+						<i class="icon icon-ico60"></i>菜单静态化操作
+					</a>菜单操作静态就，必须重新静态栏目、内容、首页所有才可以。<a href="{$RESOURCE}/attachment/jiaocheng/zhuzhancaidanjingtai.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/zhuzhancaidanjingtai.mp4" class="blue" target="_blank">视频教程>>  </a>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="tdL">操作5：统一登陆界面需要添加或修改本站点</td>
+				<td class="tdR">
+					<a class="btn btn-primary btn-lg openbtn" href="{$RESOURCE}/dl.html" target="_blank">
+						<i class="icon icon-ico60"></i>统一登陆入口设置
+					</a>没有新增就加上，已有的就修改新地址。<a href="{$RESOURCE}/attachment/jiaocheng/tydenglu.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/tydenglu.mp4" class="blue" target="_blank">视频教程>>  </a>
+				</td>
+			</tr>
+
+			<tr>
+				<td class="tdL">操作6：机构列表上面需要新增和修改本站点</td>
+				<td class="tdR">
+					<a class="btn btn-primary btn-lg openbtn" href="{$RESOURCE}/attachment/jiaocheng/jigouliebiaozengjia.pdf" target="_blank">
+						<i class="icon icon-ico60"></i>机构列表设置
+					</a>没有新增就加上，已有的就修改新地址。<a href="{$RESOURCE}/attachment/jiaocheng/jigouliebiaozengjia.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/jigouliebiaozengjia.mp4" class="blue" target="_blank">视频教程>>  </a>
+				</td>
+			</tr>
+			<tr>
+				<td class="tdL">操作7：更新缓存和静态</td>
+				<td class="tdR">
+					<a class="btn btn-primary btn-lg openbtn" href="{$core.admin_controller}/core-cache" target="_blank">
+						<i class="icon icon-ico60"></i>更新缓存和静态
+					</a>更新缓存和静态。<a href="{$RESOURCE}/attachment/jiaocheng/yijianhuancun.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/yijianhuancun.mp4" class="blue" target="_blank">视频教程>>  </a>
+				</td>
+			</tr>			
+			<tr>
+				<td class="tdL">操作8：清理浏览器缓存查看效果</td>
+				<td class="tdR">
+					<a class="btn btn-primary btn-lg openbtn" href="{$RESOURCE}/attachment/jiaocheng/jigouliebiaozengjia.pdf" target="_blank">
+						<i class="icon icon-ico60"></i>查看效果教程
+					</a>浏览器清理访问记录并快速刷新几次，可看到效果。<a href="{$RESOURCE}/attachment/jiaocheng/chakanxiaoguo.pdf" class="blue" target="_blank">文档教程>></a>&nbsp;&nbsp;<a href="{$RESOURCE}/attachment/jiaocheng/chakanxiaoguo.mp4" class="blue" target="_blank">视频教程>>  </a>
+				</td>
+			</tr>									
+			</tbody>
+		</table>
+	</div>
+</div>
+<script type="text/javascript">
+	function do_cache(cache_type){		
+		$('#cache_type').val(cache_type);
+		ajaxing({'text':'处理中…'});
+		$('#cache').submit();	
+	}
+
+var dialog = new P8_Dialog({
+	title_text: '{$P8LANG['select_category']}',
+	button: true,
+	width: 700,
+	height: 300,
+	ok: function(){
+		var values = cs.get_value();
+		$('#option_category').val(values.join(','));
+		
+		category_path(values);
+	},
+	show: function(){
+		cs.init();
+	}
+});
+dialog.content.height(240);
+
+var cs = new Recursive_Selector({
+	multiple: true,
+	input: $('#categories'),
+	dialog: dialog,
+	url: '{$this_system.controller}/category-json',
+	values: $('#option_category').val(),
+	sub_property: 'categories',
+	init_callback: function(){
+		category_path(this.get_value());
+	},
+	item_callback: function(cat, item){
+		if(cat.type == 1){
+			item.find('span').addClass('frame_category');
+			item.find('input[type=checkbox]').attr('disabled', true);
+		}
+		
+		if(cat.categories)
+			item.addClass('sub_category');
+	}
+});
+
+function category_path(cids){
+	$('#category_path').empty();
+	
+	cids = array_filter(cids);
+	var html = '';
+	for(var i in cids){
+		
+		cs.get_by_id(cids[i], function(json){
+			if(!json) return;
+			
+			var p = [];
+			while(true){
+				p.unshift(json.name);
+				if(json.parent == 0) break;
+				
+				json = cs.get_by_id(json.parent);
+			}
+			html += '<div>'+ p.join(' &gt; ') +'</div>';
+		});
+	}
+	
+	$('#category_path').html(html);
+}
+
+$(function(){
+	cs.init();
+});
+</script>
+<!--{template $this_system footer admin}-->
+<!--{/php168}-->

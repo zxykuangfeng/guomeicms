@@ -1,0 +1,501 @@
+<!--{php168}-->
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="X-Csrf-Token" content="{$CSRF_TOKEN}">
+<meta name="renderer" content="webkit">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>分站系统后台管理平台</title>
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap.min.css" type="text/css"  rel="stylesheet" >
+<link href="{$RESOURCE}/skin/sites/common/css/bootstrap-select.css" type="text/css"  rel="stylesheet" >
+<link href="{$AWESOME}/skin/default/core/awesome4.7.0/css/font-awesome.min.css" type="text/css" rel="stylesheet" >
+<link rel="stylesheet" type="text/css" href="{$_SKIN}/style.css" />
+<script type="text/javascript" src="{$RESOURCE}/js/config.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/util.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jq_validator.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/admin.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/skin/sites/common/js/bootstrap-select.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/jquery.nicescroll.min.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/lang/core/{$core.CONFIG['lang']}.js"></script>
+<!--{if $SYSTEM != 'core'}-->
+<script type="text/javascript" src="{$RESOURCE}/js/lang/$SYSTEM/{$core.CONFIG['lang']}.js"></script>
+<!--{/if}-->
+<script type="text/javascript">
+P8CONFIG.admin_controller = '{$core.admin_controller}';
+var P8_ROOT = '$P8_ROOT';
+var MENU_JSON = $json[json];
+var MENU_JSON2 = $json[json2];
+var MENU_PATH = $json[path];
+var MENU_DENIED = $denied;
+var system_menu_hide_timeout;
+function get_menu_by_id(id){
+	var path = clone(MENU_PATH[id]);
+	var root = path.shift();
+	
+	var search = get_menu_byid(MENU_JSON2,root);
+	
+	if(path.length == 0){
+		return search;
+	}
+	
+	for(var i in path){
+		search = get_menu_byid(search.menus,path[i]);
+	}
+	
+	return search;
+}
+function get_menu_byid(json,need){
+    for(var i in json){
+        if(json[i].id==need){
+            return json[i];
+        }
+    }
+    return {};
+}
+<!--{template_init_js}-->
+</script>
+
+<style>
+html {overflow-x: hidden;overflow-y: hidden;}
+</style>
+</head>
+<body>
+<div id="container" class="sites-container">
+	<div class="main-header">
+		<div class="header-container">
+			<div class="header-left">
+				<div class="logo"><a href="{$this_system.admin_controller}-index"><img src="{if isset($config['logo_sites']) && !empty($config['logo_sites'])}{$config['logo_sites']}{else}{$_SKIN}/logo2.png{/if}" /></a></div>
+				<div class="header-menu">
+					<ul class="header-menu-item" id="core_menu">
+						<!--{php $count = 0;}-->
+						<!--{foreach $admin_menu->top_menus $v}-->
+						<!--{php if($v['menu_sys'] == 'main') continue;}-->
+						<!--{php $count++;}-->
+							<!--{if $v['url']}-->
+								<!--{if $v['target'] == '_blank'}-->
+									<li><a href="{$core.admin_controller}{$v['url']}" target="_blank"><i class="fa {$v['menu_icon']}"></i> {$v['name']}</a></li>
+								<!--{else}-->
+									<li><a href="{$core.admin_controller}/{$v['url']}" target="main" onclick="get_menu({$v['id']})"><i class="fa {$v['menu_icon']}"></i> {$v['name']}</a></li>
+								<!--{/if}-->
+							<!--{else}-->
+								<li onclick="javascript:get_menu({$v['id']})"><span><i class="fa {$v['menu_icon']}"></i> {$v['name']}</span></li>
+							<!--{/if}-->
+						<!--{/foreach}-->
+					</ul>
+				</div>
+			</div>
+			<div class="header-right">
+				<div class="header-message">
+					<a href="javascript:void(0);" onclick="window.open('{$core.U_controller}?site='+$('#this_site').val()+'&main_page={urlencode('/message-inbox?message_type=new')}')"><i class="fa fa-bell"></i>消息<span>{$member_info[new_messages]}</span></a>
+				</div>
+				<div class="header-member">
+					<div class="dropdown">
+						<a href="{$core.U_controller}/member-mysites" target="_blank"><img src="{$RESOURCE}/skin/admin/member.png" /></a>
+						<ul class="dropdown-menu">
+							<div class="login-info">
+								<p class="clearfix"><a class="pull-left" href="{$core.U_controller}/member-mysites" target="_blank">$USERNAME{if $member_info['name']}（{$member_info['name']}）{/if} </a>
+								<a class="pull-right" href="{$core.admin_controller}/core-logout">退出</a></p>
+								<a class="level" href="{$core.U_controller}/member-mysites" target="_blank">{$core.roles[$core.ROLE]['name']}</a>
+							</div>
+						</ul>
+					</div>
+				</div>
+				<div class="header-clik">
+					<ul class="header-nav">	
+						<li>
+							<!--{if count($mysites)>1}-->
+							<select name="site" id="this_site" class="selectpicker" data-width="auto">
+							 <option value="">请选择</option>
+							<!--{foreach $mysites $site}-->
+							<option value="$site" {if !empty($this_system->SITE) && $site==$this_system->SITE}selected{/if}>{$allsites[$site]['sitename']}</option>
+							 <!--{/foreach}-->
+							</select>
+							<!--{else}--> 
+							<input type="hidden" id="this_site" value="{$this_system->SITE}" />
+							<!--{/if}-->
+						</li>
+						<li class="dropdown topimg">
+							<a><img src="{$RESOURCE}/skin/admin/topimg.png" /></a>
+							<ul class="dropdown-menu">
+								<li><a href="#"><i class="fa fa-angle-right"></i>数据备份</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>用户列表</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>系统设置</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>广告模块</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>信箱模块</a></li>
+								<li><a href="#"><i class="fa fa-angle-right"></i>表单模块</a></li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a><i class="icon icon-nav8"></i>快捷入口</a>
+							<ul class="dropdown-menu">
+								<li><a href="{$core.admin_controller}/cms-index_to_html" target="_blank"><i class="fa fa-angle-right"></i>静态主站首页</a></li>
+								<li><a href="javascript:;" onclick="$('#list_to_html').submit()"><i class="fa fa-angle-right"></i>静态主站栏目</a></li>
+								<li><a href="javascript:;" onclick="$('#view_to_html').submit()"><i class="fa fa-angle-right"></i>静态最近内容</a></li>
+								<li><a href="javascript:;" onclick="do_cache('base')"><i class="fa fa-angle-right"></i>更新基础缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('template')"><i class="fa fa-angle-right"></i>更新模板缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('label')"><i class="fa fa-angle-right"></i>更新标签缓存</a></li>
+								<li><a href="javascript:;" onclick="do_cache('all')"><i class="fa fa-angle-right"></i>更新全站缓存</a></li>
+							</ul>
+						</li>
+						<li class="dropdown">
+							<a href="javascript:;" onclick="open_site()"><i class="icon icon-nav9"></i>网站首页</a>
+							<ul class="dropdown-menu">
+								<li><a href="{$RESOURCE}" target="_blank"><i class="fa fa-angle-right"></i>网站静态首页</a></li>
+								<li><a href="{if $core->controller}{$core.controller}{else}{$STATIC_URL}/index.php{/if}" target="_blank"><i class="fa fa-angle-right"></i>网站动态首页</a></li>
+								<li><a href="javascript:;" onclick="show_edit_label()"><i class="fa fa-angle-right"></i>首页可视化</a></li>
+								<li><a href="{$RESOURCE}/dl.html" target="_blank"><i class="fa fa-angle-right"></i> 统一登录入口</a></li>
+								<li><a href="{$core.U_controller}?site=mainstation" target="_blank"><i class="fa fa-angle-right"></i>主站会员中心</a></li>
+								<li><a href="{$core.U_controller}/member-mysites" target="_blank"><i class="fa fa-angle-right"></i>子站会员中心</a></li>
+							</ul>
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="content-main content-top">
+		<div class="content-container">
+			<div class="content-side sider-menu-left2 sider-menu-container">			
+				<ul class="menu-vertical" role="tablist" id="submenu"></ul>
+			</div>
+			<div class="sider-menu-children-container scrollbar tab-content">
+    			<div id="tree_inner">
+					<div id="TreeMenu_Current_Operation"></div>
+				</div>
+			</div>
+			<div class="content-main">
+				<div class="content-main-item">
+					<!--<iframe src="$src" name="main" id="main" frameborder="0" scrolling="auto" style="width: 100%; height: 100%; visibility: inherit;  z-index: 1;"></iframe>-->
+					<div class="mainbox mainborder">
+						<div class="section">
+							<table class="formtable">
+								<tr>
+									<td class="headerbtn_list">
+										<ul class="sites-top-menu">
+											<li><a href="#"><i class="fa fa-cog"></i>网站概况</a></li>
+											<li><a href="#"><i class="fa fa-cog"></i>实时访客</a></li>
+											<li><a href="#"><i class="fa fa-cog"></i>访客来源</a></li>
+											<li><a href="#"><i class="fa fa-cog"></i>受访页面</a></li>
+											<li><a href="#"><i class="fa fa-cog"></i>地域分布</a></li>
+											<li><a href="#"><i class="fa fa-cog"></i>搜索词</a></li>
+											<li><a href="#"><i class="fa fa-cog"></i>关键词排名</a></li>
+											<li><a href="#"><i class="fa fa-cog"></i>使用指南</a></li>
+											<li><a href="#"><i class="fa fa-cog"></i>插件配置</a></li>
+										</ul>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div class="mainbox mainborder">
+						<div class="section">
+							<div class="statistics-box">
+								<div class="panel-heading">
+									<label>今日流量</label>
+								</div>
+								<div class="panel-body" style="padding-top:0;">
+									<table class="table-getoutline">
+										<thead>
+										<tr class="title">
+											<th class="text-center">浏览量(PV)</th>
+											<th class="text-center">访客数(UV)</th>
+											<th class="text-center">IP数</th>
+											<th class="text-center">跳出率</th>
+											<th class="text-center">平均访问时长</th>
+											<th class="text-center">转化次数</th>
+										</tr>
+										</thead>
+										<tbody class="getoutline-tbody"></tbody>
+									</table>
+									<div class="fold">
+										<a href="javascript:void(0)" id="TogglePreviewTableBtn" targets=".fade" class="toggleable recordable trackable getoutline-close"></a>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="section statistics-tab text-center">
+							<a href="javascript:location.reload();" class="btn btn-primary btn-refresh" title="刷新"><i class="fa fa-refresh"></i> </a>
+							<div class="btn-group btn-group-sm" role="group">
+								<button type="button" class="btn btn-default ajax-btn" id="tody">今天</button>
+								<button type="button" class="btn btn-default ajax-btn" id="yest">昨天</button>
+								<button type="button" class="btn btn-default ajax-btn" id="week">最近7天</button>
+								<button type="button" class="btn btn-default ajax-btn" id="month">最近30天</button>
+							</div>
+						</div>
+					</div>
+					<div class="statistics-margin">
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="statistics-box statistics-section">
+									<div class="panel-heading" style="padding:0;">
+										<div class="head clearfix">
+											<div class="title"><span class="arrow-left"></span>Top10入口页面</div>
+										</div>
+									</div>
+									<div class="panel-body" style="padding:0;">
+										<table class="table table-overview">
+											<thead>
+												<tr>
+													<td>入口页面</td>
+													<td width="20%" class="text-left">浏览量(PV)</td>
+													<td width="20%" class="text-left ratio">占比</td>
+												</tr>
+											</thead>
+										</table>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="statistics-box statistics-section">
+									<div class="panel-heading" style="padding:0;">
+										<div class="head clearfix">
+											<div class="title"><span class="arrow-left"></span>Top10入口页面</div>
+										</div>
+									</div>
+									<div class="panel-body" style="padding:0;">
+										<table class="table table-overview">
+											<thead>
+												<tr>
+													<td>入口页面</td>
+													<td width="20%" class="text-left">浏览量(PV)</td>
+													<td width="20%" class="text-left ratio">占比</td>
+												</tr>
+											</thead>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-6">
+								<div class="statistics-box statistics-section">
+									<div class="panel-heading" style="padding:0;">
+										<div class="head clearfix">
+											<div class="title"><span class="arrow-left"></span>Top10入口页面</div>
+										</div>
+									</div>
+									<div class="panel-body" style="padding:0;">
+										<table class="table table-overview">
+											<thead>
+												<tr>
+													<td>入口页面</td>
+													<td width="20%" class="text-left">浏览量(PV)</td>
+													<td width="20%" class="text-left ratio">占比</td>
+												</tr>
+											</thead>
+										</table>
+									</div>
+								</div>
+							</div>
+							<div class="col-sm-6">
+								<div class="statistics-box statistics-section">
+									<div class="panel-heading" style="padding:0;">
+										<div class="head clearfix">
+											<div class="title"><span class="arrow-left"></span>Top10入口页面</div>
+										</div>
+									</div>
+									<div class="panel-body" style="padding:0;">
+										<table class="table table-overview">
+											<thead>
+												<tr>
+													<td>入口页面</td>
+													<td width="20%" class="text-left">浏览量(PV)</td>
+													<td width="20%" class="text-left ratio">占比</td>
+												</tr>
+											</thead>
+										</table>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="status">
+<fieldset class="field" id="shower">
+	<legend>列表页</legend>
+	<iframe name="shower" width="100%" height="120" marginheight="0" marginheight="0" frameborder="0"></iframe>
+</fieldset>
+</div>
+<form id="cacher" action="$this_router-cache" method="post" target="_blank"></form>
+<form id="list_only_html" action="{$this_system.admin_controller}/item-list_to_html" method="post" target="shower"></form>
+<script language="JavaScript">
+var url = window.location.href;
+index = url.indexOf("flag");
+if(index !=-1) html_index();
+function show_edit_label(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	url = '{$core->url}/s.php/'+thisSite+'/main?edit_label=1';
+	window.open(url);
+}
+
+function html_index(){
+	thisSite = $('#this_site').val();
+	if(!thisSite)return false;
+	$.ajax({
+		   url:'{$this_router}-index_to_html',
+		   type: 'post',
+		   dataType: 'json',
+		   data: ajax_parameters({site:thisSite}),
+		   cache: false,
+		   success: function(msg){
+			   if(msg==-1)
+			   		p8_window.alert('此站没有绑定域名，不可静态');
+				else{
+					p8_window.alert('静态成功！');
+					window.open(msg);
+				}
+		   }
+	})
+	
+}
+
+function set_site(obj){
+
+	sites_main_src = sites_main.window.location.href;
+	sites_main_src=sites_main_src.replace(/[&?]site=\w*/,'');
+	$('#main').attr('src',sites_main_src+((sites_main_src.indexOf('?')>-1)?'&':'?')+'site='+$(obj).val());
+}
+
+function open_site(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/s.php/'+thisSite);
+}
+
+function open_acl(){
+	thisSite = $('#this_site').val();
+	window.location.href = '{$this_system.admin_controller}/farm-acl?alias='+thisSite;
+}
+
+function open_ucenter(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->url}/u.php?site='+thisSite);
+}
+
+function cache_all(){
+	thisSite = $('#this_site').val();
+	window.open('{$core->admin_controller}/sites/farm-cacheall?site='+thisSite,'sites_main');
+}
+function cache_category(){
+	$.ajax({
+		url:'{$this_system.admin_controller}/farm-cacheall',
+		type: 'post',
+		dataType: 'json',
+		data:ajax_parameters({cache: ['category']}),
+		cache: false,
+		beforeSend: function(){
+			ajaxing({text:'缓存中…'});
+		},
+		success: function(msg){
+			ajaxing({text:'操作成功！',action: 'hide'});
+		}
+	});	
+}
+function cache_all_site(){
+	p8_window.confirm('{$P8LANG['confirm_to_do']}', function (r) {
+		if(r){			
+			$.ajax({
+				url:'{$this_system.admin_controller}/farm-cache',
+				type: 'post',
+				dataType: 'html',
+				data: {},
+				cache: false,
+				beforeSend: function(){
+					ajaxing({text:'缓存中…'});
+				},
+				success: function(msg){
+					ajaxing({text:'操作成功！',action: 'hide'});
+				}
+			});			
+		}else{
+			return false;
+		}
+	});
+}
+function list_only_html(){
+	$('#list_only_html').empty();
+	$('#list_only_html').append($('<input type="hidden" name="pages" value="0" />'));
+	$('#list_only_html').submit();	
+	html_dialog.show();	
+	$('#list_only_html').empty();
+}
+
+var html_dialog = new P8_Dialog({
+	width: 600,
+	height: 400,
+	overlay: false,
+	cancel: function(){
+		this.content.find('iframe').attr('src', 'about:blank');
+	}
+});
+html_dialog.content.append($('#status'));
+$(document).ready(function(){
+	$('#menu_td .sec_menu').each(function(i){
+		$(this).parent().hover(
+			function(){ $(this).find('.sec_menu').show(); },
+			function(){ $(this).find('.sec_menu').hide(); }
+		)
+	});
+	$(".content-side").niceScroll({styler:"fb",cursorcolor:"#429cd8", cursorwidth: '3', cursorborderradius: '10px', background: '#d5dddf', cursorborder: '',cursorfixedheight:70});
+	$(function () {
+	  $(".dropdown").mouseover(function () {
+		$(this).addClass("open");
+	  });
+	  $(".dropdown").mouseleave(function(){
+		$(this).removeClass("open");
+	  })
+	});
+})
+$(document).ready(function(){
+	$('#menu_td .sec_menu').each(function(i){
+		$(this).parent().hover(
+			function(){ $(this).find('.sec_menu').show(); },
+			function(){ $(this).find('.sec_menu').hide(); }
+		)
+	 });
+})
+
+$(document).ready(function(){
+	$('#system li').mouseover(function(){
+		clearTimeout(system_menu_hide_timeout);
+		$('#system li dl').show();
+	});
+	$('#system li').mouseout(function(){
+		system_menu_hide_timeout = setTimeout(function(){ $('#system li dl').hide();}, 200);
+	});
+	$('#system_list').
+	mouseover(function(){
+		clearTimeout(system_menu_hide_timeout);
+	});
+
+	window.onresize();
+	
+	if(self != top){
+		parent.window.location.href = '{$core.admin_controller}';
+	}
+	$('#submenu').show();
+});
+
+//一级菜单变换CSS
+core_menu_change_css();
+$('#core_menu li:first').addClass('current');
+$('#core_menu li:first').click();
+$('#core_menu li:first a').click();
+//窗口调整
+window.onresize = function(){
+    var widths = document.body.scrollWidth;
+    var heights = document.documentElement.clientHeight-100;
+	$('#main').height(heights);
+};
+
+</script>
+</body>
+</html>
+<!--{/php168}-->

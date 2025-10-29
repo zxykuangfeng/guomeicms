@@ -1,0 +1,1033 @@
+<!--{php168}-->
+<!--{template $core header admin}-->
+<!--{template $this_module menu_bar admin}-->
+<style type="text/css">
+body, html{overflow:inherit;}
+.tab_box .main table{border:none;}
+</style>
+<script type="text/javascript" src="{$RESOURCE}/js/rcalendar.js"></script>
+<script type="text/javascript" src="{$RESOURCE}/js/upload.js"></script>
+<div class="mainbox mainborder">
+	<div class="section">
+		<table width="100%" border="0"  class="mainbox">
+			<tr>
+				<td>
+					<ul class="boxmenu">
+						<li class="btn-color1"><a href="{$this_router}-field?mid={$data['id']}" class="btn1"><i class="icon icon-ico1"></i>本招投标字段列表</a></li>
+						<li class="btn-color2"><a href="{$this_router}-edit_field?mid={$data['id']}" class="btn2"><i class="icon icon-ico44"></i>添加字段</a></li>
+						<li class="btn-color3"><a href="{$this_router}-list?mid={$data['id']}" class="btn3"><i class="icon icon-ico10"></i>本招投标内容管理</a></li>						
+						<li class="btn-color4"><a href="{$this_router}-edit_model?action=update&id={$data['id']}" class="btn1"><i class="icon icon-ico10"></i>本招投标设置</a></li>
+						<li class="btn-color5"><a href="{$this_module->controller}-post?mid={$data['id']}" target="_blank" class="btn1"><i class="icon icon-ico44"></i>招投标填写</a></li>						
+						<li class="btn-color6"><a href="{$core->U_controller}/tender-mytender?mid={$data['id']}" target="_blank" class="btn1"><i class="icon icon-ico44"></i>我的招投标</a></li>
+						<li class="btn-color7"><a href="{$core->U_controller}/tender-manage?mid={$data['id']}" target="_blank" class="btn1"><i class="icon icon-ico10"></i>我管理的招投标</a></li>
+						<li class="course pull-right"><a href="{$RESOURCE}/attachment/jiaocheng/biaodanshezhi.pdf" target="_blank" style="color:#c00;"><img src="{$RESOURCE}/skin/admin/help_icon.gif" class="helpicon" style="margin-right:5px;">招投标设置教程>></a></li>
+					</ul>
+				</td>
+			</tr>
+		</table>
+		<form id="form" action="$this_router-$ACTION" method="post" >
+		<table class="columntable formtable ">
+			<tr><td>
+			<div id="tabs"  class="tab_box mtop">
+				<div class="head">
+					<span><a>基本设置</a></span>
+					<span><a>版面信息设置</a></span>
+					<span><a>权限与安全控制</a></span>
+					<span><a>通知提醒设置</a></span>
+				</div>
+				<div class="main">
+					<div class="content">											
+						<table border="0" width="100%" cellpadding="0" cellspacing="0" >
+						<tr><td>
+							<table class="columntable formtable hover_table">
+								<tr class="title">
+									<td colspan="2" class="title">
+									{$P8LANG[$action]}招投标模型
+									</td>
+								</tr>
+								
+								<tr>
+									<td class="tdL">本招投标别名</td>
+									<td class="tdR">
+										<!--{if !empty($data['name'])}-->
+											$data[name]
+										<!--{else}-->	
+											<input type="text" class="txt" id="name" name="name" value=""/><span class="point">模型名称添加之后不能修改,必须以字母开头,只能是以字母与数字和下划线的组合 </span>
+										<!--{/if}-->
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标名称</td>
+									<td class="tdR"><input type="text" class="txt" id="alias" name="alias"  value="{if !empty($data['alias'])}{$data['alias']}{/if}" /></td>
+								</tr>
+								<tr>
+									<td class="tdL">启用招投标</td>
+									<td class="tdR">
+										<input type="checkbox" name="enabled" value="1"{if !empty($data['enabled'])} checked{/if} />
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">不启用本招投标时提示语</td>
+									<td class="tdR">
+										<input type="text" name="config[disable_message]" class="txt" size="35" value="{if !empty($config['disable_message'])}{$config['disable_message']}{else}{$P8LANG['this_model_unable']}{/if}"/> 默认为：{$P8LANG['this_model_unable']}
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">发布内容是否默认显示在列表</td>
+									<td class="tdR">
+										<input type="radio" name="config[isdisplay]" value="0" {if empty($config['isdisplay'])}checked{/if}/> 是 <span class="point">处于任意审核流程的内容都可在列表上面显示（除非手工设置了隐藏某内容）</span><br/>
+										<input type="radio"  name="config[isdisplay]" value="1" {if !empty($config['isdisplay'])}checked{/if}/> 否 <span class="point">只有终审的内容和设置了显示的内容才显示在列表上</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">启用发布时须验证码</td>
+									<td class="tdR">
+										<input type="checkbox" name="config[captcha]" value="1"{if !empty($config['captcha'])} checked{/if} />
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">启用发布时须手机验证码</td>
+									<td class="tdR">
+										<input type="checkbox" name="config[mobile_post_captcha]" value="1"{if !empty($config['mobile_post_captcha'])} checked{/if} />
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">启用搜索时须验证码</td>
+									<td class="tdR">
+										<input type="checkbox" name="config[search_captcha]" value="1"{if !empty($config['search_captcha'])} checked{/if} />
+									</td>
+								</tr>
+								
+								<tr>
+									<td class="tdL">启用搜索时须手机验证码</td>
+									<td class="tdR">
+										<input type="checkbox" name="config[mobile_search_captcha]" value="1"{if !empty($config['mobile_search_captcha'])} checked{/if} />
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">搜索/列表显示排序规则</td>
+									<td class="tdR">
+										<select name="config[display_order]">
+											<option value="DESC" {if empty($config['display_order']) || $config['display_order'] == 'DESC'} selected{/if}>降序</option>
+											<option value="ASC" {if !empty($config['display_order']) && $config['display_order'] == 'ASC'} selected{/if}>升序</option>
+										</select>
+										默认降序
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">多个搜索结果时标题字段</td>
+									<td class="tdR">
+										<select name="config[search_result_title]">
+											<option value="">请选择</option>
+											<!--{foreach $this_model['list_table_fields'] $field $field_data}-->
+											<option value="{$field}" {if !empty($config['search_result_title']) || $config['search_result_title'] == $field} selected{/if}>{$field_data[alias]}</option>
+											<!--{/foreach}-->
+										</select>
+										<!--{if $action == 'add'}-->
+											请在创建招投标模型后，新增字段并勾选“列表字段”选项再选择
+										<!--{else}-->
+											必须是列表字段，字段须勾选“列表字段”选项方可选
+										<!--{/if}-->
+										，数据索引名：search_result_title
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">启用分步填写</td>
+									<td class="tdR">
+										<input type="checkbox" name="config[parts_enabled]" value="1"{if !empty($config['parts_enabled'])} checked{/if} />
+										<span class="point">适用于错综复杂的布局，每次只填写一部分字段，分多次完成</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">填报限制</td>
+									<td class="tdR">
+										截止时间：<input type="text" name="config[deadline]" class="txt" value="{if isset($config['deadline'])}$config[deadline]{/if}" autocomplete="off" onclick="rcalendar(this, 'full')" style="font-size:12px;"/> 不填则不限制
+										<br/>
+										填报总数：<input type="text" class="txt" name="config[post_total]" id="post_total" size="5"  value="{if !empty($config['post_total'])}{$config['post_total']}{else}0{/if}" /> 不填或0则不限制		
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标列表显示数据</td>
+									<td class="tdR">
+									<!--{foreach $this_module->CONFIG['status'] $k $v}-->
+										<input type="checkbox" name="verified[]" value="$k" {if isset($data['verified']) && in_array($k,$data['verified'])} checked="checked"{/if} />$v
+										<!--{/foreach}-->
+										<input type="checkbox" name="recommend" value="1"{if $data['recommend']} checked="checked"{/if}/>推荐
+										<span class="help">不选则全部</span>
+									</td>
+								</tr>
+								<!--{if isset($auditFlowSteps)}-->
+								<tr>
+									<td class="tdL">多级审核流程</td>
+									<td class="tdR">
+										<select name="config[auditflow]">
+											<option value="0">--请选择--</option>
+											<!--{foreach $auditFlowSteps $auid $auval}-->
+											<option value="$auid" {if $config[auditflow]==$auid}selected{/if}>$auval</option>
+											<!--{/foreach}-->
+										</select>
+										<a href="{$core.admin_controller}/core/auditflow-list?module=tender" target="_blank" style="color:blue;">审核流配置</a>
+
+										<span class="help">选择了此项后，原来的初审终审失效</span>
+									</td>
+								</tr>
+								<!--{/if}-->
+								<tr>
+									<td class="tdL">本招投标项目状态</td>
+									<td class="tdR">
+									<span id="statuss">
+									<!--{foreach $config[status] $key $val}-->
+										<p>状态{$key} <input type="text" class="pname" name="config[status][$key]" value="$val"> <input type="button" value="删除" class="submit_btn" onclick="remove_status(this)" /></p>
+									<!--{/foreach}-->
+									</span>	
+										<input type="button" class="submit_btn" onclick="add_status()" value="增加"/><span class="point">如："已阅"、"同意"、"已结项"等</span>
+										<script type="text/javascript">
+											function add_status(){
+												var resultcount = $('#statuss p').length;
+												rand = resultcount? resultcount+1 : 1;
+												$('#statuss').append('<p>状态'+rand+' <input type="text" name="config[status]['+rand+']" value=""> <input type="button" class="submit_btn" value="删除" onclick="remove_status(this)" /></p>');
+											}
+											function remove_status(obj){
+												$(obj).parent().remove();
+											}
+										</script>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标布局</td>
+									<td class="tdR">
+									<span id="parts">
+									<!--{foreach $config[parts] $key $val}-->
+										<p>标题 <input type="text" class="pname" name="config[parts][$key][name]" value="$val[name]"> 列 <input type="text" onkeyup="check_row(this)" size="5" name="config[parts][$key][row]" value="$val[row]"/> 排序 <input type="text" size="5" name="config[parts][$key][order]"  value="$val[order]"/> <input type="checkbox" name="config[parts][$key][hide]" id="parts_{$key}" value="1" {if $val['hide']}checked="checked"{/if}/> <label for="parts_{$key}">隐藏</label> <input type="button" value="删除" class="submit_btn" onclick="remove_status(this)" /></p>
+									<!--{/foreach}-->
+									</span>	
+										<input type="button" class="submit_btn" onclick="add_part()" value="增加"/><span class="point">用于错综复杂的布局，如分几部分几列</span>
+										<script type="text/javascript">
+											function add_part(){
+												var rand = Math.random().toString().substr(3,5);
+												$('#parts').append('<p>标题 <input type="text" name="config[parts]['+rand+'][name]" value=""> 列 <input onkeyup="check_row(this)" type="text" size="5" name="config[parts]['+rand+'][row]" value="1"/> 排序 <input type="text" size="5" name="config[parts]['+rand+'][order]"> <input type="checkbox" name="config[parts]['+rand+'][hide]" value="1"/> <label for="parts_'+rand+'">隐藏</label> <input type="button" value="删除" onclick="remove_status(this)" /></p>');
+											}
+										</script>
+									</td>
+								</tr>								
+								<tr>
+									<td class="tdL">发布页模板</td>
+									<td class="tdR">
+										<input type="text" class="txt" name="post_template" id="pt" value="{if !empty($data['post_template'])}$data[post_template]{/if}" /> <input type="button" value="选择" class="submit_btn" onclick="template_dialog_show()" /> <span class="help">默认模板：template/default/core/tender/edit.html，如自定义模板，可把模板上传到文件夹"template/$template_dir"后再选择。</span><br>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">列表页模板</td>
+									<td class="tdR">
+										<input type="text" class="txt" name="list_template" id="lt" value="{if !empty($data['list_template'])}$data[list_template]{/if}" /> <input type="button" value="选择" class="submit_btn" onclick="lt_dialog_show()" /> <span class="help">默认模板：template/default/core/tender/list.html，如自定义模板，可把模板上传到文件夹"template/$template_dir"后再选择。</span><br>
+									</td>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">展示页模板</td>
+									<td class="tdR">
+										<input type="text" class="txt" name="view_template" id="vt" value="{if !empty($data['view_template'])}$data[view_template]{/if}" /> <input type="button" value="选择" class="submit_btn" onclick="vt_dialog_show()" /> <span class="help">默认模板：template/default/core/tender/view.html，如自定义模板，可把模板上传到文件夹"template/$template_dir"后再选择。</span><br>
+									</td>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">打印页模板</td>
+									<td class="tdR">
+										<input type="text" class="txt" name="config[print_template]" id="cpt" value="{if !empty($config['print_template'])}$config[print_template]{/if}" /> <input type="button" class="submit_btn" value="选择" onclick="cpt_dialog_show()" /> <span class="help">默认模板：template/default/core/tender/print.html，如自定义模板，可把模板上传到文件夹"template/$template_dir"后再选择。</span><br>
+									</td>
+									</td>
+								</tr>
+								<tbody id="more_option" style="display:none">
+									<tr>
+										<td class="tdL">发布页移动模板</td>
+										<td class="tdR">
+											<input type="text" class="txt" name="post_template_mobile" id="ptm" value="{if !empty($data['post_template_mobile'])}$data[post_template_mobile]{/if}" /> <input type="button"  class="submit_btn"value="选择" onclick="mtemplate_dialog_show()" /> 一般不用选。如自定义模板，可把模板上传到文件夹"template/mobile/$template_dir"后再选择。
+											</td>
+									</tr>					
+									<tr>
+										<td class="tdL">列表页移动模板</td>
+										<td class="tdR">
+											<input type="text" class="txt" name="list_template_mobile" id="ltm" value="{if !empty($data['list_template_mobile'])}$data[list_template_mobile]{/if}" /> <input type="button" class="submit_btn" value="选择" onclick="mlt_dialog_show()" /> 同上。<br>
+										</td>
+									</tr>
+									<tr>
+										<td class="tdL">展示页移动模板</td>
+										<td class="tdR">
+											<input type="text" class="txt" name="view_template_mobile" id="mvt" value="{if !empty($data['view_template_mobile'])}$data[view_template_mobile]{/if}" /> <input type="button" class="submit_btn" value="选择" onclick="mvt_dialog_show()" /> 同上。<br>
+										</td>
+									</tr>
+									<tr>
+										<td colspan="2" class="text-center"><a href="javascript:;" onclick="javascript:$('#more_option').css('display','none');$('#more_but').show()">收起更多</a></td>
+									</tr>
+								</tbody>
+								<tr id="more_but">
+									<td colspan="2" class="text-center"><a href="javascript:;" onclick="javascript:$('#more_option').css('display','');$(this).parent().parent().hide()">更多选项....</a></td>
+								</tr>
+								<tr>
+									<td class="tdL">独立标签后缀</td>
+									<td class="tdR">
+										<input type="text" name="config[label_postfix]" value="{if !empty($config['label_postfix'])}$config[label_postfix]{/if}" size="15" />
+										<!--{if $action == 'update'}--><input type="button" value="填充后缀" onclick="$(this).prev().val('listmid{$data['id']}')" />
+										<!--{else}-->
+										<input type="button" value="填充后缀" onclick="get_auto_label_postfix(this)" />
+										<input type="hidden" id="auto_label_postfix" name="auto_label_postfix" value="0"/>
+										<!--{/if}-->
+										<span class="help">可以使当前招投标的标签不同于其它招投标,也可以与其中几个相同后缀(如都是list-mid-xx)的共用</span>
+									</td>
+								</tr>								
+							</table>
+							</td></tr>
+						</table>
+					</div>
+					<div class="content">
+						<table border="0" width="100%" cellpadding="0" cellspacing="0" >
+						<tr><td>
+							<table class="columntable formtable hover_table">								
+								<tr class="title">
+									<td colspan="2" class="title">
+										版面信息设置
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" align="center"><span class="tit">招投标公共信息</span></td>
+								</tr>								
+								<tr>
+									<td class="tdL">本招投标LOGO（列表和内容页）</td>
+									<td class="tdR">
+										<input type="text" class="txt" name="config[logo]" id="tender_logo"  value="{$config['logo']}" size="50" />
+										<input type="button" onclick="imgdialog.uploader();" value="{$P8LANG['upload']}" /> <span class="help">调用：{\$this_model['CONFIG']['logo']}</span>
+										<script type="text/javascript">								
+											var imgdialog = new P8_Upload({
+												element: {
+													src: $('#tender_logo'),
+													attribute: 'value'
+												}
+											});								
+										</script>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标logo（发布页）</td>
+									<td class="tdR">
+										<input type="text" class="txt" name="config[post_logo]" id="tender_post_logo"  value="{$config['post_logo']}" size="50" />
+										<input type="button" onclick="post_logo_dialog.uploader();" value="{$P8LANG['upload']}" /> <span class="help">调用：{\$this_model['CONFIG']['post_logo']}</span>
+										<script type="text/javascript">								
+											var post_logo_dialog = new P8_Upload({
+												element: {
+													src: $('#tender_post_logo'),
+													attribute: 'value'
+												}
+											});								
+										</script>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">招投标头部公共背景图</td>
+									<td class="tdR">
+										<input type="text" class="txt" name="config[head_logo]" id="tender_head_logo"  value="{$config['head_logo']}" size="50" />
+										<input type="button" onclick="head_logo_dialog.uploader();" value="{$P8LANG['upload']}" /> <span class="help">调用：{\$this_model['CONFIG']['head_logo']}</span>
+										<script type="text/javascript">								
+											var head_logo_dialog = new P8_Upload({
+												element: {
+													src: $('#tender_head_logo'),
+													attribute: 'value'
+												}
+											});								
+										</script>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">标题尾部公共背景图</td>
+									<td class="tdR">
+										<input type="text" class="txt" name="config[foot_logo]" id="tender_foot_logo"  value="{$config['foot_logo']}" size="50" />
+										<input type="button" onclick="foot_logo_dialog.uploader();" value="{$P8LANG['upload']}" /> <span class="help">调用：{\$this_model['CONFIG']['foot_logo']}</span>
+										<script type="text/javascript">								
+											var foot_logo_dialog = new P8_Upload({
+												element: {
+													src: $('#tender_foot_logo'),
+													attribute: 'value'
+												}
+											});								
+										</script>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">【返回首页】公共调用（右上角）</td>
+									<td class="tdR" id="up">
+										<textarea name="config[result_hint]" cols="90" rows="5">
+											{if isset($config[result_hint])}{$config['result_hint']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['result_hint']}
+										<span class="help">
+											<pre class="prettyprint prettyprinted" style="">
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">style</span> <span class="cm-attribute">type</span>=<span class="cm-string">"text/css"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">.show-top li</span>{<span class="cm-property">float</span>:<span class="cm-keyword">left</span>;}</span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">.show-top a</span>{<span class="cm-property">color</span>:<span class="cm-keyword">#fff</span>;<span class="cm-property">margin-right</span>:<span class="cm-keyword">10px</span>;}</span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">.show-top a.homepage</span>{<span class="cm-property">padding-left</span>:<span class="cm-keyword">20px</span>;<span class="cm-property">padding-right</span>:<span class="cm-keyword">0</span>;<span class="cm-property">background</span>:<span class="cm-keyword">url(/images/icons/home.png) left center no-repeat</span>;}</span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">/style</span>&gt;</span></span>
+												<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>show-top pull-right clearfix<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;&lt;</span><span class="cm-tag">a</span> <span class="cm-attribute">class</span>=<span class="cm-string">"homepage"</span> <span class="cm-attribute">href</span>=<span class="cm-string">"#"</span> <span class="cm-attribute">target</span>=<span class="cm-string">"_blank"</span><span class="cm-tag cm-bracket">&gt;</span>返回首页<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">a</span><span class="cm-tag cm-bracket">&gt;&lt;/</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span class="token punctuation">&lt;</span>/ul<span class="token punctuation">&gt;</span></span>
+											</pre>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">【尾部版权】公共调用</td>
+									<td class="tdR" id="up">
+										<textarea name="config[copyright]" cols="90" rows="5">
+											{if isset($config[copyright])}{$config['copyright']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['copyright']}
+										<span class="help">
+											<pre class="prettyprint prettyprinted" style="">
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">p</span><span class="cm-tag cm-bracket">&gt;</span>大学招生办 版权所有 备110088888号<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">p</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">p</span><span class="cm-tag cm-bracket">&gt;</span>咨询电话：020-88888888888888  电子邮箱： 地址：XXXXXXXXXXXXXXXXXXXX     邮编：0000000111<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">p</span><span class="cm-tag cm-bracket">&gt;</span></span>
+											</pre>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">【用户登陆】公共调用</td>
+									<td class="tdR" id="up">
+										<textarea name="config[userlogin]" cols="90" rows="5">
+											{if isset($config[userlogin])}{$config['userlogin']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['userlogin']}
+										<span class="help">
+											<pre class="prettyprint prettyprinted" style="">
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">style</span> <span class="cm-attribute">type</span>=<span class="cm-string">"text/css"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">.show-top li</span>{<span class="cm-property">float</span>:<span class="cm-keyword">left</span>;}</span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">.show-top a</span>{<span class="cm-property">color</span>:<span class="cm-keyword">#fff</span>;<span class="cm-property">margin-right</span>:<span class="cm-keyword">10px</span>;}</span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">.show-top a.login</span>{<span class="cm-property">padding-left</span>:<span class="cm-keyword">20px</span>;<span class="cm-property">padding-right</span>:<span class="cm-keyword">0</span>;<span class="cm-property">background</span>:<span class="cm-keyword">url(/images/icons/login.png) left center no-repeat</span>;}</span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag">.show-top a.homepage</span>{<span class="cm-property">padding-left</span>:<span class="cm-keyword">20px</span>;<span class="cm-property">padding-right</span>:<span class="cm-keyword">0</span>;<span class="cm-property">background</span>:<span class="cm-keyword">url(/images/icons/home.png) left center no-repeat</span>;}</span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">/style</span>&gt;</span></span>
+												<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>ul</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>show-top pull-right clearfix<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;&lt;</span><span class="cm-tag">a</span> <span class="cm-attribute">class</span>=<span class="cm-string">"login"</span> <span class="cm-attribute">href</span>=<span class="cm-string">"#"</span> <span class="cm-attribute">target</span>=<span class="cm-string">"_blank"</span><span class="cm-tag cm-bracket">&gt;</span>统一登录<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">a</span><span class="cm-tag cm-bracket">&gt;&lt;/</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" class="cm-tab-wrap-hack" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;&lt;</span><span class="cm-tag">a</span> <span class="cm-attribute">class</span>=<span class="cm-string">"homepage"</span> <span class="cm-attribute">href</span>=<span class="cm-string">"#"</span> <span class="cm-attribute">target</span>=<span class="cm-string">"_blank"</span><span class="cm-tag cm-bracket">&gt;</span>返回首页<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">a</span><span class="cm-tag cm-bracket">&gt;&lt;/</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tab" role="presentation" cm-text="	">  </span></span>
+												<span class="token punctuation">&lt;</span>ul<span class="token punctuation">&gt;</span></span>
+											</pre>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" align="center"><span class="tit">招投标列表与内容页</span></td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标标题（列表页和内容页）</td>
+									<td class="tdR" id="up">
+										<input type="text" class="txt" id="modelname" name="config[modelname]" value="{$config['modelname']}"/><span class="point">调用示例：{\$this_model['CONFIG']['modelname']}</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标简介<br>(支持简单HTML)</td>
+									<td class="tdR" colspan="2">
+										<textarea name="config[summary]" cols="90" rows="5">
+											{if isset($config[summary])}{$config['summary']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['summary']}
+										<span class="help">
+											<pre class="prettyprint prettyprinted" style="">
+												<span role="presentation" style="padding-right: 0.1px;">请您输入【姓名】、【考生号】、【手机号码】进行查询请您输入【姓名】、【考生号】、【手机号码】进行查询1111请您输入【姓名】、【考生号】、【手机号码】进行查询1111请您输入【姓名】<br>、【考生号】、【手机号码】进行查询1111请您输入【姓名】、【考生号】、【手机号码】进行查询11111111：</span>
+											</pre>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标导航（列表和内容页）</td>
+									<td class="tdR" id="up">
+										<textarea name="config[list_navi]" cols="90" rows="5">
+											{if isset($config[list_navi])}{$config['list_navi']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['list_navi']}
+										<span class="help">
+											<pre class="prettyprint prettyprinted" style="">
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">ul</span> <span class="cm-attribute">class</span>=<span class="cm-string">"nav navbar-nav navlist navbar-right"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">li</span> <span class="cm-attribute">class</span>=<span class="cm-string">"dropdown"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">a</span> <span class="cm-attribute">class</span>=<span class="cm-string">"dropdown-toggle home"</span> <span class="cm-attribute">data-hover</span>=<span class="cm-string">"dropdown"</span> <span class="cm-attribute">href</span>=<span class="cm-string">"#"</span> <span class="cm-attribute">aria-expanded</span>=<span class="cm-string">"false"</span> <span class="cm-attribute">role</span>=<span class="cm-string">"button"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">h3</span><span class="cm-tag cm-bracket">&gt;</span>首  页<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">h3</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">span</span><span class="cm-tag cm-bracket">&gt;</span>HOME<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">span</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" class="cm-tab-wrap-hack" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">a</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">li</span> <span class="cm-attribute">class</span>=<span class="cm-string">"dropdown"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">a</span> <span class="cm-attribute">class</span>=<span class="cm-string">"dropdown-toggle"</span> <span class="cm-attribute">data-hover</span>=<span class="cm-string">"dropdown"</span> <span class="cm-attribute">href</span>=<span class="cm-string">"#"</span> <span class="cm-attribute">aria-expanded</span>=<span class="cm-string">"false"</span> <span class="cm-attribute">role</span>=<span class="cm-string">"button"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">h3</span><span class="cm-tag cm-bracket">&gt;</span>报名申请<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">h3</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">span</span><span class="cm-tag cm-bracket">&gt;</span>application<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">span</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" class="cm-tab-wrap-hack" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">a</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">li</span> <span class="cm-attribute">class</span>=<span class="cm-string">"dropdown"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">a</span> <span class="cm-attribute">class</span>=<span class="cm-string">"dropdown-toggle"</span> <span class="cm-attribute">data-toggle</span>=<span class="cm-string">"dropdown"</span> <span class="cm-attribute">data-hover</span>=<span class="cm-string">"dropdown"</span> <span class="cm-attribute">href</span>=<span class="cm-string">"#"</span> <span class="cm-attribute">aria-expanded</span>=<span class="cm-string">"false"</span> <span class="cm-attribute">role</span>=<span class="cm-string">"button"</span> <span class="cm-attribute">target</span>=<span class="cm-string">""</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">h3</span><span class="cm-tag cm-bracket">&gt;</span>发送给管理员<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">h3</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">span</span><span class="cm-tag cm-bracket">&gt;</span>Send management<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">span</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">a</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" class="cm-tab-wrap-hack" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">ul</span> <span class="cm-attribute">class</span>=<span class="cm-string">"dropdown-menu"</span> <span class="cm-attribute">role</span>=<span class="cm-string">"menu"</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tab" role="presentation" cm-text="	">  </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">li</span> <span class="cm-attribute">class</span>=<span class="cm-string">"menu1"</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">a</span> <span class="cm-attribute">href</span>=<span class="cm-string">"#"</span> <span class="cm-attribute">target</span>=<span class="cm-string">""</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">h3</span><span class="cm-tag cm-bracket">&gt;</span>发件箱<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">h3</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;</span><span class="cm-tag">span</span><span class="cm-tag cm-bracket">&gt;</span>Outbox<span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">span</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">a</span><span class="cm-tag cm-bracket">&gt;</span></span>
+												<span role="presentation" class="cm-tab-wrap-hack" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tab" role="presentation" cm-text="	">   </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span></span>
+												<span role="presentation" class="cm-tab-wrap-hack" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">ul</span><span class="cm-tag cm-bracket">&gt;</span><span class="cm-tab" role="presentation" cm-text="	">   </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span></span>
+												<span role="presentation" class="cm-tab-wrap-hack" style="padding-right: 0.1px;"><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">li</span><span class="cm-tag cm-bracket">&gt;</span> <span class="cm-tab" role="presentation" cm-text="	">  </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span><span class="cm-tab" role="presentation" cm-text="	">    </span></span>
+												<span role="presentation" style="padding-right: 0.1px;"><span class="cm-tag cm-bracket">&lt;/</span><span class="cm-tag">ul</span><span class="cm-tag cm-bracket">&gt;</span></span>
+											</pre>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标页面备注（列表和内容页）</td>
+									<td class="tdR" id="up">
+										<textarea name="config[hint]" cols="90" rows="5">
+											{if isset($config[hint])}{$config['hint']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['hint']}
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标页面备注2（列表和内容页）</td>
+									<td class="tdR" id="up">
+										<textarea name="config[remarks]" cols="90" rows="5">
+											{if isset($config[remarks])}{$config['remarks']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['remarks']}
+									</td>
+								</tr>
+								<tr>
+									<td colspan="2" align="center"><span class="tit">招投标发布页</span></td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标标题（发布页）</td>
+									<td class="tdR" id="up">
+										<input type="text" class="txt" name="config[post_title]" value="{$config['post_title']}"/>
+										调用示例：{\$this_model['CONFIG']['post_title']}
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标导航（发布页）</td>
+									<td class="tdR" id="up">
+										<textarea name="config[post_navi]" cols="90" rows="5">
+											{if isset($config[post_navi])}{$config['post_navi']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['post_navi']}
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标概要说明（发布页）</td>
+									<td class="tdR" id="up">
+										<textarea name="config[post_summary]" cols="90" rows="5">
+											{if isset($config[post_summary])}{$config['post_summary']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['post_summary']}
+										<span class="help">
+											<pre class="prettyprint prettyprinted" style="">
+												<span role="presentation" style="padding-right: 0.1px;">请您输入【姓名】、【考生号】、【手机号码】进行查询请您输入【姓名】、【考生号】、【手机号码】进行查询1111请您输入【姓名】、【考生号】、【手机号码】进行查询1111请您输入【姓名】<br>、【考生号】、【手机号码】进行查询1111请您输入【姓名】、【考生号】、【手机号码】进行查询22222：</span>
+											</pre>
+										</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标备注（发布页）</td>
+									<td class="tdR" id="up">
+										<textarea name="config[post_hint]" cols="90" rows="5">
+											{if isset($config[post_hint])}{$config['post_hint']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['post_hint']}
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">本招投标备注2（发布页）</td>
+									<td class="tdR" id="up">
+										<textarea name="config[post_remarks]" cols="90" rows="5">
+											{if isset($config[post_remarks])}{$config['post_remarks']}{/if}
+										</textarea> 
+										调用示例：{\$this_model['CONFIG']['post_remarks']}
+									</td>
+								</tr>				
+							</table>
+							</td></tr>
+						</table>
+					</div>
+					<div class="content">
+						<table border="0" width="100%" cellpadding="0" cellspacing="0" >
+						<tr><td>
+							<table class="columntable formtable hover_table">								
+								<tr class="title">
+									<td colspan="2" class="title">
+										权限与安全控制
+									</td>
+								</tr>								
+								<tr>
+									<td class="tdL">启用查看检验</td>
+									<td class="tdR">
+										<input type="checkbox" name="config[viewhash]" value="1"{if !empty($config['viewhash'])} checked{/if} />
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">是否启用密码查看</td>
+									<td class="tdR">
+										<input type="radio" name="config[need_password]" value="0" {if empty($config['need_password'])}checked{/if}/> 否 <input type="radio"  name="config[need_password]" value="1" {if !empty($config['need_password'])}checked{/if}/> 是
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">查看密码</td>
+									<td class="tdR"><input type="text" class="txt" name="config[model_password]"  value="{$config['model_password']}" size="30" /> <span class="help">设置启用密码查看的密码，不填写则设置无效</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">启用登录发布</td>
+									<td class="tdR">
+										<input type="checkbox" name="config[needlogin]" value="1"{if !empty($config['needlogin'])} checked{/if} />
+										登录后才允许发布
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">启用发布同IP防护</td>
+									<td class="tdR"><input type="text" class="txt" name="config[expire]" id="expire" size="5"  value="{if !empty($config['expire'])}{$config['expire']}{else}0{/if}" />秒
+									<input type="button" value="30秒" onclick="$('#expire').val(30)" />
+									<input type="button" value="1分钟" onclick="$('#expire').val(60)" />
+									<input type="button" value="5分钟" onclick="$('#expire').val(500)" />
+									<input type="button" value="10分钟" onclick="$('#expire').val(600)" /> 
+									<span class="point">同IP下两次发布间隔，0为不限制</span>
+									</td>
+								</tr>
+								<!--{if $action == 'update'}-->
+								<tr>
+									<td class="tdL">招投标权限设置</td>
+									<td class="tdR">
+									<!--{foreach $core->roles $id $v}-->
+										<a href="{$this_router}-set_acl?role_id=$v[id]"  target="_blank">$v[name]</a>
+									<!--{/foreach}-->
+									</td>
+								</tr>								
+								<!--{/if}-->
+								<tr>
+									<td class="tdL">招投标权限设置2</td>
+									<td class="tdR">
+										<input type="checkbox" name="config[viewself]" value="1" {if !empty($config['viewself'])}checked{/if}>至少能查看自己的数据<span class="help">在列表或内容查看被禁之情况下乃能查看到自己之内容</span>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">是否启用IP允许</td>
+									<td class="tdR">
+										<input type="radio" name="config[allow_ip][enabled]" value="0" {if empty($config['allow_ip']['enabled'])} checked{/if}/>不开启
+										<input type="radio" name="config[allow_ip][enabled]" value="2" {if !empty($config['allow_ip']['enabled']) && $config['allow_ip']['enabled']==2} checked{/if}/>启用仅限局域网访问
+										<input type="radio" name="config[allow_ip][enabled]" value="1" {if !empty($config['allow_ip']['enabled']) && $config['allow_ip']['enabled']==1} checked{/if}/>开启
+										（选开启时下面的IP设置才有效，IP检测顺序：全站IP->招投标模型IP）
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">允许IP</td>
+									<td class="tdR">
+										<textarea cols="30" rows="8" name="config[allow_ip][collectip]" style="float:left;width:208px;margin-right:10px;">
+										<!-- {if !empty($config['allow_ip']['collectip'])} -->
+											<!-- {foreach $config['allow_ip']['collectip'] $key $value} -->
+												{$value}
+											<!-- {/foreach} -->
+											<!-- {/if} -->
+										</textarea><div style="float;margin-left:10px;">访问的客户端必须是固定IP或者在固定的IP段内<br/>
+										否则很有可能导致客户端无法正常访问<br/>
+										书写格式每行一个IP，示例如下：<br/>
+										12.*.*.*<br/>
+										12.34.56.79</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">允许IP段</td>
+									<td class="tdR">
+												 <textarea cols="40" rows="8" name="config[allow_ip][area_ip]" style="float:left;width:208px;margin-right:10px;">
+												<!-- {if !empty($config['allow_ip']['area_ip'])} -->
+													<!-- {foreach $config['allow_ip']['area_ip'] $key $value} -->
+														$value
+													<!-- {/foreach} -->
+												<!-- {/if} -->
+												</textarea>
+										<div style="float;margin-left:10px;">
+											每个段位一行，书写格式如下：<br>
+											192.168.0.2-192.168.0.255<br>
+											192.168.1.0-192.168.254.255<br>
+											...</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="tdL">允许IP段内例外IP</td>
+									<td class="tdR">
+										<textarea cols="30" rows="6" name="config[allow_ip][ruleoutip]" style="float:left;width:208px;margin-right:10px;">
+										<!-- {if !empty($config['allow_ip']['ruleoutip'])} -->
+											<!-- {foreach $config['allow_ip']['ruleoutip'] $key $value} -->
+												{$value}
+											<!-- {/foreach} -->
+											<!-- {/if} -->
+										</textarea>
+										<div style="float;margin-left:10px;">在允许IP段内，可以限制例外的IP地址<br/>
+											书写格式每行一个IP，示例如下：<br/>
+											12.*.*.*<br/>
+											12.34.56.79</div>
+									</td>
+								</tr>
+							</table>							
+						</td></tr>
+						</table>
+					</div>
+					<div class="content">
+						<table border="0" width="100%" cellpadding="0" cellspacing="0" >
+						<tr><td>
+							<table class="columntable formtable hover_table">								
+								<tr class="title">
+									<td colspan="2" class="title">
+										通知提醒设置
+									</td>
+								</tr>								
+								<!--{foreach $actions $act $action_name}-->
+								<tr>
+									<td class="tdL"><b style="color:blue">{$action_name}</b>时通知提醒</td>
+									<td class="tdR">
+										<table class="columntable formtable">
+											<tr>
+												<td class="tdL">启用<b style="color:blue">{$action_name}</b>通知提醒</td>
+												<td class="tdR">
+													<input type="checkbox" name="config[{$act}][reminder_enabled]" value="1"{if !empty($config[$act]['reminder_enabled'])} checked{/if}/> 启用
+												</td>
+											</tr>
+											<tr>
+												<td class="tdL">类型</td>
+												<td class="tdR">
+													<input type="checkbox" name="config[{$act}][type][]" value="email"{if isset($config[$act]['type']) && in_array('email',$config[$act]['type'])} checked{/if}/>电子邮件 <a href="{$core.admin_controller}/core/mail-config" target="_blank">[配置系统邮件]</a>
+													<input type="checkbox" name="config[{$act}][type][]" value="sms"{if isset($config[$act]['type']) && in_array('sms',$config[$act]['type'])} checked{/if}/>手机短信 <a href="{$core.admin_controller}/core/sms-list_interface" target="_blank">[配置短信]</a>
+													<input type="checkbox" name="config[{$act}][type][]" value="msg"{if isset($config[$act]['type']) && in_array('msg',$config[$act]['type'])} checked{/if}/>站内短消息
+												</td>
+											</tr>
+											<tr>
+												<td class="tdL">提醒人员</td>
+												<td class="tdR">
+													<input type="checkbox" name="config[{$act}][poster]" value="1"{if isset($config[$act]['poster']) && $config[$act]['poster']} checked{/if}/>发起人<br/>
+													<ul id="reminder_{$act}">
+														<!--{foreach $config[$act]['reminder'] $uid}-->
+														<li>
+															{$users_info[$uid]['username']}{if $users_info[$uid]['name']} | {$users_info[$uid]['name']}{/if}
+															<input type="hidden" name="config[{$act}][reminder][]" value="{$uid}"/>
+															<span onclick="delete_manager(this)" class="delete_link">[X]</span>
+														</li>
+														<!--{/foreach}-->
+													</ul>
+													<button type="button" onclick="show_dialog('reminder','{$act}')">选择接收人</button>	
+												</td>
+											</tr>					
+											<tr>
+												<td class="tdL">提醒电子邮件</td>
+												<td class="tdR">
+													<input type="text" class="txt" size="50" name="config[{$act}][email]" value="{if isset($config[$act]['email'])}{$config[$act]['email']}{else}xxx@163.com{/if}" /> 多个邮件用英文逗号隔开
+												</td>
+											</tr>
+											<tr>
+												<td class="tdL">提醒标题</td>
+												<td class="tdR">
+													<input type="text" class="txt" id="remindertitle_{$act}" size="50" name="config[{$act}][title]" value="{if isset($config[$act]['title'])}{$config[$act]['title']}{else}你收到一个{$action_name}模型提醒：编号({code}){/if}" /><br>
+														<button type="button" value="{title}" onclick="addValue(this,'{$act}')" aria-invalid="fail">项目标题</button>  
+														<button type="button" value="{timestamp}" onclick="addValue(this,'{$act}')" aria-invalid="fail">处理时间</button>  
+														<button type="button" value="编号({code})" onclick="addValue(this,'{$act}')" aria-invalid="fail">项目编号</button>  
+														<button type="button" value="状态({status})" onclick="addValue(this,'{$act}')" aria-invalid="fail">项目状态</button>
+												</td>
+											</tr>
+										</table>
+									</td>
+								</tr>								
+								<!--{/foreach}-->
+							</table>							
+						</td></tr>
+						</table>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td align="center">
+					<!--{if !empty($config['import_logs'])}-->					
+					<!--{foreach $config['import_logs'] $key $logs}-->							
+					<input type="hidden" name="config[import_logs][$key][logs]" value="{$logs[logs]}" />
+					<input type="hidden" name="config[import_logs][$key][import_record][0]" value="{$logs[import_record][0]}" />
+					<input type="hidden" name="config[import_logs][$key][import_record][1]" value="{$logs[import_record][1]}" />
+					<!--{/foreach}-->						
+					<!--{/if}-->
+					<input type="hidden" name = "action" value="$action"/>
+					<input type="hidden" name = "id" value="{if !empty($data['id'])}$data[id]{/if}"/>
+					<input type="submit" class="submit_btn" value="{$P8LANG['submit']}"/>
+				</td>
+			</tr>							
+		</table>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+MoveTabs("tabs",0);
+$('.headerbtn_list li').removeClass();
+$(".headerbtn_list li:first-child").addClass("active");
+var cutten_act = null;
+var manage = null;
+function delete_manager(obj){
+	$(obj).parent().remove();	
+}
+var cutten_item = null;
+function member_single_select_callback(checked, json){
+	var u_name = '';
+	$('#'+cutten_item).find("input[value="+json.id+"]").parent().remove();
+	if(checked){
+		if (json.name && json.name != 'undefined') u_name = json.name;
+		$('#'+cutten_item).append('<li>'+json.username + (u_name ? ' | '+u_name :'')+'<input type="hidden" name="'+manage+'['+cutten_act+'][]" value="'+json.id+'"/><span onclick="delete_manager(this)" class="delete_link">[X]</span></li>');
+	}
+}
+
+function show_dialog(item,act){
+	manage = item;
+	cutten_act = act;
+	cutten_item = item+'_'+act;
+	var reminder_dialog = new P8_Dialog({
+		title_text:'选择接收人',
+		width: 700,
+		height: 500,
+		button: true
+	});
+	reminder_dialog.content.append($('<iframe width="100%" height="380" frameborder="0" border="0" marginwidth="0" marginheight="0"></iframe>'));
+	reminder_dialog.show();	
+	var ifr = reminder_dialog.content.find('iframe');
+	var check_uids = {};
+	$('#'+cutten_item).find('input').each( function(){ check_uids[$(this).val()]=$(this).val(); } );
+	ifr.attr('src', '{$core.U_controller}/core/member-selectuser?'+ajax_parameters({'checked_ids': check_uids}));
+}
+function addValue(button,act) {	
+	var currentValue = $('#remindertitle_'+act).val();  
+	$('#remindertitle_'+act).val(currentValue + button.value); 
+} 
+function disable_box(){
+	var stype = $("#disable_box").css('display');
+	if(stype == 'none' )
+		$("#disable_box").show();
+	else
+		$("#disable_box").hide();
+}
+function showmorebox(){
+	var stype = $("#morechose").css('display');
+	if(stype == 'none' ){
+		$("#morechose:hidden").show();
+		$("#more_logo").html('&#8743; 更多版面信息调整 &#8743;');
+	}else{
+		$("#morechose").hide();
+		$("#more_logo").html('&#8744; 更多版面信息调整 &#8744;');
+	}
+}
+$.validator.addMethod('valid_model', function(value, element){
+	return /^[a-zA-Z]/.test(value) && !/[^0-9a-zA-Z_]/.test(value);
+});
+
+var template_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		$('#pt').val(template_selector.value);
+	}
+});
+var template_selector = new Template_Selector({
+	base_dir: "{$template_dir}",
+	selected: $('#pt').val(),
+	dialog: template_dialog,
+	template_dir : 'template/',
+});
+var cpt_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		$('#cpt').val(cpt_selector.value);
+	}
+});
+var cpt_selector = new Template_Selector({
+	base_dir: "{$template_dir}",
+	selected: $('#cpt').val(),
+	dialog: cpt_dialog,
+	template_dir : 'template/',
+});
+var vt_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		$('#vt').val(vt_selector.value);
+	}
+});
+var vt_selector = new Template_Selector({
+	base_dir: "{$template_dir}",
+	selected: $('#vt').val(),
+	dialog: vt_dialog,
+	template_dir : 'template/',
+});
+
+var lt_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		$('#lt').val(lt_selector.value);
+	}
+});
+var lt_selector = new Template_Selector({
+	base_dir: "{$template_dir}",
+	selected: $('#lt').val(),
+	dialog: lt_dialog,
+	template_dir : 'template/',
+});
+
+
+var mtemplate_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		$('#ptm').val(mtemplate_selector.value);
+	}
+});
+var mtemplate_selector = new Template_Selector({
+	base_dir: "{$template_dir_mobile}",
+	selected: $('#ptm').val(),
+	dialog: mtemplate_dialog,
+	template_dir : 'template/',
+});
+
+var mvt_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		$('#mvt').val(mvt_selector.value);
+	}
+});
+var mvt_selector = new Template_Selector({
+	base_dir: "{$template_dir_mobile}",
+	selected: $('#mvt').val(),
+	dialog: mvt_dialog,
+	template_dir : 'template/',
+});
+
+var mlt_dialog = new P8_Dialog({
+	title_text: '选择模板',
+	button: true,
+	width: 700,
+	height: 500,
+	ok: function(){
+		$('#ltm').val(mlt_selector.value);
+	}
+});
+var mlt_selector = new Template_Selector({
+	base_dir: "{$template_dir_mobile}",
+	selected: $('#ltm').val(),
+	dialog: mlt_dialog,
+	template_dir : 'template/',
+});
+
+$('#form').validate({
+	
+	rules: {
+		<!--{if $action == 'add'}-->
+		name: {
+			required: true,
+			maxlength: 30,
+			valid_model: true,
+			remote: function(){
+				
+				return {
+					url: '$this_router-check_name',
+					cache: false,
+					type: 'post',
+					beforeSend: function(){
+						ajaxing({});
+					},
+					complete: function(){
+						ajaxing({action: 'hide'});
+					}
+				}
+			}
+			
+		},
+		<!--{/if}-->
+		alias: {
+			required: true
+		}
+	},
+	
+	messages: {
+		<!--{if $action == 'add'}-->
+		name: {
+			required: "{$P8LANG['tender_model_name_can_not_be_empty']}",
+			maxlength: "{$P8LANG['tender_model_name_oversize']}",
+			valid_model: "{$P8LANG['tender_model_name_invalid']}",
+			remote: "{$P8LANG['tender_model_name_duplicate']}"
+		},
+		<!--{/if}-->
+		alias: {
+			required: "{$P8LANG['tender_model_alias_required']}"
+		}
+	},
+	submitHandler:function(form){
+		$('#statuss').find('.pname').each( function(){ if($(this).val().length<1){ $(this).parent().remove(); }} );
+		$('#parts').find('.pname').each( function(){ if($(this).val().length<1){ $(this).parent().remove(); }} );
+		form.submit();
+	},
+	onkeyup: false
+});
+function check_row(obj){
+	val = $(obj).val();
+	if(val.length>0 && /[^1-9]/.test(val) ){p8_window.alert('must 1-9');$(obj).attr('value','').focus();}
+}
+/*发布页模板*/
+function template_dialog_show(){
+	ajaxing({});
+	template_dialog.show();
+	setTimeout("template_selector.init()",50);
+	setTimeout("ajaxing({action: 'hide'})",100);	
+}
+function lt_dialog_show(){
+	ajaxing({});
+	lt_dialog.show();
+	setTimeout("lt_selector.init()",50);
+	setTimeout("ajaxing({action: 'hide'})",100);	
+}
+function vt_dialog_show(){
+	ajaxing({});
+	vt_dialog.show();
+	setTimeout("vt_selector.init()",50);
+	setTimeout("ajaxing({action: 'hide'})",100);	
+}
+function cpt_dialog_show(){
+	ajaxing({});
+	cpt_dialog.show();
+	setTimeout("cpt_selector.init()",50);
+	setTimeout("ajaxing({action: 'hide'})",100);	
+}
+function mtemplate_dialog_show(){
+	ajaxing({});
+	mtemplate_dialog.show();
+	setTimeout("mtemplate_selector.init()",50);
+	setTimeout("ajaxing({action: 'hide'})",100);	
+}
+function mlt_dialog_show(){
+	ajaxing({});
+	mlt_dialog.show();
+	setTimeout("mlt_selector.init()",50);
+	setTimeout("ajaxing({action: 'hide'})",100);	
+}
+function mvt_dialog_show(){
+	ajaxing({});
+	mvt_dialog.show();
+	setTimeout("mvt_selector.init()",50);
+	setTimeout("ajaxing({action: 'hide'})",100);	
+}
+function get_auto_label_postfix(obj){
+	$.get('{$this_router}-auto_label_postfix',function(result){ $(obj).prev().val('listmid'+result); $(obj).next().val(1) });
+}
+</script>
+<!--{template $core footer admin}-->
+<!--{/php168}-->
