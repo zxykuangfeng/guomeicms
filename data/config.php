@@ -5,7 +5,7 @@ return array (
     'host' => 'localhost',
     'port' => '3306',
     'user' => 'root',
-    'password' => 'ycyy!@#2021.07',
+    'password' => 'root',
     'db' => 'ycyy',
     'pconnect' => 0,
   ),

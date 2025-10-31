@@ -478,14 +478,16 @@ function _set_config(
 * @return boolean
 **/
 function DB_connect($type = 'master'){
-	$mysql_connect_type = isset($this->CONFIG['mysql_connect_type'])?$this->CONFIG['mysql_connect_type']: 'mysql';
+	 $this->CONFIG['mysql_connect_type'] = 'pgsql';
+	$mysql_connect_type = isset($this->CONFIG['mysql_connect_type'])?$this->CONFIG['mysql_connect_type']: 'pgsql';
 
-	// var_dump($mysql_connect_type);
+	// var_dump($this->CONFIG['mysql_connect_type']);
 	// die;
 	$mysql_connect_charset = isset($this->CONFIG['mysql_charset'])?$this->CONFIG['mysql_charset']: 'utf8';
 	$mysql_connect_port = isset($this->CONFIG['mysql_connect_port'])?$this->CONFIG['mysql_connect_port']: 3306;
 	require_once PHP168_PATH .'inc/'. $mysql_connect_type .'.class.php';
-	
+	// var_dump(PHP168_PATH .'inc/'. $mysql_connect_type .'.class.php');
+	// die;
 	//连接读数据库
 	if($type == 'slave'){
 		//初始化过就退出

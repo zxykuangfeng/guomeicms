@@ -1092,8 +1092,9 @@ function init_session(){
 		
 		//限制同一IP一分钟以内的游客不同的进程的session
 		//消除超过30分钟的游客进程
-		delete_session('uid = \'0\' AND lastview < '. (P8_TIME - 1800));
 		
+		delete_session('uid = \'0\' AND lastview < '. (P8_TIME - 1800));
+			
 		$P8SESSION = array(
 			'id' => SESSION_ID,
 			'uid' => $UID,
@@ -1104,6 +1105,8 @@ function init_session(){
 			'ip' => P8_IP,
 			'lastview' => P8_TIME,
 		);
+
+		// var_dump($core->DB_master->insert($core->TABLE_ .'session', $P8SESSION));
 		if($core->DB_master->insert($core->TABLE_ .'session', $P8SESSION)){
 			delete_session('lastview < \''. (P8_TIME - 86400) .'\'');
 			delete_session('uid=0 AND lastview < \''. (P8_TIME - 86400) .'\'');
@@ -1225,12 +1228,9 @@ function set_session(){
 **/
 function delete_session($query){
 	global $core;
-	
 	$query = $core->DB_master->query('SELECT id FROM '. $core->TABLE_ .'session'. ($query ? ' WHERE '. $query : ''));
-
-
-	var_dump($query);
-	die;
+	// var_dump($query);
+	// die;
 	$ids = $comma = '';
 	
 	while($arr = $core->DB_master->fetch_array($query)){
@@ -3436,9 +3436,7 @@ define('TEMPLATE_PATH', PHP168_PATH .(empty($core->CONFIG['template_dir']) ? 'te
 $RESOURCE = $core->RESOURCE;
 $RESOURCE_VICE = $core->RESOURCE_VICE;
 $STATIC_URL = $core->STATIC_URL;
-
 $ISCLI || require_once PHP168_PATH. 'inc/laires.php';
-
 //构造头部
 header('Content-type: text/html; charset='. (empty($core->CONFIG['page_charset']) ? 'utf-8' : $core->CONFIG['page_charset']));
 
@@ -3461,7 +3459,6 @@ $onlineip2 = isset($onlineipmatches2[0]) ? $onlineipmatches2[0] : 'unknown';
 //IP
 $onlineip = isset($core->CONFIG['wlan_enable']) && $core->CONFIG['wlan_enable'] ? $onlineip2 : $onlineip;
 define('P8_IP', $onlineip);
-
 //加载全局语言包
 load_language($core, 'global');
 
@@ -3484,7 +3481,6 @@ $SKIN = '';
 $timestamp = P8_TIME;
 
 $FROMURL = HTTP_REFERER;
-
 //向上两步,适用跳转到进入表单提交前的前一个页面
 $HTTP_REFERER = isset($_REQUEST['_referer']) ? xss_url($_REQUEST['_referer']) : HTTP_REFERER;
 
@@ -3494,10 +3490,8 @@ if(!USER_AGENT || SE_ROBOT || isset($_REQUEST['_no_session'])){
 	
 }else{
 	get_session();
-	
 	//会员验证
 	member_verify();
-	
 	//脚本退出时更新SESSION
 	register_shutdown_function('set_session');
 	
@@ -3518,12 +3512,10 @@ if(!USER_AGENT || SE_ROBOT || isset($_REQUEST['_no_session'])){
 		set_cookie('LOGIN', 0, -1);
 	}
 }
-
 $HASH = isset($_P8SESSION['_hash']) ? $_P8SESSION['_hash'] : '';
 
 //是否是标签编辑状态
 define('P8_EDIT_LABEL', empty($_GET['edit_label']) || !$IS_ADMIN ? false : true);
-
 //移动
 defined('ISMOBILE') or define('ISMOBILE', init_mobile());
 
@@ -3531,5 +3523,4 @@ $HTML_DATA = array();
 $ISBACK = is_front();
 isset($_SERVER['_REQUEST_URI']) || $_SERVER['_REQUEST_URI'] = REQUEST_URI;
 $p8_routers = $core->get_router();
-
 !empty($core->CONFIG['safe_enable'] || in_array($p8_routers[1],array('special-view_to_html','label-preview','label-add','label-update'))) or require_once PHP168_PATH .'inc/safepost.php';
