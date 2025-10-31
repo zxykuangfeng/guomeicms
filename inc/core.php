@@ -309,12 +309,16 @@ function list_templates($refresh = false){
 **/
 function get_config($system, $module){
 	$query = $this->DB_master->query("SELECT `type`, k, v FROM {$this->TABLE_}config WHERE `system` = '$system' AND `module` = '$module'");
+
+	var_dump(222222);
+	die;
 	$config = array();
 	while($v = $this->DB_master->fetch_array($query)){
 		$config[$v['k']] = $v['type'] == 'serialize' ? mb_unserialize($v['v']) : $v['v'];
 	}
 	return $config;
 }
+
 
 /**
 * 写配置
