@@ -384,25 +384,62 @@ class P8_pgsql {
 
     function insert($table, $datas, $option = []){
         if(empty($datas)) return false;
-        $table = $this->normalize_identifier($table);
+          $table = $this->normalize_identifier($table);
+        $option = array_merge([
+            'multiple' => [],
+            'replace' => false,
+            'unique' => [],
+            'return_id' => false,
+        ], $option);
+
+        $rows = [];
 
         if(!empty($option['multiple'])){
-            $fields = array_map(function($f){ return '"'.$f.'"'; }, $option['multiple']);
-            $values_sql = [];
+          $fields = $option['multiple'];
             foreach($datas as $row){
-                $vals = [];
-                foreach($row as $v){ $vals[] = "'".$this->escape_string($v)."'"; }
-                $values_sql[] = '('.implode(',', $vals).')';
+                $rows[] = $row;
             }
             $sql = "INSERT INTO {$table} (".implode(',', $fields).") VALUES ".implode(',', $values_sql);
         }else{
-            $fields = []; $vals = [];
-            foreach($datas as $f=>$v){ $fields[] = '"'.$f.'"'; $vals[] = "'".$this->escape_string($v)."'"; }
-            $sql = "INSERT INTO {$table} (".implode(',', $fields).") VALUES (".implode(',', $vals).")";
+               $fields = array_keys($datas);
+            $rows[] = array_values($datas);
+        }
+
+        $quotedFields = array_map(function($f){
+            return '"'.str_replace('"', '""', $f).'"';
+        }, $fields);
+
+        $values_sql = [];
+        foreach($rows as $row){
+            $vals = [];
+            foreach($row as $v){
+                if($v === null){
+                    $vals[] = 'NULL';
+                }else{
+                    $vals[] = "'".$this->escape_string($v)."'";
+                }
+            }
+            $values_sql[] = '('.implode(',', $vals).')';
+        }
+
+        $sql = "INSERT INTO {$table} (".implode(',', $quotedFields).") VALUES ".implode(',', $values_sql);
+
+        if($option['replace']){
+            if(!empty($option['unique'])){
+                $conflict = array_map(function($f){ return '"'.str_replace('"', '""', $f).'"'; }, $option['unique']);
+                $updates = [];
+                foreach($fields as $f){
+                    $quoted = '"'.str_replace('"', '""', $f).'"';
+                    $updates[] = $quoted.'=EXCLUDED.'.$quoted;
+                }
+                $sql .= ' ON CONFLICT ('.implode(',', $conflict).') DO UPDATE SET '.implode(',', $updates);
+            }else{
+                $sql .= ' ON CONFLICT DO NOTHING';
+            }
         }
 
         $st = $this->query($sql);
-        if(!empty($option['return_id'])) return $this->insert_id();
+          if($option['return_id']) return $this->insert_id();
         return $st;
     }
 
